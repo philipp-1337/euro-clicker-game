@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# Euro Clicker Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A fun idle-clicker game built with React. Earn virtual money by clicking, buy managers to generate automatic clicks, and improve your money sources through upgrades.
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+Euro Clicker Game is an idle game in the style of "Cookie Clicker" or "Adventure Capitalist," but with a European money theme. The game features:
 
-### `npm start`
+- Different colored click buttons with varying values
+- Cooldown timers for each button
+- Managers to automate clicks
+- Two types of upgrades:
+  - Value upgrades (increase the amount of money per click)
+  - Time upgrades (reduce cooldown time)
+- Simple and intuitive user interface
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1. Make sure Node.js and npm are installed on your system
+2. Clone this repository or download it
+3. Navigate to the project directory in your terminal
+4. Install the dependencies:
 
-### `npm test`
+```bash
+npm install
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+5. Start the application:
 
-### `npm run build`
+```bash
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+6. Open [http://localhost:3000](http://localhost:3000) in your browser to play the game
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Technologies Used
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- React.js
+- React Hooks (useState, useEffect)
+- CSS
+- Lucide React (for icons)
 
-### `npm run eject`
+## How to Play
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Basic Principle**: Click on the buttons to earn money. Each button has its own value and cooldown time.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Managers**: Once you have enough money, you can buy managers who will automatically click for you. Each manager is associated with a specific button.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Upgrades**:
+   - **Value Upgrades**: Increase the money value of the respective button by 10%
+   - **Time Upgrades**: Reduce the cooldown time of the respective button by 10%
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. **Strategy**: Decide wisely when to invest in managers or upgrades to maximize your money growth!
 
-## Learn More
+## Customization
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+You can easily customize the game by changing the values and prices in the code:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Modify the base values and cooldown times in the `baseButtons` array
+- Adjust the manager and upgrade costs
+- Add more button types or change their colors
 
-### Code Splitting
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Analyzing the Bundle Size
+## Troubleshooting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+If you encounter any issues:
 
-### Making a Progressive Web App
+1. Make sure you're using the latest version of Node.js and npm
+2. Verify that all dependencies were properly installed
+3. Delete the `node_modules` folder and run `npm install` again
+4. If there are display problems, clear your browser cache
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Future Features
 
-### Advanced Configuration
+- Save game progress in local storage
+- Offline progress
+- Prestige system
+- Achievements
+- Additional types of upgrades
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Contributing
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Contributions are welcome! Feel free to report bugs or create pull requests.
