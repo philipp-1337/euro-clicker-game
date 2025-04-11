@@ -3,7 +3,7 @@ import GameHeader from './GameHeader';
 import ClickerButtons from './ClickerButtons';
 import Managers from './Managers';
 import UpgradeTabs from './UpgradeTabs';
-import useClickerGame from '../../hooks/useClickerGame';
+import useClickerGame from '@hooks/useClickerGame';
 import './ClickerGame.css';
 
 export default function ClickerGame() {

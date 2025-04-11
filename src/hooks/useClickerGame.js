@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import useOfflineEarnings from './useOfflineEarnings';
-import { gameConfig } from '../constants/gameConfig';
+import { gameConfig } from '@constants/gameConfig';
+import { calculateUpgradeCost } from '@utils/calculators';
 
 export default function useClickerGame() {
   // Hauptzustände
@@ -20,11 +21,13 @@ export default function useClickerGame() {
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(0);
 
   // Kosten berechnen
-  const valueUpgradeCosts = valueUpgradeLevels.map((lvl, i) => 
-    gameConfig.baseValueUpgradeCosts[i] * Math.pow(1.5, lvl));
+  const valueUpgradeCosts = valueUpgradeLevels.map((lvl, i) =>
+    calculateUpgradeCost(gameConfig.baseValueUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  );
   
-  const cooldownUpgradeCosts = cooldownUpgradeLevels.map((lvl, i) => 
-    gameConfig.baseCooldownUpgradeCosts[i] * Math.pow(1.5, lvl));
+  const cooldownUpgradeCosts = cooldownUpgradeLevels.map((lvl, i) =>
+    calculateUpgradeCost(gameConfig.baseCooldownUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  );
   
   const globalMultiplierCost = 1000 * Math.pow(2, globalMultiplierLevel);
   const offlineEarningsCost = 5000 * Math.pow(2.2, offlineEarningsLevel);
