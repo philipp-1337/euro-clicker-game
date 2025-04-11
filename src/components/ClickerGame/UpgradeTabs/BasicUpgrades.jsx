@@ -44,7 +44,7 @@ export default function BasicUpgrades({
                 title="-10% Time"
               >
                 <span>{formatNumber(cooldownUpgradeCosts[index])} €</span>
-                <span>{(cooldownReductions[index] * 100).toFixed(0)}%</span>
+                <span>{(cooldownReductions[index]).toFixed(0)}%</span>
               </div>
             </button>
           ))}
