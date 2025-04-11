@@ -1,259 +1,352 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-  
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f5f5f5;
-}
-  
 .game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 0.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .game-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #2c3e50;
+  }
+  
+  .money-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    margin: 1rem auto;
-}
+    color: #2c3e50;
+  }
   
-.game-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    color: #333;
-}
-  
-.money-display {
-    font-size: 1.25rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    width: 100%;
+  .section-title {
+    margin: 25px 0 15px;
+    color: #2c3e50;
     text-align: center;
-}
+  }
   
-.section-title {
-    font-size: 1.1rem;
+  /* Clicker Buttons */
+  .clicker-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+  }
+  
+  .button-container {
+    flex: 1;
+    min-width: 120px;
+    max-width: 160px;
+  }
+  
+  .clicker-button {
+    width: 100%;
+    height: 80px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
     font-weight: bold;
-    margin: 0.75rem 0;
-    color: #333;
-    width: 100%;
-    text-align: center;
-}
-  
-/* Main clicker buttons */
-.clicker-buttons {
-    width: 100%;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
   
-.button-container {
+  .clicker-button.blue { background-color: #3498db; }
+  .clicker-button.green { background-color: #2ecc71; }
+  .clicker-button.yellow { background-color: #f1c40f; }
+  .clicker-button.red { background-color: #e74c3c; }
+  .clicker-button.purple { background-color: #9b59b6; }
+  
+  .clicker-button:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .clicker-button:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .clicker-button.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .cooldown-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+    font-size: 0.8rem;
+  }
+  
+  .spinning-icon {
+    animation: spin 1.5s linear infinite;
+    width: 16px;
+    height: 16px;
+    margin-bottom: 2px;
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Manager Buttons */
+  .manager-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+  }
+  
+  .manager-button {
+    width: 120px;
+    height: 70px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .manager-button.blue { background-color: #3498db; }
+  .manager-button.green { background-color: #2ecc71; }
+  .manager-button.yellow { background-color: #f1c40f; }
+  .manager-button.red { background-color: #e74c3c; }
+  .manager-button.purple { background-color: #9b59b6; }
+  
+  .manager-button:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
+  }
+  
+  .manager-button.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .manager-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .check-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Upgrade Buttons */
+  .upgrade-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .upgrade-button {
+    width: 120px;
+    height: 70px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .upgrade-button.blue { background-color: #3498db; }
+  .upgrade-button.green { background-color: #2ecc71; }
+  .upgrade-button.yellow { background-color: #f1c40f; }
+  .upgrade-button.red { background-color: #e74c3c; }
+  .upgrade-button.purple { background-color: #9b59b6; }
+  
+  .upgrade-button:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
+  }
+  
+  .upgrade-button.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .upgrade-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  /* Tabs System */
+  .upgrade-tabs {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 15px;
+    border-bottom: 2px solid #e0e0e0;
+  }
+  
+  .tab-button {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  
+  .tab-button:hover {
+    color: #2c3e50;
+  }
+  
+  .tab-button.active {
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  .tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
     width: 100%;
+    height: 2px;
+    background-color: #3498db;
+  }
+  
+  /* Premium Upgrades Tab */
+  .premium-section {
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .premium-upgrade-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #3498db;
+  }
+  
+  .premium-upgrade-header {
     display: flex;
     align-items: center;
-    /* Feste Höhe für den Container */
-    height: 3.5rem;
-}
+    margin-bottom: 10px;
+  }
   
-.clicker-button {
-    width: 100%;
-    height: 100%;
+  .premium-icon {
+    color: #f39c12;
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .premium-upgrade-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #2c3e50;
+  }
+  
+  .premium-upgrade-description {
+    margin: 0 0 15px 0;
+    color: #7f8c8d;
+    font-size: 0.95rem;
+  }
+  
+  .premium-upgrade-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    font-weight: bold;
+  }
+  
+  .premium-upgrade-level {
+    font-size: 0.9rem;
+    color: #34495e;
+  }
+  
+  .premium-upgrade-button {
+    background-color: #3498db;
     color: white;
-    cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
-    /* Stellen sicher, dass alles richtig zentriert ist */
-    position: relative;
-}
-  
-.clicker-button::after {
-    content: "";
-    min-width: 3rem;
-    display: block;
-    visibility: hidden;
-}
-
-.clicker-button.disabled::after {
-    display: none;
-}
-  
-.clicker-button:active {
-    transform: scale(0.98);
-}
-  
-.clicker-button.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-  
-.cooldown-indicator {
-    display: flex;
-    align-items: center;
-    /* Fester Platz für die Cooldown-Anzeige */
-    min-width: 3rem;
-    justify-content: flex-end;
-}
-  
-.spinning-icon {
-    animation: spin 1s linear infinite;
-    margin-right: 0.25rem;
-    height: 1rem;
-    width: 1rem;
-}
-  
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-  
-/* Manager buttons */
-.manager-buttons {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-  
-.manager-button {
-    height: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
     border: none;
-    border-radius: 0.25rem;
-    font-weight: bold;
-    color: white;
-    font-size: 0.75rem;
+    border-radius: 6px;
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: opacity 0.2s;
-}
+    transition: all 0.2s ease;
+  }
   
-.manager-button.disabled {
-    opacity: 0.5;
+  .premium-upgrade-button:hover:not(.disabled) {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+  }
+  
+  .premium-upgrade-button.disabled {
+    opacity: 0.7;
     cursor: not-allowed;
-}
+  }
   
-.manager-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-  
-.check-icon {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin-bottom: 0.25rem;
-}
-  
-/* Upgrade buttons */
-.upgrade-buttons {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-/* Upgrade sections: first row = value, second row = time */
-.upgrade-buttons + .upgrade-buttons {
-    margin-top: 0.5rem;
-}
-  
-.upgrade-button {
-    height: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border: none;
-    border-radius: 0.25rem;
-    font-weight: bold;
-    color: white;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-  
-.upgrade-button.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-  
-.upgrade-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-}
-  
-.multiplier {
-    font-size: 0.7rem;
-    margin-top: 0.25rem;
-}
-  
-/* Button colors */
-.blue {
-    background-color: #3b82f6;
-}
-  
-.blue:hover:not(.disabled) {
-    background-color: #2563eb;
-}
-  
-.green {
-    background-color: #10b981;
-}
-  
-.green:hover:not(.disabled) {
-    background-color: #059669;
-}
-  
-.yellow {
-    background-color: #f59e0b;
-}
-  
-.yellow:hover:not(.disabled) {
-    background-color: #d97706;
-}
-  
-.red {
-    background-color: #ef4444;
-}
-  
-.red:hover:not(.disabled) {
-    background-color: #dc2626;
-}
-  
-.purple {
-    background-color: #8b5cf6;
-}
-  
-.purple:hover:not(.disabled) {
-    background-color: #7c3aed;
-}
+  /* Responsive Design */
+  @media (max-width: 600px) {
+    .clicker-buttons,
+    .manager-buttons,
+    .upgrade-buttons {
+      gap: 8px;
+    }
+    
+    .button-container {
+      min-width: 100px;
+    }
+    
+    .manager-button,
+    .upgrade-button {
+      width: 100px;
+      height: 65px;
+      font-size: 0.8rem;
+    }
+    
+    .premium-upgrade-info {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .premium-upgrade-button {
+      width: 100%;
+    }
+  }
