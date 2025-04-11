@@ -1,15 +1,15 @@
 export const gameConfig = {
     // Basis-Kosten für Upgrades
-    baseValueUpgradeCosts: [1, 2, 3, 4, 5],
-    baseCooldownUpgradeCosts: [1, 2, 3, 4, 5],
+    baseValueUpgradeCosts: [10, 20, 30, 40, 50],
+    baseCooldownUpgradeCosts: [10, 20, 30, 40, 50],
     
     // Basis-Button-Konfiguration
     baseButtons: [
-      { baseValue: 1, baseCooldownTime: 1, colorClass: 'blue', managerCost: 1 },
-      { baseValue: 2, baseCooldownTime: 2, colorClass: 'green', managerCost: 5 },
-      { baseValue: 3, baseCooldownTime: 3, colorClass: 'yellow', managerCost: 10 },
-      { baseValue: 4, baseCooldownTime: 4, colorClass: 'red', managerCost: 20 },
-      { baseValue: 5, baseCooldownTime: 5, colorClass: 'purple', managerCost: 50 }
+      { baseValue: 1, baseCooldownTime: 1, colorClass: 'blue', managerCost: 100 },
+      { baseValue: 2, baseCooldownTime: 2, colorClass: 'green', managerCost: 500 },
+      { baseValue: 3, baseCooldownTime: 3, colorClass: 'yellow', managerCost: 1000 },
+      { baseValue: 4, baseCooldownTime: 4, colorClass: 'red', managerCost: 2000 },
+      { baseValue: 5, baseCooldownTime: 5, colorClass: 'purple', managerCost: 5000 }
     ],
     
     // Upgrade-Multiplikatoren

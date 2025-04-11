@@ -26,8 +26,8 @@ export default function useClickerGame() {
   const cooldownUpgradeCosts = cooldownUpgradeLevels.map((lvl, i) => 
     gameConfig.baseCooldownUpgradeCosts[i] * Math.pow(1.5, lvl));
   
-  const globalMultiplierCost = 10 * Math.pow(2, globalMultiplierLevel);
-  const offlineEarningsCost = 50 * Math.pow(2.2, offlineEarningsLevel);
+  const globalMultiplierCost = 1000 * Math.pow(2, globalMultiplierLevel);
+  const offlineEarningsCost = 5000 * Math.pow(2.2, offlineEarningsLevel);
 
   // Buttons mit aktualisierten Werten berechnen
   const buttons = gameConfig.baseButtons.map((button, index) => {
