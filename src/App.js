@@ -1,4 +1,5 @@
-import ClickerGame from './ClickerGame';
+import React from 'react';
+import ClickerGame from './components/ClickerGame';
 
 function App() {
   return (
