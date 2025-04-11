@@ -1,4 +1,5 @@
 import { Star, Zap, RefreshCw } from 'lucide-react';
+import { formatNumber } from '@utils/calculators';  // Import der formatNumber Funktion
 
 export default function PremiumUpgrades({
   money,
@@ -24,14 +25,14 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalMultiplierLevel} (×{globalMultiplier.toLocaleString("en-GB", { minimumFractionDigits: 2 })})
+            Level: {globalMultiplierLevel} (×{formatNumber(globalMultiplier)})
           </div>
           <button
             onClick={buyGlobalMultiplier}
             disabled={money < globalMultiplierCost}
             className={`premium-upgrade-button ${money < globalMultiplierCost ? 'disabled' : ''}`}
           >
-            {globalMultiplierCost.toLocaleString("en-GB")} €
+            {formatNumber(globalMultiplierCost)} €
           </button>
         </div>
       </div>
@@ -53,7 +54,7 @@ export default function PremiumUpgrades({
             disabled={money < offlineEarningsCost}
             className={`premium-upgrade-button ${money < offlineEarningsCost ? 'disabled' : ''}`}
           >
-            {offlineEarningsCost.toLocaleString("en-GB")} €
+            {formatNumber(offlineEarningsCost)} €
           </button>
         </div>
       </div>

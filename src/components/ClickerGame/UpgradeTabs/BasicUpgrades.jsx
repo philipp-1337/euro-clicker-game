@@ -1,3 +1,5 @@
+import { formatNumber } from '@utils/calculators';
+
 export default function BasicUpgrades({ 
     buttons, 
     valueUpgradeCosts, 
@@ -7,7 +9,7 @@ export default function BasicUpgrades({
     buyCooldownUpgrade,
     valueMultipliers,
     cooldownReductions
-  }) {
+}) {
     return (
       <div className="upgrade-section">
         <h2 className="section-title">Buy Upgrades</h2>
@@ -23,8 +25,8 @@ export default function BasicUpgrades({
                 className="upgrade-content"
                 title="+10% Value"
               >
-                <span>{valueUpgradeCosts[index].toLocaleString("en-GB", { minimumFractionDigits: 1 })} €</span>
-                <span>×{valueMultipliers[index].toLocaleString("en-GB", { minimumFractionDigits: 1 })}</span>
+                <span>{formatNumber(valueUpgradeCosts[index])} €</span>
+                <span>×{formatNumber(valueMultipliers[index])}</span>
               </div>
             </button>
           ))}
@@ -41,12 +43,12 @@ export default function BasicUpgrades({
                 className="upgrade-content"
                 title="-10% Time"
               >
-                <span>{cooldownUpgradeCosts[index].toLocaleString("en-GB", { minimumFractionDigits: 1 })} €</span>
-                <span>{cooldownReductions[index].toFixed(0)}%</span>
+                <span>{formatNumber(cooldownUpgradeCosts[index])} €</span>
+                <span>{(cooldownReductions[index] * 100).toFixed(0)}%</span>
               </div>
             </button>
           ))}
         </div>
       </div>
     );
-  }
+}

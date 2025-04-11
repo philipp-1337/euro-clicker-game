@@ -50,17 +50,18 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
     return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency);
   };
   
-  /**
-   * Formats a number for display (e.g., 1000 -> 1K)
-   * @param {number} num - The number to format
-   * @returns {string} The formatted number as a string
-   */
-  export const formatNumber = (num) => {
-    if (num < 1000) return Math.floor(num).toString();
-    if (num < 1000000) return (Math.floor(num / 100) / 10).toFixed(1) + 'K';
-    if (num < 1000000000) return (Math.floor(num / 100000) / 10).toFixed(1) + 'M';
-    return (Math.floor(num / 100000000) / 10).toFixed(1) + 'B';
-  };
+/**
+ * Formats a number for display (e.g., 1000 -> 1.00K)
+ * Always returns two decimal places
+ * @param {number} num - The number to format
+ * @returns {string} The formatted number as a string
+ */
+export const formatNumber = (num) => {
+  if (num < 1000) return num.toFixed(2);
+  if (num < 1_000_000) return (num / 1_000).toFixed(2) + 'K';
+  if (num < 1_000_000_000) return (num / 1_000_000).toFixed(2) + 'M';
+  return (num / 1_000_000_000).toFixed(2) + 'B';
+};
   
   /**
    * Calculates the maximum affordable level based on available currency
