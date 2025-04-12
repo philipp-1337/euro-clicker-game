@@ -12,7 +12,11 @@ export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
             className={`clicker-button ${button.colorClass} ${cooldowns[index] > 0 ? 'disabled' : ''}`}
           >
             <span>
-              {typeof button.label === 'number' ? formatNumber(button.label) : button.label}  {/* Hier wird das Label immer formatiert */}
+              {typeof button.label === 'string' && button.label.startsWith('+') && button.label.includes('€')
+                ? `+${formatNumber(parseFloat(button.label.replace(/[^\d.-]/g, '')))} €`
+                : typeof button.label === 'number'
+                ? formatNumber(button.label)
+                : button.label}
             </span>
             {cooldowns[index] > 0 && (
               <div className="cooldown-indicator">
