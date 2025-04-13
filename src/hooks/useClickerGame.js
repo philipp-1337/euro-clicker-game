@@ -29,7 +29,7 @@ export default function useClickerGame() {
     calculateUpgradeCost(gameConfig.baseCooldownUpgradeCosts[i], lvl, lvl + 1, 1.5)
   );
   
-  const globalMultiplierCost = 1000 * Math.pow(2, globalMultiplierLevel);
+  const globalMultiplierCost = 1000 * Math.pow(2.5, globalMultiplierLevel);
   const offlineEarningsCost = 5000 * Math.pow(2.2, offlineEarningsLevel);
 
   // Buttons mit aktualisierten Werten berechnen
@@ -148,7 +148,7 @@ export default function useClickerGame() {
   function buyGlobalMultiplier() {
     if (money >= globalMultiplierCost) {
       setMoney(prev => prev - globalMultiplierCost);
-      setGlobalMultiplier(prev => prev * 1.15); // +15% pro Level
+      setGlobalMultiplier(prev => prev * 1.05); // +5% pro Level
       setGlobalMultiplierLevel(prev => prev + 1);
     }
   }
