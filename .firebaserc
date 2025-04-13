@@ -1,5 +1,28 @@
 {
   "projects": {
     "default": "euro-clicker-game"
-  }
+  },
+  "targets": {
+    "dein-projekt-id": {
+      "hosting": {
+        "beta": [
+          "euro-clicker-game-beta"
+        ],
+        "production": [
+          "euro-clicker-game"
+        ]
+      }
+    },
+    "euro-clicker-game": {
+      "hosting": {
+        "beta": [
+          "euro-clicker-game-beta"
+        ],
+        "production": [
+          "euro-clicker-game"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
