@@ -21,7 +21,7 @@ export default function PremiumUpgrades({
           <h3>Global Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          Erhöht den Wert aller Klicks um 15%
+          Erhöht den Wert aller Klicks um 5%
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
