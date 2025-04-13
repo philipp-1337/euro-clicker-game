@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import useOfflineEarnings from './useOfflineEarnings';
 import { gameConfig } from '@constants/gameConfig';
 import { calculateUpgradeCost } from '@utils/calculators';
@@ -44,6 +44,19 @@ export default function useClickerGame() {
     };
   });
 
+
+  const handleClick = useCallback((index) => {
+    if (cooldowns[index] <= 0) {
+      setMoney(prevMoney => prevMoney + buttons[index].value);
+  
+      setCooldowns(prevCooldowns => {
+        const newCooldowns = [...prevCooldowns];
+        newCooldowns[index] = buttons[index].cooldownTime;
+        return newCooldowns;
+      });
+    }
+  }, [cooldowns, buttons, setMoney, setCooldowns]);
+
   // Offline-Einnahmen initialisieren
   useOfflineEarnings({
     offlineEarningsLevel,
@@ -71,7 +84,7 @@ export default function useClickerGame() {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [managers, buttons]);
+  }, [managers, buttons, handleClick]);
 
   // Manager Auto-Clicking
   useEffect(() => {
@@ -84,19 +97,7 @@ export default function useClickerGame() {
     }, 100);
 
     return () => clearInterval(autoClickInterval);
-  }, [managers, cooldowns, buttons]);
-
-  function handleClick(index) {
-    if (cooldowns[index] <= 0) {
-      setMoney(prevMoney => prevMoney + buttons[index].value);
-      
-      setCooldowns(prevCooldowns => {
-        const newCooldowns = [...prevCooldowns];
-        newCooldowns[index] = buttons[index].cooldownTime;
-        return newCooldowns;
-      });
-    }
-  }
+  }, [managers, cooldowns, buttons, handleClick]);
 
   function buyManager(index, cost) {
     if (money >= cost && !managers[index]) {
