@@ -1,4 +1,4 @@
-import { Star, Zap, RefreshCw } from 'lucide-react';
+import { Star, RefreshCw } from 'lucide-react';
 import { formatNumber } from '@utils/calculators';  // Import der formatNumber Funktion
 
 export default function PremiumUpgrades({
