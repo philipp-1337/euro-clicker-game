@@ -36,7 +36,7 @@ jobs:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            firebase deploy --only hosting:euro-clicker-game
+            firebase deploy --only hosting:production
           elif [[ "${GITHUB_REF}" == "refs/heads/beta" ]]; then
-            firebase deploy --only hosting:euro-clicker-game-beta
+            firebase deploy --only hosting:beta
           fi
