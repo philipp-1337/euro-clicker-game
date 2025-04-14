@@ -85,3 +85,24 @@ export const formatNumber = (num) => {
     
     return level;
   };
+
+  /**
+   * Calculates the global multiplier increase percentage from a multiplier factor
+   * @param {number} multiplierFactor - The multiplication factor (e.g., 1.05)
+   * @returns {number} The percentage increase (e.g., 5 for 5%)
+   */
+  export const getGlobalMultiplierPercentage = (multiplierFactor) => {
+    // Convert factor (e.g. 1.05) to percentage (e.g. 5)
+    return Math.round((multiplierFactor - 1) * 100);
+  };
+
+  /**
+   * Calculates the offline earnings percentage based on level and config
+   * @param {number} level - Current level of offline earnings upgrade
+   * @param {object} offlineEarningsConfig - Configuration for offline earnings
+   * @returns {number} The percentage of normal rate
+   */
+  export const calculateOfflineEarningsPercentage = (level, offlineEarningsConfig) => {
+    if (level <= 0) return 0;
+    return offlineEarningsConfig.basePercentage + (level * offlineEarningsConfig.percentagePerLevel);
+  };

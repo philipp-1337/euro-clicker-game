@@ -53,7 +53,10 @@ export const gameConfig = {
       },
       offlineEarnings: {
         baseCost: 5000,
-        costExponent: 2.2
+        costExponent: 2.2,
+        basePercentage: 20,    // Basis-Prozentsatz bei Level 1
+        percentagePerLevel: 10, // Zusätzliche Prozent pro Level
+        maxOfflineHours: 8      // Maximale Offline-Zeit in Stunden
       }
     },
 
