@@ -23,9 +23,6 @@ export const gameConfig = {
     maxOfflineTimeInSeconds: 3600 * 8, // Maximale Offline-Zeit in Sekunden (8 Stunden)
     minimumOfflineTimeInSeconds: 10, // Minimale Zeit für Offline-Einnahmen (10 Sekunden)
     
-    // Zeitlimits
-    maxOfflineTimeInHours: 8, // Maximale Zeit für Offline-Einnahmen
-    minimumOfflineTimeInSeconds: 10, // Minimale Zeit für Offline-Einnahmen
     // Startbedingungen
     initialState: {
       money: 0,
