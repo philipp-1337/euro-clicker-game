@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import useOfflineEarnings from './useOfflineEarnings';
 import { gameConfig } from '@constants/gameConfig';
-import { calculateUpgradeCost } from '@utils/calculators';
+import { calculateButtons, calculateCostWithDifficulty } from '@utils/calculators';
 
 export default function useClickerGame(easyMode = false) {
   // Hauptzustände mit Anfangswerten aus Config
@@ -20,52 +20,51 @@ export default function useClickerGame(easyMode = false) {
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
-  const calculateCost = (baseCost, level, growthFactor = 1) => {
-    const cost = baseCost * Math.pow(growthFactor, level);
-    return easyMode ? cost * gameConfig.getCostMultiplier(true) : cost;
-  };
-
   // Kosten berechnen
   const valueUpgradeCosts = valueUpgradeLevels.map((_, i) =>
-    calculateCost(
+    calculateCostWithDifficulty(
       gameConfig.baseValueUpgradeCosts[i],
       valueUpgradeLevels[i],
-      gameConfig.upgrades.costIncreaseFactor
+      gameConfig.upgrades.costIncreaseFactor,
+      easyMode,
+      gameConfig.getCostMultiplier
     )
   );
   
   const cooldownUpgradeCosts = cooldownUpgradeLevels.map((_, i) =>
-    calculateCost(
+    calculateCostWithDifficulty(
       gameConfig.baseCooldownUpgradeCosts[i],
       cooldownUpgradeLevels[i],
-      gameConfig.upgrades.costIncreaseFactor
+      gameConfig.upgrades.costIncreaseFactor,
+      easyMode,
+      gameConfig.getCostMultiplier
     )
   );
   
   // Premium-Upgrade-Kosten mit Config-Werten
-  const globalMultiplierCost = calculateCost(
+  const globalMultiplierCost = calculateCostWithDifficulty(
     gameConfig.premiumUpgrades.globalMultiplier.baseCost,
     globalMultiplierLevel,
-    gameConfig.premiumUpgrades.globalMultiplier.costExponent
+    gameConfig.premiumUpgrades.globalMultiplier.costExponent,
+    easyMode,
+    gameConfig.getCostMultiplier
   );
   
-  const offlineEarningsCost = calculateCost(
+  const offlineEarningsCost = calculateCostWithDifficulty(
     gameConfig.premiumUpgrades.offlineEarnings.baseCost,
     offlineEarningsLevel,
-    gameConfig.premiumUpgrades.offlineEarnings.costExponent
+    gameConfig.premiumUpgrades.offlineEarnings.costExponent,
+    easyMode,
+    gameConfig.getCostMultiplier
   );
 
   // Buttons mit aktualisierten Werten berechnen
-  const buttons = gameConfig.baseButtons.map((button, index) => {
-    const actualValue = button.baseValue * valueMultipliers[index] * globalMultiplier;
-    const actualCooldownTime = button.baseCooldownTime * cooldownReductions[index];
-    return {
-      ...button,
-      value: actualValue,
-      cooldownTime: actualCooldownTime,
-      label: `+${actualValue.toLocaleString("en-GB", { minimumFractionDigits: 1 })} €`
-    };
-  });
+  const buttons = calculateButtons(
+    gameConfig.baseButtons,
+    valueMultipliers,
+    globalMultiplier,
+    cooldownReductions
+  );
 
 
   const handleClick = useCallback((index) => {

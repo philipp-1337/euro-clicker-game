@@ -145,3 +145,38 @@ export const formatNumber = (num) => {
   export const calculateCooldownReductionPercentage = (currentCooldown, baseCooldown) => {
     return (currentCooldown / baseCooldown) * 100;
   };
+
+  /**
+   * Berechnet alle Button-Daten (Wert, Cooldown, Label) basierend auf den Multiplikatoren und Reduktionen
+   * @param {Array} baseButtons - Die Basis-Button-Konfigurationen
+   * @param {Array} valueMultipliers - Multiplikatoren pro Button
+   * @param {number} globalMultiplier - Globaler Multiplikator
+   * @param {Array} cooldownReductions - Reduktionsfaktoren pro Button
+   * @returns {Array} Liste von Buttons mit berechneten Werten
+   */
+  export const calculateButtons = (baseButtons, valueMultipliers, globalMultiplier, cooldownReductions) => {
+    return baseButtons.map((button, index) => {
+      const actualValue = button.baseValue * valueMultipliers[index] * globalMultiplier;
+      const actualCooldownTime = button.baseCooldownTime * cooldownReductions[index];
+      return {
+        ...button,
+        value: actualValue,
+        cooldownTime: actualCooldownTime,
+        label: `+${actualValue.toLocaleString("en-GB", { minimumFractionDigits: 1 })} €`
+      };
+    });
+  };
+
+  /**
+   * Berechnet die Upgrade-Kosten unter Berücksichtigung des Schwierigkeitsgrads (z. B. Easy Mode)
+   * @param {number} baseCost - Basispreis
+   * @param {number} level - Aktueller Level
+   * @param {number} growthFactor - Wachstumsfaktor (default: 1.5)
+   * @param {boolean} easyMode - Ist Easy Mode aktiv?
+   * @param {function} getCostMultiplier - Funktion zur Ermittlung des Kostenmultiplikators
+   * @returns {number} Die berechneten Kosten
+   */
+  export const calculateCostWithDifficulty = (baseCost, level, growthFactor = 1.5, easyMode = false, getCostMultiplier) => {
+    const cost = baseCost * Math.pow(growthFactor, level);
+    return easyMode ? cost * getCostMultiplier(true) : cost;
+  };
