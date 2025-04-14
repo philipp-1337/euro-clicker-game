@@ -6,9 +6,10 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import './ClickerGame.css';
 
-export default function ClickerGame() {
+export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   const [activeTab, setActiveTab] = useState('basic'); // 'basic' oder 'premium'
   
+  // Übergebe easyMode als Parameter an den Hook
   const {
     money,
     buttons,
@@ -29,12 +30,15 @@ export default function ClickerGame() {
     offlineEarningsCost,
     buyGlobalMultiplier,
     buyOfflineEarnings
-  } = useClickerGame();
+  } = useClickerGame(easyMode);
 
   return (
     <div className="game-container">
-      <GameHeader money={money} />
-      
+      <GameHeader 
+        money={money} 
+        easyMode={easyMode} 
+        onEasyModeToggle={onEasyModeToggle} 
+      />
       <ClickerButtons 
         buttons={buttons} 
         cooldowns={cooldowns} 

@@ -43,6 +43,7 @@ export const gameConfig = {
       valueMultiplierFactor: 1.1,    // 10% Steigerung pro Level
       cooldownReductionFactor: 0.9,  // 10% Reduktion pro Level
       globalMultiplierFactor: 1.05,  // 5% Steigerung pro Level
+      costIncreaseFactor: 1.5        // 50% Kostensteigerung pro Level
     },
 
     // Premium-Upgrades Kostenberechnung
@@ -72,5 +73,18 @@ export const gameConfig = {
         { id: 'premium', label: 'Premium Upgrades' }
         // Leicht erweiterbar für zukünftige Tab-Typen
       ]
+    },
+    // Schwierigkeitseinstellungen
+    difficulty: {
+      normal: {
+        costMultiplier: 1
+      },
+      easy: {
+        costMultiplier: 0.01 // 1/100 der normalen Kosten
+      }
+    },
+    // Hilfsfunktion zur Kostenberechnung mit Schwierigkeitsgrad
+    getCostMultiplier: (easyMode = false) => {
+      return easyMode ? gameConfig.difficulty.easy.costMultiplier : gameConfig.difficulty.normal.costMultiplier;
     }
   };

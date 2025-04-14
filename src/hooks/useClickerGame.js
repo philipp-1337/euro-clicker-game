@@ -3,7 +3,7 @@ import useOfflineEarnings from './useOfflineEarnings';
 import { gameConfig } from '@constants/gameConfig';
 import { calculateUpgradeCost } from '@utils/calculators';
 
-export default function useClickerGame() {
+export default function useClickerGame(easyMode = false) {
   // Hauptzustände mit Anfangswerten aus Config
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
@@ -20,21 +20,40 @@ export default function useClickerGame() {
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
+  const calculateCost = (baseCost, level, growthFactor = 1) => {
+    const cost = baseCost * Math.pow(growthFactor, level);
+    return easyMode ? cost * gameConfig.getCostMultiplier(true) : cost;
+  };
+
   // Kosten berechnen
-  const valueUpgradeCosts = valueUpgradeLevels.map((lvl, i) =>
-    calculateUpgradeCost(gameConfig.baseValueUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  const valueUpgradeCosts = valueUpgradeLevels.map((_, i) =>
+    calculateCost(
+      gameConfig.baseValueUpgradeCosts[i],
+      valueUpgradeLevels[i],
+      gameConfig.upgrades.costIncreaseFactor
+    )
   );
   
-  const cooldownUpgradeCosts = cooldownUpgradeLevels.map((lvl, i) =>
-    calculateUpgradeCost(gameConfig.baseCooldownUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  const cooldownUpgradeCosts = cooldownUpgradeLevels.map((_, i) =>
+    calculateCost(
+      gameConfig.baseCooldownUpgradeCosts[i],
+      cooldownUpgradeLevels[i],
+      gameConfig.upgrades.costIncreaseFactor
+    )
   );
   
   // Premium-Upgrade-Kosten mit Config-Werten
-  const globalMultiplierCost = gameConfig.premiumUpgrades.globalMultiplier.baseCost * 
-    Math.pow(gameConfig.premiumUpgrades.globalMultiplier.costExponent, globalMultiplierLevel);
+  const globalMultiplierCost = calculateCost(
+    gameConfig.premiumUpgrades.globalMultiplier.baseCost,
+    globalMultiplierLevel,
+    gameConfig.premiumUpgrades.globalMultiplier.costExponent
+  );
   
-  const offlineEarningsCost = gameConfig.premiumUpgrades.offlineEarnings.baseCost * 
-    Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, offlineEarningsLevel);
+  const offlineEarningsCost = calculateCost(
+    gameConfig.premiumUpgrades.offlineEarnings.baseCost,
+    offlineEarningsLevel,
+    gameConfig.premiumUpgrades.offlineEarnings.costExponent
+  );
 
   // Buttons mit aktualisierten Werten berechnen
   const buttons = gameConfig.baseButtons.map((button, index) => {
