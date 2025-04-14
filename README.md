@@ -16,22 +16,22 @@ Euro Clicker Game is an idle game in the style of "Cookie Clicker" or "Adventure
 
 ## Installation
 
-1. Make sure Node.js and npm are installed on your system
-2. Clone this repository or download it
-3. Navigate to the project directory in your terminal
-4. Install the dependencies:
+- Make sure Node.js and npm are installed on your system
+- Clone this repository or download it
+- Navigate to the project directory in your terminal
+- Install the dependencies:
 
 ```bash
 npm install
 ```
 
-5. Start the application:
+- *Start the application:
 
 ```bash
 npm start
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser to play the game
+- Open [http://localhost:3000](http://localhost:3000) in your browser to play the game
 
 ## Technologies Used
 
