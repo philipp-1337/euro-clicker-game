@@ -63,5 +63,14 @@ export const gameConfig = {
     // Timing-Konstanten
     timing: {
       updateInterval: 100,  // 100ms für Timer-Updates
+    },
+    
+    // UI-bezogene Konfigurationen
+    ui: {
+      tabs: [
+        { id: 'basic', label: 'Basic Upgrades' },
+        { id: 'premium', label: 'Premium Upgrades' }
+        // Leicht erweiterbar für zukünftige Tab-Typen
+      ]
     }
   };

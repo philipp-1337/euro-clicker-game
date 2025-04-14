@@ -124,3 +124,24 @@ export const formatNumber = (num) => {
   export const calculateCooldownUpgradePercentage = (cooldownReductionFactor) => {
     return Math.round((1 - cooldownReductionFactor) * 100);
   };
+
+  /**
+   * Berechnet den aktuellen Multiplikator für ein Button-Upgrade
+   * @param {number} currentValue - Aktueller Wert des Buttons
+   * @param {number} baseValue - Basiswert des Buttons
+   * @param {number} globalMultiplier - Globaler Multiplikator
+   * @returns {number} Der spezifische Multiplikator für diesen Button
+   */
+  export const calculateButtonValueMultiplier = (currentValue, baseValue, globalMultiplier) => {
+    return currentValue / baseValue / globalMultiplier;
+  };
+
+  /**
+   * Berechnet die prozentuale Reduzierung der Cooldown-Zeit
+   * @param {number} currentCooldown - Aktuelle Cooldown-Zeit
+   * @param {number} baseCooldown - Basis-Cooldown-Zeit
+   * @returns {number} Prozentuale Cooldown-Zeit (100% = keine Reduzierung)
+   */
+  export const calculateCooldownReductionPercentage = (currentCooldown, baseCooldown) => {
+    return (currentCooldown / baseCooldown) * 100;
+  };
