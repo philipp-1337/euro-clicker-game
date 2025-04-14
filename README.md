@@ -57,7 +57,6 @@ npm start
   /hooks
     /useClickerGame.js        # Hauptlogik als Hook extrahiert
     /useOfflineEarnings.js    # Logik für Offline-Earnings
-    /useAutoClicker.js        # Logik für den Auto-Clicker
   /utils
     /calculators.js           # Hilfsfunktionen für Berechnungen
     /localStorage.js          # Funktionen für LocalStorage-Verwaltung
