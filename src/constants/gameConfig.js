@@ -20,6 +20,8 @@ export const gameConfig = {
     globalMultiplierIncrease: 1.05, // +5% pro Level
     offlineEarningsBaseRate: 0.2, // 20% der normalen Rate
     offlineEarningsIncreasePerLevel: 0.1, // +10% pro Level
+    maxOfflineTimeInSeconds: 3600 * 8, // Maximale Offline-Zeit in Sekunden (8 Stunden)
+    minimumOfflineTimeInSeconds: 10, // Minimale Zeit für Offline-Einnahmen (10 Sekunden)
     
     // Zeitlimits
     maxOfflineTimeInHours: 8, // Maximale Zeit für Offline-Einnahmen
@@ -53,7 +55,7 @@ export const gameConfig = {
         costExponent: 2.5
       },
       offlineEarnings: {
-        baseCost: 5000,
+        baseCost: 2000,
         costExponent: 2.2,
         basePercentage: 20,    // Basis-Prozentsatz bei Level 1
         percentagePerLevel: 10, // Zusätzliche Prozent pro Level

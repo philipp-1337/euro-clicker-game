@@ -1,3 +1,5 @@
+import { gameConfig } from '@constants/gameConfig'; // Stelle sicher, dass der Pfad korrekt ist
+
 /**
  * Calculates the cost of the next level of an item
  * @param {number} baseCost - The base cost of the item
@@ -40,14 +42,19 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
   };
   
   /**
-   * Calculates offline earnings
-   * @param {number} productionPerSecond - Current production per second
-   * @param {number} offlineTimeInSeconds - Time spent offline in seconds
-   * @param {number} offlineEfficiency - Efficiency of offline earnings (0-1)
-   * @returns {number} The total offline earnings
+   * Berechnet Offline-Einnahmen, wobei der Level von Offline-Einnahmen berücksichtigt wird
+   * @param {number} productionPerSecond - Aktuelle Produktion pro Sekunde
+   * @param {number} offlineTimeInSeconds - Zeit, die offline war (in Sekunden)
+   * @param {number} offlineEarningsLevel - Der Level der Offline-Einnahmen
+   * @param {number} offlineEfficiency - Effizienz der Offline-Einnahmen (0-1)
+   * @returns {number} Die Gesamt-OFFLINE-Einnahmen
    */
-  export const calculateOfflineEarnings = (productionPerSecond, offlineTimeInSeconds, offlineEfficiency = 0.5) => {
-    return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency);
+  export const calculateOfflineEarnings = (productionPerSecond, offlineTimeInSeconds, offlineEarningsLevel, offlineEfficiency = 0.5) => {
+    // Wir verwenden den Wert aus der gameConfig.js für den Basisprozentsatz und berechnen den Prozentsatz
+    const offlineEarningsPercentage = gameConfig.offlineEarningsBaseRate + (offlineEarningsLevel * gameConfig.offlineEarningsIncreasePerLevel);
+    
+    // Berechnung der Offline-Einnahmen
+    return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency * offlineEarningsPercentage);
   };
   
 /**
