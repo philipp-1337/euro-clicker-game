@@ -23,5 +23,42 @@ export const gameConfig = {
     
     // Zeitlimits
     maxOfflineTimeInHours: 8, // Maximale Zeit für Offline-Einnahmen
-    minimumOfflineTimeInSeconds: 10 // Minimale Zeit für Offline-Einnahmen
+    minimumOfflineTimeInSeconds: 10, // Minimale Zeit für Offline-Einnahmen
+    // Startbedingungen
+    initialState: {
+      money: 0,
+      cooldowns: [0, 0, 0, 0, 0],
+      managers: [false, false, false, false, false],
+      valueMultipliers: [1, 1, 1, 1, 1],
+      cooldownReductions: [1, 1, 1, 1, 1],
+      valueUpgradeLevels: [0, 0, 0, 0, 0],
+      cooldownUpgradeLevels: [0, 0, 0, 0, 0],
+      globalMultiplier: 1,
+      globalMultiplierLevel: 0,
+      offlineEarningsLevel: 0
+    },
+
+    // Upgrade-Multiplikatoren
+    upgrades: {
+      valueMultiplierFactor: 1.1,    // 10% Steigerung pro Level
+      cooldownReductionFactor: 0.9,  // 10% Reduktion pro Level
+      globalMultiplierFactor: 1.05,  // 5% Steigerung pro Level
+    },
+
+    // Premium-Upgrades Kostenberechnung
+    premiumUpgrades: {
+      globalMultiplier: {
+        baseCost: 1000,
+        costExponent: 2.5
+      },
+      offlineEarnings: {
+        baseCost: 5000,
+        costExponent: 2.2
+      }
+    },
+
+    // Timing-Konstanten
+    timing: {
+      updateInterval: 100,  // 100ms für Timer-Updates
+    }
   };

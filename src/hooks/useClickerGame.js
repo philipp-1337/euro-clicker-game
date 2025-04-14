@@ -4,21 +4,21 @@ import { gameConfig } from '@constants/gameConfig';
 import { calculateUpgradeCost } from '@utils/calculators';
 
 export default function useClickerGame() {
-  // Hauptzustände
-  const [money, setMoney] = useState(0);
-  const [cooldowns, setCooldowns] = useState([0, 0, 0, 0, 0]);
-  const [managers, setManagers] = useState([false, false, false, false, false]);
+  // Hauptzustände mit Anfangswerten aus Config
+  const [money, setMoney] = useState(gameConfig.initialState.money);
+  const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
+  const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
   
-  // Upgrade-Zustände
-  const [valueMultipliers, setValueMultipliers] = useState([1, 1, 1, 1, 1]);
-  const [cooldownReductions, setCooldownReductions] = useState([1, 1, 1, 1, 1]);
-  const [valueUpgradeLevels, setValueUpgradeLevels] = useState([0, 0, 0, 0, 0]);
-  const [cooldownUpgradeLevels, setCooldownUpgradeLevels] = useState([0, 0, 0, 0, 0]);
+  // Upgrade-Zustände mit Anfangswerten aus Config
+  const [valueMultipliers, setValueMultipliers] = useState([...gameConfig.initialState.valueMultipliers]);
+  const [cooldownReductions, setCooldownReductions] = useState([...gameConfig.initialState.cooldownReductions]);
+  const [valueUpgradeLevels, setValueUpgradeLevels] = useState([...gameConfig.initialState.valueUpgradeLevels]);
+  const [cooldownUpgradeLevels, setCooldownUpgradeLevels] = useState([...gameConfig.initialState.cooldownUpgradeLevels]);
   
-  // Premium-Upgrade-Zustände
-  const [globalMultiplier, setGlobalMultiplier] = useState(1);
-  const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(0);
-  const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(0);
+  // Premium-Upgrade-Zustände mit Anfangswerten aus Config
+  const [globalMultiplier, setGlobalMultiplier] = useState(gameConfig.initialState.globalMultiplier);
+  const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
+  const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
   // Kosten berechnen
   const valueUpgradeCosts = valueUpgradeLevels.map((lvl, i) =>
@@ -29,8 +29,12 @@ export default function useClickerGame() {
     calculateUpgradeCost(gameConfig.baseCooldownUpgradeCosts[i], lvl, lvl + 1, 1.5)
   );
   
-  const globalMultiplierCost = 1000 * Math.pow(2.5, globalMultiplierLevel);
-  const offlineEarningsCost = 5000 * Math.pow(2.2, offlineEarningsLevel);
+  // Premium-Upgrade-Kosten mit Config-Werten
+  const globalMultiplierCost = gameConfig.premiumUpgrades.globalMultiplier.baseCost * 
+    Math.pow(gameConfig.premiumUpgrades.globalMultiplier.costExponent, globalMultiplierLevel);
+  
+  const offlineEarningsCost = gameConfig.premiumUpgrades.offlineEarnings.baseCost * 
+    Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, offlineEarningsLevel);
 
   // Buttons mit aktualisierten Werten berechnen
   const buttons = gameConfig.baseButtons.map((button, index) => {
@@ -81,7 +85,7 @@ export default function useClickerGame() {
           return newCooldown;
         })
       );
-    }, 100);
+    }, gameConfig.timing.updateInterval);
 
     return () => clearInterval(interval);
   }, [managers, buttons, handleClick]);
@@ -94,7 +98,7 @@ export default function useClickerGame() {
           handleClick(index);
         }
       });
-    }, 100);
+    }, gameConfig.timing.updateInterval);
 
     return () => clearInterval(autoClickInterval);
   }, [managers, cooldowns, buttons, handleClick]);
@@ -116,7 +120,7 @@ export default function useClickerGame() {
       setMoney(prev => prev - cost);
       setValueMultipliers(prev => {
         const updated = [...prev];
-        updated[index] *= 1.1;
+        updated[index] *= gameConfig.upgrades.valueMultiplierFactor;
         return updated;
       });
       setValueUpgradeLevels(prev => {
@@ -133,7 +137,7 @@ export default function useClickerGame() {
       setMoney(prev => prev - cost);
       setCooldownReductions(prev => {
         const updated = [...prev];
-        updated[index] *= 0.9;
+        updated[index] *= gameConfig.upgrades.cooldownReductionFactor;
         return updated;
       });
       setCooldownUpgradeLevels(prev => {
@@ -148,7 +152,7 @@ export default function useClickerGame() {
   function buyGlobalMultiplier() {
     if (money >= globalMultiplierCost) {
       setMoney(prev => prev - globalMultiplierCost);
-      setGlobalMultiplier(prev => prev * 1.05); // +5% pro Level
+      setGlobalMultiplier(prev => prev * gameConfig.upgrades.globalMultiplierFactor);
       setGlobalMultiplierLevel(prev => prev + 1);
     }
   }
