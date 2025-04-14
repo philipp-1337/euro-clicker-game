@@ -1,4 +1,9 @@
-import { formatNumber } from '@utils/calculators';
+import { 
+  formatNumber, 
+  calculateValueUpgradePercentage, 
+  calculateCooldownUpgradePercentage 
+} from '@utils/calculators';
+import { gameConfig } from '@constants/gameConfig';
 
 export default function BasicUpgrades({ 
     buttons, 
@@ -10,6 +15,12 @@ export default function BasicUpgrades({
     valueMultipliers,
     cooldownReductions
 }) {
+  // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
+  const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
+  
+  // Prozentsatz für Cooldown-Upgrade aus der gameConfig berechnen
+  const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
+
     return (
       <div className="upgrade-section">
         <h2 className="section-title">Buy Upgrades</h2>
@@ -23,7 +34,7 @@ export default function BasicUpgrades({
             >
               <div
                 className="upgrade-content"
-                title="+10% Value"
+                title={`+${valueUpgradePercentage}% Value`}
               >
                 <span>{formatNumber(valueUpgradeCosts[index])} €</span>
                 <span>×{formatNumber(valueMultipliers[index])}</span>
@@ -41,7 +52,7 @@ export default function BasicUpgrades({
             >
               <div
                 className="upgrade-content"
-                title="-10% Time"
+                title={`-${cooldownUpgradePercentage}% Time`}
               >
                 <span>{formatNumber(cooldownUpgradeCosts[index])} €</span>
                 <span>{(cooldownReductions[index]).toFixed(0)}%</span>

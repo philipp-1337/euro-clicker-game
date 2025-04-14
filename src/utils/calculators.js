@@ -106,3 +106,21 @@ export const formatNumber = (num) => {
     if (level <= 0) return 0;
     return offlineEarningsConfig.basePercentage + (level * offlineEarningsConfig.percentagePerLevel);
   };
+
+  /**
+   * Berechnet den Prozentsatz für Value-Upgrades
+   * @param {number} valueMultiplierFactor - Der Multiplikator-Faktor (z.B. 1.1)
+   * @returns {number} Der Prozentsatz (z.B. 10 für 10%)
+   */
+  export const calculateValueUpgradePercentage = (valueMultiplierFactor) => {
+    return Math.round((valueMultiplierFactor - 1) * 100);
+  };
+
+  /**
+   * Berechnet den Prozentsatz für Cooldown-Upgrades
+   * @param {number} cooldownReductionFactor - Der Reduktions-Faktor (z.B. 0.9)
+   * @returns {number} Der Prozentsatz (z.B. 10 für 10%)
+   */
+  export const calculateCooldownUpgradePercentage = (cooldownReductionFactor) => {
+    return Math.round((1 - cooldownReductionFactor) * 100);
+  };
