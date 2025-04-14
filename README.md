@@ -54,10 +54,6 @@ npm start
         /index.jsx            # Tab-Container
         /BasicUpgrades.jsx    # Erster Tab
         /PremiumUpgrades.jsx  # Zweiter Tab
-    /common                   # Wiederverwendbare UI-Komponenten
-      /Button.jsx
-      /Card.jsx
-      /Tabs.jsx
   /hooks
     /useClickerGame.js        # Hauptlogik als Hook extrahiert
     /useOfflineEarnings.js    # Logik für Offline-Earnings
