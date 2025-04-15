@@ -97,6 +97,38 @@ export default function useClickerGame(easyMode = false) {
     setMoney
   });
 
+  const buyCompany = (index) => {
+  const company = companies[index];
+  if (money >= company.cost && !company.owned) {
+    setMoney(prev => prev - company.cost);
+    const updated = [...companies];
+    updated[index] = { ...company, owned: true };
+    setCompanies(updated);
+  }
+  };
+  
+  // Unternehmen zum Kauf
+  const [money, setMoney] = useState(0);
+  const [companies, setCompanies] = useState([
+  {
+    name: "Taxiunternehmen",
+    cost: 10000,
+    income: 10,
+    owned: false,
+    colorClass: "yellow-button"
+  },
+  {
+    name: "Energydrink-Verkauf",
+    cost: 25000,
+    income: 20,
+    owned: false,
+    colorClass: "blue-button"
+  }
+  // weitere Unternehmen hier
+]);
+
+
+  
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
