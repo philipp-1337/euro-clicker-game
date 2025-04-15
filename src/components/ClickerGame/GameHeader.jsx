@@ -89,7 +89,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         {formatNumber(money)} €
       </div>
       <div className="playtime-display">
-        ⏱ {formatPlayTime(playTime)} gespielt
+        ⏱ {formatPlayTime(playTime)}
 
         <button
           className="header-button"
