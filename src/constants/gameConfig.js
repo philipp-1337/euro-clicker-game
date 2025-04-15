@@ -70,6 +70,7 @@ export const gameConfig = {
       tabs: [
         { id: 'basic', label: 'Basic Upgrades' },
         { id: 'premium', label: 'Premium Upgrades' }
+        { id: 'companies', label: 'Unternehmen' }  // 👈 HIER hinzufügen
         // Leicht erweiterbar für zukünftige Tab-Typen
       ]
     },
