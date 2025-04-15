@@ -85,5 +85,6 @@ export const gameConfig = {
     // Hilfsfunktion zur Kostenberechnung mit Schwierigkeitsgrad
     getCostMultiplier: (easyMode = false) => {
       return easyMode ? gameConfig.difficulty.easy.costMultiplier : gameConfig.difficulty.normal.costMultiplier;
-    }
+    },
+    getBaseManagerCosts: () => gameConfig.baseButtons.map(button => button.managerCost),
   };

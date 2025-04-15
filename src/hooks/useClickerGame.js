@@ -23,7 +23,7 @@ export default function useClickerGame(easyMode = false) {
     offlineEarningsLevel, setOfflineEarningsLevel,
     gameState, loadGameState
   } = gameStateHook;
-
+  
   // Berechnungen für abgeleitete Zustände 
   const {
     valueUpgradeCosts,
@@ -41,7 +41,7 @@ export default function useClickerGame(easyMode = false) {
     offlineEarningsLevel,
     easyMode
   );
-
+  
   // Upgrade-Funktionen
   const {
     buyValueUpgrade,
@@ -63,10 +63,13 @@ export default function useClickerGame(easyMode = false) {
     offlineEarningsCost,
     gameConfig
   );
-
+  
   // Manager-Funktionen
+  const costMultiplier = gameConfig.getCostMultiplier(easyMode);
   const { buyManager } = useManagers(money, setMoney, managers, setManagers);
-
+  // Managerkosten dynamisch berechnen
+  const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
+  
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
     cooldowns, setCooldowns, managers, buttons, money, setMoney
@@ -109,5 +112,6 @@ export default function useClickerGame(easyMode = false) {
     offlineEarningsLevel,
     globalMultiplierCost,
     offlineEarningsCost,
+    managerCosts
   };
 }

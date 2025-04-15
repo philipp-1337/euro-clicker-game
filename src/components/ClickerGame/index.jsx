@@ -28,7 +28,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     globalMultiplierCost,
     offlineEarningsCost,
     buyGlobalMultiplier,
-    buyOfflineEarnings
+    buyOfflineEarnings,
+    managerCosts
   } = useClickerGame(easyMode);
 
   return (
@@ -64,6 +65,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         buyOfflineEarnings={buyOfflineEarnings}
         managers={managers}
         buyManager={buyManager}
+        managerCosts={managerCosts}
       />
     </div>
   );

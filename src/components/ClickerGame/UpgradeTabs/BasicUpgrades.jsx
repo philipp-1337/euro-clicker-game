@@ -16,13 +16,18 @@ export default function BasicUpgrades({
     valueMultipliers,
     cooldownReductions,
     managers,
-    buyManager
+    buyManager,
+    managerCosts
 }) {
   // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
   
   // Prozentsatz für Cooldown-Upgrade aus der gameConfig berechnen
   const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
+
+  if (!managerCosts || managerCosts.length === 0) {
+    return null; // Oder ein Lade-Indikator, falls du möchtest
+  }
 
     return (
       <div className="upgrade-section">
@@ -70,9 +75,9 @@ export default function BasicUpgrades({
           {buttons.map((button, index) => (
             <button
               key={index}
-              onClick={() => buyManager(index, button.managerCost)}
-              disabled={money < button.managerCost || managers[index]}
-              className={`upgrade-button ${button.colorClass} ${(money < button.managerCost || managers[index]) ? 'disabled' : ''}`}
+              onClick={() => buyManager(index, managerCosts[index])}
+              disabled={money < managerCosts[index] || managers[index]}
+              className={`upgrade-button ${button.colorClass} ${(money < managerCosts[index] || managers[index]) ? 'disabled' : ''}`}
             >
               {managers[index] ? (
                 <div className="upgrade-content">
@@ -81,7 +86,7 @@ export default function BasicUpgrades({
                 </div>
               ) : (
                 <div className="upgrade-content">
-                  <span>{button.managerCost.toLocaleString("en-GB")} €</span>
+                  <span>{formatNumber(managerCosts[index])} €</span>
                   <span>Manager</span>
                 </div>
               )}
