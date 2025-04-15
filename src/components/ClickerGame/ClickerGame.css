@@ -137,55 +137,6 @@
     to { transform: rotate(360deg); }
   }
   
-  /* Manager Buttons */
-  .manager-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-  }
-  
-  .manager-button {
-    width: 120px;
-    height: 70px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .manager-button.blue { background-color: #3498db; }
-  .manager-button.green { background-color: #2ecc71; }
-  .manager-button.yellow { background-color: #f1c40f; }
-  .manager-button.red { background-color: #e74c3c; }
-  .manager-button.purple { background-color: #9b59b6; }
-  
-  .manager-button:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
-  }
-  
-  .manager-button.disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  .manager-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-  }
-  
   .check-icon {
     width: 18px;
     height: 18px;
@@ -359,7 +310,6 @@
   /* Responsive Design */
   @media (max-width: 600px) {
     .clicker-buttons,
-    .manager-buttons,
     .upgrade-buttons {
       gap: 8px;
     }
@@ -372,7 +322,6 @@
       min-width: 100px;
     }
     
-    .manager-button,
     .upgrade-button {
       width: 100px;
       height: 65px;

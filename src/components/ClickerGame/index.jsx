@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import GameHeader from './GameHeader';
 import ClickerButtons from './ClickerButtons';
-import Managers from './Managers';
 import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import './ClickerGame.css';
@@ -45,13 +44,6 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         handleClick={handleClick} 
       />
       
-      <Managers 
-        buttons={buttons} 
-        managers={managers} 
-        money={money} 
-        buyManager={buyManager} 
-      />
-      
       <UpgradeTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -70,6 +62,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         offlineEarningsCost={offlineEarningsCost}
         buyGlobalMultiplier={buyGlobalMultiplier}
         buyOfflineEarnings={buyOfflineEarnings}
+        managers={managers}
+        buyManager={buyManager}
       />
     </div>
   );

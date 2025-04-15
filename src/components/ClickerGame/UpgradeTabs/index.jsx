@@ -20,7 +20,9 @@ export default function UpgradeTabs({
   globalMultiplierCost,
   offlineEarningsCost,
   buyGlobalMultiplier,
-  buyOfflineEarnings
+  buyOfflineEarnings,
+  managers,
+  buyManager
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -55,6 +57,8 @@ export default function UpgradeTabs({
           buyCooldownUpgrade={buyCooldownUpgrade}
           valueMultipliers={valueMultipliers}
           cooldownReductions={cooldownReductions}
+          managers={managers}
+          buyManager={buyManager}
         />
       )}
       
