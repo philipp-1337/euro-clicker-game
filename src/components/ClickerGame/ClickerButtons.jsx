@@ -1,4 +1,3 @@
-import { RefreshCw } from 'lucide-react';
 import { formatNumber } from '@utils/calculators';  // Import von formatNumber
 
 export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
@@ -19,9 +18,12 @@ export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
                 : button.label}
             </span>
             {cooldowns[index] > 0 && (
-              <div className="cooldown-indicator">
-                <RefreshCw className="spinning-icon" />
-                <span>{formatNumber(cooldowns[index])}s</span>  {/* Rundung für Cooldown */}
+              <div className="cooldown-progress-bar">
+                <div
+                  className="cooldown-progress-fill"
+                  style={{ width: `${(1 - cooldowns[index] / button.cooldownTime) * 100}%` }}
+                />
+                <span className="cooldown-text">{formatNumber(cooldowns[index])}s</span>
               </div>
             )}
           </button>

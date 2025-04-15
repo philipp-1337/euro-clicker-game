@@ -10,6 +10,40 @@
     margin-bottom: 20px;
     color: #2c3e50;
   }
+
+  .env-label {
+    font-size: 0.5em;
+    margin-left: 10px;
+    cursor: pointer;
+    user-select: none;
+    vertical-align: super;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 400;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+  }
+  
+  .env-label:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  
+  .env-label.beta {
+    color: #999;
+    background-color: #f5f5f5;
+  }
+  
+  .env-label.localhost {
+    color: #5f9ea0;
+    background-color: #e0f7f7;
+  }
+  
+  .env-label.localhost.easy,
+  .env-label.beta.easy {
+    color: #ffcc00;
+    font-weight: bold;
+  }
   
   .money-display {
     font-size: 2.5rem;
@@ -21,6 +55,53 @@
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: #2c3e50;
+  }
+
+  .playtime-display {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-top: -20px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+  }
+
+  .header-button {
+    background: none;
+    border: none;
+    margin-left: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+  
+  .header-button:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  .save-feedback-banner {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2ecc71;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    animation: fadeOut 1.5s ease-out forwards;
+  }
+  
+  @keyframes fadeOut {
+    0% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
   }
   
   .section-title {
@@ -62,23 +143,37 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  .clicker-button.blue { background-color: #3498db; }
-  .clicker-button.green { background-color: #2ecc71; }
-  .clicker-button.yellow { background-color: #f1c40f; }
-  .clicker-button.red { background-color: #e74c3c; }
-  .clicker-button.purple { background-color: #9b59b6; }
+  .clicker-button.blue, .upgrade-button.blue {
+    background: linear-gradient(to bottom, #3498db, #2980b9);
+  }
   
-  .clicker-button:hover:not(.disabled) {
+  .clicker-button.green, .upgrade-button.green {
+    background: linear-gradient(to bottom, #2ecc71, #27ae60);
+  }
+  
+  .clicker-button.yellow, .upgrade-button.yellow {
+    background: linear-gradient(to bottom, #f1c40f, #d4ac0d);
+  }
+  
+  .clicker-button.red, .upgrade-button.red {
+    background: linear-gradient(to bottom, #e74c3c, #c0392b);
+  }
+  
+  .clicker-button.purple, .upgrade-button.purple {
+    background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+  }
+  
+  .clicker-button:hover:not(.disabled), .upgrade-button:hover:not(.disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }
   
-  .clicker-button:active:not(.disabled) {
+  .clicker-button:active:not(.disabled), .upgrade-button:active:not(.disabled) {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .clicker-button.disabled {
+  .clicker-button.disabled, .upgrade-button.disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
@@ -91,6 +186,31 @@
     font-size: 0.8rem;
   }
   
+  .cooldown-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+  }
+
+  .cooldown-progress-fill {
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: width 0.1s linear;
+  }
+
+  .cooldown-text {
+    position: absolute;
+    bottom: 8px;
+    font-size: 0.75rem;
+    color: white;
+    text-shadow: 0 0 2px black;
+  }
+  
   .spinning-icon {
     animation: spin 1.5s linear infinite;
     width: 16px;
@@ -101,55 +221,6 @@
   @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
-  }
-  
-  /* Manager Buttons */
-  .manager-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 30px;
-  }
-  
-  .manager-button {
-    width: 120px;
-    height: 70px;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .manager-button.blue { background-color: #3498db; }
-  .manager-button.green { background-color: #2ecc71; }
-  .manager-button.yellow { background-color: #f1c40f; }
-  .manager-button.red { background-color: #e74c3c; }
-  .manager-button.purple { background-color: #9b59b6; }
-  
-  .manager-button:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
-  }
-  
-  .manager-button.disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  .manager-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
   }
   
   .check-icon {
@@ -182,23 +253,7 @@
     padding: 10px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   }
-  
-  .upgrade-button.blue { background-color: #3498db; }
-  .upgrade-button.green { background-color: #2ecc71; }
-  .upgrade-button.yellow { background-color: #f1c40f; }
-  .upgrade-button.red { background-color: #e74c3c; }
-  .upgrade-button.purple { background-color: #9b59b6; }
-  
-  .upgrade-button:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
-  }
-  
-  .upgrade-button.disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
+    
   .upgrade-content {
     display: flex;
     flex-direction: column;
@@ -325,16 +380,18 @@
   /* Responsive Design */
   @media (max-width: 600px) {
     .clicker-buttons,
-    .manager-buttons,
     .upgrade-buttons {
       gap: 8px;
     }
-    
+  
+    .env-label {
+      display: block !important;
+    }
+  
     .button-container {
       min-width: 100px;
     }
     
-    .manager-button,
     .upgrade-button {
       width: 100px;
       height: 65px;

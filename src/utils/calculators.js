@@ -1,3 +1,5 @@
+import { gameConfig } from '@constants/gameConfig'; // Stelle sicher, dass der Pfad korrekt ist
+
 /**
  * Calculates the cost of the next level of an item
  * @param {number} baseCost - The base cost of the item
@@ -40,14 +42,19 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
   };
   
   /**
-   * Calculates offline earnings
-   * @param {number} productionPerSecond - Current production per second
-   * @param {number} offlineTimeInSeconds - Time spent offline in seconds
-   * @param {number} offlineEfficiency - Efficiency of offline earnings (0-1)
-   * @returns {number} The total offline earnings
+   * Berechnet Offline-Einnahmen, wobei der Level von Offline-Einnahmen berücksichtigt wird
+   * @param {number} productionPerSecond - Aktuelle Produktion pro Sekunde
+   * @param {number} offlineTimeInSeconds - Zeit, die offline war (in Sekunden)
+   * @param {number} offlineEarningsLevel - Der Level der Offline-Einnahmen
+   * @param {number} offlineEfficiency - Effizienz der Offline-Einnahmen (0-1)
+   * @returns {number} Die Gesamt-OFFLINE-Einnahmen
    */
-  export const calculateOfflineEarnings = (productionPerSecond, offlineTimeInSeconds, offlineEfficiency = 0.5) => {
-    return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency);
+  export const calculateOfflineEarnings = (productionPerSecond, offlineTimeInSeconds, offlineEarningsLevel, offlineEfficiency = 0.5) => {
+    // Wir verwenden den Wert aus der gameConfig.js für den Basisprozentsatz und berechnen den Prozentsatz
+    const offlineEarningsPercentage = gameConfig.offlineEarningsBaseRate + (offlineEarningsLevel * gameConfig.offlineEarningsIncreasePerLevel);
+    
+    // Berechnung der Offline-Einnahmen
+    return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency * offlineEarningsPercentage);
   };
   
 /**
@@ -84,4 +91,99 @@ export const formatNumber = (num) => {
     }
     
     return level;
+  };
+
+  /**
+   * Calculates the global multiplier increase percentage from a multiplier factor
+   * @param {number} multiplierFactor - The multiplication factor (e.g., 1.05)
+   * @returns {number} The percentage increase (e.g., 5 for 5%)
+   */
+  export const getGlobalMultiplierPercentage = (multiplierFactor) => {
+    // Convert factor (e.g. 1.05) to percentage (e.g. 5)
+    return Math.round((multiplierFactor - 1) * 100);
+  };
+
+  /**
+   * Calculates the offline earnings percentage based on level and config
+   * @param {number} level - Current level of offline earnings upgrade
+   * @param {object} offlineEarningsConfig - Configuration for offline earnings
+   * @returns {number} The percentage of normal rate
+   */
+  export const calculateOfflineEarningsPercentage = (level, offlineEarningsConfig) => {
+    if (level <= 0) return 0;
+    return offlineEarningsConfig.basePercentage + (level * offlineEarningsConfig.percentagePerLevel);
+  };
+
+  /**
+   * Berechnet den Prozentsatz für Value-Upgrades
+   * @param {number} valueMultiplierFactor - Der Multiplikator-Faktor (z.B. 1.1)
+   * @returns {number} Der Prozentsatz (z.B. 10 für 10%)
+   */
+  export const calculateValueUpgradePercentage = (valueMultiplierFactor) => {
+    return Math.round((valueMultiplierFactor - 1) * 100);
+  };
+
+  /**
+   * Berechnet den Prozentsatz für Cooldown-Upgrades
+   * @param {number} cooldownReductionFactor - Der Reduktions-Faktor (z.B. 0.9)
+   * @returns {number} Der Prozentsatz (z.B. 10 für 10%)
+   */
+  export const calculateCooldownUpgradePercentage = (cooldownReductionFactor) => {
+    return Math.round((1 - cooldownReductionFactor) * 100);
+  };
+
+  /**
+   * Berechnet den aktuellen Multiplikator für ein Button-Upgrade
+   * @param {number} currentValue - Aktueller Wert des Buttons
+   * @param {number} baseValue - Basiswert des Buttons
+   * @param {number} globalMultiplier - Globaler Multiplikator
+   * @returns {number} Der spezifische Multiplikator für diesen Button
+   */
+  export const calculateButtonValueMultiplier = (currentValue, baseValue, globalMultiplier) => {
+    return currentValue / baseValue / globalMultiplier;
+  };
+
+  /**
+   * Berechnet die prozentuale Reduzierung der Cooldown-Zeit
+   * @param {number} currentCooldown - Aktuelle Cooldown-Zeit
+   * @param {number} baseCooldown - Basis-Cooldown-Zeit
+   * @returns {number} Prozentuale Cooldown-Zeit (100% = keine Reduzierung)
+   */
+  export const calculateCooldownReductionPercentage = (currentCooldown, baseCooldown) => {
+    return (currentCooldown / baseCooldown) * 100;
+  };
+
+  /**
+   * Berechnet alle Button-Daten (Wert, Cooldown, Label) basierend auf den Multiplikatoren und Reduktionen
+   * @param {Array} baseButtons - Die Basis-Button-Konfigurationen
+   * @param {Array} valueMultipliers - Multiplikatoren pro Button
+   * @param {number} globalMultiplier - Globaler Multiplikator
+   * @param {Array} cooldownReductions - Reduktionsfaktoren pro Button
+   * @returns {Array} Liste von Buttons mit berechneten Werten
+   */
+  export const calculateButtons = (baseButtons, valueMultipliers, globalMultiplier, cooldownReductions) => {
+    return baseButtons.map((button, index) => {
+      const actualValue = button.baseValue * valueMultipliers[index] * globalMultiplier;
+      const actualCooldownTime = button.baseCooldownTime * cooldownReductions[index];
+      return {
+        ...button,
+        value: actualValue,
+        cooldownTime: actualCooldownTime,
+        label: `+${actualValue.toLocaleString("en-GB", { minimumFractionDigits: 1 })} €`
+      };
+    });
+  };
+
+  /**
+   * Berechnet die Upgrade-Kosten unter Berücksichtigung des Schwierigkeitsgrads (z. B. Easy Mode)
+   * @param {number} baseCost - Basispreis
+   * @param {number} level - Aktueller Level
+   * @param {number} growthFactor - Wachstumsfaktor (default: 1.5)
+   * @param {boolean} easyMode - Ist Easy Mode aktiv?
+   * @param {function} getCostMultiplier - Funktion zur Ermittlung des Kostenmultiplikators
+   * @returns {number} Die berechneten Kosten
+   */
+  export const calculateCostWithDifficulty = (baseCost, level, growthFactor = 1.5, easyMode = false, getCostMultiplier) => {
+    const cost = baseCost * Math.pow(growthFactor, level);
+    return easyMode ? cost * getCostMultiplier(true) : cost;
   };

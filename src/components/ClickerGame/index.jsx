@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import GameHeader from './GameHeader';
 import ClickerButtons from './ClickerButtons';
-import Managers from './Managers';
 import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import './ClickerGame.css';
 
-export default function ClickerGame() {
+export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   const [activeTab, setActiveTab] = useState('basic'); // 'basic' oder 'premium'
   
+  // Übergebe easyMode als Parameter an den Hook
   const {
     money,
     buttons,
@@ -28,24 +28,25 @@ export default function ClickerGame() {
     globalMultiplierCost,
     offlineEarningsCost,
     buyGlobalMultiplier,
-    buyOfflineEarnings
-  } = useClickerGame();
+    buyOfflineEarnings,
+    managerCosts,
+    playTime,
+    saveGame
+  } = useClickerGame(easyMode);
 
   return (
     <div className="game-container">
-      <GameHeader money={money} />
-      
+      <GameHeader 
+        money={money} 
+        easyMode={easyMode} 
+        onEasyModeToggle={onEasyModeToggle}
+        playTime={playTime}
+        onSaveGame={saveGame}
+      />
       <ClickerButtons 
         buttons={buttons} 
         cooldowns={cooldowns} 
         handleClick={handleClick} 
-      />
-      
-      <Managers 
-        buttons={buttons} 
-        managers={managers} 
-        money={money} 
-        buyManager={buyManager} 
       />
       
       <UpgradeTabs 
@@ -66,6 +67,9 @@ export default function ClickerGame() {
         offlineEarningsCost={offlineEarningsCost}
         buyGlobalMultiplier={buyGlobalMultiplier}
         buyOfflineEarnings={buyOfflineEarnings}
+        managers={managers}
+        buyManager={buyManager}
+        managerCosts={managerCosts}
       />
     </div>
   );

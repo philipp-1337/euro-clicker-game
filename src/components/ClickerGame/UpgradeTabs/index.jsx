@@ -1,8 +1,10 @@
 import BasicUpgrades from './BasicUpgrades';
 import PremiumUpgrades from './PremiumUpgrades';
+import { gameConfig } from '@constants/gameConfig';
+import { calculateButtonValueMultiplier, calculateCooldownReductionPercentage } from '@utils/calculators';
 
-export default function UpgradeTabs({ 
-  activeTab, 
+export default function UpgradeTabs({
+  activeTab,
   setActiveTab,
   money,
   buttons,
@@ -18,23 +20,32 @@ export default function UpgradeTabs({
   globalMultiplierCost,
   offlineEarningsCost,
   buyGlobalMultiplier,
-  buyOfflineEarnings
+  buyOfflineEarnings,
+  managers,
+  buyManager,
+  managerCosts
 }) {
+  // Berechnete Werte mit ausgelagerten Funktionen
+  const valueMultipliers = valueUpgradeLevels.map((_, i) => 
+    calculateButtonValueMultiplier(buttons[i].value, buttons[i].baseValue, globalMultiplier)
+  );
+  
+  const cooldownReductions = cooldownUpgradeLevels.map((_, i) => 
+    calculateCooldownReductionPercentage(buttons[i].cooldownTime, buttons[i].baseCooldownTime)
+  );
+
   return (
     <>
       <div className="upgrade-tabs">
-        <button 
-          className={`tab-button ${activeTab === 'basic' ? 'active' : ''}`}
-          onClick={() => setActiveTab('basic')}
-        >
-          Basic Upgrades
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'premium' ? 'active' : ''}`}
-          onClick={() => setActiveTab('premium')}
-        >
-          Premium Upgrades
-        </button>
+        {gameConfig.ui.tabs.map(tab => (
+          <button
+            key={tab.id}
+            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
       
       {activeTab === 'basic' && (
@@ -45,8 +56,11 @@ export default function UpgradeTabs({
           money={money}
           buyValueUpgrade={buyValueUpgrade}
           buyCooldownUpgrade={buyCooldownUpgrade}
-          valueMultipliers={valueUpgradeLevels.map((_, i) => buttons[i].value / buttons[i].baseValue / globalMultiplier)}
-          cooldownReductions={cooldownUpgradeLevels.map((_, i) => (buttons[i].cooldownTime / buttons[i].baseCooldownTime) * 100)}
+          valueMultipliers={valueMultipliers}
+          cooldownReductions={cooldownReductions}
+          managers={managers}
+          buyManager={buyManager}
+          managerCosts={managerCosts}
         />
       )}
       

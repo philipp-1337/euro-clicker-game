@@ -40,6 +40,35 @@ npm start
 - CSS
 - Lucide React (for icons)
 
+## Folder- & File-Structure
+
+```bash
+/src
+  /components
+    /ClickerGame
+      /index.jsx              # Hauptkomponente, exportiert ClickerGame
+      /GameHeader.jsx         # Titel und Geldanzeige
+      /ClickerButtons.jsx     # Die Haupt-Click-Buttons
+      /UpgradeTabs
+        /index.jsx            # Tab-Container
+        /BasicUpgrades.jsx    # Erster Tab
+        /PremiumUpgrades.jsx  # Zweiter Tab
+  /hooks
+    /useClickerGame.js        # Hauptlogik als Hook extrahiert
+    /useCooldowns.js
+    /useGameCalculations.js
+    /useGameState.js
+    /useLocalStorage.js
+    /useManagers.js
+    /useOfflineEarnings.js    # Logik für Offline-Earnings
+    /useUpgrades.js
+  /utils
+    /calculators.js           # Hilfsfunktionen für Berechnungen
+    /localStorage.js          # Funktionen für LocalStorage-Verwaltung
+  /constants
+    /gameConfig.js            # Spielkonfiguration (Kosten, Multiplikatoren, etc.)
+```
+
 ## How to Play
 
 1. **Basic Principle**: Click on the buttons to earn money. Each button has its own value and cooldown time.

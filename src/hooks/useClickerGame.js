@@ -1,63 +1,90 @@
-import { useState, useEffect, useCallback } from 'react';
-import useOfflineEarnings from './useOfflineEarnings';
+import { useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
-import { calculateUpgradeCost } from '@utils/calculators';
+import useGameState from './useGameState';
+import useGameCalculations from './useGameCalculations';
+import useUpgrades from './useUpgrades';
+import useManagers from './useManagers';
+import useCooldowns from './useCooldowns';
+import usePlaytime from './usePlaytime';
+import useOfflineEarnings from './useOfflineEarnings';
+import useLocalStorage from './useLocalStorage';
 
-export default function useClickerGame() {
-  // Hauptzustände
-  const [money, setMoney] = useState(0);
-  const [cooldowns, setCooldowns] = useState([0, 0, 0, 0, 0]);
-  const [managers, setManagers] = useState([false, false, false, false, false]);
+export default function useClickerGame(easyMode = false) {
+  // Basis-Spielzustand
+  const gameStateHook = useGameState(easyMode);
+  const {
+    money, setMoney,
+    cooldowns, setCooldowns,
+    managers, setManagers,
+    valueMultipliers, setValueMultipliers,
+    cooldownReductions, setCooldownReductions,
+    valueUpgradeLevels, setValueUpgradeLevels,
+    cooldownUpgradeLevels, setCooldownUpgradeLevels,
+    globalMultiplier, setGlobalMultiplier,
+    globalMultiplierLevel, setGlobalMultiplierLevel,
+    offlineEarningsLevel, setOfflineEarningsLevel,
+    gameState, loadGameState
+  } = gameStateHook;
   
-  // Upgrade-Zustände
-  const [valueMultipliers, setValueMultipliers] = useState([1, 1, 1, 1, 1]);
-  const [cooldownReductions, setCooldownReductions] = useState([1, 1, 1, 1, 1]);
-  const [valueUpgradeLevels, setValueUpgradeLevels] = useState([0, 0, 0, 0, 0]);
-  const [cooldownUpgradeLevels, setCooldownUpgradeLevels] = useState([0, 0, 0, 0, 0]);
-  
-  // Premium-Upgrade-Zustände
-  const [globalMultiplier, setGlobalMultiplier] = useState(1);
-  const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(0);
-  const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(0);
-
-  // Kosten berechnen
-  const valueUpgradeCosts = valueUpgradeLevels.map((lvl, i) =>
-    calculateUpgradeCost(gameConfig.baseValueUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  // Berechnungen für abgeleitete Zustände 
+  const {
+    valueUpgradeCosts,
+    cooldownUpgradeCosts,
+    globalMultiplierCost,
+    offlineEarningsCost,
+    buttons
+  } = useGameCalculations(
+    valueUpgradeLevels,
+    cooldownUpgradeLevels,
+    valueMultipliers,
+    cooldownReductions,
+    globalMultiplier,
+    globalMultiplierLevel,
+    offlineEarningsLevel,
+    easyMode
   );
   
-  const cooldownUpgradeCosts = cooldownUpgradeLevels.map((lvl, i) =>
-    calculateUpgradeCost(gameConfig.baseCooldownUpgradeCosts[i], lvl, lvl + 1, 1.5)
+  // Upgrade-Funktionen
+  const {
+    buyValueUpgrade,
+    buyCooldownUpgrade,
+    buyGlobalMultiplier,
+    buyOfflineEarnings
+  } = useUpgrades(
+    money, setMoney,
+    valueMultipliers, setValueMultipliers,
+    cooldownReductions, setCooldownReductions,
+    valueUpgradeLevels, setValueUpgradeLevels,
+    cooldownUpgradeLevels, setCooldownUpgradeLevels,
+    globalMultiplier, setGlobalMultiplier,
+    globalMultiplierLevel, setGlobalMultiplierLevel,
+    offlineEarningsLevel, setOfflineEarningsLevel,
+    valueUpgradeCosts,
+    cooldownUpgradeCosts,
+    globalMultiplierCost,
+    offlineEarningsCost,
+    gameConfig
   );
   
-  const globalMultiplierCost = 1000 * Math.pow(2.5, globalMultiplierLevel);
-  const offlineEarningsCost = 5000 * Math.pow(2.2, offlineEarningsLevel);
-
-  // Buttons mit aktualisierten Werten berechnen
-  const buttons = gameConfig.baseButtons.map((button, index) => {
-    const actualValue = button.baseValue * valueMultipliers[index] * globalMultiplier;
-    const actualCooldownTime = button.baseCooldownTime * cooldownReductions[index];
-    return {
-      ...button,
-      value: actualValue,
-      cooldownTime: actualCooldownTime,
-      label: `+${actualValue.toLocaleString("en-GB", { minimumFractionDigits: 1 })} €`
-    };
-  });
-
-
-  const handleClick = useCallback((index) => {
-    if (cooldowns[index] <= 0) {
-      setMoney(prevMoney => prevMoney + buttons[index].value);
+  // Manager-Funktionen
+  const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+  const { buyManager } = useManagers(money, setMoney, managers, setManagers);
+  // Managerkosten dynamisch berechnen
+  const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
   
-      setCooldowns(prevCooldowns => {
-        const newCooldowns = [...prevCooldowns];
-        newCooldowns[index] = buttons[index].cooldownTime;
-        return newCooldowns;
-      });
-    }
-  }, [cooldowns, buttons, setMoney, setCooldowns]);
+  // Cooldown-Management und Click-Handler
+  const { handleClick } = useCooldowns(
+    cooldowns, setCooldowns, managers, buttons, money, setMoney
+  );
 
-  // Offline-Einnahmen initialisieren
+  // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
+  const { playTime, ensureStartTime } = usePlaytime();
+  const wrappedHandleClick = (index) => {
+    ensureStartTime();
+    handleClick(index);
+  };
+
+  // Offline-Einnahmen
   useOfflineEarnings({
     offlineEarningsLevel,
     managers,
@@ -65,120 +92,40 @@ export default function useClickerGame() {
     setMoney
   });
 
-  // Cooldown-Timer
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCooldowns(prevCooldowns => 
-        prevCooldowns.map((cooldown, index) => {
-          // Cooldown-Zeit verringern
-          const newCooldown = cooldown > 0 ? cooldown - 0.1 : 0;
-          
-          // Wenn Manager existiert und Cooldown gerade fertig ist, Auto-Click auslösen
-          if (managers[index] && cooldown > 0 && newCooldown <= 0) {
-            setTimeout(() => handleClick(index), 0);
-          }
-          
-          return newCooldown;
-        })
-      );
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [managers, buttons, handleClick]);
-
-  // Manager Auto-Clicking
-  useEffect(() => {
-    const autoClickInterval = setInterval(() => {
-      managers.forEach((hasManager, index) => {
-        if (hasManager && cooldowns[index] <= 0) {
-          handleClick(index);
-        }
-      });
-    }, 100);
-
-    return () => clearInterval(autoClickInterval);
-  }, [managers, cooldowns, buttons, handleClick]);
-
-  function buyManager(index, cost) {
-    if (money >= cost && !managers[index]) {
-      setMoney(prevMoney => prevMoney - cost);
-      setManagers(prevManagers => {
-        const newManagers = [...prevManagers];
-        newManagers[index] = true;
-        return newManagers;
-      });
-    }
-  }
-
-  function buyValueUpgrade(index) {
-    const cost = valueUpgradeCosts[index];
-    if (money >= cost) {
-      setMoney(prev => prev - cost);
-      setValueMultipliers(prev => {
-        const updated = [...prev];
-        updated[index] *= 1.1;
-        return updated;
-      });
-      setValueUpgradeLevels(prev => {
-        const updated = [...prev];
-        updated[index]++;
-        return updated;
-      });
-    }
-  }
-
-  function buyCooldownUpgrade(index) {
-    const cost = cooldownUpgradeCosts[index];
-    if (money >= cost) {
-      setMoney(prev => prev - cost);
-      setCooldownReductions(prev => {
-        const updated = [...prev];
-        updated[index] *= 0.9;
-        return updated;
-      });
-      setCooldownUpgradeLevels(prev => {
-        const updated = [...prev];
-        updated[index]++;
-        return updated;
-      });
-    }
-  }
-
-  // Premium-Upgrade-Handler
-  function buyGlobalMultiplier() {
-    if (money >= globalMultiplierCost) {
-      setMoney(prev => prev - globalMultiplierCost);
-      setGlobalMultiplier(prev => prev * 1.05); // +5% pro Level
-      setGlobalMultiplierLevel(prev => prev + 1);
-    }
-  }
-
-  function buyOfflineEarnings() {
-    if (money >= offlineEarningsCost) {
-      setMoney(prev => prev - offlineEarningsCost);
-      setOfflineEarningsLevel(prev => prev + 1);
-    }
-  }
+  // Spielstand-Speichern
+  const stableLoadGameState = useCallback((state) => {
+    loadGameState(state);
+  }, [loadGameState]);
+  
+  const { saveGame } = useLocalStorage(gameState, stableLoadGameState);
 
   return {
+    // Hauptzustände
     money,
     buttons,
     cooldowns,
     managers,
-    handleClick,
+    
+    // Funktionen
+    handleClick: wrappedHandleClick,
+    playTime,
     buyManager,
+    buyValueUpgrade,
+    buyCooldownUpgrade,
+    buyGlobalMultiplier,
+    buyOfflineEarnings,
+    saveGame, // Neue Funktion zum manuellen Speichern
+    
+    // Upgrade-Info
     valueUpgradeLevels,
     cooldownUpgradeLevels,
     valueUpgradeCosts,
     cooldownUpgradeCosts,
-    buyValueUpgrade,
-    buyCooldownUpgrade,
     globalMultiplier,
     globalMultiplierLevel,
     offlineEarningsLevel,
     globalMultiplierCost,
     offlineEarningsCost,
-    buyGlobalMultiplier,
-    buyOfflineEarnings
+    managerCosts
   };
 }
