@@ -1,12 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { saveGameState, loadGameState, hasSavedGame } from '@utils/localStorage';
 
+const STORAGE_KEY = 'clickerSave';
+
 export default function useLocalStorage(gameState, loadGameStateHook) {
+  const hasLoaded = useRef(false);
+
   // Beim ersten Laden versuchen, gespeicherten Spielstand zu laden
   useEffect(() => {
-    // Prüfen, ob ein gespeicherter Spielstand existiert
-    if (hasSavedGame()) {
-      const savedGame = loadGameState();
+    if (hasLoaded.current) return;
+    hasLoaded.current = true;
+
+    if (hasSavedGame(STORAGE_KEY)) {
+      const savedGame = loadGameState(STORAGE_KEY);
       if (savedGame) {
         loadGameStateHook(savedGame);
       }
@@ -16,14 +22,13 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
   // Spiel automatisch speichern, wenn sich der Zustand ändert
   useEffect(() => {
     const saveInterval = setInterval(() => {
-      saveGameState(gameState);
+      saveGameState(STORAGE_KEY, gameState);
     }, 30000); // Alle 30 Sekunden speichern
     
     return () => clearInterval(saveInterval);
   }, [gameState]);
 
-  // Manuelles Speichern ermöglichen
-  const saveGame = () => saveGameState(gameState);
+  const saveGame = () => saveGameState(STORAGE_KEY, gameState);
 
   return { saveGame };
 }

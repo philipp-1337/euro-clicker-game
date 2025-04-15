@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -81,6 +82,7 @@ export default function useClickerGame(easyMode = false) {
   const wrappedHandleClick = (index) => {
     ensureStartTime();
     handleClick(index);
+    saveGame();
   };
 
   // Offline-Einnahmen
@@ -92,7 +94,11 @@ export default function useClickerGame(easyMode = false) {
   });
 
   // Spielstand-Speichern
-  const { saveGame } = useLocalStorage(gameState, loadGameState);
+  const stableLoadGameState = useCallback((state) => {
+    loadGameState(state);
+  }, []);
+  
+  const { saveGame } = useLocalStorage(gameState, stableLoadGameState);
 
   return {
     // Hauptzustände
