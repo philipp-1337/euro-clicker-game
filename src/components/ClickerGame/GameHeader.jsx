@@ -55,7 +55,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
 
-  const triggerSaveFeedback = (message = 'Gespeichert') => {
+  const triggerSaveFeedback = (message = 'Game saved') => {
     setSaveMessage(message);
     setIsSaving(true);
     setTimeout(() => {
@@ -66,7 +66,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   useEffect(() => {
     const handleAutoSave = () => {
-      triggerSaveFeedback('Automatisch gespeichert'); // 🆕
+      triggerSaveFeedback('Auto-saved'); // 🆕
     };
     window.addEventListener('game:autosaved', handleAutoSave);
     return () => window.removeEventListener('game:autosaved', handleAutoSave);
@@ -95,9 +95,9 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
           className="header-button"
           onClick={() => {
             onSaveGame();
-            triggerSaveFeedback('Gespeichert'); // 🆕 explizit
+            triggerSaveFeedback('Saved');
           }}
-          title="Speichern"
+          title="Save"
         >
           {isSaving ? '✅' : '💾'}
         </button>
@@ -105,13 +105,13 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         <button
           className="header-button"
           onClick={() => {
-            const confirmReset = window.confirm('Bist du sicher, dass du deinen Spielstand zurücksetzen willst?');
+            const confirmReset = window.confirm('Are you sure you want to reset your game progress?');
             if (confirmReset) {
               localStorage.clear();
               window.location.reload();
             }
           }}
-          title="Spiel zurücksetzen"
+          title="Reset Game"
         >
           🗑️
         </button>
