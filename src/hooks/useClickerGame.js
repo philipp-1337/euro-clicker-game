@@ -82,7 +82,6 @@ export default function useClickerGame(easyMode = false) {
   const wrappedHandleClick = (index) => {
     ensureStartTime();
     handleClick(index);
-    saveGame();
   };
 
   // Offline-Einnahmen
@@ -96,7 +95,7 @@ export default function useClickerGame(easyMode = false) {
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
-  }, []);
+  }, [loadGameState]);
   
   const { saveGame } = useLocalStorage(gameState, stableLoadGameState);
 

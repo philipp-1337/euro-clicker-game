@@ -5,8 +5,14 @@ const STORAGE_KEY = 'clickerSave';
 
 export default function useLocalStorage(gameState, loadGameStateHook) {
   const hasLoaded = useRef(false);
+  const latestGameState = useRef(gameState);
 
-  // Beim ersten Laden versuchen, gespeicherten Spielstand zu laden
+  // Ref aktualisieren bei jeder Änderung
+  useEffect(() => {
+    latestGameState.current = gameState;
+  }, [gameState]);
+
+  // 🎮 Spielstand beim ersten Laden laden
   useEffect(() => {
     if (hasLoaded.current) return;
     hasLoaded.current = true;
@@ -19,16 +25,19 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     }
   }, [loadGameStateHook]);
 
-  // Spiel automatisch speichern, wenn sich der Zustand ändert
+  // Alle 30 Sekunden speichern (aber verwende Ref, nicht Dependency)
   useEffect(() => {
     const saveInterval = setInterval(() => {
-      saveGameState(STORAGE_KEY, gameState);
-    }, 30000); // Alle 30 Sekunden speichern
-    
+      saveGame(); // ✅ nutzt die Funktion, die das Event sendet
+    }, 30000);
     return () => clearInterval(saveInterval);
-  }, [gameState]);
+  }, []);
 
-  const saveGame = () => saveGameState(STORAGE_KEY, gameState);
+  const saveGame = () => {
+    console.log('[AutoSave] Triggered');
+    saveGameState(STORAGE_KEY, latestGameState.current);
+    window.dispatchEvent(new Event('game:autosaved')); 
+  };
 
   return { saveGame };
 }

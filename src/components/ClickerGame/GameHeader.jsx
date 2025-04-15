@@ -1,7 +1,7 @@
 import { formatNumber } from '@utils/calculators';
 import { useState, useEffect } from 'react';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime }) {
+export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame }) {
   const [environment, setEnvironment] = useState('production');
 
   useEffect(() => {
@@ -52,8 +52,33 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
     .join(' ');
   };
 
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  const triggerSaveFeedback = (message = 'Gespeichert') => {
+    setSaveMessage(message);
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setSaveMessage('');
+    }, 1500);
+  };
+
+  useEffect(() => {
+    const handleAutoSave = () => {
+      triggerSaveFeedback('Automatisch gespeichert'); // 🆕
+    };
+    window.addEventListener('game:autosaved', handleAutoSave);
+    return () => window.removeEventListener('game:autosaved', handleAutoSave);
+  }, []);
+
   return (
     <>
+      {isSaving && (
+        <div className="save-feedback-banner">
+          {saveMessage}
+        </div>
+      )}
       <div className="game-header-container">
         <h1 className="game-title">
           Euro Clicker Game
@@ -65,6 +90,31 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
       </div>
       <div className="playtime-display">
         ⏱ {formatPlayTime(playTime)} gespielt
+
+        <button
+          className="header-button"
+          onClick={() => {
+            onSaveGame();
+            triggerSaveFeedback('Gespeichert'); // 🆕 explizit
+          }}
+          title="Speichern"
+        >
+          {isSaving ? '✅' : '💾'}
+        </button>
+
+        <button
+          className="header-button"
+          onClick={() => {
+            const confirmReset = window.confirm('Bist du sicher, dass du deinen Spielstand zurücksetzen willst?');
+            if (confirmReset) {
+              localStorage.clear();
+              window.location.reload();
+            }
+          }}
+          title="Spiel zurücksetzen"
+        >
+          🗑️
+        </button>
       </div>
     </>
   );

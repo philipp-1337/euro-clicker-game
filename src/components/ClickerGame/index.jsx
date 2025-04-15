@@ -30,7 +30,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     buyGlobalMultiplier,
     buyOfflineEarnings,
     managerCosts,
-    playTime
+    playTime,
+    saveGame
   } = useClickerGame(easyMode);
 
   return (
@@ -40,6 +41,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         easyMode={easyMode} 
         onEasyModeToggle={onEasyModeToggle}
         playTime={playTime}
+        onSaveGame={saveGame}
       />
       <ClickerButtons 
         buttons={buttons} 
