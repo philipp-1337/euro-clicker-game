@@ -1,11 +1,10 @@
 import { formatNumber } from '@utils/calculators';
 import { useState, useEffect } from 'react';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle }) {
+export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime }) {
   const [environment, setEnvironment] = useState('production');
-  
+
   useEffect(() => {
-    // Prüfe, ob wir uns in der Beta-Version oder auf localhost befinden
     const hostname = window.location.hostname;
     if (hostname.includes('beta')) {
       setEnvironment('beta');
@@ -15,20 +14,19 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle }) {
       setEnvironment('production');
     }
   }, []);
-  
+
   const toggleEasyMode = () => {
-    // Callback an die übergeordnete Komponente, um den Easy-Mode zu aktualisieren
     if (onEasyModeToggle) {
       onEasyModeToggle(!easyMode);
     }
   };
-  
+
   const renderEnvironmentLabel = () => {
     if (environment === 'production') return null;
-  
+
     const labelText = environment === 'beta' ? 'beta' : 'localhost';
     const displayText = easyMode ? `${labelText} (easy)` : labelText;
-  
+
     return (
       <span 
         className={`env-label ${environment}`} 
@@ -39,7 +37,21 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle }) {
       </span>
     );
   };
-  
+
+  const formatPlayTime = (totalSeconds) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return [
+      hours > 0 ? `${hours}h` : null,
+      minutes > 0 || hours > 0 ? `${minutes}m` : null,
+      `${seconds}s`
+    ]
+    .filter(Boolean)
+    .join(' ');
+  };
+
   return (
     <>
       <div className="game-header-container">
@@ -50,6 +62,9 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle }) {
       </div>
       <div className="money-display">
         {formatNumber(money)} €
+      </div>
+      <div className="playtime-display">
+        ⏱ {formatPlayTime(playTime)} gespielt
       </div>
     </>
   );

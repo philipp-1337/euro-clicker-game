@@ -4,6 +4,7 @@ import useGameCalculations from './useGameCalculations';
 import useUpgrades from './useUpgrades';
 import useManagers from './useManagers';
 import useCooldowns from './useCooldowns';
+import usePlaytime from './usePlaytime';
 import useOfflineEarnings from './useOfflineEarnings';
 import useLocalStorage from './useLocalStorage';
 
@@ -75,6 +76,13 @@ export default function useClickerGame(easyMode = false) {
     cooldowns, setCooldowns, managers, buttons, money, setMoney
   );
 
+  // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
+  const { playTime, ensureStartTime } = usePlaytime();
+  const wrappedHandleClick = (index) => {
+    ensureStartTime();
+    handleClick(index);
+  };
+
   // Offline-Einnahmen
   useOfflineEarnings({
     offlineEarningsLevel,
@@ -94,7 +102,8 @@ export default function useClickerGame(easyMode = false) {
     managers,
     
     // Funktionen
-    handleClick,
+    handleClick: wrappedHandleClick,
+    playTime,
     buyManager,
     buyValueUpgrade,
     buyCooldownUpgrade,

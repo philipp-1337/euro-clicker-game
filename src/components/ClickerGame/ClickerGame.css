@@ -56,6 +56,16 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: #2c3e50;
   }
+
+  .playtime-display {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-top: -20px;
+    margin-bottom: 25px;
+    opacity: 0.8;
+  }
   
   .section-title {
     margin: 25px 0 15px;
@@ -96,23 +106,37 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
-  .clicker-button.blue { background-color: #3498db; }
-  .clicker-button.green { background-color: #2ecc71; }
-  .clicker-button.yellow { background-color: #f1c40f; }
-  .clicker-button.red { background-color: #e74c3c; }
-  .clicker-button.purple { background-color: #9b59b6; }
+  .clicker-button.blue, .upgrade-button.blue {
+    background: linear-gradient(to bottom, #3498db, #2980b9);
+  }
   
-  .clicker-button:hover:not(.disabled) {
+  .clicker-button.green, .upgrade-button.green {
+    background: linear-gradient(to bottom, #2ecc71, #27ae60);
+  }
+  
+  .clicker-button.yellow, .upgrade-button.yellow {
+    background: linear-gradient(to bottom, #f1c40f, #d4ac0d);
+  }
+  
+  .clicker-button.red, .upgrade-button.red {
+    background: linear-gradient(to bottom, #e74c3c, #c0392b);
+  }
+  
+  .clicker-button.purple, .upgrade-button.purple {
+    background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+  }
+  
+  .clicker-button:hover:not(.disabled), .upgrade-button:hover:not(.disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
   }
   
-  .clicker-button:active:not(.disabled) {
+  .clicker-button:active:not(.disabled), .upgrade-button:active:not(.disabled) {
     transform: translateY(1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .clicker-button.disabled {
+  .clicker-button.disabled, .upgrade-button.disabled {
     opacity: 0.7;
     cursor: not-allowed;
   }
@@ -192,23 +216,7 @@
     padding: 10px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
   }
-  
-  .upgrade-button.blue { background-color: #3498db; }
-  .upgrade-button.green { background-color: #2ecc71; }
-  .upgrade-button.yellow { background-color: #f1c40f; }
-  .upgrade-button.red { background-color: #e74c3c; }
-  .upgrade-button.purple { background-color: #9b59b6; }
-  
-  .upgrade-button:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.15);
-  }
-  
-  .upgrade-button.disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
+    
   .upgrade-content {
     display: flex;
     flex-direction: column;
