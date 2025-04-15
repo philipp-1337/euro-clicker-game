@@ -1,5 +1,6 @@
 import BasicUpgrades from './BasicUpgrades';
 import PremiumUpgrades from './PremiumUpgrades';
+import CompanyUpgrades from './CompanyUpgrades'; // 👈 NEU
 import { gameConfig } from '@constants/gameConfig';
 import { calculateButtonValueMultiplier, calculateCooldownReductionPercentage } from '@utils/calculators';
 
@@ -76,6 +77,12 @@ export default function UpgradeTabs({
           buyOfflineEarnings={buyOfflineEarnings}
         />
       )}
+
+     {activeTab === 'companies' && (   // 👈 NEU
+        <CompanyUpgrades 
+        // props für Unternehmen
+        />
+      )} 
     </>
   );
 }
