@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import GameHeader from './GameHeader';
+import GameHeader from '../shared/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
-import './ClickerGame.css';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   const [activeTab, setActiveTab] = useState('basic'); // 'basic' oder 'premium'
