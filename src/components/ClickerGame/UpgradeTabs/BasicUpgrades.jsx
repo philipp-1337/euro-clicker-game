@@ -51,7 +51,7 @@ export default function BasicUpgrades({
             </button>
           ))}
         </div>
-        <h3 className="section-title">Decrease Cooldown Time</h3>
+        <h3 className="section-title">Decrease Cooldown</h3>
         <div className="upgrade-buttons">
           {buttons.map((button, index) => (
             <button

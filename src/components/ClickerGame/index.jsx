@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import GameHeader from './GameHeader';
+import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
+import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
-import './ClickerGame.css';
+import 'App.css';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   const [activeTab, setActiveTab] = useState('basic'); // 'basic' oder 'premium'
@@ -31,7 +32,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     buyOfflineEarnings,
     managerCosts,
     playTime,
-    saveGame
+    saveGame,
+    addQuickMoney
   } = useClickerGame(easyMode);
 
   return (
@@ -71,6 +73,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         buyManager={buyManager}
         managerCosts={managerCosts}
       />
+
+    <FloatingClickButton onClick={addQuickMoney} />
+
     </div>
   );
 }

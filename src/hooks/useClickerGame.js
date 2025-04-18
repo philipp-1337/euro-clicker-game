@@ -65,6 +65,11 @@ export default function useClickerGame(easyMode = false) {
     offlineEarningsCost,
     gameConfig
   );
+
+  // In useClickerGame.js, füge diese Funktion hinzu
+  const addQuickMoney = useCallback(() => {
+    setMoney(prevMoney => prevMoney + 1);
+  }, [setMoney]);
   
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -114,7 +119,8 @@ export default function useClickerGame(easyMode = false) {
     buyCooldownUpgrade,
     buyGlobalMultiplier,
     buyOfflineEarnings,
-    saveGame, // Neue Funktion zum manuellen Speichern
+    saveGame,
+    addQuickMoney,
     
     // Upgrade-Info
     valueUpgradeLevels,
