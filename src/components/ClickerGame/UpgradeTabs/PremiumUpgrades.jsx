@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react';
+import { DollarSign, Star } from 'lucide-react';
 import { 
   formatNumber, 
   getGlobalMultiplierPercentage, 
@@ -48,6 +48,7 @@ export default function PremiumUpgrades({
       </div>
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
+        <DollarSign className="premium-icon" />
           <h3>Unlock Investments</h3>
         </div>
         <p className="premium-upgrade-description">
