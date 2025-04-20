@@ -18,6 +18,15 @@ export default function useGameState(easyMode = false) {
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
+  // NEU: Investment-Tab-Status
+  const [isInvestmentUnlocked, setIsInvestmentUnlocked] = useState(
+    gameConfig.initialState.isInvestmentUnlocked ?? false
+  );
+  // NEU: Investments
+  const [investments, setInvestments] = useState(
+    gameConfig.initialState.investments ?? gameConfig.investments.map(() => 0)
+  );
+
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
@@ -29,7 +38,9 @@ export default function useGameState(easyMode = false) {
     cooldownUpgradeLevels,
     globalMultiplier,
     globalMultiplierLevel,
-    offlineEarningsLevel
+    offlineEarningsLevel,
+    isInvestmentUnlocked,
+    investments
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -46,6 +57,8 @@ export default function useGameState(easyMode = false) {
     setGlobalMultiplier(savedState.globalMultiplier ?? gameConfig.initialState.globalMultiplier);
     setGlobalMultiplierLevel(savedState.globalMultiplierLevel ?? gameConfig.initialState.globalMultiplierLevel);
     setOfflineEarningsLevel(savedState.offlineEarningsLevel ?? gameConfig.initialState.offlineEarningsLevel);
+    setIsInvestmentUnlocked(savedState.isInvestmentUnlocked ?? false);
+    setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
   };
 
   return {
@@ -60,6 +73,8 @@ export default function useGameState(easyMode = false) {
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
     offlineEarningsLevel, setOfflineEarningsLevel,
+    isInvestmentUnlocked, setIsInvestmentUnlocked,
+    investments, setInvestments,
     
     // Save/Load
     gameState,

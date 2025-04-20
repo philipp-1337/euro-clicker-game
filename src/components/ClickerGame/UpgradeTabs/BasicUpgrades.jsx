@@ -13,11 +13,11 @@ export default function BasicUpgrades({
     money, 
     buyValueUpgrade, 
     buyCooldownUpgrade,
-    valueMultipliers,
     cooldownReductions,
     managers,
     buyManager,
-    managerCosts
+    managerCosts,
+    valueMultipliers
 }) {
   // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);

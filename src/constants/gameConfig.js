@@ -1,3 +1,7 @@
+import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
+import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
+import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
+
 export const gameConfig = {
     // Basis-Kosten für Upgrades
     baseValueUpgradeCosts: [10, 20, 30, 40, 50],
@@ -10,6 +14,17 @@ export const gameConfig = {
       { baseValue: 3, baseCooldownTime: 3, colorClass: 'yellow', managerCost: 2000 },
       { baseValue: 4, baseCooldownTime: 4, colorClass: 'red', managerCost: 5000 },
       { baseValue: 5, baseCooldownTime: 5, colorClass: 'purple', managerCost: 10000 },
+    ],
+
+    investments: [
+      { name: 'Taxiunternehmen', cost: 10000, income: 10 },
+      { name: 'Energydrinks', cost: 20000, income: 20 },
+      { name: 'Balkonkraftwerke', cost: 30000, income: 30 },
+      { name: 'Delikatessenladen', cost: 40000, income: 40 },
+      { name: 'Modelabel', cost: 50000, income: 50 },
+      { name: 'E-Autohersteller', cost: 60000, income: 60 },
+      { name: 'E-Zigaretten', cost: 70000, income: 70 },
+      { name: 'Pharma', cost: 80000, income: 80 },
     ],
     
     // Upgrade-Multiplikatoren
@@ -34,7 +49,9 @@ export const gameConfig = {
       cooldownUpgradeLevels: [0, 0, 0, 0, 0],
       globalMultiplier: 1,
       globalMultiplierLevel: 0,
-      offlineEarningsLevel: 0
+      offlineEarningsLevel: 0,
+      isInvestmentUnlocked: false,
+      investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
     },
 
     // Upgrade-Multiplikatoren
@@ -49,8 +66,9 @@ export const gameConfig = {
     premiumUpgrades: {
       globalMultiplier: {
         baseCost: 1000,
-        costExponent: 2.5
+        costExponent: 1.75
       },
+      unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
       offlineEarnings: {
         baseCost: 2000,
         costExponent: 2.2,
@@ -68,10 +86,10 @@ export const gameConfig = {
     // UI-bezogene Konfigurationen
     ui: {
       tabs: [
-        { id: 'basic', label: 'Basic Upgrades' },
-        { id: 'premium', label: 'Premium Upgrades' }
-        // Leicht erweiterbar für zukünftige Tab-Typen
-      ]
+        { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
+        { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
+        { id: 'investments', label: 'Investments', component: Investments },
+      ],
     },
     // Schwierigkeitseinstellungen
     difficulty: {
