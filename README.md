@@ -50,17 +50,18 @@ npm start
       /GameHeader.jsx         # Titel und Geldanzeige
       /ClickerButtons.jsx     # Die Haupt-Click-Buttons
       /UpgradeTabs
-        /index.jsx            # Tab-Container
         /BasicUpgrades.jsx    # Erster Tab
+        /index.jsx            # Tab-Container
+        /Investments.jsx
         /PremiumUpgrades.jsx  # Zweiter Tab
   /hooks
     /useClickerGame.js        # Hauptlogik als Hook extrahiert
     /useCooldowns.js
     /useGameCalculations.js
     /useGameState.js
+    /useInvestments.js
     /useLocalStorage.js
     /useManagers.js
-    /useOfflineEarnings.js    # Logik für Offline-Earnings
     /useUpgrades.js
   /utils
     /calculators.js           # Hilfsfunktionen für Berechnungen

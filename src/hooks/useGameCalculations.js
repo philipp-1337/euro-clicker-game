@@ -9,7 +9,6 @@ export default function useGameCalculations(
   cooldownReductions,
   globalMultiplier,
   globalMultiplierLevel,
-  offlineEarningsLevel,
   easyMode = false
 ) {
   // Kosten für Upgrades berechnen
@@ -44,15 +43,6 @@ export default function useGameCalculations(
       easyMode,
       gameConfig.getCostMultiplier
     ), [globalMultiplierLevel, easyMode]);
-  
-  const offlineEarningsCost = useMemo(() => 
-    calculateCostWithDifficulty(
-      gameConfig.premiumUpgrades.offlineEarnings.baseCost,
-      offlineEarningsLevel,
-      gameConfig.premiumUpgrades.offlineEarnings.costExponent,
-      easyMode,
-      gameConfig.getCostMultiplier
-    ), [offlineEarningsLevel, easyMode]);
 
   // Buttons mit aktuellen Werten berechnen
   const buttons = useMemo(() => 
@@ -67,7 +57,6 @@ export default function useGameCalculations(
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    offlineEarningsCost,
     buttons
   };
 }

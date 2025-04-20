@@ -1,5 +1,3 @@
-import { gameConfig } from '@constants/gameConfig'; // Stelle sicher, dass der Pfad korrekt ist
-
 /**
  * Calculates the cost of the next level of an item
  * @param {number} baseCost - The base cost of the item
@@ -39,22 +37,6 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
    */
   export const calculateProduction = (baseProduction, level, multiplier = 1) => {
     return baseProduction * level * multiplier;
-  };
-  
-  /**
-   * Berechnet Offline-Einnahmen, wobei der Level von Offline-Einnahmen berücksichtigt wird
-   * @param {number} productionPerSecond - Aktuelle Produktion pro Sekunde
-   * @param {number} offlineTimeInSeconds - Zeit, die offline war (in Sekunden)
-   * @param {number} offlineEarningsLevel - Der Level der Offline-Einnahmen
-   * @param {number} offlineEfficiency - Effizienz der Offline-Einnahmen (0-1)
-   * @returns {number} Die Gesamt-OFFLINE-Einnahmen
-   */
-  export const calculateOfflineEarnings = (productionPerSecond, offlineTimeInSeconds, offlineEarningsLevel, offlineEfficiency = 0.5) => {
-    // Wir verwenden den Wert aus der gameConfig.js für den Basisprozentsatz und berechnen den Prozentsatz
-    const offlineEarningsPercentage = gameConfig.offlineEarningsBaseRate + (offlineEarningsLevel * gameConfig.offlineEarningsIncreasePerLevel);
-    
-    // Berechnung der Offline-Einnahmen
-    return Math.floor(productionPerSecond * offlineTimeInSeconds * offlineEfficiency * offlineEarningsPercentage);
   };
   
 /**
@@ -101,17 +83,6 @@ export const formatNumber = (num) => {
   export const getGlobalMultiplierPercentage = (multiplierFactor) => {
     // Convert factor (e.g. 1.05) to percentage (e.g. 5)
     return Math.round((multiplierFactor - 1) * 100);
-  };
-
-  /**
-   * Calculates the offline earnings percentage based on level and config
-   * @param {number} level - Current level of offline earnings upgrade
-   * @param {object} offlineEarningsConfig - Configuration for offline earnings
-   * @returns {number} The percentage of normal rate
-   */
-  export const calculateOfflineEarningsPercentage = (level, offlineEarningsConfig) => {
-    if (level <= 0) return 0;
-    return offlineEarningsConfig.basePercentage + (level * offlineEarningsConfig.percentagePerLevel);
   };
 
   /**

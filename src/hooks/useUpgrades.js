@@ -6,11 +6,9 @@ export default function useUpgrades(
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    offlineEarningsLevel, setOfflineEarningsLevel,
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    offlineEarningsCost,
     gameConfig
   ) {
     function buyValueUpgrade(index) {
@@ -55,17 +53,9 @@ export default function useUpgrades(
       }
     }
   
-    function buyOfflineEarnings() {
-      if (money >= offlineEarningsCost) {
-        setMoney(prev => prev - offlineEarningsCost);
-        setOfflineEarningsLevel(prev => prev + 1);
-      }
-    }
-  
     return {
       buyValueUpgrade,
       buyCooldownUpgrade,
       buyGlobalMultiplier,
-      buyOfflineEarnings
     };
   }
