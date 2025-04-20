@@ -14,7 +14,9 @@ export default function PremiumUpgrades({
   globalMultiplierCost,
   offlineEarningsCost,
   buyGlobalMultiplier,
-  buyOfflineEarnings
+  buyOfflineEarnings,
+  isInvestmentUnlocked,
+  unlockInvestments
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getGlobalMultiplierPercentage(
@@ -25,6 +27,9 @@ export default function PremiumUpgrades({
     offlineEarningsLevel,
     gameConfig.premiumUpgrades.offlineEarnings
   );
+
+  // Kosten für die Freischaltung des Investment-Tabs aus der gameConfig abrufen
+  const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost;
 
   return (
     <div className="upgrade-section premium-section">
@@ -68,6 +73,29 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < offlineEarningsCost ? 'disabled' : ''}`}
           >
             {formatNumber(offlineEarningsCost)} €
+          </button>
+        </div>
+      </div>
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <h3>Unlock Investments</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Schalte den Investment-Tab frei, um in Unternehmen zu investieren.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Status: {isInvestmentUnlocked ? 'Freigeschaltet' : 'Nicht freigeschaltet'}
+          </div>
+          <button
+            onClick={() => {
+              console.log('Button clicked, money:', money, 'cost:', unlockInvestmentCost);
+              unlockInvestments();
+            }}
+            disabled={money < unlockInvestmentCost || isInvestmentUnlocked}
+            className={`premium-upgrade-button ${money < unlockInvestmentCost || isInvestmentUnlocked ? 'disabled' : ''}`}
+          >
+            {isInvestmentUnlocked ? 'Freigeschaltet' : `${formatNumber(unlockInvestmentCost)} €`}
           </button>
         </div>
       </div>

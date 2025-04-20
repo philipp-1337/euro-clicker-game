@@ -17,6 +17,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     managers,
     handleClick,
     buyManager,
+    investments,
+    buyInvestment,
     valueUpgradeLevels,
     cooldownUpgradeLevels,
     valueUpgradeCosts,
@@ -33,7 +35,11 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     managerCosts,
     playTime,
     saveGame,
-    addQuickMoney
+    addQuickMoney,
+    valueMultipliers,
+    cooldownReductions,
+    isInvestmentUnlocked,
+    unlockInvestments
   } = useClickerGame(easyMode);
 
   return (
@@ -56,6 +62,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         setActiveTab={setActiveTab}
         money={money}
         buttons={buttons}
+        investments={investments}
+        buyInvestment={buyInvestment}
         valueUpgradeLevels={valueUpgradeLevels}
         cooldownUpgradeLevels={cooldownUpgradeLevels}
         valueUpgradeCosts={valueUpgradeCosts}
@@ -72,6 +80,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         managers={managers}
         buyManager={buyManager}
         managerCosts={managerCosts}
+        valueMultipliers={valueMultipliers}
+        cooldownReductions={cooldownReductions}
+        isInvestmentUnlocked={isInvestmentUnlocked}
+        unlockInvestments={unlockInvestments}
       />
 
     <FloatingClickButton onClick={addQuickMoney} />

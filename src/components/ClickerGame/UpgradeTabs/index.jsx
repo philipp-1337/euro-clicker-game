@@ -1,5 +1,3 @@
-import BasicUpgrades from './BasicUpgrades';
-import PremiumUpgrades from './PremiumUpgrades';
 import { gameConfig } from '@constants/gameConfig';
 import { calculateButtonValueMultiplier, calculateCooldownReductionPercentage } from '@utils/calculators';
 
@@ -23,7 +21,11 @@ export default function UpgradeTabs({
   buyOfflineEarnings,
   managers,
   buyManager,
-  managerCosts
+  managerCosts,
+  investments,
+  buyInvestment,
+  isInvestmentUnlocked,
+  unlockInvestments
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -37,36 +39,29 @@ export default function UpgradeTabs({
   return (
     <>
       <div className="upgrade-tabs">
-        {gameConfig.ui.tabs.map(tab => (
-          <button
-            key={tab.id}
-            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label}
-          </button>
+        {gameConfig.ui.tabs.map((tab) => (
+          (tab.id !== 'investments' || isInvestmentUnlocked) && ( // Nur anzeigen, wenn freigeschaltet
+            <button
+              key={tab.id}
+              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              {tab.label}
+            </button>
+          )
         ))}
       </div>
-      
-      {activeTab === 'basic' && (
-        <BasicUpgrades 
+
+    {gameConfig.ui.tabs.map(tab => (
+      activeTab === tab.id && (
+        <tab.component
+          key={tab.id}
+          money={money}
           buttons={buttons}
           valueUpgradeCosts={valueUpgradeCosts}
           cooldownUpgradeCosts={cooldownUpgradeCosts}
-          money={money}
           buyValueUpgrade={buyValueUpgrade}
           buyCooldownUpgrade={buyCooldownUpgrade}
-          valueMultipliers={valueMultipliers}
-          cooldownReductions={cooldownReductions}
-          managers={managers}
-          buyManager={buyManager}
-          managerCosts={managerCosts}
-        />
-      )}
-      
-      {activeTab === 'premium' && (
-        <PremiumUpgrades
-          money={money} 
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           offlineEarningsLevel={offlineEarningsLevel}
@@ -74,8 +69,18 @@ export default function UpgradeTabs({
           offlineEarningsCost={offlineEarningsCost}
           buyGlobalMultiplier={buyGlobalMultiplier}
           buyOfflineEarnings={buyOfflineEarnings}
+          managers={managers}
+          buyManager={buyManager}
+          managerCosts={managerCosts}
+          investments={investments}
+          buyInvestment={buyInvestment}
+          valueMultipliers={valueMultipliers}
+          cooldownReductions={cooldownReductions}
+          isInvestmentUnlocked={isInvestmentUnlocked}
+          unlockInvestments={unlockInvestments}
         />
-      )}
-    </>
+      )
+    ))}
+  </>
   );
 }
