@@ -39,7 +39,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     valueMultipliers,
     cooldownReductions,
     isInvestmentUnlocked,
-    unlockInvestments
+    unlockInvestments,
+    totalIncomePerSecond
   } = useClickerGame(easyMode);
 
   return (
@@ -84,6 +85,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         cooldownReductions={cooldownReductions}
         isInvestmentUnlocked={isInvestmentUnlocked}
         unlockInvestments={unlockInvestments}
+        totalIncomePerSecond={totalIncomePerSecond}
       />
 
     <FloatingClickButton onClick={addQuickMoney} />

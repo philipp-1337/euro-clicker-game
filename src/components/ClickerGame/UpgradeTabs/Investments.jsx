@@ -1,10 +1,16 @@
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function Investments({ money, investments, buyInvestment }) {
+export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond }) {
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">Investments</h2>
+      <h2 className="section-title">
+        Investments
+        <span style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+          {/* Einkommen pro Sekunde anzeigen */}
+          {formatNumber(totalIncomePerSecond)} €/s
+        </span>
+      </h2>
       {gameConfig.investments.map((investment, index) => (
         <div key={index} className="premium-upgrade-card">
           <div className="premium-upgrade-header">
@@ -15,14 +21,14 @@ export default function Investments({ money, investments, buyInvestment }) {
           </p>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
-              Gekauft: {investments[index]}
+              Gekauft: {investments[index] ? 'Ja' : 'Nein'}
             </div>
             <button
               onClick={() => buyInvestment(index)}
-              disabled={money < investment.cost}
-              className={`premium-upgrade-button ${money < investment.cost ? 'disabled' : ''}`}
+              disabled={money < investment.cost || investments[index] === 1}
+              className={`premium-upgrade-button ${money < investment.cost || investments[index] === 1 ? 'disabled' : ''}`}
             >
-              {formatNumber(investment.cost)} €
+              {investments[index] === 1 ? 'Gekauft' : `${formatNumber(investment.cost)} €`}
             </button>
           </div>
         </div>

@@ -25,7 +25,8 @@ export default function UpgradeTabs({
   investments,
   buyInvestment,
   isInvestmentUnlocked,
-  unlockInvestments
+  unlockInvestments,
+  totalIncomePerSecond
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -78,6 +79,8 @@ export default function UpgradeTabs({
           cooldownReductions={cooldownReductions}
           isInvestmentUnlocked={isInvestmentUnlocked}
           unlockInvestments={unlockInvestments}
+          totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
+
         />
       )
     ))}

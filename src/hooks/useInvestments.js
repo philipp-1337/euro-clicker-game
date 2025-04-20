@@ -9,11 +9,11 @@ export default function useInvestments(money, setMoney, investments, setInvestme
 
   const buyInvestment = (index) => {
     const investment = gameConfig.investments[index];
-    if (money >= investment.cost) {
+    if (money >= investment.cost && investments[index] === 0) { // Nur kaufen, wenn noch nicht gekauft
       setMoney((prev) => prev - investment.cost);
       setInvestments((prev) => {
         const updated = [...prev];
-        updated[index]++;
+        updated[index] = 1; // Nur einmal kaufbar
         return updated;
       });
     }
