@@ -14,11 +14,8 @@ export default function UpgradeTabs({
   buyCooldownUpgrade,
   globalMultiplier,
   globalMultiplierLevel,
-  offlineEarningsLevel,
   globalMultiplierCost,
-  offlineEarningsCost,
   buyGlobalMultiplier,
-  buyOfflineEarnings,
   managers,
   buyManager,
   managerCosts,
@@ -65,11 +62,8 @@ export default function UpgradeTabs({
           buyCooldownUpgrade={buyCooldownUpgrade}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
-          offlineEarningsLevel={offlineEarningsLevel}
           globalMultiplierCost={globalMultiplierCost}
-          offlineEarningsCost={offlineEarningsCost}
           buyGlobalMultiplier={buyGlobalMultiplier}
-          buyOfflineEarnings={buyOfflineEarnings}
           managers={managers}
           buyManager={buyManager}
           managerCosts={managerCosts}

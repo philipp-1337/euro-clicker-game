@@ -16,7 +16,6 @@ export default function useGameState(easyMode = false) {
   // Premium-Upgrade-Zustände
   const [globalMultiplier, setGlobalMultiplier] = useState(gameConfig.initialState.globalMultiplier);
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
-  const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
   // NEU: Investment-Tab-Status
   const [isInvestmentUnlocked, setIsInvestmentUnlocked] = useState(
@@ -38,7 +37,6 @@ export default function useGameState(easyMode = false) {
     cooldownUpgradeLevels,
     globalMultiplier,
     globalMultiplierLevel,
-    offlineEarningsLevel,
     isInvestmentUnlocked,
     investments
   };
@@ -56,7 +54,6 @@ export default function useGameState(easyMode = false) {
     setCooldownUpgradeLevels(savedState.cooldownUpgradeLevels ?? [...gameConfig.initialState.cooldownUpgradeLevels]);
     setGlobalMultiplier(savedState.globalMultiplier ?? gameConfig.initialState.globalMultiplier);
     setGlobalMultiplierLevel(savedState.globalMultiplierLevel ?? gameConfig.initialState.globalMultiplierLevel);
-    setOfflineEarningsLevel(savedState.offlineEarningsLevel ?? gameConfig.initialState.offlineEarningsLevel);
     setIsInvestmentUnlocked(savedState.isInvestmentUnlocked ?? false);
     setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
   };
@@ -72,7 +69,6 @@ export default function useGameState(easyMode = false) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    offlineEarningsLevel, setOfflineEarningsLevel,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
     

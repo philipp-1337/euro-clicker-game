@@ -33,10 +33,6 @@ export const gameConfig = {
     
     // Premium-Upgrade-Faktoren
     globalMultiplierIncrease: 1.05, // +5% pro Level
-    offlineEarningsBaseRate: 0.2, // 20% der normalen Rate
-    offlineEarningsIncreasePerLevel: 0.1, // +10% pro Level
-    maxOfflineTimeInSeconds: 3600 * 8, // Maximale Offline-Zeit in Sekunden (8 Stunden)
-    minimumOfflineTimeInSeconds: 10, // Minimale Zeit für Offline-Einnahmen (10 Sekunden)
     
     // Startbedingungen
     initialState: {
@@ -49,7 +45,6 @@ export const gameConfig = {
       cooldownUpgradeLevels: [0, 0, 0, 0, 0],
       globalMultiplier: 1,
       globalMultiplierLevel: 0,
-      offlineEarningsLevel: 0,
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
     },
@@ -69,13 +64,6 @@ export const gameConfig = {
         costExponent: 1.75
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-      offlineEarnings: {
-        baseCost: 2000,
-        costExponent: 2.2,
-        basePercentage: 20,    // Basis-Prozentsatz bei Level 1
-        percentagePerLevel: 10, // Zusätzliche Prozent pro Level
-        maxOfflineHours: 8      // Maximale Offline-Zeit in Stunden
-      }
     },
 
     // Timing-Konstanten

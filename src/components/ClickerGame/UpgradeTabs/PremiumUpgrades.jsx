@@ -1,8 +1,7 @@
-import { Star, RefreshCw } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { 
   formatNumber, 
   getGlobalMultiplierPercentage, 
-  calculateOfflineEarningsPercentage 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
@@ -10,22 +9,14 @@ export default function PremiumUpgrades({
   money,
   globalMultiplier,
   globalMultiplierLevel,
-  offlineEarningsLevel,
   globalMultiplierCost,
-  offlineEarningsCost,
   buyGlobalMultiplier,
-  buyOfflineEarnings,
   isInvestmentUnlocked,
   unlockInvestments
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getGlobalMultiplierPercentage(
     gameConfig.upgrades.globalMultiplierFactor
-  );
-  
-  const offlineEarningsPercentage = calculateOfflineEarningsPercentage(
-    offlineEarningsLevel,
-    gameConfig.premiumUpgrades.offlineEarnings
   );
 
   // Kosten für die Freischaltung des Investment-Tabs aus der gameConfig abrufen
@@ -52,27 +43,6 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < globalMultiplierCost ? 'disabled' : ''}`}
           >
             {formatNumber(globalMultiplierCost)} €
-          </button>
-        </div>
-      </div>
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <RefreshCw className="premium-icon" />
-          <h3>Offline Earnings</h3>
-        </div>
-        <p className="premium-upgrade-description">
-          Verdiene Geld, auch wenn du nicht spielst (max. {gameConfig.premiumUpgrades.offlineEarnings.maxOfflineHours} Stunden)
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Level: {offlineEarningsLevel} ({offlineEarningsLevel > 0 ? `${offlineEarningsPercentage}% der normalen Rate` : 'Inaktiv'})
-          </div>
-          <button
-            onClick={buyOfflineEarnings}
-            disabled={money < offlineEarningsCost}
-            className={`premium-upgrade-button ${money < offlineEarningsCost ? 'disabled' : ''}`}
-          >
-            {formatNumber(offlineEarningsCost)} €
           </button>
         </div>
       </div>

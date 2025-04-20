@@ -27,11 +27,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     buyCooldownUpgrade,
     globalMultiplier,
     globalMultiplierLevel,
-    offlineEarningsLevel,
     globalMultiplierCost,
-    offlineEarningsCost,
     buyGlobalMultiplier,
-    buyOfflineEarnings,
     managerCosts,
     playTime,
     saveGame,
@@ -73,11 +70,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         buyCooldownUpgrade={buyCooldownUpgrade}
         globalMultiplier={globalMultiplier}
         globalMultiplierLevel={globalMultiplierLevel}
-        offlineEarningsLevel={offlineEarningsLevel}
         globalMultiplierCost={globalMultiplierCost}
-        offlineEarningsCost={offlineEarningsCost}
         buyGlobalMultiplier={buyGlobalMultiplier}
-        buyOfflineEarnings={buyOfflineEarnings}
         managers={managers}
         buyManager={buyManager}
         managerCosts={managerCosts}

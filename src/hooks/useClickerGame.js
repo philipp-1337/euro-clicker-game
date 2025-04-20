@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -6,7 +6,6 @@ import useUpgrades from './useUpgrades';
 import useManagers from './useManagers';
 import useCooldowns from './useCooldowns';
 import usePlaytime from './usePlaytime';
-import useOfflineEarnings from './useOfflineEarnings';
 import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
 
@@ -23,7 +22,6 @@ export default function useClickerGame(easyMode = false) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    offlineEarningsLevel, setOfflineEarningsLevel,
     gameState, loadGameState,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
@@ -34,7 +32,6 @@ export default function useClickerGame(easyMode = false) {
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    offlineEarningsCost,
     buttons
   } = useGameCalculations(
     valueUpgradeLevels,
@@ -43,7 +40,6 @@ export default function useClickerGame(easyMode = false) {
     cooldownReductions,
     globalMultiplier,
     globalMultiplierLevel,
-    offlineEarningsLevel,
     easyMode
   );
   
@@ -52,7 +48,6 @@ export default function useClickerGame(easyMode = false) {
     buyValueUpgrade,
     buyCooldownUpgrade,
     buyGlobalMultiplier,
-    buyOfflineEarnings
   } = useUpgrades(
     money, setMoney,
     valueMultipliers, setValueMultipliers,
@@ -61,11 +56,9 @@ export default function useClickerGame(easyMode = false) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    offlineEarningsLevel, setOfflineEarningsLevel,
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    offlineEarningsCost,
     gameConfig
   );
 
@@ -104,14 +97,6 @@ export default function useClickerGame(easyMode = false) {
     money, setMoney, investments, setInvestments
   );
 
-  // Offline-Einnahmen
-  useOfflineEarnings({
-    offlineEarningsLevel,
-    managers,
-    buttons,
-    setMoney
-  });
-
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
@@ -135,7 +120,6 @@ export default function useClickerGame(easyMode = false) {
     buyValueUpgrade,
     buyCooldownUpgrade,
     buyGlobalMultiplier,
-    buyOfflineEarnings,
     unlockInvestments,
     buyInvestment,
     saveGame,
@@ -148,9 +132,7 @@ export default function useClickerGame(easyMode = false) {
     cooldownUpgradeCosts,
     globalMultiplier,
     globalMultiplierLevel,
-    offlineEarningsLevel,
     globalMultiplierCost,
-    offlineEarningsCost,
     managerCosts,
     totalIncomePerSecond
   };
