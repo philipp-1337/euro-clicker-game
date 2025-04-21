@@ -1,4 +1,4 @@
-import { DollarSign, Star } from 'lucide-react';
+import { DollarSign, Star, Percent } from 'lucide-react';
 import { 
   formatNumber, 
   getGlobalMultiplierPercentage, 
@@ -10,6 +10,10 @@ export default function PremiumUpgrades({
   globalMultiplier,
   globalMultiplierLevel,
   globalMultiplierCost,
+  globalPriceDecrease,
+  globalPriceDecreaseLevel,
+  globalPriceDecreaseCost,
+  buyGlobalPriceDecrease,
   buyGlobalMultiplier,
   isInvestmentUnlocked,
   unlockInvestments
@@ -43,6 +47,27 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < globalMultiplierCost ? 'disabled' : ''}`}
           >
             {formatNumber(globalMultiplierCost)} €
+          </button>
+        </div>
+      </div>
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Percent className="premium-icon" />
+          <h3>Global Price Decrease</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Reduziert alle Basic-Upgrade-Kosten um 5% pro Level.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {globalPriceDecreaseLevel} (Kostenfaktor: ×{(globalPriceDecrease ?? 1).toFixed(2)})
+          </div>
+          <button
+            onClick={buyGlobalPriceDecrease}
+            disabled={money < globalPriceDecreaseCost || isNaN(globalPriceDecreaseCost)}
+            className={`premium-upgrade-button ${money < globalPriceDecreaseCost ? 'disabled' : ''}`}
+          >
+            {isNaN(globalPriceDecreaseCost) ? 'Fehler' : `${formatNumber(globalPriceDecreaseCost)} €`}
           </button>
         </div>
       </div>

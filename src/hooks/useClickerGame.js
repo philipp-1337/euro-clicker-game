@@ -22,6 +22,8 @@ export default function useClickerGame(easyMode = false) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
+    globalPriceDecrease, setGlobalPriceDecrease,
+    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
     gameState, loadGameState,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
@@ -32,6 +34,7 @@ export default function useClickerGame(easyMode = false) {
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
+    globalPriceDecreaseCost,
     buttons
   } = useGameCalculations(
     valueUpgradeLevels,
@@ -40,8 +43,20 @@ export default function useClickerGame(easyMode = false) {
     cooldownReductions,
     globalMultiplier,
     globalMultiplierLevel,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
     easyMode
   );
+
+  // Kauflogik für das neue Upgrade
+  const buyGlobalPriceDecrease = useCallback(() => {
+    if (money >= globalPriceDecreaseCost) {
+      setMoney(prev => prev - globalPriceDecreaseCost);
+      setGlobalPriceDecreaseLevel(prev => prev + 1);
+      setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
+    }
+  }, [money, globalPriceDecreaseCost, setMoney, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease]);
+
   
   // Upgrade-Funktionen
   const {
@@ -137,6 +152,7 @@ export default function useClickerGame(easyMode = false) {
     buyValueUpgrade,
     buyCooldownUpgrade,
     buyGlobalMultiplier,
+    buyGlobalPriceDecrease,
     unlockInvestments,
     buyInvestment,
     saveGame,
@@ -150,6 +166,9 @@ export default function useClickerGame(easyMode = false) {
     globalMultiplier,
     globalMultiplierLevel,
     globalMultiplierCost,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    globalPriceDecreaseCost,
     managerCosts,
     totalIncomePerSecond
   };

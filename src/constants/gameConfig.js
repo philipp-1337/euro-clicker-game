@@ -45,6 +45,8 @@ export const gameConfig = {
       cooldownUpgradeLevels: [0, 0, 0, 0, 0],
       globalMultiplier: 1,
       globalMultiplierLevel: 0,
+      globalPriceDecreaseLevel: 0,
+      globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
     },
@@ -62,6 +64,11 @@ export const gameConfig = {
       globalMultiplier: {
         baseCost: 1000,
         costExponent: 1.75
+      },
+      globalPriceDecrease: {
+        baseCost: 2500,
+        costExponent: 1.75, // z.B. exponentiell steigend, anpassbar
+        decreaseFactor: 0.95 // -5% pro Level (0.95^level)
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
     },

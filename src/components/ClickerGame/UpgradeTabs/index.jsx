@@ -15,6 +15,10 @@ export default function UpgradeTabs({
   globalMultiplier,
   globalMultiplierLevel,
   globalMultiplierCost,
+  globalPriceDecrease,
+  globalPriceDecreaseLevel,
+  globalPriceDecreaseCost,
+  buyGlobalPriceDecrease,
   buyGlobalMultiplier,
   managers,
   buyManager,
@@ -74,7 +78,10 @@ export default function UpgradeTabs({
           isInvestmentUnlocked={isInvestmentUnlocked}
           unlockInvestments={unlockInvestments}
           totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
-
+          globalPriceDecrease={globalPriceDecrease}
+          globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+          globalPriceDecreaseCost={globalPriceDecreaseCost}
+          buyGlobalPriceDecrease={buyGlobalPriceDecrease}
         />
       )
     ))}

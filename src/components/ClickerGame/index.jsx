@@ -28,6 +28,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     globalMultiplier,
     globalMultiplierLevel,
     globalMultiplierCost,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    globalPriceDecreaseCost,
+    buyGlobalPriceDecrease,
     buyGlobalMultiplier,
     managerCosts,
     playTime,
@@ -38,7 +42,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     isInvestmentUnlocked,
     unlockInvestments,
     totalIncomePerSecond,
-    totalMoneyPerSecond
+    totalMoneyPerSecond,
   } = useClickerGame(easyMode);
 
   return (
@@ -82,6 +86,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         isInvestmentUnlocked={isInvestmentUnlocked}
         unlockInvestments={unlockInvestments}
         totalIncomePerSecond={totalIncomePerSecond}
+        globalPriceDecrease={globalPriceDecrease}
+        globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+        globalPriceDecreaseCost={globalPriceDecreaseCost}
+        buyGlobalPriceDecrease={buyGlobalPriceDecrease}
       />
 
     <FloatingClickButton onClick={addQuickMoney} />
