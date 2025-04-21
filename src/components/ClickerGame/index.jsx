@@ -46,7 +46,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     satisfaction,
     stateBuildings,
     buyStateBuilding
-  } = useClickerGame(easyMode);
+    } = useClickerGame(easyMode);
 
   return (
     <div className="game-container">
@@ -96,6 +96,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         satisfaction={satisfaction}
         stateBuildings={stateBuildings}
         buyStateBuilding={buyStateBuilding}
+        totalMoneyPerSecond={totalMoneyPerSecond}
       />
 
     <FloatingClickButton onClick={addQuickMoney} />

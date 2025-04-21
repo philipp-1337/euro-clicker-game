@@ -6,6 +6,7 @@ export default function StateInfrastructure({
   satisfaction,
   stateBuildings,
   buyStateBuilding,
+  totalMoneyPerSecond,
 }) {
   return (
     <div className="upgrade-section premium-section">
@@ -15,29 +16,36 @@ export default function StateInfrastructure({
           Zufriedenheit: {formatNumber(satisfaction)}
         </span>
       </h2>
-      {gameConfig.stateBuildings.map((building, idx) => (
-        <div key={idx} className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <h3>{building.name}</h3>
-          </div>
-          <p className="premium-upgrade-description">
-            Kosten: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;
-            Zufriedenheit: {formatNumber(building.satisfactionPerSecond)} /s
-          </p>
-          <div className="premium-upgrade-info">
-            <div className="premium-upgrade-level">
-              Aktiv: {stateBuildings[idx] ? 'Ja' : 'Nein'}
+      {gameConfig.stateBuildings.map((building, idx) => {
+        const canAfford =
+          stateBuildings[idx] === 0 &&
+          money >= building.costPerSecond &&
+          totalMoneyPerSecond >= building.costPerSecond;
+
+        return (
+          <div key={idx} className="premium-upgrade-card">
+            <div className="premium-upgrade-header">
+              <h3>{building.name}</h3>
             </div>
-            <button
-              onClick={() => buyStateBuilding(idx)}
-              disabled={stateBuildings[idx] === 1 || money < building.costPerSecond}
-              className={`premium-upgrade-button ${stateBuildings[idx] === 1 || money < building.costPerSecond ? 'disabled' : ''}`}
-            >
-              {stateBuildings[idx] === 1 ? 'Aktiviert' : 'Aktivieren'}
-            </button>
+            <p className="premium-upgrade-description">
+              Kosten: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;
+              Zufriedenheit: {formatNumber(building.satisfactionValue)} (einmalig)
+            </p>
+            <div className="premium-upgrade-info">
+              <div className="premium-upgrade-level">
+                Aktiv: {stateBuildings[idx] ? 'Ja' : 'Nein'}
+              </div>
+              <button
+                onClick={() => buyStateBuilding(idx)}
+                disabled={!canAfford}
+                className={`premium-upgrade-button ${!canAfford ? 'disabled' : ''}`}
+              >
+                {stateBuildings[idx] === 1 ? 'Aktiviert' : 'Aktivieren'}
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

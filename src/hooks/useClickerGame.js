@@ -114,9 +114,18 @@ export default function useClickerGame(easyMode = false) {
     }, 0);
   }, [managers, buttons]);
 
-  // Gesamt-Einkommen pro Sekunde
-  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond;
+  // Laufende Kosten für Staatsgebäude pro Sekunde berechnen
+  const stateBuildingsCostPerSecond = useMemo(() => {
+    return stateBuildings.reduce((sum, active, idx) => {
+      if (active) {
+        return sum + gameConfig.stateBuildings[idx].costPerSecond;
+      }
+      return sum;
+    }, 0);
+  }, [stateBuildings]);
 
+  // Gesamt-Einkommen pro Sekunde
+  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond - stateBuildingsCostPerSecond;
 
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
