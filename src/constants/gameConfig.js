@@ -30,13 +30,13 @@ export const gameConfig = {
     ],
 
     stateBuildings: [
-      { name: 'Schule', costPerSecond: 10, satisfactionPerSecond: 1 },
-      { name: 'Freier ÖPNV', costPerSecond: 20, satisfactionPerSecond: 5 },
-      { name: 'Krankenversicherung', costPerSecond: 30, satisfactionPerSecond: 10 },
-      { name: 'Rüstungsindustrie', costPerSecond: 50, satisfactionPerSecond: -50 },
-      { name: 'Steuersenkung für ArbeiterInnen', costPerSecond: 40, satisfactionPerSecond: 20 },
-      { name: 'Steuersenkungen', costPerSecond: 60, satisfactionPerSecond: 30 },
-      { name: 'Parkanlagen', costPerSecond: 100, satisfactionPerSecond: 50 },
+      { name: 'Schule', costPerSecond: 10, satisfactionValue: 1 },
+      { name: 'Freier ÖPNV', costPerSecond: 20, satisfactionValue: 5 },
+      { name: 'Krankenversicherung', costPerSecond: 30, satisfactionValue: 10 },
+      { name: 'Rüstungsindustrie', costPerSecond: 50, satisfactionValue: -50 },
+      { name: 'Steuersenkung für ArbeiterInnen', costPerSecond: 40, satisfactionValue: 20 },
+      { name: 'Steuersenkungen', costPerSecond: 60, satisfactionValue: 30 },
+      { name: 'Parkanlagen', costPerSecond: 100, satisfactionValue: 50 },
     ],
     
     // Upgrade-Multiplikatoren
