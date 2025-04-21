@@ -1,6 +1,8 @@
 import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
 import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
+import StateInfrastructure from '@components/ClickerGame/UpgradeTabs/StateInfrastructure';
+
 
 export const gameConfig = {
     // Basis-Kosten für Upgrades
@@ -26,6 +28,16 @@ export const gameConfig = {
       { name: 'E-Zigaretten', cost: 70000, income: 70 },
       { name: 'Pharma', cost: 80000, income: 80 },
     ],
+
+    stateBuildings: [
+      { name: 'Schule', costPerSecond: 10, satisfactionPerSecond: 1 },
+      { name: 'Freier ÖPNV', costPerSecond: 20, satisfactionPerSecond: 5 },
+      { name: 'Krankenversicherung', costPerSecond: 30, satisfactionPerSecond: 10 },
+      { name: 'Rüstungsindustrie', costPerSecond: 50, satisfactionPerSecond: -50 },
+      { name: 'Steuersenkung für ArbeiterInnen', costPerSecond: 40, satisfactionPerSecond: 20 },
+      { name: 'Steuersenkungen', costPerSecond: 60, satisfactionPerSecond: 30 },
+      { name: 'Parkanlagen', costPerSecond: 100, satisfactionPerSecond: 50 },
+    ],
     
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level
@@ -49,6 +61,8 @@ export const gameConfig = {
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
+      satisfaction: 0,
+      stateBuildings: [0, 0, 0, 0, 0, 0, 0], // Anzahl pro Gebäude
     },
 
     // Upgrade-Multiplikatoren
@@ -84,6 +98,7 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
+        { id: 'state', label: 'State & Infrastructure', component: StateInfrastructure },
       ],
     },
     // Schwierigkeitseinstellungen
