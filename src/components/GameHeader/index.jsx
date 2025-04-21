@@ -1,7 +1,7 @@
 import { formatNumber } from '@utils/calculators';
 import { useState, useEffect } from 'react';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame }) {
+export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame, totalMoneyPerSecond }) {
   const [environment, setEnvironment] = useState('production');
 
   useEffect(() => {
@@ -87,6 +87,12 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
       </div>
       <div className="money-display">
         {formatNumber(money)} €
+        {/* Einkommen pro Sekunde anzeigen, wenn > 0 */}
+        {totalMoneyPerSecond > 0 && (
+          <span style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+            +{formatNumber(totalMoneyPerSecond)} €/s
+          </span>
+        )}
       </div>
       <div className="playtime-display">
         ⏱ {formatPlayTime(playTime)}

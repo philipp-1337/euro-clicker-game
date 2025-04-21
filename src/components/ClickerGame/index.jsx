@@ -37,7 +37,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     cooldownReductions,
     isInvestmentUnlocked,
     unlockInvestments,
-    totalIncomePerSecond
+    totalIncomePerSecond,
+    totalMoneyPerSecond
   } = useClickerGame(easyMode);
 
   return (
@@ -48,6 +49,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         onEasyModeToggle={onEasyModeToggle}
         playTime={playTime}
         onSaveGame={saveGame}
+        totalMoneyPerSecond={totalMoneyPerSecond}
       />
       <ClickerButtons 
         buttons={buttons} 

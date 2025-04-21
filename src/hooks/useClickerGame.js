@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -72,7 +72,28 @@ export default function useClickerGame(easyMode = false) {
   const { buyManager } = useManagers(money, setMoney, managers, setManagers);
   // Managerkosten dynamisch berechnen
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
-  
+
+  // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
+  const { buyInvestment, totalIncomePerSecond } = useInvestments(
+    money, setMoney, investments, setInvestments
+  );
+
+  // Manager-Einkommen pro Sekunde berechnen
+  const managerIncomePerSecond = useMemo(() => {
+    return managers.reduce((sum, hasManager, idx) => {
+      if (hasManager) {
+        // Button-Wert pro Cooldown, umgerechnet auf 1 Sekunde
+        const button = buttons[idx];
+        return sum + (button.value / button.cooldownTime);
+      }
+      return sum;
+    }, 0);
+  }, [managers, buttons]);
+
+  // Gesamt-Einkommen pro Sekunde
+  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond;
+
+
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
     cooldowns, setCooldowns, managers, buttons, money, setMoney
@@ -92,11 +113,6 @@ export default function useClickerGame(easyMode = false) {
     }
   }, [money, setMoney, setIsInvestmentUnlocked]);
 
-  // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
-  const { buyInvestment, totalIncomePerSecond } = useInvestments(
-    money, setMoney, investments, setInvestments
-  );
-
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
@@ -112,6 +128,7 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
+    totalMoneyPerSecond,
     
     // Funktionen
     handleClick: wrappedHandleClick,
