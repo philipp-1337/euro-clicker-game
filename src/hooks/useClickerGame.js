@@ -8,6 +8,7 @@ import useCooldowns from './useCooldowns';
 import usePlaytime from './usePlaytime';
 import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
+import useStateInfrastructure from './useStateInfrastructure';
 
 export default function useClickerGame(easyMode = false) {
   // Basis-Spielzustand
@@ -27,6 +28,8 @@ export default function useClickerGame(easyMode = false) {
     gameState, loadGameState,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
+    satisfaction, setSatisfaction,
+    stateBuildings, setStateBuildings,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -57,6 +60,12 @@ export default function useClickerGame(easyMode = false) {
     }
   }, [money, globalPriceDecreaseCost, setMoney, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease]);
 
+  // Kauflogik für Staatsgebäude
+  const { buyStateBuilding } = useStateInfrastructure(
+    money, setMoney,
+    satisfaction, setSatisfaction,
+    stateBuildings, setStateBuildings
+  );
   
   // Upgrade-Funktionen
   const {
@@ -144,6 +153,8 @@ export default function useClickerGame(easyMode = false) {
     investments,
     isInvestmentUnlocked,
     totalMoneyPerSecond,
+    satisfaction,
+    stateBuildings,
     
     // Funktionen
     handleClick: wrappedHandleClick,
@@ -153,6 +164,7 @@ export default function useClickerGame(easyMode = false) {
     buyCooldownUpgrade,
     buyGlobalMultiplier,
     buyGlobalPriceDecrease,
+    buyStateBuilding,
     unlockInvestments,
     buyInvestment,
     saveGame,
