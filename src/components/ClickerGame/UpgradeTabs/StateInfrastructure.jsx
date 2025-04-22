@@ -30,7 +30,10 @@ export default function StateInfrastructure({
           <h3>{building.name}</h3>
         </div>
         <p className="premium-upgrade-description">
-          Kosten: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;
+          {building.costPerSecond < 0
+            ? <>Verdiene: {formatNumber(Math.abs(building.costPerSecond))} €/s &nbsp; | &nbsp;</>
+            : <>Kosten: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;</>
+          }
           Zufriedenheit: {formatNumber(building.satisfactionValue)} (einmalig)
         </p>
         <div className="premium-upgrade-info">
