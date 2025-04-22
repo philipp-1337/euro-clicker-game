@@ -434,6 +434,10 @@
     .upgrade-buttons {
       gap: 8px;
     }
+
+    .money-display .per-second {
+      display: block;
+    }
   
     .env-label {
       display: block !important;
