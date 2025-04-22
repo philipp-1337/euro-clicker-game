@@ -32,7 +32,10 @@ export default function UpgradeTabs({
   stateBuildings,
   buyStateBuilding,
   totalMoneyPerSecond,
-  unlockInvestmentCost
+  unlockInvestmentCost,
+  isStateUnlocked,
+  unlockState,
+  unlockStateCost,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -47,7 +50,8 @@ export default function UpgradeTabs({
     <>
       <div className="upgrade-tabs">
         {gameConfig.ui.tabs.map((tab) => (
-          (tab.id !== 'investments' || isInvestmentUnlocked) && ( // Nur anzeigen, wenn freigeschaltet
+          ((tab.id !== 'investments' || isInvestmentUnlocked) &&
+           (tab.id !== 'state' || isStateUnlocked)) && (
             <button
               key={tab.id}
               className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
@@ -92,6 +96,9 @@ export default function UpgradeTabs({
           buyStateBuilding={buyStateBuilding}
           totalMoneyPerSecond={totalMoneyPerSecond}
           unlockInvestmentCost={unlockInvestmentCost}
+          isStateUnlocked={isStateUnlocked}
+          unlockState={unlockState}
+          unlockStateCost={unlockStateCost}
         />
       )
     ))}
