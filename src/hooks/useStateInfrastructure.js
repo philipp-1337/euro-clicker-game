@@ -27,7 +27,10 @@ export default function useStateInfrastructure(
           totalCost += gameConfig.stateBuildings[idx].costPerSecond;
         }
       });
-      if (totalCost > 0) setMoney(prev => Math.max(0, prev - totalCost));
+      // Ziehe Kosten ab oder addiere Einkommen (bei negativen Kosten)
+      if (totalCost !== 0) {
+        setMoney(prev => Math.max(0, prev - totalCost));
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [stateBuildings, setMoney]);
