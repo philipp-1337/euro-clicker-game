@@ -120,7 +120,7 @@ export default function PremiumUpgrades({
             {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
           </button>
         </div>
-        <div class="experimental-label">
+        <div className="experimental-label">
           Experimental Feature
         </div>
       </div>
