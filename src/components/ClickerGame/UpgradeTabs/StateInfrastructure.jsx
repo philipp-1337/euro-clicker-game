@@ -31,21 +31,21 @@ export default function StateInfrastructure({
         </div>
         <p className="premium-upgrade-description">
           {building.costPerSecond < 0
-            ? <>Verdiene: {formatNumber(Math.abs(building.costPerSecond))} €/s &nbsp; | &nbsp;</>
-            : <>Kosten: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;</>
+            ? <>Earn: {formatNumber(Math.abs(building.costPerSecond))} €/s &nbsp; | &nbsp;</>
+            : <>Cost: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;</>
           }
-          Zufriedenheit: {formatNumber(building.satisfactionValue)} (einmalig)
+          Satisfaction: {formatNumber(building.satisfactionValue)} (one-time)
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Aktiv: {stateBuildings[building.idx] ? 'Ja' : 'Nein'}
+            Active: {stateBuildings[building.idx] ? 'Yes' : 'No'}
           </div>
           <button
             onClick={() => buyStateBuilding(building.idx)}
             disabled={!canAfford}
             className={`premium-upgrade-button ${!canAfford ? 'disabled' : ''}`}
           >
-            {stateBuildings[building.idx] === 1 ? 'Aktiviert' : 'Aktivieren'}
+            {stateBuildings[building.idx] === 1 ? 'Activated' : 'Activate'}
           </button>
         </div>
       </div>
@@ -55,9 +55,9 @@ export default function StateInfrastructure({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">
-        Staat & Infrastruktur
+        State & Infrastructure
         <span className="section-label" style={{ fontSize: '1rem', marginLeft: 12, color: '#3498db' }}>
-          Zufriedenheit: {formatNumber(satisfaction)}
+          Satisfaction: {formatNumber(satisfaction)}
         </span>
       </h2>
 
@@ -66,25 +66,25 @@ export default function StateInfrastructure({
           className={`segmented-btn${activeSection === 'positive' ? ' active' : ''}`}
           onClick={() => setActiveSection('positive')}
         >
-          Sozial & Infrastruktur
+          Social & Infrastructure
         </button>
         <button
           className={`segmented-btn${activeSection === 'negative' ? ' active' : ''}`}
           onClick={() => setActiveSection('negative')}
         >
-          Profit & Kontrolle
+          Profit & Control
         </button>
       </div>
 
       {activeSection === 'positive' && (
         <>
-          <h3 className="section-title">Sozial & Infrastruktur</h3>
+          <h3 className="section-title">Social & Infrastructure</h3>
           {positiveBuildings.map(renderBuilding)}
         </>
       )}
       {activeSection === 'negative' && (
         <>
-          <h3 className="section-title">Profit & Kontrolle</h3>
+          <h3 className="section-title">Profit & Control</h3>
           {negativeBuildings.map(renderBuilding)}
         </>
       )}

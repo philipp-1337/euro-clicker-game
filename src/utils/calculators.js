@@ -80,9 +80,8 @@ export const formatNumber = (num) => {
    * @param {number} multiplierFactor - The multiplication factor (e.g., 1.05)
    * @returns {number} The percentage increase (e.g., 5 for 5%)
    */
-  export const getGlobalMultiplierPercentage = (multiplierFactor) => {
-    // Convert factor (e.g. 1.05) to percentage (e.g. 5)
-    return Math.round((multiplierFactor - 1) * 100);
+  export const getPercentage = (multiplierFactor) => {
+    return Math.abs(Math.round((multiplierFactor - 1) * 100));
   };
 
   /**

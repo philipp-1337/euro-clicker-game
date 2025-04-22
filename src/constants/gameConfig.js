@@ -19,24 +19,24 @@ export const gameConfig = {
     ],
 
     investments: [
-      { name: 'Taxiunternehmen', cost: 10000, income: 10 },
-      { name: 'Energydrinks', cost: 20000, income: 20 },
-      { name: 'Balkonkraftwerke', cost: 30000, income: 30 },
-      { name: 'Delikatessenladen', cost: 40000, income: 40 },
-      { name: 'Modelabel', cost: 50000, income: 50 },
-      { name: 'E-Autohersteller', cost: 60000, income: 60 },
-      { name: 'E-Zigaretten', cost: 70000, income: 70 },
+      { name: 'Taxi Company', cost: 10000, income: 10 },
+      { name: 'Energy Drinks', cost: 20000, income: 20 },
+      { name: 'Balcony Power Plants', cost: 30000, income: 30 },
+      { name: 'Delicatessen', cost: 40000, income: 40 },
+      { name: 'Fashion Label', cost: 50000, income: 50 },
+      { name: 'E-Car Manufacturer', cost: 60000, income: 60 },
+      { name: 'E-Cigarettes', cost: 70000, income: 70 },
       { name: 'Pharma', cost: 80000, income: 80 },
     ],
 
     stateBuildings: [
-      { name: 'Schule', costPerSecond: 10, satisfactionValue: 1 },
-      { name: 'Freier ÖPNV', costPerSecond: 20, satisfactionValue: 5 },
-      { name: 'Krankenversicherung', costPerSecond: 30, satisfactionValue: 10 },
-      { name: 'Rüstungsindustrie', costPerSecond: -50, satisfactionValue: -50 },
-      { name: 'Steuersenkung für ArbeiterInnen', costPerSecond: 40, satisfactionValue: 20 },
-      { name: 'Steuersenkungen', costPerSecond: 60, satisfactionValue: 30 },
-      { name: 'Parkanlagen', costPerSecond: 100, satisfactionValue: 50 },
+      { name: 'School', costPerSecond: 10, satisfactionValue: 1 },
+      { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5 },
+      { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10 },
+      { name: 'Arms Industry', costPerSecond: -50, satisfactionValue: -50 },
+      { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20 },
+      { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30 },
+      { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50 },
     ],
     
     // Upgrade-Multiplikatoren
