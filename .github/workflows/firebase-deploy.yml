@@ -40,5 +40,5 @@ jobs:
             firebase deploy --only hosting:beta
           else
             BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-            firebase hosting:channel:deploy alpha-${BRANCH_NAME} --only hosting:production
+            firebase hosting:channel:deploy alpha-${BRANCH_NAME} --only production
           fi
