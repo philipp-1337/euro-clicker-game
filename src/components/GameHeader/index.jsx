@@ -6,9 +6,9 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   useEffect(() => {
     const hostname = window.location.hostname;
-    if (hostname.includes('beta')) {
+    if (hostname.includes('beta.web')) {
       setEnvironment('beta');
-    } else if (hostname.includes('alpha')) {
+    } else if (hostname.includes('beta--alpha')) {
       setEnvironment('alpha');
     } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
       setEnvironment('localhost');
