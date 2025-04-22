@@ -59,8 +59,9 @@ export default function useGameCalculations(
       // Preis für das neue Premium-Upgrade berechnen
       const globalPriceDecreaseCost = useMemo(() =>
         gameConfig.premiumUpgrades.globalPriceDecrease.baseCost *
-        Math.pow(gameConfig.premiumUpgrades.globalPriceDecrease.costExponent, globalPriceDecreaseLevel),
-        [globalPriceDecreaseLevel]
+        Math.pow(gameConfig.premiumUpgrades.globalPriceDecrease.costExponent, globalPriceDecreaseLevel) *
+        gameConfig.getCostMultiplier(easyMode), // <--- Easy Mode berücksichtigen
+        [globalPriceDecreaseLevel, easyMode]
       );
 
   return {

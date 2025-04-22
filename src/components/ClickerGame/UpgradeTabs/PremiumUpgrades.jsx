@@ -16,15 +16,13 @@ export default function PremiumUpgrades({
   buyGlobalPriceDecrease,
   buyGlobalMultiplier,
   isInvestmentUnlocked,
-  unlockInvestments
+  unlockInvestments,
+  unlockInvestmentCost
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getGlobalMultiplierPercentage(
     gameConfig.upgrades.globalMultiplierFactor
   );
-
-  // Kosten für die Freischaltung des Investment-Tabs aus der gameConfig abrufen
-  const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost;
 
   return (
     <div className="upgrade-section premium-section">

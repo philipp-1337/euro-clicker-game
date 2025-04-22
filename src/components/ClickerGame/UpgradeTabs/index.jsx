@@ -31,7 +31,8 @@ export default function UpgradeTabs({
   satisfaction,
   stateBuildings,
   buyStateBuilding,
-  totalMoneyPerSecond
+  totalMoneyPerSecond,
+  unlockInvestmentCost
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -90,6 +91,7 @@ export default function UpgradeTabs({
           stateBuildings={stateBuildings}
           buyStateBuilding={buyStateBuilding}
           totalMoneyPerSecond={totalMoneyPerSecond}
+          unlockInvestmentCost={unlockInvestmentCost}
         />
       )
     ))}
