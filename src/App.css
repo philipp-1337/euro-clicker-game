@@ -310,13 +310,25 @@
 
 .upgrade-tabs {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* <-- wichtig für korrektes Scrollen */
+  align-items: center;
+  width: 100%;
   margin: 20px 0 15px;
   border-bottom: 2px solid #e0e0e0;
-  overflow-x: auto; 
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
   position: relative;
+}
+
+.upgrade-tabs-inner {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  margin: 0 auto; /* zentriert, wenn kein Overflow */
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .upgrade-tabs::after,
@@ -511,11 +523,11 @@
   }
 
   .upgrade-tabs {
-    justify-content: flex-start;
     gap: 0;
     padding-left: 4px;
     padding-right: 4px;
     overflow-x: auto;
+    justify-content: flex-start;
   }
 
   .upgrade-tabs::after,

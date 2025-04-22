@@ -49,6 +49,7 @@ export default function UpgradeTabs({
   return (
     <>
       <div className="upgrade-tabs">
+      <div className="upgrade-tabs-inner">
         {gameConfig.ui.tabs.map((tab) => (
           ((tab.id !== 'investments' || isInvestmentUnlocked) &&
            (tab.id !== 'state' || isStateUnlocked)) && (
@@ -62,6 +63,7 @@ export default function UpgradeTabs({
           )
         ))}
       </div>
+    </div>
 
     {gameConfig.ui.tabs.map(tab => (
       activeTab === tab.id && (
