@@ -20,13 +20,5 @@ export default function useInvestments(money, setMoney, investments, setInvestme
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMoney((prev) => prev + totalIncomePerSecond);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [totalIncomePerSecond, setMoney]);
-
   return { buyInvestment, totalIncomePerSecond };
 }

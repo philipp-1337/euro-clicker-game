@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -141,6 +141,14 @@ export default function useClickerGame(easyMode = false) {
 
   // Gesamt-Einkommen pro Sekunde
   const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond - stateBuildingsCostPerSecond;
+
+  // Zentrale Geldberechnung pro Sekunde
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMoney(prev => prev + totalMoneyPerSecond);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [totalMoneyPerSecond, setMoney]);
 
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
