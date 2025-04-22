@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
 export default function useInvestments(money, setMoney, investments, setInvestments, ensureStartTime) {
