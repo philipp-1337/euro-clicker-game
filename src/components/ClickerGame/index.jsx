@@ -46,7 +46,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     satisfaction,
     stateBuildings,
     buyStateBuilding,
-    unlockInvestmentCost
+    unlockInvestmentCost,
+    isStateUnlocked,
+    unlockState,
+    unlockStateCost
     } = useClickerGame(easyMode);
 
   return (
@@ -99,6 +102,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         buyStateBuilding={buyStateBuilding}
         totalMoneyPerSecond={totalMoneyPerSecond}
         unlockInvestmentCost={unlockInvestmentCost}
+        isStateUnlocked={isStateUnlocked}
+        unlockState={unlockState}
+        unlockStateCost={unlockStateCost}
       />
 
     <FloatingClickButton onClick={addQuickMoney} />

@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent } from 'lucide-react';
+import { DollarSign, Star, Percent, Landmark } from 'lucide-react';
 import { 
   formatNumber, 
   getGlobalMultiplierPercentage, 
@@ -17,7 +17,10 @@ export default function PremiumUpgrades({
   buyGlobalMultiplier,
   isInvestmentUnlocked,
   unlockInvestments,
-  unlockInvestmentCost
+  unlockInvestmentCost,
+  isStateUnlocked,
+  unlockState,
+  unlockStateCost
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getGlobalMultiplierPercentage(
@@ -72,7 +75,7 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
         <DollarSign className="premium-icon" />
-          <h3>Unlock Investments</h3>
+          <h3>Investments</h3>
         </div>
         <p className="premium-upgrade-description">
           Schalte den Investment-Tab frei, um in Unternehmen zu investieren.
@@ -90,6 +93,27 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < unlockInvestmentCost || isInvestmentUnlocked ? 'disabled' : ''}`}
           >
             {isInvestmentUnlocked ? 'Freigeschaltet' : `${formatNumber(unlockInvestmentCost)} €`}
+          </button>
+        </div>
+      </div>
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Landmark className="premium-icon" />
+          <h3>State & Infrastructure</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Schalte den State & Infrastructure-Tab frei, um Staatsgebäude zu bauen.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Status: {isStateUnlocked ? 'Freigeschaltet' : 'Nicht freigeschaltet'}
+          </div>
+          <button
+            onClick={unlockState}
+            disabled={money < unlockStateCost || isStateUnlocked}
+            className={`premium-upgrade-button ${money < unlockStateCost || isStateUnlocked ? 'disabled' : ''}`}
+          >
+            {isStateUnlocked ? 'Freigeschaltet' : `${formatNumber(unlockStateCost)} €`}
           </button>
         </div>
       </div>

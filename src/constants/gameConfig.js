@@ -61,6 +61,7 @@ export const gameConfig = {
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
+      isStateUnlocked: false,
       satisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0], // Anzahl pro Gebäude
     },
@@ -85,6 +86,7 @@ export const gameConfig = {
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+      unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
     },
 
     // Timing-Konstanten

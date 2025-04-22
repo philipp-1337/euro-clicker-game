@@ -22,13 +22,19 @@ export default function useGameState(easyMode = false) {
   const [globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel] = useState(gameConfig.initialState.globalPriceDecreaseLevel);
 
 
-  // NEU: Investment-Tab-Status
+  // Investment-Tab-Status
   const [isInvestmentUnlocked, setIsInvestmentUnlocked] = useState(
     gameConfig.initialState.isInvestmentUnlocked ?? false
   );
-  // NEU: Investments
+
+  // Investments
   const [investments, setInvestments] = useState(
     gameConfig.initialState.investments ?? gameConfig.investments.map(() => 0)
+  );
+
+  // StateInfrastructure-Tab-Status
+  const [isStateUnlocked, setIsStateUnlocked] = useState(
+    gameConfig.initialState.isStateUnlocked ?? false
   );
 
   // Kompakter Spielzustand für Speichern/Laden
@@ -48,6 +54,7 @@ export default function useGameState(easyMode = false) {
     investments,
     satisfaction,
     stateBuildings,
+    isStateUnlocked
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -69,6 +76,7 @@ export default function useGameState(easyMode = false) {
     setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
     setSatisfaction(savedState.satisfaction ?? gameConfig.initialState.satisfaction);
     setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
+    setIsStateUnlocked(savedState.isStateUnlocked ?? false);
   };
 
   return {
@@ -88,7 +96,8 @@ export default function useGameState(easyMode = false) {
     investments, setInvestments,
     satisfaction, setSatisfaction,
     stateBuildings, setStateBuildings,
-    
+    isStateUnlocked, setIsStateUnlocked,
+   
     // Save/Load
     gameState,
     loadGameState

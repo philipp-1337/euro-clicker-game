@@ -39,7 +39,8 @@ export default function useClickerGame(easyMode = false) {
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
     satisfaction, setSatisfaction,
-    stateBuildings, setStateBuildings
+    stateBuildings, setStateBuildings,
+    isStateUnlocked, setIsStateUnlocked,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -101,6 +102,7 @@ export default function useClickerGame(easyMode = false) {
 
   // In useClickerGame.js, füge diese Funktion hinzu
   const addQuickMoney = useCallback(() => {
+    ensureStartTime?.();
     setMoney(prevMoney => prevMoney + 1);
   }, [setMoney]);
   
@@ -158,6 +160,18 @@ export default function useClickerGame(easyMode = false) {
 
   const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier;
 
+  // Unlock StateInfrastructure Tab
+  const unlockState = useCallback(() => {
+    const unlockCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
+    if (money >= unlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - unlockCost);
+      setIsStateUnlocked(true);
+    }
+  }, [money, setMoney, setIsStateUnlocked, costMultiplier, ensureStartTime]);
+
+  const unlockStateCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
+
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
@@ -173,6 +187,7 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
+    isStateUnlocked,
     totalMoneyPerSecond,
     satisfaction,
     stateBuildings,
@@ -187,6 +202,7 @@ export default function useClickerGame(easyMode = false) {
     buyGlobalPriceDecrease,
     buyStateBuilding,
     unlockInvestments,
+    unlockState,
     buyInvestment,
     saveGame,
     addQuickMoney,
@@ -204,6 +220,7 @@ export default function useClickerGame(easyMode = false) {
     globalPriceDecreaseCost,
     managerCosts,
     totalIncomePerSecond,
-    unlockInvestmentCost
+    unlockInvestmentCost,
+    unlockStateCost
   };
 }

@@ -94,7 +94,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         {formatNumber(money)} €
         {/* Einkommen pro Sekunde anzeigen, wenn > 0 */}
         {totalMoneyPerSecond > 0 && (
-          <span class="per-second" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+          <span className="per-second" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
             +{formatNumber(totalMoneyPerSecond)} €/s
           </span>
         )}
