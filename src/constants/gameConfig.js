@@ -33,7 +33,7 @@ export const gameConfig = {
       { name: 'Schule', costPerSecond: 10, satisfactionValue: 1 },
       { name: 'Freier ÖPNV', costPerSecond: 20, satisfactionValue: 5 },
       { name: 'Krankenversicherung', costPerSecond: 30, satisfactionValue: 10 },
-      { name: 'Rüstungsindustrie', costPerSecond: 50, satisfactionValue: -50 },
+      { name: 'Rüstungsindustrie', costPerSecond: -50, satisfactionValue: -50 },
       { name: 'Steuersenkung für ArbeiterInnen', costPerSecond: 40, satisfactionValue: 20 },
       { name: 'Steuersenkungen', costPerSecond: 60, satisfactionValue: 30 },
       { name: 'Parkanlagen', costPerSecond: 100, satisfactionValue: 50 },
