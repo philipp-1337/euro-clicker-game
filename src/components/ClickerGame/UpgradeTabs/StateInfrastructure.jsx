@@ -56,7 +56,7 @@ export default function StateInfrastructure({
     <div className="upgrade-section premium-section">
       <h2 className="section-title">
         Staat & Infrastruktur
-        <span style={{ fontSize: '1rem', marginLeft: 12, color: '#3498db' }}>
+        <span class="section-label" style={{ fontSize: '1rem', marginLeft: 12, color: '#3498db' }}>
           Zufriedenheit: {formatNumber(satisfaction)}
         </span>
       </h2>
