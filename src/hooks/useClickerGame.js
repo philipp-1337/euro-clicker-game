@@ -104,7 +104,7 @@ export default function useClickerGame(easyMode = false) {
   const addQuickMoney = useCallback(() => {
     ensureStartTime?.();
     setMoney(prevMoney => prevMoney + 1);
-  }, [setMoney]);
+  }, [setMoney, ensureStartTime]);
   
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
