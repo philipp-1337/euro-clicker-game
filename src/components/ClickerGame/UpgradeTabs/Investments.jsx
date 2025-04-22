@@ -17,18 +17,18 @@ export default function Investments({ money, investments, buyInvestment, totalIn
             <h3>{investment.name}</h3>
           </div>
           <p className="premium-upgrade-description">
-            Investiere {formatNumber(investment.cost)} €, um {formatNumber(investment.income)} €/s zu verdienen.
+            Invest {formatNumber(investment.cost)} € to earn {formatNumber(investment.income)} €/s.
           </p>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
-              Gekauft: {investments[index] ? 'Ja' : 'Nein'}
+              Purchased: {investments[index] ? 'Yes' : 'No'}
             </div>
             <button
               onClick={() => buyInvestment(index)}
               disabled={money < investment.cost || investments[index] === 1}
               className={`premium-upgrade-button ${money < investment.cost || investments[index] === 1 ? 'disabled' : ''}`}
             >
-              {investments[index] === 1 ? 'Gekauft' : `${formatNumber(investment.cost)} €`}
+              {investments[index] === 1 ? 'Purchased' : `${formatNumber(investment.cost)} €`}
             </button>
           </div>
         </div>

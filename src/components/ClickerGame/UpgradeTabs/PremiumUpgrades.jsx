@@ -1,7 +1,7 @@
 import { DollarSign, Star, Percent, Landmark } from 'lucide-react';
 import { 
   formatNumber, 
-  getGlobalMultiplierPercentage, 
+  getPercentage, 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
@@ -23,8 +23,12 @@ export default function PremiumUpgrades({
   unlockStateCost
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
-  const globalMultiplierPercentage = getGlobalMultiplierPercentage(
+  const globalMultiplierPercentage = getPercentage(
     gameConfig.upgrades.globalMultiplierFactor
+  );
+
+  const globalCostReductionPercentage = getPercentage(
+    gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor
   );
 
   return (
@@ -33,10 +37,10 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Star className="premium-icon" />
-          <h3>Global Value Multiplier</h3>
+          <h3>Manager Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          Erhöht den Wert aller Klicks um {globalMultiplierPercentage}%
+          Increases the value of all clicks made by managers by {globalMultiplierPercentage}%.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -54,21 +58,21 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Percent className="premium-icon" />
-          <h3>Global Price Decrease</h3>
+          <h3>Upgrade Price Decrease</h3>
         </div>
         <p className="premium-upgrade-description">
-          Reduziert alle Basic-Upgrade-Kosten um 5% pro Level.
+          Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalPriceDecreaseLevel} (Kostenfaktor: ×{(globalPriceDecrease ?? 1).toFixed(2)})
+            Level: {globalPriceDecreaseLevel} (Cost Factor: ×{(globalPriceDecrease ?? 1).toFixed(2)})
           </div>
           <button
             onClick={buyGlobalPriceDecrease}
             disabled={money < globalPriceDecreaseCost || isNaN(globalPriceDecreaseCost)}
             className={`premium-upgrade-button ${money < globalPriceDecreaseCost ? 'disabled' : ''}`}
           >
-            {isNaN(globalPriceDecreaseCost) ? 'Fehler' : `${formatNumber(globalPriceDecreaseCost)} €`}
+            {isNaN(globalPriceDecreaseCost) ? 'Error' : `${formatNumber(globalPriceDecreaseCost)} €`}
           </button>
         </div>
       </div>
@@ -78,11 +82,11 @@ export default function PremiumUpgrades({
           <h3>Investments</h3>
         </div>
         <p className="premium-upgrade-description">
-          Schalte den Investment-Tab frei, um in Unternehmen zu investieren.
+        Unlock the Investments tab to invest in companies.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Status: {isInvestmentUnlocked ? 'Freigeschaltet' : 'Nicht freigeschaltet'}
+            Status: {isInvestmentUnlocked ? 'Unlocked' : 'Locked'}
           </div>
           <button
             onClick={() => {
@@ -92,7 +96,7 @@ export default function PremiumUpgrades({
             disabled={money < unlockInvestmentCost || isInvestmentUnlocked}
             className={`premium-upgrade-button ${money < unlockInvestmentCost || isInvestmentUnlocked ? 'disabled' : ''}`}
           >
-            {isInvestmentUnlocked ? 'Freigeschaltet' : `${formatNumber(unlockInvestmentCost)} €`}
+            {isInvestmentUnlocked ? 'Unlocked' : `${formatNumber(unlockInvestmentCost)} €`}
           </button>
         </div>
       </div>
@@ -102,18 +106,18 @@ export default function PremiumUpgrades({
           <h3>State & Infrastructure</h3>
         </div>
         <p className="premium-upgrade-description">
-          Schalte den State & Infrastructure-Tab frei, um Staatsgebäude zu bauen.
+          Unlock the State & Infrastructure tab to build state.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Status: {isStateUnlocked ? 'Freigeschaltet' : 'Nicht freigeschaltet'}
+            Status: {isStateUnlocked ? 'Unlocked' : 'Locked'}
           </div>
           <button
             onClick={unlockState}
             disabled={money < unlockStateCost || isStateUnlocked}
             className={`premium-upgrade-button ${money < unlockStateCost || isStateUnlocked ? 'disabled' : ''}`}
           >
-            {isStateUnlocked ? 'Freigeschaltet' : `${formatNumber(unlockStateCost)} €`}
+            {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
           </button>
         </div>
       </div>
