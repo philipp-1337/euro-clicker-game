@@ -25,10 +25,13 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   const renderEnvironmentLabel = () => {
     if (environment === 'production') return null;
-
-    const labelText = environment === 'beta' ? 'beta' : 'localhost';
+  
+    let labelText = environment;
+    if (environment === 'localhost' || environment === 'beta' || environment === 'alpha') {
+      labelText = environment;
+    }
     const displayText = easyMode ? `${labelText} (easy)` : labelText;
-
+  
     return (
       <span 
         className={`env-label ${environment}`} 
