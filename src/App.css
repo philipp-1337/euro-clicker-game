@@ -328,6 +328,28 @@
     height: 2px;
     background-color: #3498db;
   }
+
+  .segmented-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .segmented-btn {
+    border: 1px solid #3498db;
+    background: #fff;
+    color: #3498db;
+    padding: 6px 16px;
+    border-radius: 6px 6px 6px 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+  }
+  .segmented-btn.active {
+    background: #3498db;
+    color: #fff;
+  }
   
   /* Premium Upgrades Tab */
   .premium-section {
