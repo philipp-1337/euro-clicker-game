@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function useInvestments(money, setMoney, investments, setInvestments) {
+export default function useInvestments(money, setMoney, investments, setInvestments, ensureStartTime) {
   const totalIncomePerSecond = investments.reduce(
     (total, count, index) => total + count * gameConfig.investments[index].income,
     0
@@ -10,6 +10,7 @@ export default function useInvestments(money, setMoney, investments, setInvestme
   const buyInvestment = (index) => {
     const investment = gameConfig.investments[index];
     if (money >= investment.cost && investments[index] === 0) { // Nur kaufen, wenn noch nicht gekauft
+      ensureStartTime?.();
       setMoney((prev) => prev - investment.cost);
       setInvestments((prev) => {
         const updated = [...prev];
