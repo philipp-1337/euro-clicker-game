@@ -9,11 +9,13 @@ export default function useUpgrades(
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    gameConfig
+    gameConfig,
+    ensureStartTime
   ) {
     function buyValueUpgrade(index) {
       const cost = valueUpgradeCosts[index];
       if (money >= cost) {
+        ensureStartTime?.();
         setMoney(prev => prev - cost);
         setValueMultipliers(prev => {
           const updated = [...prev];
@@ -31,6 +33,7 @@ export default function useUpgrades(
     function buyCooldownUpgrade(index) {
       const cost = cooldownUpgradeCosts[index];
       if (money >= cost) {
+        ensureStartTime?.();
         setMoney(prev => prev - cost);
         setCooldownReductions(prev => {
           const updated = [...prev];
@@ -47,6 +50,7 @@ export default function useUpgrades(
   
     function buyGlobalMultiplier() {
       if (money >= globalMultiplierCost) {
+        ensureStartTime?.();
         setMoney(prev => prev - globalMultiplierCost);
         setGlobalMultiplier(prev => prev * gameConfig.upgrades.globalMultiplierFactor);
         setGlobalMultiplierLevel(prev => prev + 1);
