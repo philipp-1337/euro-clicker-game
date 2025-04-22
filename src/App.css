@@ -421,6 +421,17 @@
   border-left: 4px solid #3498db;
 }
 
+.premium-upgrade-card.experimental {
+  border-left: 4px solid #e74c3c;
+}
+
+.experimental-label {
+  color: #e74c3c;
+  font-weight: bold;
+  margin-top: 8;
+  text-align: center
+}
+
 .premium-upgrade-header {
   display: flex;
   align-items: center;

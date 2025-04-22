@@ -100,7 +100,7 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      <div className="premium-upgrade-card">
+      <div className="premium-upgrade-card experimental">
         <div className="premium-upgrade-header">
           <Landmark className="premium-icon" />
           <h3>State & Infrastructure</h3>
@@ -119,6 +119,9 @@ export default function PremiumUpgrades({
           >
             {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
           </button>
+        </div>
+        <div class="experimental-label">
+          Experimental Feature
         </div>
       </div>
     </div>
