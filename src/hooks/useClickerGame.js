@@ -139,12 +139,16 @@ export default function useClickerGame(easyMode = false) {
     handleClick(index);
   };
 
+  // Kauflogik für Investments freischalten
   const unlockInvestments = useCallback(() => {
-    if (money >= gameConfig.premiumUpgrades.unlockInvestmentCost) {
-      setMoney(prev => prev - gameConfig.premiumUpgrades.unlockInvestmentCost);
+    const unlockCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier; // <--- Easy Mode berücksichtigen
+    if (money >= unlockCost) {
+      setMoney(prev => prev - unlockCost);
       setIsInvestmentUnlocked(true);
     }
-  }, [money, setMoney, setIsInvestmentUnlocked]);
+  }, [money, setMoney, setIsInvestmentUnlocked, costMultiplier]);
+
+  const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier;
 
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
@@ -191,6 +195,7 @@ export default function useClickerGame(easyMode = false) {
     globalPriceDecreaseLevel,
     globalPriceDecreaseCost,
     managerCosts,
-    totalIncomePerSecond
+    totalIncomePerSecond,
+    unlockInvestmentCost
   };
 }
