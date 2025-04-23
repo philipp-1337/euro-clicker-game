@@ -33,7 +33,7 @@ export const gameConfig = {
       { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
       { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
       { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
-      { name: 'Arms Industry', costPerSecond: -50, satisfactionValue: 0, dissatisfactionValue: 50 },
+      { name: 'Arms Industry', costPerSecond: 50, satisfactionValue: 0, dissatisfactionValue: 50 },
       { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
       { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
       { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
