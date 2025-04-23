@@ -29,6 +29,7 @@ export default function UpgradeTabs({
   unlockInvestments,
   totalIncomePerSecond,
   satisfaction,
+  dissatisfaction,
   stateBuildings,
   buyStateBuilding,
   totalMoneyPerSecond,
@@ -94,6 +95,7 @@ export default function UpgradeTabs({
           globalPriceDecreaseCost={globalPriceDecreaseCost}
           buyGlobalPriceDecrease={buyGlobalPriceDecrease}
           satisfaction={satisfaction}
+          dissatisfaction={dissatisfaction}
           stateBuildings={stateBuildings}
           buyStateBuilding={buyStateBuilding}
           totalMoneyPerSecond={totalMoneyPerSecond}

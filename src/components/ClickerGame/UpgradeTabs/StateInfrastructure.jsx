@@ -5,6 +5,7 @@ import { gameConfig } from '@constants/gameConfig';
 export default function StateInfrastructure({
   money,
   satisfaction,
+  dissatisfaction,
   stateBuildings,
   buyStateBuilding,
   totalMoneyPerSecond,
@@ -16,7 +17,7 @@ export default function StateInfrastructure({
     .filter(b => b.satisfactionValue > 0);
   const negativeBuildings = gameConfig.stateBuildings
     .map((b, idx) => ({ ...b, idx }))
-    .filter(b => b.satisfactionValue < 0);
+    .filter(b => b.dissatisfactionValue > 0);
 
   const renderBuilding = (building) => {
     const canAfford =
@@ -34,7 +35,12 @@ export default function StateInfrastructure({
             ? <>Earn: {formatNumber(Math.abs(building.costPerSecond))} €/s &nbsp; | &nbsp;</>
             : <>Cost: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;</>
           }
-          Satisfaction: {formatNumber(building.satisfactionValue)} (one-time)
+          {building.satisfactionValue > 0 && (
+            <>Satisfaction: {formatNumber(building.satisfactionValue)} (one-time)</>
+          )}
+          {building.dissatisfactionValue > 0 && (
+            <>Dissatisfaction: {formatNumber(building.dissatisfactionValue)} (one-time)</>
+          )}
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -57,7 +63,7 @@ export default function StateInfrastructure({
       <h2 className="section-title">
         State & Infrastructure
         <span className="section-label" style={{ fontSize: '1rem', marginLeft: 12, color: '#3498db' }}>
-          Satisfaction: {formatNumber(satisfaction)}
+          Satisfaction: {formatNumber(satisfaction)} &nbsp;|&nbsp; Dissatisfaction: {formatNumber(dissatisfaction)}
         </span>
       </h2>
 

@@ -39,6 +39,7 @@ export default function useClickerGame(easyMode = false) {
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
     satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
   } = gameStateHook;
@@ -76,6 +77,7 @@ export default function useClickerGame(easyMode = false) {
   const { buyStateBuilding } = useStateInfrastructure(
     money, setMoney,
     satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
     stateBuildings, setStateBuildings,
     ensureStartTime
   );
@@ -198,6 +200,7 @@ export default function useClickerGame(easyMode = false) {
     isStateUnlocked,
     totalMoneyPerSecond,
     satisfaction,
+    dissatisfaction,
     stateBuildings,
     
     // Funktionen

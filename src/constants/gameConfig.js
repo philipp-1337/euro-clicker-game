@@ -30,13 +30,13 @@ export const gameConfig = {
     ],
 
     stateBuildings: [
-      { name: 'School', costPerSecond: 10, satisfactionValue: 1 },
-      { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5 },
-      { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10 },
-      { name: 'Arms Industry', costPerSecond: -50, satisfactionValue: -50 },
-      { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20 },
-      { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30 },
-      { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50 },
+      { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
+      { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
+      { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
+      { name: 'Arms Industry', costPerSecond: -50, satisfactionValue: 0, dissatisfactionValue: 50 },
+      { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
+      { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
+      { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
     ],
     
     // Upgrade-Multiplikatoren
@@ -63,6 +63,7 @@ export const gameConfig = {
       investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
       isStateUnlocked: false,
       satisfaction: 0,
+      dissatisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0], // Anzahl pro Gebäude
     },
 

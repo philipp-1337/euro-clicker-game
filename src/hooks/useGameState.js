@@ -7,6 +7,7 @@ export default function useGameState(easyMode = false) {
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
   const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
   const [satisfaction, setSatisfaction] = useState(gameConfig.initialState.satisfaction ?? 0);
+  const [dissatisfaction, setDissatisfaction] = useState(gameConfig.initialState.dissatisfaction ?? 0);
   const [stateBuildings, setStateBuildings] = useState([...gameConfig.initialState.stateBuildings]);
   
   // Upgrade-Zustände
@@ -53,6 +54,7 @@ export default function useGameState(easyMode = false) {
     isInvestmentUnlocked,
     investments,
     satisfaction,
+    dissatisfaction,
     stateBuildings,
     isStateUnlocked
   };
@@ -75,6 +77,7 @@ export default function useGameState(easyMode = false) {
     setIsInvestmentUnlocked(savedState.isInvestmentUnlocked ?? false);
     setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
     setSatisfaction(savedState.satisfaction ?? gameConfig.initialState.satisfaction);
+    setDissatisfaction(savedState.dissatisfaction ?? gameConfig.initialState.dissatisfaction);
     setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
   };
@@ -95,6 +98,7 @@ export default function useGameState(easyMode = false) {
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
     satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
    
