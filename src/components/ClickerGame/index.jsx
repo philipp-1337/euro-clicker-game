@@ -44,6 +44,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     totalIncomePerSecond,
     totalMoneyPerSecond,
     satisfaction,
+    dissatisfaction,
     stateBuildings,
     buyStateBuilding,
     unlockInvestmentCost,
@@ -98,6 +99,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         globalPriceDecreaseCost={globalPriceDecreaseCost}
         buyGlobalPriceDecrease={buyGlobalPriceDecrease}
         satisfaction={satisfaction}
+        dissatisfaction={dissatisfaction}
         stateBuildings={stateBuildings}
         buyStateBuilding={buyStateBuilding}
         totalMoneyPerSecond={totalMoneyPerSecond}

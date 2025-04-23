@@ -62,8 +62,8 @@ export default function StateInfrastructure({
     <div className="upgrade-section premium-section">
       <h2 className="section-title">
         State & Infrastructure
-        <span className="section-label" style={{ fontSize: '1rem', marginLeft: 12, color: '#3498db' }}>
-          Satisfaction: {formatNumber(satisfaction)} &nbsp;|&nbsp; Dissatisfaction: {formatNumber(dissatisfaction)}
+        <span className="section-label" style={{ fontSize: '0.9rem', marginLeft: 12, color: '#3498db', display: 'inline-block', verticalAlign: 'middle', lineHeight: '1.2' }}>
+          Satisfaction: {formatNumber(isNaN(Number(satisfaction)) ? 0 : Number(satisfaction))} <br /> Dissatisfaction: {formatNumber(isNaN(Number(dissatisfaction)) ? 0 : Number(dissatisfaction))}
         </span>
       </h2>
 
