@@ -1,0 +1,611 @@
+@use "sass:map";
+// Variablen zusammenfassen in Farb-Maps
+$colors: (
+  primary: #2c3e50,
+  secondary: #999,
+  accent: #5f9ea0,
+  warning: #ffcc00,
+  text-dark: #555,
+  light-gray: #7f8c8d,
+  blue: #3498db,
+  white: #fff,
+  red: #e74c3c,
+  orange: #f39c12,
+  dark-blue: #34495e,
+);
+
+$backgrounds: (
+  light: #f5f5f5,
+  lighter-blue: #e0f7f7,
+  off-white: #f8f9fa,
+  transparent-white-30: rgba(255, 255, 255, 0.3),
+  transparent-white-90: rgba(255, 255, 255, 0.9),
+  blue: #3498db,
+  dark-blue: #2980b9,
+);
+
+$font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// Animationen zusammenfassen
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Mixins für gemeinsame Stile
+@mixin button-base {
+  border: none;
+  border-radius: 8px;
+  color: map.get($colors, white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@mixin color-variant($color1, $color2) {
+  background: linear-gradient(to bottom, $color1, $color2);
+}
+
+// Hauptcontainer
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: $font-family;
+}
+
+.game-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: map.get($colors, primary);
+}
+
+// Environment Labels
+.env-label {
+  font-size: 0.5em;
+  margin-left: 10px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: super;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 400;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  &.beta {
+    color: map.get($colors, secondary);
+    background-color: map.get($backgrounds, light);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+
+  &.localhost {
+    color: map.get($colors, accent);
+    background-color: map.get($backgrounds, lighter-blue);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+}
+
+// Displays
+.money-display {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: map.get($colors, primary);
+}
+
+.playtime-display {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, text-dark);
+  margin-top: -20px;
+  margin-bottom: 25px;
+  opacity: 0.8;
+}
+
+// Header elements
+.header-button {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.save-feedback-banner {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2ecc71;
+  color: map.get($colors, white);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  animation: fadeOut 1.5s ease-out forwards;
+}
+
+.section-title {
+  margin: 25px 0 15px;
+  color: map.get($colors, primary);
+  text-align: center;
+}
+
+// Buttons
+.floating-click-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #ff6b6b, #e67e22);
+  color: map.get($colors, white);
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+  }
+}
+
+// Clicker section
+.clicker-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.button-container {
+  flex: 1;
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.clicker-button {
+  @include button-base;
+  width: 100%;
+  height: 80px;
+  font-size: 1rem;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  &.blue {
+    @include color-variant(#3498db, #2980b9);
+  }
+  &.green {
+    @include color-variant(#2ecc71, #27ae60);
+  }
+  &.yellow {
+    @include color-variant(#f1c40f, #d4ac0d);
+  }
+  &.red {
+    @include color-variant(#e74c3c, #c0392b);
+  }
+  &.purple {
+    @include color-variant(#9b59b6, #8e44ad);
+  }
+}
+
+.upgrade-button {
+  @include button-base;
+  width: 120px;
+  height: 70px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+
+  &.blue {
+    @include color-variant(#3498db, #2980b9);
+  }
+  &.green {
+    @include color-variant(#2ecc71, #27ae60);
+  }
+  &.yellow {
+    @include color-variant(#f1c40f, #d4ac0d);
+  }
+  &.red {
+    @include color-variant(#e74c3c, #c0392b);
+  }
+  &.purple {
+    @include color-variant(#9b59b6, #8e44ad);
+  }
+}
+
+// Cooldown indicators
+.cooldown-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.cooldown-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  background-color: map.get($backgrounds, transparent-white-30);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.cooldown-progress-fill {
+  height: 100%;
+  background-color: map.get($backgrounds, transparent-white-90);
+  transition: width 0.1s linear;
+}
+
+.cooldown-text {
+  position: absolute;
+  bottom: 8px;
+  font-size: 0.75rem;
+  color: map.get($colors, white);
+  text-shadow: 0 0 2px black;
+}
+
+// Icons
+.spinning-icon {
+  animation: spin 1.5s linear infinite;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+}
+
+.check-icon {
+  width: 18px;
+  height: 18px;
+}
+
+// Upgrade sections
+.upgrade-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.upgrade-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+// Tabs
+.upgrade-tabs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0 15px;
+  border-bottom: 2px solid #e0e0e0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, #fff 70%, transparent);
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, #fff 70%, transparent);
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.upgrade-tabs-inner {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, light-gray);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    color: map.get($colors, primary);
+  }
+
+  &.active {
+    color: map.get($colors, primary);
+    font-weight: 600;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: map.get($backgrounds, blue);
+    }
+  }
+}
+
+// Segmented buttons
+.segmented-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.segmented-btn {
+  border: 1px solid #3498db;
+  background: #fff;
+  color: map.get($colors, blue);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+
+  &.active {
+    background: #3498db;
+    color: map.get($colors, white);
+  }
+}
+
+// Premium section
+.premium-section {
+  animation: fadeIn 0.3s ease;
+}
+
+.premium-upgrade-card {
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3498db;
+
+  &.experimental {
+    border-left: 4px solid #e74c3c;
+  }
+}
+
+.experimental-label {
+  color: map.get($colors, red);
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.premium-upgrade-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: map.get($colors, primary);
+  }
+}
+
+.premium-icon {
+  color: map.get($colors, orange);
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.premium-upgrade-description {
+  margin: 0 0 15px 0;
+  color: map.get($colors, light-gray);
+  font-size: 0.95rem;
+}
+
+.premium-upgrade-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premium-upgrade-level {
+  font-size: 0.9rem;
+  color: map.get($colors, dark-blue);
+}
+
+.premium-upgrade-button {
+  background-color: map.get($backgrounds, blue);
+  color: map.get($colors, white);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background-color: map.get($backgrounds, dark-blue);
+    transform: translateY(-1px);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .clicker-buttons,
+  .upgrade-buttons {
+    gap: 8px;
+  }
+
+  .money-display .per-second,
+  .section-title .section-label {
+    display: block;
+  }
+
+  .env-label {
+    display: block !important;
+  }
+
+  .button-container {
+    min-width: 100px;
+  }
+
+  .upgrade-tabs {
+    gap: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-x: auto;
+    justify-content: flex-start;
+
+    &::after,
+    &::before {
+      display: none;
+    }
+  }
+
+  .tab-button {
+    min-width: 120px;
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    padding: 10px 10px;
+  }
+
+  .upgrade-button {
+    width: 100px;
+    height: 65px;
+    font-size: 0.8rem;
+  }
+
+  .premium-upgrade-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .premium-upgrade-button {
+    width: 100%;
+  }
+}
