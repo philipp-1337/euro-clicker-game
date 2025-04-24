@@ -2,6 +2,7 @@ import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
 import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import StateInfrastructure from '@components/ClickerGame/UpgradeTabs/StateInfrastructure';
+import Interventions from '@components/ClickerGame/UpgradeTabs/Interventions';
 
 
 export const gameConfig = {
@@ -88,6 +89,7 @@ export const gameConfig = {
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
       unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
+      unlockInterventionsCost: 50000, // Kosten für die Freischaltung des Interventions-Tabs
     },
 
     // Timing-Konstanten
@@ -102,6 +104,7 @@ export const gameConfig = {
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
         { id: 'state', label: 'State & Infrastructure', component: StateInfrastructure },
+        { id: 'interventions', label: 'Interventions', component: Interventions },
       ],
     },
     // Schwierigkeitseinstellungen

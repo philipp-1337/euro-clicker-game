@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent, Landmark } from 'lucide-react';
+import { DollarSign, Star, Percent, Landmark, Shield } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -20,7 +20,10 @@ export default function PremiumUpgrades({
   unlockInvestmentCost,
   isStateUnlocked,
   unlockState,
-  unlockStateCost
+  unlockStateCost,
+  unlockInterventions,
+  isInterventionsUnlocked,
+  interventionsUnlockCost
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -124,6 +127,33 @@ export default function PremiumUpgrades({
           Experimental Feature
         </div>
       </div>
+      {/* Interventions option, only visible after State is unlocked */}
+      {isStateUnlocked && (
+        <div className="premium-upgrade-card experimental">
+          <div className="premium-upgrade-header">
+            <Shield className="premium-icon" />
+            <h3>Interventions</h3>
+          </div>
+          <p className="premium-upgrade-description">
+            Unlock the Interventions tab to access special state interventions.
+          </p>
+          <div className="premium-upgrade-info">
+            <div className="premium-upgrade-level">
+              Status: {isInterventionsUnlocked ? 'Unlocked' : 'Locked'}
+            </div>
+            <button
+              onClick={unlockInterventions}
+              disabled={money < interventionsUnlockCost || isInterventionsUnlocked}
+              className={`premium-upgrade-button ${money < interventionsUnlockCost || isInterventionsUnlocked ? 'disabled' : ''}`}
+            >
+              {isInterventionsUnlocked ? 'Unlocked' : `${formatNumber(interventionsUnlockCost)} €`}
+            </button>
+          </div>
+          <div className="experimental-label">
+            Experimental Feature
+          </div>
+        </div>
+      )}
     </div>
   );
 }

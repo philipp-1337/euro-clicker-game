@@ -42,6 +42,11 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.isStateUnlocked ?? false
   );
 
+  // Interventions-Tab-Status
+  const [isInterventionsUnlocked, setIsInterventionsUnlocked] = useState(
+    gameConfig.initialState.isInterventionsUnlocked ?? false
+  );
+
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
@@ -60,7 +65,8 @@ export default function useGameState(easyMode = false) {
     satisfaction,
     dissatisfaction,
     stateBuildings,
-    isStateUnlocked
+    isStateUnlocked,
+    isInterventionsUnlocked
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -88,6 +94,7 @@ export default function useGameState(easyMode = false) {
     );
     setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
+    setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
   };
 
   return {
@@ -109,6 +116,7 @@ export default function useGameState(easyMode = false) {
     dissatisfaction, setDissatisfaction,
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
+    isInterventionsUnlocked, setIsInterventionsUnlocked,
    
     // Save/Load
     gameState,

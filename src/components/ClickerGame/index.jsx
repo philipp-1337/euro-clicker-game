@@ -51,7 +51,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     isStateUnlocked,
     unlockState,
     unlockStateCost,
-    investmentCostMultiplier
+    investmentCostMultiplier,
+    isInterventionsUnlocked,
+    unlockInterventions,
+    interventionsUnlockCost
     } = useClickerGame(easyMode);
 
   return (
@@ -108,6 +111,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         isStateUnlocked={isStateUnlocked}
         unlockState={unlockState}
         unlockStateCost={unlockStateCost}
+        isInterventionsUnlocked={isInterventionsUnlocked}
+        unlockInterventions={unlockInterventions}
+        interventionsUnlockCost={interventionsUnlockCost}
         investmentCostMultiplier={investmentCostMultiplier}
       />
 

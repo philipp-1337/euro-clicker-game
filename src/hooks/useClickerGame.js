@@ -42,6 +42,7 @@ export default function useClickerGame(easyMode = false) {
     dissatisfaction, setDissatisfaction,
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
+    isInterventionsUnlocked, setIsInterventionsUnlocked,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -182,6 +183,18 @@ export default function useClickerGame(easyMode = false) {
 
   const unlockStateCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
 
+  // Unlock Interventions Tab
+  const unlockInterventions = useCallback(() => {
+    const unlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
+    if (money >= unlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - unlockCost);
+      setIsInterventionsUnlocked(true);
+    }
+  }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
+
+  const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
+
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
@@ -198,6 +211,7 @@ export default function useClickerGame(easyMode = false) {
     investments,
     isInvestmentUnlocked,
     isStateUnlocked,
+    isInterventionsUnlocked,
     totalMoneyPerSecond,
     satisfaction,
     dissatisfaction,
@@ -214,6 +228,7 @@ export default function useClickerGame(easyMode = false) {
     buyStateBuilding,
     unlockInvestments,
     unlockState,
+    unlockInterventions,
     buyInvestment,
     saveGame,
     addQuickMoney,
@@ -233,6 +248,7 @@ export default function useClickerGame(easyMode = false) {
     totalIncomePerSecond,
     unlockInvestmentCost,
     unlockStateCost,
+    interventionsUnlockCost,
     investmentCostMultiplier
   };
 }
