@@ -28,6 +28,8 @@ export const gameConfig = {
       { name: 'E-Car Manufacturer', cost: 60000, income: 60 },
       { name: 'E-Cigarettes', cost: 70000, income: 70 },
       { name: 'Pharma', cost: 80000, income: 80 },
+      { name: 'National Airline', cost: 90000, income: 90 },
+      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 }, // <-- Added
     ],
 
     stateBuildings: [
@@ -61,7 +63,7 @@ export const gameConfig = {
       globalPriceDecreaseLevel: 0,
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
-      investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
+      investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
       isStateUnlocked: false,
       satisfaction: 0,
       dissatisfaction: 0,
