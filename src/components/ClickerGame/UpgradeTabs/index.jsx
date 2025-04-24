@@ -37,6 +37,7 @@ export default function UpgradeTabs({
   isStateUnlocked,
   unlockState,
   unlockStateCost,
+  investmentCostMultiplier,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -103,6 +104,7 @@ export default function UpgradeTabs({
           isStateUnlocked={isStateUnlocked}
           unlockState={unlockState}
           unlockStateCost={unlockStateCost}
+          investmentCostMultiplier={investmentCostMultiplier}
         />
       )
     ))}

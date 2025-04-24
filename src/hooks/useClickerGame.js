@@ -115,8 +115,8 @@ export default function useClickerGame(easyMode = false) {
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
   // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
-  const { buyInvestment, totalIncomePerSecond } = useInvestments(
-    money, setMoney, investments, setInvestments, ensureStartTime
+  const { buyInvestment, totalIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
+    money, setMoney, investments, setInvestments, ensureStartTime, easyMode
   );
 
   // Manager-Einkommen pro Sekunde berechnen
@@ -232,6 +232,7 @@ export default function useClickerGame(easyMode = false) {
     managerCosts,
     totalIncomePerSecond,
     unlockInvestmentCost,
-    unlockStateCost
+    unlockStateCost,
+    investmentCostMultiplier
   };
 }
