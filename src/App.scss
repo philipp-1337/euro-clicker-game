@@ -1,3 +1,4 @@
+@use "sass:list";
 @use "sass:map";
 // Variablen zusammenfassen in Farb-Maps
 $colors: (
@@ -62,7 +63,7 @@ $button-colors: (
 @each $name, $colors in $button-colors {
   .clicker-button.#{$name},
   .upgrade-button.#{$name} {
-    @include color-variant(nth($colors, 1), nth($colors, 2));
+    @include color-variant(list.nth($colors, 1), list.nth($colors, 2));
   }
 }
 
