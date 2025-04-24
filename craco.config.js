@@ -1,4 +1,3 @@
-// craco.config.js
 const { GenerateSW } = require('workbox-webpack-plugin');
 const path = require('path');
 
@@ -11,20 +10,17 @@ module.exports = {
       "@constants": path.resolve(__dirname, "src/constants")
     },
     configure: (webpackConfig) => {
-      // Bestehende webpack-Konfiguration
-      
-      // PWA-Plugin hinzufügen
-      webpackConfig.plugins.push(
-        new GenerateSW({
-          clientsClaim: true,
-          skipWaiting: true,
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-          // Passe die Inhalte an, die gecacht werden sollen
-          include: [/\.html$/, /\.js$/, /\.css$/, /\.png$/, /\.jpg$/, /\.svg$/],
-          // Füge weitere Optionen nach Bedarf hinzu
-        })
-      );
-      
+      // Nur im Production-Build das Plugin hinzufügen
+      if (process.env.NODE_ENV === 'production') {
+        webpackConfig.plugins.push(
+          new GenerateSW({
+            clientsClaim: true,
+            skipWaiting: true,
+            maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+            include: [/\.html$/, /\.js$/, /\.css$/, /\.png$/, /\.jpg$/, /\.svg$/],
+          })
+        );
+      }
       return webpackConfig;
     }
   }
