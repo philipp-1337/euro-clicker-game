@@ -8,6 +8,7 @@ $colors: (
   text-dark: #555,
   light-gray: #7f8c8d,
   blue: #3498db,
+  dark-blue: #2980b9,
   white: #fff,
   red: #e74c3c,
   orange: #f39c12,
@@ -20,9 +21,22 @@ $backgrounds: (
   off-white: #f8f9fa,
   transparent-white-30: rgba(255, 255, 255, 0.3),
   transparent-white-90: rgba(255, 255, 255, 0.9),
-  blue: #3498db,
-  dark-blue: #2980b9,
 );
+
+$button-colors: (
+  blue: (map.get($colors, blue), map.get($colors, dark-blue)),
+  green: (#2ecc71, #27ae60),
+  yellow: (#f1c40f, #d4ac0d),
+  red: (#e74c3c, #c0392b),
+  purple: (#9b59b6, #8e44ad)
+);
+
+@each $name, $colors in $button-colors {
+  .clicker-button.#{$name},
+  .upgrade-button.#{$name} {
+    @include color-variant(nth($colors, 1), nth($colors, 2));
+  }
+}
 
 $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
@@ -256,22 +270,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  &.blue {
-    @include color-variant(#3498db, #2980b9);
-  }
-  &.green {
-    @include color-variant(#2ecc71, #27ae60);
-  }
-  &.yellow {
-    @include color-variant(#f1c40f, #d4ac0d);
-  }
-  &.red {
-    @include color-variant(#e74c3c, #c0392b);
-  }
-  &.purple {
-    @include color-variant(#9b59b6, #8e44ad);
-  }
 }
 
 .upgrade-button {
@@ -285,22 +283,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   align-items: center;
   padding: 10px;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-
-  &.blue {
-    @include color-variant(#3498db, #2980b9);
-  }
-  &.green {
-    @include color-variant(#2ecc71, #27ae60);
-  }
-  &.yellow {
-    @include color-variant(#f1c40f, #d4ac0d);
-  }
-  &.red {
-    @include color-variant(#e74c3c, #c0392b);
-  }
-  &.purple {
-    @include color-variant(#9b59b6, #8e44ad);
-  }
 }
 
 // Cooldown indicators
@@ -534,7 +516,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .premium-upgrade-button {
-  background-color: map.get($backgrounds, blue);
+  background-color: map.get($colors, blue);
   color: map.get($colors, white);
   border: none;
   border-radius: 6px;
@@ -545,7 +527,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   transition: all 0.2s ease;
 
   &:hover:not(.disabled) {
-    background-color: map.get($backgrounds, dark-blue);
+    background-color: map.get($colors, dark-blue);
     transform: translateY(-1px);
   }
 
