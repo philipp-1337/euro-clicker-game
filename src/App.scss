@@ -12,7 +12,7 @@ $colors: (
   white: #fff,
   red: #e74c3c,
   orange: #f39c12,
-  dark-blue: #34495e,
+  dark-hue: #34495e,
 );
 
 $backgrounds: (
@@ -30,6 +30,34 @@ $button-colors: (
   red: (#e74c3c, #c0392b),
   purple: (#9b59b6, #8e44ad)
 );
+
+@mixin button-base {
+  border: none;
+  border-radius: 8px;
+  color: map.get($colors, white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@mixin color-variant($color1, $color2) {
+  background: linear-gradient(to bottom, $color1, $color2);
+}
 
 @each $name, $colors in $button-colors {
   .clicker-button.#{$name},
@@ -72,33 +100,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 // Mixins für gemeinsame Stile
-@mixin button-base {
-  border: none;
-  border-radius: 8px;
-  color: map.get($colors, white);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-  &:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  &:active:not(.disabled) {
-    transform: translateY(1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  &.disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-}
-
-@mixin color-variant($color1, $color2) {
-  background: linear-gradient(to bottom, $color1, $color2);
-}
 
 // Hauptcontainer
 .game-container {
@@ -512,7 +513,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 .premium-upgrade-level {
   font-size: 0.9rem;
-  color: map.get($colors, dark-blue);
+  color: map.get($colors, dark-hue);
 }
 
 .premium-upgrade-button {
@@ -527,7 +528,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   transition: all 0.2s ease;
 
   &:hover:not(.disabled) {
-    background-color: map.get($colors, dark-blue);
+    background-color: map.get($colors, dark-hue);
     transform: translateY(-1px);
   }
 
