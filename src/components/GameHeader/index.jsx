@@ -1,7 +1,7 @@
 import { formatNumber } from '@utils/calculators';
 import { useState, useEffect } from 'react';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame, totalMoneyPerSecond }) {
+export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame, totalMoneyPerSecond, floatingClicks }) {
   const [environment, setEnvironment] = useState('production');
 
   useEffect(() => {
@@ -59,6 +59,8 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  // Statistik-Anzeige Toggle
+  const [showStats, setShowStats] = useState(false);
 
   const triggerSaveFeedback = (message = 'Game saved') => {
     setSaveMessage(message);
@@ -71,7 +73,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   useEffect(() => {
     const handleAutoSave = () => {
-      triggerSaveFeedback('Auto-saved'); // 🆕
+      triggerSaveFeedback('Auto-saved');
     };
     window.addEventListener('game:autosaved', handleAutoSave);
     return () => window.removeEventListener('game:autosaved', handleAutoSave);
@@ -126,6 +128,22 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         >
           🗑️
         </button>
+
+        {/* Statistik-Button */}
+        <button
+          className="header-button"
+          onClick={() => setShowStats(s => !s)}
+          title="Show Click Stats"
+          style={{ marginLeft: 8 }}
+        >
+          {showStats ? '📊' : '📈'}
+        </button>
+        {/* Click-Counter */}
+        {showStats && (
+          <span style={{ marginLeft: 8, fontWeight: 500 }}>
+            Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
+          </span>
+        )}
       </div>
     </>
   );

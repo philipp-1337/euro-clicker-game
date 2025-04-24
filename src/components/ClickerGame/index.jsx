@@ -107,6 +107,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
           playTime={playTime}
           onSaveGame={saveGame}
           totalMoneyPerSecond={totalMoneyPerSecond}
+          floatingClicks={floatingClicks} // <-- floatingClicks weitergeben
         />
       )}
 
