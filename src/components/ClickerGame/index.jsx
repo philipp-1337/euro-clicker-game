@@ -1,5 +1,5 @@
 import { useUiProgress } from '@hooks/useUiProgress';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
@@ -83,22 +83,6 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
 
   // FloatingButton: centerMode solange < 1 Klicks
   const floatingCenterMode = floatingClicks < 1;
-
-  // Fade-In für UpgradeTabs und ClickerButtons
-  const [showUpgrades, setShowUpgrades] = useState(false);
-  const [showClickerButtons, setShowClickerButtons] = useState(false);
-
-  // Zeige UpgradeTabs, wenn sie sichtbar werden sollen
-  // Zeige ClickerButtons, wenn sie sichtbar werden sollen
-  // useEffect statt useState für Side-Effect!
-  useEffect(() => {
-    if (uiProgress.gameStarted && money >= 10 && allButtonsClicked) {
-      setShowUpgrades(true);
-    }
-    if (uiProgress.gameStarted && money >= 10) {
-      setShowClickerButtons(true);
-    }
-  }, [uiProgress.gameStarted, money, allButtonsClicked]);
 
   return (
     <div className="game-container">
