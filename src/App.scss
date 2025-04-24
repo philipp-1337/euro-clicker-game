@@ -217,6 +217,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 // Buttons
 .floating-click-button {
+  // Default: bottom right
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -234,7 +235,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.1s;
+  transition: transform 0.1s, width 0.3s, height 0.3s, left 0.3s, top 0.3s, right 0.3s, bottom 0.3s;
 
   &:active {
     transform: scale(0.95);
@@ -242,6 +243,25 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   &:hover {
     background: linear-gradient(to bottom, #e67e22, #d35400);
+  }
+
+  &.center-mode {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vw;
+    max-width: 350px;
+    max-height: 350px;
+    min-width: 180px;
+    min-height: 180px;
+    font-size: 2.5rem;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    z-index: 2000;
   }
 }
 
