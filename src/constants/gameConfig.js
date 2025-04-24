@@ -12,11 +12,11 @@ export const gameConfig = {
     
     // Basis-Button-Konfiguration
     baseButtons: [
-      { baseValue: 1, baseCooldownTime: 1, colorClass: 'blue', managerCost: 100 },
-      { baseValue: 2, baseCooldownTime: 2, colorClass: 'green', managerCost: 1000 },
-      { baseValue: 3, baseCooldownTime: 3, colorClass: 'yellow', managerCost: 2000 },
-      { baseValue: 4, baseCooldownTime: 4, colorClass: 'red', managerCost: 5000 },
-      { baseValue: 5, baseCooldownTime: 5, colorClass: 'purple', managerCost: 10000 },
+      { baseValue: 10, baseCooldownTime: 10, colorClass: 'blue', managerCost: 100 },
+      { baseValue: 20, baseCooldownTime: 20, colorClass: 'green', managerCost: 1000 },
+      { baseValue: 30, baseCooldownTime: 30, colorClass: 'yellow', managerCost: 2000 },
+      { baseValue: 40, baseCooldownTime: 40, colorClass: 'red', managerCost: 5000 },
+      { baseValue: 50, baseCooldownTime: 50, colorClass: 'purple', managerCost: 10000 },
     ],
 
     investments: [
