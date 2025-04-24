@@ -103,30 +103,32 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      <div className="premium-upgrade-card experimental">
-        <div className="premium-upgrade-header">
-          <Landmark className="premium-icon" />
-          <h3>State & Infrastructure</h3>
-        </div>
-        <p className="premium-upgrade-description">
-          Unlock the State & Infrastructure tab to build state.
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Status: {isStateUnlocked ? 'Unlocked' : 'Locked'}
+      {isInvestmentUnlocked && ( // Ensure Investments is unlocked before showing State & Infrastructure
+        <div className="premium-upgrade-card experimental">
+          <div className="premium-upgrade-header">
+            <Landmark className="premium-icon" />
+            <h3>State & Infrastructure</h3>
           </div>
-          <button
-            onClick={unlockState}
-            disabled={money < unlockStateCost || isStateUnlocked}
-            className={`premium-upgrade-button ${money < unlockStateCost || isStateUnlocked ? 'disabled' : ''}`}
-          >
-            {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
-          </button>
+          <p className="premium-upgrade-description">
+            Unlock the State & Infrastructure tab to build state.
+          </p>
+          <div className="premium-upgrade-info">
+            <div className="premium-upgrade-level">
+              Status: {isStateUnlocked ? 'Unlocked' : 'Locked'}
+            </div>
+            <button
+              onClick={unlockState}
+              disabled={money < unlockStateCost || isStateUnlocked}
+              className={`premium-upgrade-button ${money < unlockStateCost || isStateUnlocked ? 'disabled' : ''}`}
+            >
+              {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
+            </button>
+          </div>
+          <div className="experimental-label">
+            Experimental Feature
+          </div>
         </div>
-        <div className="experimental-label">
-          Experimental Feature
-        </div>
-      </div>
+      )}
       {/* Interventions option, only visible after State is unlocked */}
       {isStateUnlocked && (
         <div className="premium-upgrade-card experimental">
