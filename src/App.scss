@@ -613,3 +613,13 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
   }
 }
+
+// UpgradeTabs Fade-In Animation
+.upgrade-tabs-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// ClickerButtons Fade-In Animation
+.clicker-buttons-fade {
+  animation: fadeIn 0.4s ease;
+}

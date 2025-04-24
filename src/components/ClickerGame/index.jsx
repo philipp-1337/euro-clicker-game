@@ -1,5 +1,5 @@
 import { useUiProgress } from '@hooks/useUiProgress';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
@@ -17,8 +17,6 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     floatingClicks,
     incrementFloatingClicks,
   } = useUiProgress();
-
-  const { gameStarted, clickedButtons } = uiProgress;
 
   const {
     money,
@@ -86,6 +84,22 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   // FloatingButton: centerMode solange < 1 Klicks
   const floatingCenterMode = floatingClicks < 1;
 
+  // Fade-In für UpgradeTabs und ClickerButtons
+  const [showUpgrades, setShowUpgrades] = useState(false);
+  const [showClickerButtons, setShowClickerButtons] = useState(false);
+
+  // Zeige UpgradeTabs, wenn sie sichtbar werden sollen
+  // Zeige ClickerButtons, wenn sie sichtbar werden sollen
+  // useEffect statt useState für Side-Effect!
+  useEffect(() => {
+    if (uiProgress.gameStarted && money >= 10 && allButtonsClicked) {
+      setShowUpgrades(true);
+    }
+    if (uiProgress.gameStarted && money >= 10) {
+      setShowClickerButtons(true);
+    }
+  }, [uiProgress.gameStarted, money, allButtonsClicked]);
+
   return (
     <div className="game-container">
       {/* GameHeader (mit Money, Income, Save, Reset, Playtime) erst nach erstem Klick */}
@@ -102,58 +116,62 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
 
       {/* ClickerButtons erst ab 10 € */}
       {uiProgress.gameStarted && money >= 10 && (
-        <ClickerButtons 
-          buttons={buttons} 
-          cooldowns={cooldowns} 
-          handleClick={handleClickerButton} 
-        />
+        <div className="clicker-buttons-fade">
+          <ClickerButtons 
+            buttons={buttons} 
+            cooldowns={cooldowns} 
+            handleClick={handleClickerButton} 
+          />
+        </div>
       )}
 
       {/* UpgradeTabs erst, wenn alle Buttons mindestens einmal geklickt wurden */}
       {uiProgress.gameStarted && money >= 10 && allButtonsClicked && (
-        <UpgradeTabs 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          money={money}
-          buttons={buttons}
-          investments={investments}
-          buyInvestment={buyInvestment}
-          valueUpgradeLevels={valueUpgradeLevels}
-          cooldownUpgradeLevels={cooldownUpgradeLevels}
-          valueUpgradeCosts={valueUpgradeCosts}
-          cooldownUpgradeCosts={cooldownUpgradeCosts}
-          buyValueUpgrade={buyValueUpgrade}
-          buyCooldownUpgrade={buyCooldownUpgrade}
-          globalMultiplier={globalMultiplier}
-          globalMultiplierLevel={globalMultiplierLevel}
-          globalMultiplierCost={globalMultiplierCost}
-          buyGlobalMultiplier={buyGlobalMultiplier}
-          managers={managers}
-          buyManager={buyManager}
-          managerCosts={managerCosts}
-          valueMultipliers={valueMultipliers}
-          cooldownReductions={cooldownReductions}
-          isInvestmentUnlocked={isInvestmentUnlocked}
-          unlockInvestments={unlockInvestments}
-          totalIncomePerSecond={totalIncomePerSecond}
-          globalPriceDecrease={globalPriceDecrease}
-          globalPriceDecreaseLevel={globalPriceDecreaseLevel}
-          globalPriceDecreaseCost={globalPriceDecreaseCost}
-          buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-          satisfaction={satisfaction}
-          dissatisfaction={dissatisfaction}
-          stateBuildings={stateBuildings}
-          buyStateBuilding={buyStateBuilding}
-          totalMoneyPerSecond={totalMoneyPerSecond}
-          unlockInvestmentCost={unlockInvestmentCost}
-          isStateUnlocked={isStateUnlocked}
-          unlockState={unlockState}
-          unlockStateCost={unlockStateCost}
-          isInterventionsUnlocked={isInterventionsUnlocked}
-          unlockInterventions={unlockInterventions}
-          interventionsUnlockCost={interventionsUnlockCost}
-          investmentCostMultiplier={investmentCostMultiplier}
-        />
+        <div className="upgrade-tabs-fade">
+          <UpgradeTabs 
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            money={money}
+            buttons={buttons}
+            investments={investments}
+            buyInvestment={buyInvestment}
+            valueUpgradeLevels={valueUpgradeLevels}
+            cooldownUpgradeLevels={cooldownUpgradeLevels}
+            valueUpgradeCosts={valueUpgradeCosts}
+            cooldownUpgradeCosts={cooldownUpgradeCosts}
+            buyValueUpgrade={buyValueUpgrade}
+            buyCooldownUpgrade={buyCooldownUpgrade}
+            globalMultiplier={globalMultiplier}
+            globalMultiplierLevel={globalMultiplierLevel}
+            globalMultiplierCost={globalMultiplierCost}
+            buyGlobalMultiplier={buyGlobalMultiplier}
+            managers={managers}
+            buyManager={buyManager}
+            managerCosts={managerCosts}
+            valueMultipliers={valueMultipliers}
+            cooldownReductions={cooldownReductions}
+            isInvestmentUnlocked={isInvestmentUnlocked}
+            unlockInvestments={unlockInvestments}
+            totalIncomePerSecond={totalIncomePerSecond}
+            globalPriceDecrease={globalPriceDecrease}
+            globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+            globalPriceDecreaseCost={globalPriceDecreaseCost}
+            buyGlobalPriceDecrease={buyGlobalPriceDecrease}
+            satisfaction={satisfaction}
+            dissatisfaction={dissatisfaction}
+            stateBuildings={stateBuildings}
+            buyStateBuilding={buyStateBuilding}
+            totalMoneyPerSecond={totalMoneyPerSecond}
+            unlockInvestmentCost={unlockInvestmentCost}
+            isStateUnlocked={isStateUnlocked}
+            unlockState={unlockState}
+            unlockStateCost={unlockStateCost}
+            isInterventionsUnlocked={isInterventionsUnlocked}
+            unlockInterventions={unlockInterventions}
+            interventionsUnlockCost={interventionsUnlockCost}
+            investmentCostMultiplier={investmentCostMultiplier}
+          />
+        </div>
       )}
 
       {/* FloatingClickButton immer sichtbar */}
