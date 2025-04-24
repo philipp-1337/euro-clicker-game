@@ -24,11 +24,11 @@ $backgrounds: (
 );
 
 $button-colors: (
-  blue: (map.get($colors, blue), map.get($colors, dark-blue)),
-  green: (#2ecc71, #27ae60),
-  yellow: (#f1c40f, #d4ac0d),
-  red: (#e74c3c, #c0392b),
-  purple: (#9b59b6, #8e44ad)
+  "blue": (map.get($colors, blue), map.get($colors, dark-blue)),
+  "green": (#2ecc71, #27ae60),
+  "yellow": (#f1c40f, #d4ac0d),
+  "red": (#e74c3c, #c0392b),
+  "purple": (#9b59b6, #8e44ad)
 );
 
 @mixin button-base {
@@ -353,6 +353,16 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   height: 18px;
 }
 
+// UpgradeTabs Fade-In Animation
+.upgrade-tabs-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// ClickerButtons Fade-In Animation
+.clicker-buttons-fade {
+  animation: fadeIn 0.4s ease;
+}
+
 // Upgrade sections
 .upgrade-buttons {
   display: flex;
@@ -612,14 +622,4 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   .premium-upgrade-button {
     width: 100%;
   }
-}
-
-// UpgradeTabs Fade-In Animation
-.upgrade-tabs-fade {
-  animation: fadeIn 0.4s ease;
-}
-
-// ClickerButtons Fade-In Animation
-.clicker-buttons-fade {
-  animation: fadeIn 0.4s ease;
 }

@@ -84,6 +84,18 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
   // FloatingButton: centerMode solange < 1 Klicks
   const floatingCenterMode = floatingClicks < 1;
 
+  // --- Fix: UI bleibt sichtbar, wenn einmal freigeschaltet, auch wenn das Geld wieder unter 10 € fällt ---
+  // Merke, ob ClickerButtons und UpgradeTabs schon einmal angezeigt wurden
+  const [clickerButtonsUnlocked, setClickerButtonsUnlocked] = useState(false);
+  const [upgradeTabsUnlocked, setUpgradeTabsUnlocked] = useState(false);
+
+  if (uiProgress.gameStarted && money >= 10 && !clickerButtonsUnlocked) {
+    setClickerButtonsUnlocked(true);
+  }
+  if (uiProgress.gameStarted && money >= 10 && allButtonsClicked && !upgradeTabsUnlocked) {
+    setUpgradeTabsUnlocked(true);
+  }
+
   return (
     <div className="game-container">
       {/* GameHeader (mit Money, Income, Save, Reset, Playtime) erst nach erstem Klick */}
@@ -98,8 +110,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         />
       )}
 
-      {/* ClickerButtons erst ab 10 € */}
-      {uiProgress.gameStarted && money >= 10 && (
+      {/* ClickerButtons erst ab 10 €, aber nach Freischaltung immer sichtbar */}
+      {uiProgress.gameStarted && clickerButtonsUnlocked && (
         <div className="clicker-buttons-fade">
           <ClickerButtons 
             buttons={buttons} 
@@ -109,8 +121,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
         </div>
       )}
 
-      {/* UpgradeTabs erst, wenn alle Buttons mindestens einmal geklickt wurden */}
-      {uiProgress.gameStarted && money >= 10 && allButtonsClicked && (
+      {/* UpgradeTabs erst, wenn alle Buttons mindestens einmal geklickt wurden, aber nach Freischaltung immer sichtbar */}
+      {uiProgress.gameStarted && upgradeTabsUnlocked && (
         <div className="upgrade-tabs-fade">
           <UpgradeTabs 
             activeTab={activeTab}
