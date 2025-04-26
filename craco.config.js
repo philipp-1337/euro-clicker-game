@@ -14,10 +14,12 @@ module.exports = {
       if (process.env.NODE_ENV === 'production') {
         webpackConfig.plugins.push(
           new GenerateSW({
-            clientsClaim: true,
-            skipWaiting: true,
+            clientsClaim: true, // Wichtig: Damit der neue SW die Kontrolle übernimmt
+            skipWaiting: true,  // Wichtig: Aktiviert den neuen SW sofort (oder nach Nachricht)
             maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
             include: [/\.html$/, /\.js$/, /\.css$/, /\.png$/, /\.jpg$/, /\.svg$/],
+            // Stelle sicher, dass der generierte SW auf die Nachricht hört
+            // Workbox v6+ macht dies standardmäßig, wenn skipWaiting: true gesetzt ist.
           })
         );
       }

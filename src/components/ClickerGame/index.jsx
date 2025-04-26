@@ -1,5 +1,5 @@
 import { useUiProgress } from '@hooks/useUiProgress';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Importiere useEffect
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
@@ -7,7 +7,7 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import 'App.scss';
 
-export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
+export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) { // Neuer Prop
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
@@ -64,6 +64,13 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle }) {
     unlockInterventions,
     interventionsUnlockCost,
     } = useClickerGame(easyMode);
+
+  // Registriere die saveGame Funktion beim übergeordneten App-Component
+  useEffect(() => {
+    if (registerSaveGameHandler && typeof registerSaveGameHandler === 'function') {
+      registerSaveGameHandler(saveGame);
+    }
+  }, [saveGame, registerSaveGameHandler]);
 
   // Handler für FloatingClickButton
   const handleFloatingClick = () => {

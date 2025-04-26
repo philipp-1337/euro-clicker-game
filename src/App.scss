@@ -569,58 +569,53 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
-// Responsive design
-@media (max-width: 600px) {
-  .clicker-buttons,
-  .upgrade-buttons {
-    gap: 8px;
-  }
+// Update Banner Styles
+.update-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: map.get($colors, dark-blue);
+  color: map.get($colors, white);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2000; // Ensure it's above other elements like the floating button
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 0.9rem;
 
-  .money-display .per-second,
-  .section-title .section-label {
-    display: block;
-  }
+  button {
+    @include button-base;
+    background: linear-gradient(to bottom, map.get($colors, blue), map.get($colors, dark-blue));
+    padding: 5px 15px;
+    font-size: 0.85rem;
+    margin-left: 15px;
+    box-shadow: none; // Remove default shadow for smaller button
 
-  .env-label {
-    display: block !important;
-  }
-
-  .button-container {
-    min-width: 100px;
-  }
-
-  .upgrade-tabs {
-    gap: 0;
-    padding-left: 4px;
-    padding-right: 4px;
-    overflow-x: auto;
-    justify-content: flex-start;
-
-    &::after,
-    &::before {
-      display: none;
+    &:hover:not(.disabled) {
+      background: linear-gradient(to bottom, map.get($colors, dark-blue), map.get($colors, blue));
+      transform: none; // No hover transform needed
+      box-shadow: none;
+    }
+     &:active:not(.disabled) {
+      transform: translateY(1px); // Slight press effect
     }
   }
+}
 
-  .tab-button {
-    min-width: 120px;
-    flex: 0 0 auto;
-    font-size: 0.95rem;
-    padding: 10px 10px;
-  }
-
-  .upgrade-button {
-    width: 100px;
-    height: 65px;
-    font-size: 0.8rem;
-  }
-
-  .premium-upgrade-info {
+// Responsive Anpassung für den Banner
+@media (max-width: 600px) {
+  .update-banner {
     flex-direction: column;
-    gap: 10px;
-  }
+    text-align: center;
+    gap: 8px;
+    padding: 12px;
 
-  .premium-upgrade-button {
-    width: 100%;
+    button {
+      width: 100%;
+      max-width: 200px; // Limit button width on small screens
+      margin-left: 0;
+    }
   }
 }
