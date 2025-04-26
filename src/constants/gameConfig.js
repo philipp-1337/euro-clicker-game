@@ -46,17 +46,6 @@ export const gameConfig = {
       { name: 'Gig Economy Deregulation', costPerSecond: -25, satisfactionValue: 0, dissatisfactionValue: 30 }, 
       { name: 'Tax Haven Subsidies', costPerSecond: -30, satisfactionValue: 0, dissatisfactionValue: 25 }
     ],
-
-    investments: [
-      { name: 'Taxiunternehmen', cost: 10000, income: 10 },
-      { name: 'Energydrinks', cost: 20000, income: 20 },
-      { name: 'Balkonkraftwerke', cost: 30000, income: 30 },
-      { name: 'Delikatessenladen', cost: 40000, income: 40 },
-      { name: 'Modelabel', cost: 50000, income: 50 },
-      { name: 'E-Autohersteller', cost: 60000, income: 60 },
-      { name: 'E-Zigaretten', cost: 70000, income: 70 },
-      { name: 'Pharma', cost: 80000, income: 80 },
-    ],
     
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level

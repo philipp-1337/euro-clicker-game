@@ -8,7 +8,10 @@ function onUpdateReady(registration) {
 }
 
 export function register() {
-  if ('serviceWorker' in navigator) {
+  if (
+    'serviceWorker' in navigator &&
+    process.env.NODE_ENV === 'production' // Nur in Produktion registrieren!
+  ) {
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
       
