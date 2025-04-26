@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -8,8 +8,19 @@ import useCooldowns from './useCooldowns';
 import usePlaytime from './usePlaytime';
 import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
+import useStateInfrastructure from './useStateInfrastructure';
 
 export default function useClickerGame(easyMode = false) {
+
+  // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
+  const { playTime, ensureStartTime } = usePlaytime();
+
+  // Überprüfe, ob die Startzeit gesetzt ist
+  const wrappedHandleClick = (index) => {
+    ensureStartTime();
+    handleClick(index);
+  };
+
   // Basis-Spielzustand
   const gameStateHook = useGameState(easyMode);
   const {
@@ -22,9 +33,16 @@ export default function useClickerGame(easyMode = false) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
+    globalPriceDecrease, setGlobalPriceDecrease,
+    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
     gameState, loadGameState,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
+    satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
+    stateBuildings, setStateBuildings,
+    isStateUnlocked, setIsStateUnlocked,
+    isInterventionsUnlocked, setIsInterventionsUnlocked,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -32,6 +50,7 @@ export default function useClickerGame(easyMode = false) {
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
+    globalPriceDecreaseCost,
     buttons
   } = useGameCalculations(
     valueUpgradeLevels,
@@ -40,7 +59,28 @@ export default function useClickerGame(easyMode = false) {
     cooldownReductions,
     globalMultiplier,
     globalMultiplierLevel,
-    easyMode
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    easyMode,
+  );
+
+  // Kauflogik für das neue Upgrade
+  const buyGlobalPriceDecrease = useCallback(() => {
+    if (money >= globalPriceDecreaseCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - globalPriceDecreaseCost);
+      setGlobalPriceDecreaseLevel(prev => prev + 1);
+      setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
+    }
+  }, [money, globalPriceDecreaseCost, setMoney, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease, ensureStartTime]);
+
+  // Kauflogik für Staatsgebäude
+  const { buyStateBuilding } = useStateInfrastructure(
+    money, setMoney,
+    satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
+    stateBuildings, setStateBuildings,
+    ensureStartTime
   );
   
   // Upgrade-Funktionen
@@ -59,43 +99,101 @@ export default function useClickerGame(easyMode = false) {
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
-    gameConfig
+    gameConfig,
+    ensureStartTime
   );
 
   // In useClickerGame.js, füge diese Funktion hinzu
   const addQuickMoney = useCallback(() => {
+    ensureStartTime?.();
     setMoney(prevMoney => prevMoney + 1);
-  }, [setMoney]);
+  }, [setMoney, ensureStartTime]);
   
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-  const { buyManager } = useManagers(money, setMoney, managers, setManagers);
+  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime);
   // Managerkosten dynamisch berechnen
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
-  
+
+  // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
+  const { buyInvestment, totalIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
+    money, setMoney, investments, setInvestments, ensureStartTime, easyMode
+  );
+
+  // Manager-Einkommen pro Sekunde berechnen
+  const managerIncomePerSecond = useMemo(() => {
+    return managers.reduce((sum, hasManager, idx) => {
+      if (hasManager) {
+        // Button-Wert pro Cooldown, umgerechnet auf 1 Sekunde
+        const button = buttons[idx];
+        return sum + (button.value / button.cooldownTime);
+      }
+      return sum;
+    }, 0);
+  }, [managers, buttons]);
+
+  // Laufende Kosten für Staatsgebäude pro Sekunde berechnen
+  const stateBuildingsCostPerSecond = useMemo(() => {
+    return stateBuildings.reduce((sum, active, idx) => {
+      if (active) {
+        return sum + gameConfig.stateBuildings[idx].costPerSecond;
+      }
+      return sum;
+    }, 0);
+  }, [stateBuildings]);
+
+  // Gesamt-Einkommen pro Sekunde
+  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond - stateBuildingsCostPerSecond;
+
+  // Zentrale Geldberechnung pro Sekunde
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMoney(prev => prev + totalMoneyPerSecond);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [totalMoneyPerSecond, setMoney]);
+
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
     cooldowns, setCooldowns, managers, buttons, money, setMoney
   );
 
-  // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
-  const { playTime, ensureStartTime } = usePlaytime();
-  const wrappedHandleClick = (index) => {
-    ensureStartTime();
-    handleClick(index);
-  };
 
+  // Kauflogik für Investments freischalten
   const unlockInvestments = useCallback(() => {
-    if (money >= gameConfig.premiumUpgrades.unlockInvestmentCost) {
-      setMoney(prev => prev - gameConfig.premiumUpgrades.unlockInvestmentCost);
+    const unlockCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier; // <--- Easy Mode berücksichtigen
+    if (money >= unlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - unlockCost);
       setIsInvestmentUnlocked(true);
     }
-  }, [money, setMoney, setIsInvestmentUnlocked]);
+  }, [money, setMoney, setIsInvestmentUnlocked, costMultiplier, ensureStartTime]);
 
-  // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
-  const { buyInvestment, totalIncomePerSecond } = useInvestments(
-    money, setMoney, investments, setInvestments
-  );
+  const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier;
+
+  // Unlock StateInfrastructure Tab
+  const unlockState = useCallback(() => {
+    const unlockCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
+    if (money >= unlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - unlockCost);
+      setIsStateUnlocked(true);
+    }
+  }, [money, setMoney, setIsStateUnlocked, costMultiplier, ensureStartTime]);
+
+  const unlockStateCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
+
+  // Unlock Interventions Tab
+  const unlockInterventions = useCallback(() => {
+    const unlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
+    if (money >= unlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - unlockCost);
+      setIsInterventionsUnlocked(true);
+    }
+  }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
+
+  const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
 
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
@@ -112,6 +210,12 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
+    isStateUnlocked,
+    isInterventionsUnlocked,
+    totalMoneyPerSecond,
+    satisfaction,
+    dissatisfaction,
+    stateBuildings,
     
     // Funktionen
     handleClick: wrappedHandleClick,
@@ -120,7 +224,11 @@ export default function useClickerGame(easyMode = false) {
     buyValueUpgrade,
     buyCooldownUpgrade,
     buyGlobalMultiplier,
+    buyGlobalPriceDecrease,
+    buyStateBuilding,
     unlockInvestments,
+    unlockState,
+    unlockInterventions,
     buyInvestment,
     saveGame,
     addQuickMoney,
@@ -133,7 +241,14 @@ export default function useClickerGame(easyMode = false) {
     globalMultiplier,
     globalMultiplierLevel,
     globalMultiplierCost,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    globalPriceDecreaseCost,
     managerCosts,
-    totalIncomePerSecond
+    totalIncomePerSecond,
+    unlockInvestmentCost,
+    unlockStateCost,
+    interventionsUnlockCost,
+    investmentCostMultiplier
   };
 }

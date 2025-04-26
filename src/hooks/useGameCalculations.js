@@ -9,6 +9,8 @@ export default function useGameCalculations(
   cooldownReductions,
   globalMultiplier,
   globalMultiplierLevel,
+  globalPriceDecrease,
+  globalPriceDecreaseLevel,
   easyMode = false
 ) {
   // Kosten für Upgrades berechnen
@@ -20,8 +22,8 @@ export default function useGameCalculations(
         gameConfig.upgrades.costIncreaseFactor,
         easyMode,
         gameConfig.getCostMultiplier
-      )
-    ), [valueUpgradeLevels, easyMode]);
+      ) * globalPriceDecrease
+    ), [valueUpgradeLevels, easyMode, globalPriceDecrease]);
   
   const cooldownUpgradeCosts = useMemo(() => 
     cooldownUpgradeLevels.map((_, i) =>
@@ -31,32 +33,42 @@ export default function useGameCalculations(
         gameConfig.upgrades.costIncreaseFactor,
         easyMode,
         gameConfig.getCostMultiplier
-      )
-    ), [cooldownUpgradeLevels, easyMode]);
-  
-  // Premium-Upgrade-Kosten
-  const globalMultiplierCost = useMemo(() => 
-    calculateCostWithDifficulty(
-      gameConfig.premiumUpgrades.globalMultiplier.baseCost,
-      globalMultiplierLevel,
-      gameConfig.premiumUpgrades.globalMultiplier.costExponent,
-      easyMode,
-      gameConfig.getCostMultiplier
-    ), [globalMultiplierLevel, easyMode]);
+      ) * globalPriceDecrease
+    ), [cooldownUpgradeLevels, easyMode, globalPriceDecrease]);
 
-  // Buttons mit aktuellen Werten berechnen
-  const buttons = useMemo(() => 
-    calculateButtons(
-      gameConfig.baseButtons,
-      valueMultipliers,
-      globalMultiplier,
-      cooldownReductions
-    ), [valueMultipliers, globalMultiplier, cooldownReductions]);
+    
+    // Premium-Upgrade-Kosten
+    const globalMultiplierCost = useMemo(() => 
+      calculateCostWithDifficulty(
+        gameConfig.premiumUpgrades.globalMultiplier.baseCost,
+        globalMultiplierLevel,
+        gameConfig.premiumUpgrades.globalMultiplier.costExponent,
+        easyMode,
+        gameConfig.getCostMultiplier
+      ), [globalMultiplierLevel, easyMode]);
+      
+      // Buttons mit aktuellen Werten berechnen
+      const buttons = useMemo(() => 
+        calculateButtons(
+          gameConfig.baseButtons,
+          valueMultipliers,
+          globalMultiplier,
+          cooldownReductions
+        ), [valueMultipliers, globalMultiplier, cooldownReductions]);
+        
+      // Preis für das neue Premium-Upgrade berechnen
+      const globalPriceDecreaseCost = useMemo(() =>
+        gameConfig.premiumUpgrades.globalPriceDecrease.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.globalPriceDecrease.costExponent, globalPriceDecreaseLevel) *
+        gameConfig.getCostMultiplier(easyMode), // <--- Easy Mode berücksichtigen
+        [globalPriceDecreaseLevel, easyMode]
+      );
 
   return {
     valueUpgradeCosts,
     cooldownUpgradeCosts,
     globalMultiplierCost,
+    globalPriceDecreaseCost,
     buttons
   };
 }

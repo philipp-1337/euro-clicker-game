@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function useInvestments(money, setMoney, investments, setInvestments) {
+export default function useInvestments(money, setMoney, investments, setInvestments, ensureStartTime, easyMode = false) {
+  // Kostenmultiplikator für easyMode berücksichtigen
+  const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+
   const totalIncomePerSecond = investments.reduce(
     (total, count, index) => total + count * gameConfig.investments[index].income,
     0
@@ -9,8 +11,10 @@ export default function useInvestments(money, setMoney, investments, setInvestme
 
   const buyInvestment = (index) => {
     const investment = gameConfig.investments[index];
-    if (money >= investment.cost && investments[index] === 0) { // Nur kaufen, wenn noch nicht gekauft
-      setMoney((prev) => prev - investment.cost);
+    const investmentCost = investment.cost * costMultiplier;
+    if (money >= investmentCost && investments[index] === 0) { // Nur kaufen, wenn noch nicht gekauft
+      ensureStartTime?.();
+      setMoney((prev) => prev - investmentCost);
       setInvestments((prev) => {
         const updated = [...prev];
         updated[index] = 1; // Nur einmal kaufbar
@@ -19,13 +23,5 @@ export default function useInvestments(money, setMoney, investments, setInvestme
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMoney((prev) => prev + totalIncomePerSecond);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [totalIncomePerSecond, setMoney]);
-
-  return { buyInvestment, totalIncomePerSecond };
+  return { buyInvestment, totalIncomePerSecond, costMultiplier };
 }

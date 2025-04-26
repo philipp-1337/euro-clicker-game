@@ -1,0 +1,696 @@
+@use "sass:list";
+@use "sass:map";
+// Variablen zusammenfassen in Farb-Maps
+$colors: (
+  primary: #2c3e50,
+  secondary: #999,
+  accent: #5f9ea0,
+  warning: #ffcc00,
+  text-dark: #555,
+  light-gray: #7f8c8d,
+  blue: #3498db,
+  dark-blue: #2980b9,
+  white: #fff,
+  red: #e74c3c,
+  orange: #f39c12,
+  dark-hue: #34495e,
+);
+
+$backgrounds: (
+  light: #f5f5f5,
+  lighter-blue: #e0f7f7,
+  off-white: #f8f9fa,
+  transparent-white-30: rgba(255, 255, 255, 0.3),
+  transparent-white-90: rgba(255, 255, 255, 0.9),
+);
+
+$button-colors: (
+  "blue": (map.get($colors, blue), map.get($colors, dark-blue)),
+  "green": (#2ecc71, #27ae60),
+  "yellow": (#f1c40f, #d4ac0d),
+  "red": (#e74c3c, #c0392b),
+  "purple": (#9b59b6, #8e44ad)
+);
+
+@mixin button-base {
+  border: none;
+  border-radius: 8px;
+  color: map.get($colors, white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@mixin color-variant($color1, $color2) {
+  background: linear-gradient(to bottom, $color1, $color2);
+}
+
+@each $name, $colors in $button-colors {
+  .clicker-button.#{$name},
+  .upgrade-button.#{$name} {
+    @include color-variant(list.nth($colors, 1), list.nth($colors, 2));
+  }
+}
+
+$font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+// Animationen zusammenfassen
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Mixins für gemeinsame Stile
+
+// Hauptcontainer
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: $font-family;
+}
+
+.game-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: map.get($colors, primary);
+}
+
+// Environment Labels
+.env-label {
+  font-size: 0.5em;
+  margin-left: 10px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: super;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 400;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  &.beta {
+    color: map.get($colors, secondary);
+    background-color: map.get($backgrounds, light);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+
+  &.localhost {
+    color: map.get($colors, accent);
+    background-color: map.get($backgrounds, lighter-blue);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+}
+
+// Displays
+.money-display {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: map.get($colors, primary);
+}
+
+.playtime-display {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, text-dark);
+  margin-top: -20px;
+  margin-bottom: 25px;
+  opacity: 0.8;
+}
+
+// Header elements
+.header-button {
+  background: none;
+  border: none;
+  margin-left: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.save-feedback-banner {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2ecc71;
+  color: map.get($colors, white);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  animation: fadeOut 1.5s ease-out forwards;
+}
+
+.section-title {
+  margin: 25px 0 15px;
+  color: map.get($colors, primary);
+  text-align: center;
+}
+
+// Section label styles (for Investments and StateInfrastructure)
+.section-label {
+  font-size: 0.9rem;
+  margin-left: 12px;
+  color: #2ecc71;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+// Buttons
+.floating-click-button {
+  // Default: bottom right
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #ff6b6b, #e67e22);
+  color: map.get($colors, white);
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, width 0.3s, height 0.3s, left 0.3s, top 0.3s, right 0.3s, bottom 0.3s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+  }
+
+  &.center-mode {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vw;
+    max-width: 350px;
+    max-height: 350px;
+    min-width: 180px;
+    min-height: 180px;
+    font-size: 2.5rem;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    z-index: 2000;
+  }
+}
+
+// Clicker section
+.clicker-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.button-container {
+  flex: 1;
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.clicker-button {
+  @include button-base;
+  width: 100%;
+  height: 80px;
+  font-size: 1rem;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upgrade-button {
+  @include button-base;
+  width: 120px;
+  height: 70px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+// Cooldown indicators
+.cooldown-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.cooldown-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  background-color: map.get($backgrounds, transparent-white-30);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.cooldown-progress-fill {
+  height: 100%;
+  background-color: map.get($backgrounds, transparent-white-90);
+  transition: width 0.1s linear;
+}
+
+.cooldown-text {
+  position: absolute;
+  bottom: 8px;
+  font-size: 0.75rem;
+  color: map.get($colors, white);
+  text-shadow: 0 0 2px black;
+}
+
+// Icons
+.spinning-icon {
+  animation: spin 1.5s linear infinite;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+}
+
+.check-icon {
+  width: 18px;
+  height: 18px;
+}
+
+// UpgradeTabs Fade-In Animation
+.upgrade-tabs-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// ClickerButtons Fade-In Animation
+.clicker-buttons-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// Upgrade sections
+.upgrade-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.upgrade-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+// Tabs
+.upgrade-tabs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0 15px;
+  border-bottom: 2px solid #e0e0e0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.upgrade-tabs-inner {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, light-gray);
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    color: map.get($colors, primary);
+  }
+
+  &.active {
+    color: map.get($colors, primary);
+    font-weight: 600;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: map.get($backgrounds, blue);
+    }
+  }
+}
+
+// Segmented buttons
+.segmented-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.segmented-btn {
+  border: 1px solid #3498db;
+  background: #fff;
+  color: map.get($colors, blue);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+
+  &.active {
+    background: #3498db;
+    color: map.get($colors, white);
+  }
+}
+
+// Premium section
+.premium-section {
+  animation: fadeIn 0.3s ease;
+}
+
+.premium-upgrade-card {
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3498db;
+
+  &.experimental {
+    border-left: 4px solid #e74c3c;
+  }
+}
+
+.experimental-label {
+  color: map.get($colors, red);
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.premium-upgrade-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: map.get($colors, primary);
+  }
+}
+
+.premium-icon {
+  color: map.get($colors, orange);
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.premium-upgrade-description {
+  margin: 0 0 15px 0;
+  color: map.get($colors, light-gray);
+  font-size: 0.95rem;
+}
+
+.premium-upgrade-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premium-upgrade-level {
+  font-size: 0.9rem;
+  color: map.get($colors, dark-hue);
+}
+
+.premium-upgrade-button {
+  background-color: map.get($colors, blue);
+  color: map.get($colors, white);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background-color: map.get($colors, dark-hue);
+    transform: translateY(-1px);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Update Banner Styles
+.update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  min-width: 280px;
+  max-width: 95vw;
+  background: linear-gradient(90deg, #f9d423 0%, #ff4e50 100%);
+  color: map.get($colors, primary);
+  padding: 16px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  font-family: $font-family;
+  font-size: 1.05rem;
+  font-weight: 500;
+  z-index: 2002;
+  // border: 2px solid #fffbe6;
+  animation: fadeIn 0.3s;
+
+  // Abstand für iOS/iPadOS "safe area"
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+
+  span {
+    font-weight: 600;
+    color: map.get($colors, dark-hue);
+    letter-spacing: 0.01em;
+  }
+
+  button {
+    @include button-base;
+    background: linear-gradient(to bottom, map.get($colors, blue), map.get($colors, dark-blue));
+    color: map.get($colors, white);
+    padding: 7px 22px;
+    font-size: 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover:not(.disabled) {
+      transform: translateY(-1px) scale(1.04);
+    }
+
+    &:active:not(.disabled) {
+      transform: translateY(1px) scale(0.98);
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+
+  .clicker-buttons,
+  .upgrade-buttons {
+    gap: 8px;
+  }
+
+  .money-display .per-second,
+  .section-title .section-label {
+    display: block;
+  }
+
+  .env-label {
+    display: block !important;
+  }
+
+  .button-container {
+    min-width: 100px;
+  }
+
+  .upgrade-tabs {
+    gap: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-x: auto;
+    justify-content: flex-start;
+
+    &::after,
+    &::before {
+      display: none;
+    }
+  }
+
+  .tab-button {
+    min-width: 120px;
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    padding: 10px 10px;
+  }
+
+  .upgrade-button {
+    width: 100px;
+    height: 65px;
+    font-size: 0.8rem;
+  }
+
+  .premium-upgrade-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .premium-upgrade-button {
+    width: 100%;
+  }
+  .update-banner {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 10px calc(14px + env(safe-area-inset-bottom, 0px)) 10px;
+    min-width: 0;
+    width: 95vw;
+    left: 50%;
+    bottom: 12px;
+    font-size: 0.98rem;
+    border-radius: 12px;
+  }
+  .update-banner button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1.05rem;
+  }
+}

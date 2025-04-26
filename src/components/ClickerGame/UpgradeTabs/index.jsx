@@ -15,6 +15,10 @@ export default function UpgradeTabs({
   globalMultiplier,
   globalMultiplierLevel,
   globalMultiplierCost,
+  globalPriceDecrease,
+  globalPriceDecreaseLevel,
+  globalPriceDecreaseCost,
+  buyGlobalPriceDecrease,
   buyGlobalMultiplier,
   managers,
   buyManager,
@@ -23,7 +27,20 @@ export default function UpgradeTabs({
   buyInvestment,
   isInvestmentUnlocked,
   unlockInvestments,
-  totalIncomePerSecond
+  totalIncomePerSecond,
+  satisfaction,
+  dissatisfaction,
+  stateBuildings,
+  buyStateBuilding,
+  totalMoneyPerSecond,
+  unlockInvestmentCost,
+  isStateUnlocked,
+  unlockState,
+  unlockStateCost,
+  investmentCostMultiplier,
+  isInterventionsUnlocked,
+  unlockInterventions,
+  interventionsUnlockCost,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -37,8 +54,11 @@ export default function UpgradeTabs({
   return (
     <>
       <div className="upgrade-tabs">
+      <div className="upgrade-tabs-inner">
         {gameConfig.ui.tabs.map((tab) => (
-          (tab.id !== 'investments' || isInvestmentUnlocked) && ( // Nur anzeigen, wenn freigeschaltet
+          ((tab.id !== 'investments' || isInvestmentUnlocked) &&
+           (tab.id !== 'state' || isStateUnlocked) &&
+           (tab.id !== 'interventions' || isInterventionsUnlocked)) && (
             <button
               key={tab.id}
               className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
@@ -49,6 +69,7 @@ export default function UpgradeTabs({
           )
         ))}
       </div>
+    </div>
 
     {gameConfig.ui.tabs.map(tab => (
       activeTab === tab.id && (
@@ -74,7 +95,23 @@ export default function UpgradeTabs({
           isInvestmentUnlocked={isInvestmentUnlocked}
           unlockInvestments={unlockInvestments}
           totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
-
+          globalPriceDecrease={globalPriceDecrease}
+          globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+          globalPriceDecreaseCost={globalPriceDecreaseCost}
+          buyGlobalPriceDecrease={buyGlobalPriceDecrease}
+          satisfaction={satisfaction}
+          dissatisfaction={dissatisfaction}
+          stateBuildings={stateBuildings}
+          buyStateBuilding={buyStateBuilding}
+          totalMoneyPerSecond={totalMoneyPerSecond}
+          unlockInvestmentCost={unlockInvestmentCost}
+          isStateUnlocked={isStateUnlocked}
+          unlockState={unlockState}
+          unlockStateCost={unlockStateCost}
+          investmentCostMultiplier={investmentCostMultiplier}
+          isInterventionsUnlocked={isInterventionsUnlocked}
+          unlockInterventions={unlockInterventions}
+          interventionsUnlockCost={interventionsUnlockCost}
         />
       )
     ))}

@@ -1,6 +1,9 @@
 import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
 import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
+import StateInfrastructure from '@components/ClickerGame/UpgradeTabs/StateInfrastructure';
+import Interventions from '@components/ClickerGame/UpgradeTabs/Interventions';
+
 
 export const gameConfig = {
     // Basis-Kosten für Upgrades
@@ -9,11 +12,39 @@ export const gameConfig = {
     
     // Basis-Button-Konfiguration
     baseButtons: [
-      { baseValue: 1, baseCooldownTime: 1, colorClass: 'blue', managerCost: 100 },
-      { baseValue: 2, baseCooldownTime: 2, colorClass: 'green', managerCost: 1000 },
-      { baseValue: 3, baseCooldownTime: 3, colorClass: 'yellow', managerCost: 2000 },
-      { baseValue: 4, baseCooldownTime: 4, colorClass: 'red', managerCost: 5000 },
-      { baseValue: 5, baseCooldownTime: 5, colorClass: 'purple', managerCost: 10000 },
+      { baseValue: 10, baseCooldownTime: 10, colorClass: 'blue', managerCost: 200 },
+      { baseValue: 20, baseCooldownTime: 20, colorClass: 'green', managerCost: 1000 },
+      { baseValue: 30, baseCooldownTime: 30, colorClass: 'yellow', managerCost: 2000 },
+      { baseValue: 40, baseCooldownTime: 40, colorClass: 'red', managerCost: 5000 },
+      { baseValue: 50, baseCooldownTime: 50, colorClass: 'purple', managerCost: 10000 },
+    ],
+
+    investments: [
+      { name: 'Taxi Company', cost: 10000, income: 10 },
+      { name: 'Energy Drinks', cost: 20000, income: 20 },
+      { name: 'Balcony Power Plants', cost: 30000, income: 30 },
+      { name: 'Delicatessen', cost: 40000, income: 40 },
+      { name: 'Fashion Label', cost: 50000, income: 50 },
+      { name: 'E-Car Manufacturer', cost: 60000, income: 60 },
+      { name: 'E-Cigarettes', cost: 70000, income: 70 },
+      { name: 'Pharma', cost: 80000, income: 80 },
+      { name: 'National Airline', cost: 90000, income: 90 },
+      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 }, // <-- Added
+    ],
+
+    stateBuildings: [
+      { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
+      { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
+      { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
+      { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
+      { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
+      { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
+      { name: 'Arms Race', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 },
+      { name: 'Media Manipulation', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 }, 
+      { name: 'Surveillance Expansion', costPerSecond: -15, satisfactionValue: 0, dissatisfactionValue: 15 }, 
+      { name: 'Private Prisons', costPerSecond: -20, satisfactionValue: 0, dissatisfactionValue: 20 }, 
+      { name: 'Gig Economy Deregulation', costPerSecond: -25, satisfactionValue: 0, dissatisfactionValue: 30 }, 
+      { name: 'Tax Haven Subsidies', costPerSecond: -30, satisfactionValue: 0, dissatisfactionValue: 25 }
     ],
 
     investments: [
@@ -45,8 +76,14 @@ export const gameConfig = {
       cooldownUpgradeLevels: [0, 0, 0, 0, 0],
       globalMultiplier: 1,
       globalMultiplierLevel: 0,
+      globalPriceDecreaseLevel: 0,
+      globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
-      investments: [0, 0, 0, 0, 0, 0, 0, 0], // gleiche Länge wie investments-Array
+      investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
+      isStateUnlocked: false,
+      satisfaction: 0,
+      dissatisfaction: 0,
+      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
     },
 
     // Upgrade-Multiplikatoren
@@ -63,7 +100,14 @@ export const gameConfig = {
         baseCost: 1000,
         costExponent: 1.75
       },
+      globalPriceDecrease: {
+        baseCost: 2500,
+        costExponent: 1.75, // z.B. exponentiell steigend, anpassbar
+        decreaseFactor: 0.95 // -5% pro Level (0.95^level)
+      },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+      unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
+      unlockInterventionsCost: 50000, // Kosten für die Freischaltung des Interventions-Tabs
     },
 
     // Timing-Konstanten
@@ -77,6 +121,8 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
+        { id: 'state', label: 'State & Infrastructure', component: StateInfrastructure },
+        { id: 'interventions', label: 'Interventions', component: Interventions },
       ],
     },
     // Schwierigkeitseinstellungen

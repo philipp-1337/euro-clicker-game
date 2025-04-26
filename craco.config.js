@@ -1,4 +1,3 @@
-// craco.config.js
 const { GenerateSW } = require('workbox-webpack-plugin');
 const path = require('path');
 
@@ -11,20 +10,19 @@ module.exports = {
       "@constants": path.resolve(__dirname, "src/constants")
     },
     configure: (webpackConfig) => {
-      // Bestehende webpack-Konfiguration
-      
-      // PWA-Plugin hinzufügen
-      webpackConfig.plugins.push(
-        new GenerateSW({
-          clientsClaim: true,
-          skipWaiting: true,
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
-          // Passe die Inhalte an, die gecacht werden sollen
-          include: [/\.html$/, /\.js$/, /\.css$/, /\.png$/, /\.jpg$/, /\.svg$/],
-          // Füge weitere Optionen nach Bedarf hinzu
-        })
-      );
-      
+      // Nur im Production-Build das Plugin hinzufügen
+      if (process.env.NODE_ENV === 'production') {
+        webpackConfig.plugins.push(
+          new GenerateSW({
+            clientsClaim: true, // Wichtig: Damit der neue SW die Kontrolle übernimmt
+            skipWaiting: true,  // Wichtig: Aktiviert den neuen SW sofort (oder nach Nachricht)
+            maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+            include: [/\.html$/, /\.js$/, /\.css$/, /\.png$/, /\.jpg$/, /\.svg$/],
+            // Stelle sicher, dass der generierte SW auf die Nachricht hört
+            // Workbox v6+ macht dies standardmäßig, wenn skipWaiting: true gesetzt ist.
+          })
+        );
+      }
       return webpackConfig;
     }
   }

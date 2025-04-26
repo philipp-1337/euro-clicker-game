@@ -1,13 +1,15 @@
 import { formatNumber } from '@utils/calculators';
 import { useState, useEffect } from 'react';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame }) {
+export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame, totalMoneyPerSecond, floatingClicks }) {
   const [environment, setEnvironment] = useState('production');
 
   useEffect(() => {
     const hostname = window.location.hostname;
     if (hostname.includes('beta')) {
       setEnvironment('beta');
+    } else if (hostname.includes('alpha')) {
+      setEnvironment('alpha');
     } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
       setEnvironment('localhost');
     } else {
@@ -23,10 +25,13 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   const renderEnvironmentLabel = () => {
     if (environment === 'production') return null;
-
-    const labelText = environment === 'beta' ? 'beta' : 'localhost';
+  
+    let labelText = environment;
+    if (environment === 'localhost' || environment === 'beta' || environment === 'alpha') {
+      labelText = environment;
+    }
     const displayText = easyMode ? `${labelText} (easy)` : labelText;
-
+  
     return (
       <span 
         className={`env-label ${environment}`} 
@@ -54,6 +59,8 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  // Statistik-Anzeige Toggle
+  const [showStats, setShowStats] = useState(false);
 
   const triggerSaveFeedback = (message = 'Game saved') => {
     setSaveMessage(message);
@@ -66,7 +73,7 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
 
   useEffect(() => {
     const handleAutoSave = () => {
-      triggerSaveFeedback('Auto-saved'); // 🆕
+      triggerSaveFeedback('Auto-saved');
     };
     window.addEventListener('game:autosaved', handleAutoSave);
     return () => window.removeEventListener('game:autosaved', handleAutoSave);
@@ -87,6 +94,12 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
       </div>
       <div className="money-display">
         {formatNumber(money)} €
+        {/* Einkommen pro Sekunde anzeigen, wenn > 0 */}
+        {totalMoneyPerSecond > 0 && (
+          <span className="per-second" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+            +{formatNumber(totalMoneyPerSecond)} €/s
+          </span>
+        )}
       </div>
       <div className="playtime-display">
         ⏱ {formatPlayTime(playTime)}
@@ -115,6 +128,22 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         >
           🗑️
         </button>
+
+        {/* Statistik-Button */}
+        <button
+          className="header-button"
+          onClick={() => setShowStats(s => !s)}
+          title="Show Click Stats"
+          style={{ marginLeft: 8 }}
+        >
+          {showStats ? '📊' : '📈'}
+        </button>
+        {/* Click-Counter */}
+        {showStats && (
+          <span style={{ marginLeft: 8, fontWeight: 500 }}>
+            Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
+          </span>
+        )}
       </div>
     </>
   );
