@@ -216,6 +216,16 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   text-align: center;
 }
 
+// Section label styles (for Investments and StateInfrastructure)
+.section-label {
+  font-size: 0.9rem;
+  margin-left: 12px;
+  color: #2ecc71;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
 // Buttons
 .floating-click-button {
   // Default: bottom right

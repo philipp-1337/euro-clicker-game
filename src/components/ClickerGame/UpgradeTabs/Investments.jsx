@@ -6,7 +6,7 @@ export default function Investments({ money, investments, buyInvestment, totalIn
     <div className="upgrade-section premium-section">
       <h2 className="section-title">
         Investments
-        <span className="section-label" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+        <span className="section-label">
           {/* Einkommen pro Sekunde anzeigen */}
           {formatNumber(totalIncomePerSecond)} €/s
         </span>
