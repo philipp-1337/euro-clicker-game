@@ -36,11 +36,15 @@ export const gameConfig = {
       { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
       { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
       { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
-      { name: 'Sell Arms Industry', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 },
       { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
       { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
       { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
-      { name: 'Private Prisons', costPerSecond: -20, satisfactionValue: 0, dissatisfactionValue: 20 }, // <-- Added
+      { name: 'Arms Race', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 },
+      { name: 'Media Manipulation', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 }, 
+      { name: 'Surveillance Expansion', costPerSecond: -15, satisfactionValue: 0, dissatisfactionValue: 15 }, 
+      { name: 'Private Prisons', costPerSecond: -20, satisfactionValue: 0, dissatisfactionValue: 20 }, 
+      { name: 'Gig Economy Deregulation', costPerSecond: -25, satisfactionValue: 0, dissatisfactionValue: 30 }, 
+      { name: 'Tax Haven Subsidies', costPerSecond: -30, satisfactionValue: 0, dissatisfactionValue: 25 }
     ],
     
     // Upgrade-Multiplikatoren
@@ -68,7 +72,7 @@ export const gameConfig = {
       isStateUnlocked: false,
       satisfaction: 0,
       dissatisfaction: 0,
-      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
+      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
     },
 
     // Upgrade-Multiplikatoren

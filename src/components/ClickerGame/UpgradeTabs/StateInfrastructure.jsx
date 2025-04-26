@@ -36,10 +36,10 @@ export default function StateInfrastructure({
             : <>Cost: {formatNumber(building.costPerSecond)} €/s &nbsp; | &nbsp;</>
           }
           {building.satisfactionValue > 0 && (
-            <>Satisfaction: {formatNumber(building.satisfactionValue)} (one-time)</>
+            <>Satisfaction: {formatNumber(building.satisfactionValue)}</>
           )}
           {building.dissatisfactionValue > 0 && (
-            <>Dissatisfaction: {formatNumber(building.dissatisfactionValue)} (one-time)</>
+            <>Dissatisfaction: {formatNumber(building.dissatisfactionValue)}</>
           )}
         </p>
         <div className="premium-upgrade-info">
