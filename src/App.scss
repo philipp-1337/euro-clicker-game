@@ -406,16 +406,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     transition: opacity 0.2s;
   }
 
-  &::after {
-    right: 0;
-    background: linear-gradient(to left, #fff 70%, transparent);
-  }
-
-  &::before {
-    left: 0;
-    background: linear-gradient(to right, #fff 70%, transparent);
-  }
-
   &::-webkit-scrollbar {
     display: none;
   }
