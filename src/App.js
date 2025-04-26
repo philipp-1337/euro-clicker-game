@@ -56,13 +56,25 @@ function App() {
     saveGameRef.current = saveFn;
   };
 
+  // // TEST: Banner manuell anzeigen (nur für lokale Entwicklung)
+  // const triggerTestUpdateBanner = () => {
+  //   // Simuliere ein Service Worker Update-Event
+  //   window.dispatchEvent(new CustomEvent('swUpdateReady', { detail: { waiting: { postMessage: () => {} } } }));
+  // };
+
   return (
     <div className="App">
+      {/* TEST-BUTTON NUR LOKAL */}
+      {/* {window.location.hostname === 'localhost' && (
+        <button style={{ position: 'fixed', top: 10, right: 10, zIndex: 9999 }} onClick={triggerTestUpdateBanner}>
+          Test Update-Banner
+        </button>
+      )} */}
       {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}
         onEasyModeToggle={handleEasyModeToggle}
-        registerSaveGameHandler={registerSaveGameHandler} // Übergebe den Handler an ClickerGame
+        registerSaveGameHandler={registerSaveGameHandler}
       />
     </div>
   );
