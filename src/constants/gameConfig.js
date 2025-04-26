@@ -4,7 +4,6 @@ import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import StateInfrastructure from '@components/ClickerGame/UpgradeTabs/StateInfrastructure';
 import Interventions from '@components/ClickerGame/UpgradeTabs/Interventions';
 
-
 export const gameConfig = {
     // Basis-Kosten für Upgrades
     baseValueUpgradeCosts: [10, 20, 30, 40, 50],
@@ -36,11 +35,84 @@ export const gameConfig = {
       { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
       { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
       { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
-      { name: 'Sell Arms Industry', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 },
       { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
       { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
       { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
-      { name: 'Private Prisons', costPerSecond: -20, satisfactionValue: 0, dissatisfactionValue: 20 }, // <-- Added
+      { name: 'Arms Race', costPerSecond: 10, satisfactionValue: 0, dissatisfactionValue: 10 },
+      { name: 'Private Prisons', costPerSecond: 20, satisfactionValue: 0, dissatisfactionValue: 20 },
+    ],
+
+    interventions: [
+      {
+        name: 'Bürgerdividende',
+        requiredSatisfaction: 50,
+        requiredDissatisfaction: 0,
+        effect: 'increaseAllClickerValue',
+        effectValue: 0.1,
+        description: 'Erhöhe alle Klickerwerte dauerhaft um 10%.',
+        unlockCondition: 'satisfaction', // Nur bei positiver Strategie
+        once: true
+      },
+      {
+        name: 'Bildungsoffensive',
+        requiredSatisfaction: 30,
+        requiredDissatisfaction: 0,
+        effect: 'reduceUpgradeCosts',
+        effectValue: 0.9,
+        description: 'Reduziert Upgrade-Kosten um 10%.',
+        unlockCondition: 'satisfaction',
+        once: true
+      },
+      {
+        name: 'Grüne Infrastruktur',
+        requiredSatisfaction: 40,
+        requiredDissatisfaction: 0,
+        effect: 'increaseInvestmentIncome',
+        effectValue: 0.2,
+        description: 'Erhöht Einkommen aus Investments um 20%.',
+        unlockCondition: 'satisfaction',
+        once: true
+      },
+      {
+        name: 'Privatisierung',
+        requiredSatisfaction: 0,
+        requiredDissatisfaction: 40,
+        effect: 'instantMoney',
+        effectValue: 20000,
+        description: 'Einmaliger Geldbonus, aber Zufriedenheit sinkt dauerhaft.',
+        unlockCondition: 'dissatisfaction',
+        once: true
+      },
+      {
+        name: 'Überwachungsausbau',
+        requiredSatisfaction: 0,
+        requiredDissatisfaction: 30,
+        effect: 'reduceCooldowns',
+        effectValue: 0.9,
+        description: 'Reduziert Cooldown-Zeiten aller Buttons um 10%.',
+        unlockCondition: 'dissatisfaction',
+        once: true
+      },
+      {
+        name: 'Steueramnestie',
+        requiredSatisfaction: 0,
+        requiredDissatisfaction: 50,
+        effect: 'freeManagers',
+        effectValue: 1,
+        description: 'Alle Manager werden kostenlos.',
+        unlockCondition: 'dissatisfaction',
+        once: true
+      },
+      {
+        name: 'Sozialer Ausgleich',
+        requiredSatisfaction: 20,
+        requiredDissatisfaction: 20,
+        effect: 'resetSatisfactionDissatisfaction',
+        effectValue: 1,
+        description: 'Setzt beide Werte auf 0, gibt aber einen großen Geldbonus.',
+        unlockCondition: 'mixed',
+        once: true
+      }
     ],
     
     // Upgrade-Multiplikatoren
@@ -64,11 +136,12 @@ export const gameConfig = {
       globalPriceDecreaseLevel: 0,
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
-      investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
+      investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       isStateUnlocked: false,
       satisfaction: 0,
       dissatisfaction: 0,
-      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
+      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0],
+      interventionsState: [false, false, false, false, false, false, false],
     },
 
     // Upgrade-Multiplikatoren

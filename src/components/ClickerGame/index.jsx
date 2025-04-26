@@ -7,7 +7,7 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import 'App.scss';
 
-export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) { // Neuer Prop
+export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
@@ -63,7 +63,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     isInterventionsUnlocked,
     unlockInterventions,
     interventionsUnlockCost,
-    } = useClickerGame(easyMode);
+    interventionStrategy,
+    interventionsState,
+    applyIntervention,
+  } = useClickerGame(easyMode);
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
@@ -174,6 +177,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
             unlockInterventions={unlockInterventions}
             interventionsUnlockCost={interventionsUnlockCost}
             investmentCostMultiplier={investmentCostMultiplier}
+            interventionStrategy={interventionStrategy}
+            interventionsState={interventionsState}
+            applyIntervention={applyIntervention}
           />
         </div>
       )}

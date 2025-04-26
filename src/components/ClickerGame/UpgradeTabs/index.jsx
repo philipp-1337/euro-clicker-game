@@ -41,6 +41,9 @@ export default function UpgradeTabs({
   isInterventionsUnlocked,
   unlockInterventions,
   interventionsUnlockCost,
+  interventionStrategy,
+  interventionsState,
+  applyIntervention
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -54,67 +57,70 @@ export default function UpgradeTabs({
   return (
     <>
       <div className="upgrade-tabs">
-      <div className="upgrade-tabs-inner">
-        {gameConfig.ui.tabs.map((tab) => (
-          ((tab.id !== 'investments' || isInvestmentUnlocked) &&
-           (tab.id !== 'state' || isStateUnlocked) &&
-           (tab.id !== 'interventions' || isInterventionsUnlocked)) && (
-            <button
-              key={tab.id}
-              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              {tab.label}
-            </button>
-          )
-        ))}
+        <div className="upgrade-tabs-inner">
+          {gameConfig.ui.tabs.map((tab) => (
+            ((tab.id !== 'investments' || isInvestmentUnlocked) &&
+             (tab.id !== 'state' || isStateUnlocked) &&
+             (tab.id !== 'interventions' || isInterventionsUnlocked)) && (
+              <button
+                key={tab.id}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            )
+          ))}
+        </div>
       </div>
-    </div>
 
-    {gameConfig.ui.tabs.map(tab => (
-      activeTab === tab.id && (
-        <tab.component
-          key={tab.id}
-          money={money}
-          buttons={buttons}
-          valueUpgradeCosts={valueUpgradeCosts}
-          cooldownUpgradeCosts={cooldownUpgradeCosts}
-          buyValueUpgrade={buyValueUpgrade}
-          buyCooldownUpgrade={buyCooldownUpgrade}
-          globalMultiplier={globalMultiplier}
-          globalMultiplierLevel={globalMultiplierLevel}
-          globalMultiplierCost={globalMultiplierCost}
-          buyGlobalMultiplier={buyGlobalMultiplier}
-          managers={managers}
-          buyManager={buyManager}
-          managerCosts={managerCosts}
-          investments={investments}
-          buyInvestment={buyInvestment}
-          valueMultipliers={valueMultipliers}
-          cooldownReductions={cooldownReductions}
-          isInvestmentUnlocked={isInvestmentUnlocked}
-          unlockInvestments={unlockInvestments}
-          totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
-          globalPriceDecrease={globalPriceDecrease}
-          globalPriceDecreaseLevel={globalPriceDecreaseLevel}
-          globalPriceDecreaseCost={globalPriceDecreaseCost}
-          buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-          satisfaction={satisfaction}
-          dissatisfaction={dissatisfaction}
-          stateBuildings={stateBuildings}
-          buyStateBuilding={buyStateBuilding}
-          totalMoneyPerSecond={totalMoneyPerSecond}
-          unlockInvestmentCost={unlockInvestmentCost}
-          isStateUnlocked={isStateUnlocked}
-          unlockState={unlockState}
-          unlockStateCost={unlockStateCost}
-          investmentCostMultiplier={investmentCostMultiplier}
-          isInterventionsUnlocked={isInterventionsUnlocked}
-          unlockInterventions={unlockInterventions}
-          interventionsUnlockCost={interventionsUnlockCost}
-        />
-      )
-    ))}
-  </>
+      {gameConfig.ui.tabs.map(tab => (
+        activeTab === tab.id && (
+          <tab.component
+            key={tab.id}
+            money={money}
+            buttons={buttons}
+            valueUpgradeCosts={valueUpgradeCosts}
+            cooldownUpgradeCosts={cooldownUpgradeCosts}
+            buyValueUpgrade={buyValueUpgrade}
+            buyCooldownUpgrade={buyCooldownUpgrade}
+            globalMultiplier={globalMultiplier}
+            globalMultiplierLevel={globalMultiplierLevel}
+            globalMultiplierCost={globalMultiplierCost}
+            buyGlobalMultiplier={buyGlobalMultiplier}
+            managers={managers}
+            buyManager={buyManager}
+            managerCosts={managerCosts}
+            investments={investments}
+            buyInvestment={buyInvestment}
+            valueMultipliers={valueMultipliers}
+            cooldownReductions={cooldownReductions}
+            isInvestmentUnlocked={isInvestmentUnlocked}
+            unlockInvestments={unlockInvestments}
+            totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
+            globalPriceDecrease={globalPriceDecrease}
+            globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+            globalPriceDecreaseCost={globalPriceDecreaseCost}
+            buyGlobalPriceDecrease={buyGlobalPriceDecrease}
+            satisfaction={satisfaction}
+            dissatisfaction={dissatisfaction}
+            stateBuildings={stateBuildings}
+            buyStateBuilding={buyStateBuilding}
+            totalMoneyPerSecond={totalMoneyPerSecond}
+            unlockInvestmentCost={unlockInvestmentCost}
+            isStateUnlocked={isStateUnlocked}
+            unlockState={unlockState}
+            unlockStateCost={unlockStateCost}
+            investmentCostMultiplier={investmentCostMultiplier}
+            isInterventionsUnlocked={isInterventionsUnlocked}
+            unlockInterventions={unlockInterventions}
+            interventionsUnlockCost={interventionsUnlockCost}
+            interventionStrategy={interventionStrategy}
+            interventionsState={interventionsState}
+            applyIntervention={applyIntervention}
+          />
+        )
+      ))}
+    </>
   );
 }

@@ -1,6 +1,14 @@
 import { useState } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
+function ensureInterventionsStateLength(stateArr) {
+  const len = gameConfig.interventions.length;
+  if (!Array.isArray(stateArr)) return Array(len).fill(false);
+  if (stateArr.length === len) return stateArr;
+  // Pad or trim to correct length
+  return [...stateArr, ...Array(len - stateArr.length).fill(false)].slice(0, len);
+}
+
 export default function useGameState(easyMode = false) {
   // Hauptzustände
   const [money, setMoney] = useState(gameConfig.initialState.money);
@@ -47,6 +55,13 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.isInterventionsUnlocked ?? false
   );
 
+  const [interventionsState, setInterventionsState] = useState(
+    ensureInterventionsStateLength(gameConfig.initialState.interventionsState ?? [])
+  );
+  const [interventionStrategy, setInterventionStrategy] = useState(
+    gameConfig.initialState.interventionStrategy ?? null // null, 'satisfaction', oder 'dissatisfaction'
+  );
+  
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
@@ -66,7 +81,9 @@ export default function useGameState(easyMode = false) {
     dissatisfaction,
     stateBuildings,
     isStateUnlocked,
-    isInterventionsUnlocked
+    isInterventionsUnlocked,
+    interventionsState,
+    interventionStrategy,
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -95,6 +112,10 @@ export default function useGameState(easyMode = false) {
     setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
     setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
+    setInterventionsState(
+      ensureInterventionsStateLength(savedState.interventionsState)
+    );
+    setInterventionStrategy(savedState.interventionStrategy ?? null);
   };
 
   return {
@@ -117,6 +138,8 @@ export default function useGameState(easyMode = false) {
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
+    interventionsState, setInterventionsState,
+    interventionStrategy, setInterventionStrategy,
    
     // Save/Load
     gameState,

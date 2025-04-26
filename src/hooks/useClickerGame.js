@@ -9,6 +9,7 @@ import usePlaytime from './usePlaytime';
 import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
 import useStateInfrastructure from './useStateInfrastructure';
+import useInterventions from './useInterventions';
 
 export default function useClickerGame(easyMode = false) {
 
@@ -43,6 +44,8 @@ export default function useClickerGame(easyMode = false) {
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
+    interventionsState, setInterventionsState,
+    interventionStrategy, setInterventionStrategy,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -158,7 +161,6 @@ export default function useClickerGame(easyMode = false) {
     cooldowns, setCooldowns, managers, buttons, money, setMoney
   );
 
-
   // Kauflogik für Investments freischalten
   const unlockInvestments = useCallback(() => {
     const unlockCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier; // <--- Easy Mode berücksichtigen
@@ -195,6 +197,21 @@ export default function useClickerGame(easyMode = false) {
 
   const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
 
+  const { applyIntervention } = useInterventions({
+    money, setMoney,
+    satisfaction, setSatisfaction,
+    dissatisfaction, setDissatisfaction,
+    interventionsState, setInterventionsState,
+    setValueMultipliers,
+    setCooldownReductions,
+    setGlobalPriceDecrease,
+    setManagers,
+    setInvestments,
+    ensureStartTime,
+    interventionStrategy,
+    setInterventionStrategy,
+  });
+
   // Spielstand-Speichern
   const stableLoadGameState = useCallback((state) => {
     loadGameState(state);
@@ -216,6 +233,8 @@ export default function useClickerGame(easyMode = false) {
     satisfaction,
     dissatisfaction,
     stateBuildings,
+    interventionsState,
+    interventionStrategy,
     
     // Funktionen
     handleClick: wrappedHandleClick,
@@ -232,6 +251,7 @@ export default function useClickerGame(easyMode = false) {
     buyInvestment,
     saveGame,
     addQuickMoney,
+    applyIntervention,
     
     // Upgrade-Info
     valueUpgradeLevels,
