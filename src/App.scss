@@ -562,50 +562,106 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 // Update Banner Styles
 .update-banner {
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100%;
-  background-color: map.get($colors, dark-blue);
-  color: map.get($colors, white);
+  background-color: map.get($colors, warning);
+  color: map.get($colors, text-dark);
   padding: 10px 20px;
+  text-align: center;
+  z-index: 1001; // Ensure it's above other elements like the save banner
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  z-index: 2000; // Ensure it's above other elements like the floating button
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
-  font-size: 0.9rem;
+  gap: 15px;
+
+  span {
+    font-weight: 500;
+  }
 
   button {
     @include button-base;
     background: linear-gradient(to bottom, map.get($colors, blue), map.get($colors, dark-blue));
     padding: 5px 15px;
-    font-size: 0.85rem;
-    margin-left: 15px;
+    font-size: 0.9rem;
     box-shadow: none; // Remove default shadow for smaller button
 
     &:hover:not(.disabled) {
-      background: linear-gradient(to bottom, map.get($colors, dark-blue), map.get($colors, blue));
-      transform: none; // No hover transform needed
+      transform: none; // Disable hover transform for banner button
       box-shadow: none;
+      background: linear-gradient(to bottom, map.get($colors, dark-blue), map.get($colors, blue)); // Slightly darker on hover
     }
-     &:active:not(.disabled) {
-      transform: translateY(1px); // Slight press effect
+
+    &:active:not(.disabled) {
+      transform: translateY(1px); // Keep active state
     }
   }
 }
 
-// Responsive Anpassung für den Banner
+// Responsive design
 @media (max-width: 600px) {
+  .clicker-buttons,
+  .upgrade-buttons {
+    gap: 8px;
+  }
+
+  .money-display .per-second,
+  .section-title .section-label {
+    display: block;
+  }
+
+  .env-label {
+    display: block !important;
+  }
+
+  .button-container {
+    min-width: 100px;
+  }
+
+  .upgrade-tabs {
+    gap: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-x: auto;
+    justify-content: flex-start;
+
+    &::after,
+    &::before {
+      display: none;
+    }
+  }
+
+  .tab-button {
+    min-width: 120px;
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    padding: 10px 10px;
+  }
+
+  .upgrade-button {
+    width: 100px;
+    height: 65px;
+    font-size: 0.8rem;
+  }
+
+  .premium-upgrade-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .premium-upgrade-button {
+    width: 100%;
+  }
+
   .update-banner {
     flex-direction: column;
-    text-align: center;
     gap: 8px;
-    padding: 12px;
+    padding: 8px 15px;
 
     button {
-      width: 100%;
-      max-width: 200px; // Limit button width on small screens
-      margin-left: 0;
+      width: auto; // Allow button to size naturally
+      padding: 6px 18px;
     }
   }
 }
