@@ -40,10 +40,10 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Star className="premium-icon" />
-          <h3>Manager Value Multiplier</h3>
+          <h3>Clicker Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          Increases the value of all clicks made by managers by {globalMultiplierPercentage}%.
+          Increases the value of all clicks by {globalMultiplierPercentage}%.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
