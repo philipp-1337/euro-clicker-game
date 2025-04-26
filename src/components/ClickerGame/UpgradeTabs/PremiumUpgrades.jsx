@@ -43,7 +43,7 @@ export default function PremiumUpgrades({
           <h3>Clicker Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          Increases the value of all clicks by {globalMultiplierPercentage}%.
+          Increases the value of all clicks by {globalMultiplierPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
