@@ -5,6 +5,8 @@ import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
   Save as SaveIcon,
+  MousePointerClick as MousePointerClickIcon,
+  HourglassIcon,
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 
@@ -84,11 +86,14 @@ export default function GameHeader(props) {
         </button>
         {showClickStats && (
           <span className="header-clickstats">
-            Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
+            <MousePointerClickIcon size={20} />
+            {String(floatingClicks ?? 0).padStart(5, '0')}
           </span>
         )}
         {showPlaytime && (
-          <span className="header-playtime">{formatPlayTime(playTime)}</span>
+          <span className="header-playtime">
+            <HourglassIcon size={20} />
+            {formatPlayTime(playTime)}</span>
         )}
       </div>
       {/* Settings Modal */}
