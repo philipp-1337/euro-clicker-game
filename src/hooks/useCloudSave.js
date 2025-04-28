@@ -1,0 +1,94 @@
+import { useState } from 'react';
+import { db } from '../firebase';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+
+// Hilfsfunktion für UUID
+function generateUUID() {
+  // RFC4122 v4 compliant
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+}
+
+const CLICKER_SAVE_KEY = 'clickerSave';
+const UI_PROGRESS_KEY = 'clickerUiProgress';
+const START_TIME_KEY = 'startTime';
+
+export default function useCloudSave() {
+  const [cloudUuid, setCloudUuid] = useState(() => {
+    return localStorage.getItem('cloudSaveUuid') || null;
+  });
+  const [cloudStatus, setCloudStatus] = useState(null);
+
+  // Exportiere Spielstand in die Cloud (Firestore)
+  const exportToCloud = async (gameState) => {
+    let uuid = cloudUuid;
+    if (!uuid) {
+      uuid = generateUUID();
+      localStorage.setItem('cloudSaveUuid', uuid);
+      setCloudUuid(uuid);
+    }
+    setCloudStatus('saving');
+    try {
+      // Hole zusätzliche Daten aus LocalStorage
+      const clickerSave = localStorage.getItem(CLICKER_SAVE_KEY) || null;
+      const clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
+      const startTime = localStorage.getItem(START_TIME_KEY) || null;
+
+      await setDoc(doc(db, 'saves', uuid), {
+        ...gameState,
+        updatedAt: Date.now(),
+        clickerSave,
+        clickerUiProgress,
+        startTime,
+      });
+      setCloudStatus('saved');
+      return uuid;
+    } catch (e) {
+      setCloudStatus('error');
+      throw e;
+    }
+  };
+
+  // Importiere Spielstand aus der Cloud (Firestore)
+  const importFromCloud = async (uuid) => {
+    setCloudStatus('loading');
+    try {
+      const snap = await getDoc(doc(db, 'saves', uuid));
+      if (!snap.exists()) throw new Error('Not found');
+      const data = snap.data();
+      setCloudStatus('loaded');
+      localStorage.setItem('cloudSaveUuid', uuid);
+      setCloudUuid(uuid);
+
+      // Schreibe die LocalStorage-Daten zurück
+      if (data.clickerSave) localStorage.setItem(CLICKER_SAVE_KEY, data.clickerSave);
+      if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
+      if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
+
+      // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand
+      const {
+        updatedAt,
+        clickerSave,
+        clickerUiProgress,
+        startTime,
+        ...gameState
+      } = data;
+      return gameState;
+    } catch (e) {
+      setCloudStatus('error');
+      throw e;
+    }
+  };
+
+  return {
+    cloudUuid,
+    exportToCloud,
+    importFromCloud,
+    cloudStatus,
+    setCloudUuid,
+  };
+}

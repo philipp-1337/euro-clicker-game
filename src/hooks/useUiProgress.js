@@ -20,22 +20,45 @@ function saveUiProgress(progress) {
 
 export function useUiProgress() {
   const [uiProgress, setUiProgress] = useState(() => {
-    return (
-      loadUiProgress() || {
-        gameStarted: false,
-        clickedButtons: [false, false, false, false, false],
-        floatingClicks: 0,
+    // Beim Laden: cloudSaveMode aus clickerSave übernehmen, falls vorhanden
+    const progress = loadUiProgress() || {
+      gameStarted: false,
+      clickedButtons: [false, false, false, false, false],
+      floatingClicks: 0,
+      cloudSaveMode: false,
+    };
+    try {
+      const clickerSaveRaw = localStorage.getItem('clickerSave');
+      if (clickerSaveRaw) {
+        const clickerSave = JSON.parse(clickerSaveRaw);
+        if (typeof clickerSave.cloudSaveMode === 'boolean' && typeof progress.cloudSaveMode !== 'boolean') {
+          progress.cloudSaveMode = clickerSave.cloudSaveMode;
+        }
       }
-    );
+    } catch {}
+    return progress;
   });
 
   // floatingClicks als eigene Variable für einfacheren Zugriff
   const floatingClicks = uiProgress.floatingClicks || 0;
 
-  // Save to localStorage on change
+  // CloudSaveMode als eigene Variable
+  const cloudSaveMode = typeof uiProgress.cloudSaveMode === 'boolean' ? uiProgress.cloudSaveMode : false;
+
+  // Save to localStorage on change (inkl. cloudSaveMode auch in clickerSave speichern)
   useEffect(() => {
     saveUiProgress(uiProgress);
-  }, [uiProgress]);
+    // cloudSaveMode auch in clickerSave persistieren, falls vorhanden
+    try {
+      const clickerSaveRaw = localStorage.getItem('clickerSave');
+      if (clickerSaveRaw) {
+        const clickerSave = JSON.parse(clickerSaveRaw);
+        if (clickerSave.cloudSaveMode !== cloudSaveMode) {
+          localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, cloudSaveMode }));
+        }
+      }
+    } catch {}
+  }, [uiProgress, cloudSaveMode]);
 
   // Setze Spielstart
   const setGameStarted = useCallback(() => {
@@ -68,11 +91,47 @@ export function useUiProgress() {
     });
   }, []);
 
+  // CloudSaveMode setzen (korrektes Updater-Pattern)
+  const setCloudSaveMode = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.cloudSaveMode === 'boolean' ? prev.cloudSaveMode : false;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, cloudSaveMode: nextValue };
+      saveUiProgress(next);
+      // cloudSaveMode auch direkt in clickerSave persistieren, falls vorhanden
+      try {
+        const clickerSaveRaw = localStorage.getItem('clickerSave');
+        if (clickerSaveRaw) {
+          const clickerSave = JSON.parse(clickerSaveRaw);
+          if (clickerSave.cloudSaveMode !== nextValue) {
+            localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, cloudSaveMode: nextValue }));
+          }
+        }
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  // Sync cloudSaveMode from external event (GameHeader)
+  useEffect(() => {
+    const handler = (e) => {
+      if (e?.detail && typeof e.detail.cloudSaveMode === 'boolean') {
+        setCloudSaveMode(e.detail.cloudSaveMode);
+      }
+    };
+    window.addEventListener('game:cloudsavemode', handler);
+    return () => window.removeEventListener('game:cloudsavemode', handler);
+  }, [setCloudSaveMode]);
+
   return {
     uiProgress,
     setGameStarted,
     setButtonClicked,
     floatingClicks,
     incrementFloatingClicks,
+    cloudSaveMode,
+    setCloudSaveMode,
   };
 }

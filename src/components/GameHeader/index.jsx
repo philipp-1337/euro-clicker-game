@@ -1,83 +1,34 @@
 import { formatNumber } from '@utils/calculators';
-import { useState, useEffect } from 'react';
+import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
 
-export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime, onSaveGame, totalMoneyPerSecond, floatingClicks }) {
-  const [environment, setEnvironment] = useState('production');
-
-  useEffect(() => {
-    const hostname = window.location.hostname;
-    if (hostname.includes('beta')) {
-      setEnvironment('beta');
-    } else if (hostname.includes('alpha')) {
-      setEnvironment('alpha');
-    } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      setEnvironment('localhost');
-    } else {
-      setEnvironment('production');
-    }
-  }, []);
-
-  const toggleEasyMode = () => {
-    if (onEasyModeToggle) {
-      onEasyModeToggle(!easyMode);
-    }
-  };
-
-  const renderEnvironmentLabel = () => {
-    if (environment === 'production') return null;
-  
-    let labelText = environment;
-    if (environment === 'localhost' || environment === 'beta' || environment === 'alpha') {
-      labelText = environment;
-    }
-    const displayText = easyMode ? `${labelText} (easy)` : labelText;
-  
-    return (
-      <span 
-        className={`env-label ${environment}`} 
-        onClick={toggleEasyMode}
-        title="Toggle Easy Mode"
-      >
-        {displayText}
-      </span>
-    );
-  };
-
-  const formatPlayTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return [
-      hours > 0 ? `${hours}h` : null,
-      minutes > 0 || hours > 0 ? `${minutes}m` : null,
-      `${seconds}s`
-    ]
-    .filter(Boolean)
-    .join(' ');
-  };
-
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState('');
-  // Statistik-Anzeige Toggle
-  const [showStats, setShowStats] = useState(false);
-
-  const triggerSaveFeedback = (message = 'Game saved') => {
-    setSaveMessage(message);
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveMessage('');
-    }, 1500);
-  };
-
-  useEffect(() => {
-    const handleAutoSave = () => {
-      triggerSaveFeedback('Auto-saved');
-    };
-    window.addEventListener('game:autosaved', handleAutoSave);
-    return () => window.removeEventListener('game:autosaved', handleAutoSave);
-  }, []);
+export default function GameHeader(props) {
+  // ...alle States/Handler aus dem Hook...
+  const {
+    renderEnvironmentLabel,
+    formatPlayTime,
+    isSaving,
+    saveMessage,
+    showStats,
+    setShowStats,
+    showImportDialog,
+    setShowImportDialog,
+    importUuid,
+    setImportUuid,
+    importError,
+    handleImportCloud,
+    cloudSaveMode,
+    setCloudSaveMode,
+    handleSave,
+    handleExportCloud,
+    showUuid,
+    setShowUuid,
+    cloudUuid,
+    floatingClicks,
+    triggerSaveFeedback,
+    money,
+    playTime,
+    totalMoneyPerSecond,
+  } = useGameHeaderLogic(props);
 
   return (
     <>
@@ -94,7 +45,6 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
       </div>
       <div className="money-display">
         {formatNumber(money)} €
-        {/* Einkommen pro Sekunde anzeigen, wenn > 0 */}
         {totalMoneyPerSecond > 0 && (
           <span className="per-second" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
             +{formatNumber(totalMoneyPerSecond)} €/s
@@ -104,15 +54,27 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
       <div className="playtime-display">
         ⏱ {formatPlayTime(playTime)}
 
+        {/* Cloud-Save Toggle */}
+        <button
+          className={`header-button${cloudSaveMode ? ' active' : ''}`}
+          onClick={() => {
+            const next = !cloudSaveMode;
+            setCloudSaveMode(next);
+            // Persist Cloud-Save-Mode in clickerUiProgress
+            window.dispatchEvent(new CustomEvent('game:cloudsavemode', { detail: { cloudSaveMode: next } }));
+          }}
+          title={cloudSaveMode ? "Cloud-Save: ON" : "Cloud-Save: OFF"}
+          style={{ marginRight: 8 }}
+        >
+          {cloudSaveMode ? '☁️💾' : '💾'}
+        </button>
+
         <button
           className="header-button"
-          onClick={() => {
-            onSaveGame();
-            triggerSaveFeedback('Saved');
-          }}
-          title="Save"
+          onClick={handleSave}
+          title={cloudSaveMode ? "Save to Cloud" : "Save"}
         >
-          {isSaving ? '✅' : '💾'}
+          {isSaving ? '✅' : (cloudSaveMode ? '☁️⬆️' : '💾')}
         </button>
 
         <button
@@ -129,7 +91,6 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
           🗑️
         </button>
 
-        {/* Statistik-Button */}
         <button
           className="header-button"
           onClick={() => setShowStats(s => !s)}
@@ -138,13 +99,71 @@ export default function GameHeader({ money, easyMode, onEasyModeToggle, playTime
         >
           {showStats ? '📊' : '📈'}
         </button>
-        {/* Click-Counter */}
         {showStats && (
           <span style={{ marginLeft: 8, fontWeight: 500 }}>
             Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
           </span>
         )}
+        <button
+          className="header-button"
+          onClick={() => setShowImportDialog(true)}
+          title="Import from Cloud"
+        >
+          ☁️⬇️
+        </button>
+        {cloudUuid && (
+          <button
+            className="header-button"
+            onClick={() => setShowUuid(v => !v)}
+            title="Show/Hide Cloud Save UUID"
+            style={{ marginLeft: 8 }}
+          >
+            {showUuid ? '🔑' : '🆔'}
+          </button>
+        )}
+        {cloudUuid && showUuid && (
+          <span
+            style={{
+              marginLeft: 8,
+              fontSize: '0.85em',
+              background: '#eee',
+              borderRadius: 4,
+              padding: '2px 6px',
+              userSelect: 'all',
+              cursor: 'pointer'
+            }}
+            title="Your Cloud Save UUID (copy & use on other device)"
+            onClick={() => {
+              navigator.clipboard?.writeText(cloudUuid);
+              triggerSaveFeedback('UUID copied');
+            }}
+          >
+            UUID: {cloudUuid}
+          </span>
+        )}
       </div>
+      {showImportDialog && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.3)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: '#fff', padding: 24, borderRadius: 10, minWidth: 320, boxShadow: '0 2px 12px rgba(0,0,0,0.15)'
+          }}>
+            <h3>Import Cloud Save</h3>
+            <input
+              type="text"
+              placeholder="Enter UUID"
+              value={importUuid}
+              onChange={e => setImportUuid(e.target.value)}
+              style={{ width: '100%', marginBottom: 8, padding: 6, fontSize: 16 }}
+            />
+            {importError && <div style={{ color: 'red', marginBottom: 8 }}>{importError}</div>}
+            <button onClick={handleImportCloud} style={{ marginRight: 8 }}>Import</button>
+            <button onClick={() => setShowImportDialog(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
