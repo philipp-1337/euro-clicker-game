@@ -12,6 +12,7 @@ import {
   CloudAlert,
   ClipboardCopyIcon,
   IdCardIcon,
+  FolderOpen,
 } from "lucide-react";
 
 export default function GameSettingsModal({
@@ -43,7 +44,8 @@ export default function GameSettingsModal({
         <div className="settings-modal-header">
           <h3>Settings</h3>
           <button
-            className="modal-btn settings-modal-close"
+            className="header-button"
+            style={{ marginLeft: "auto" }}
             onClick={() => setShowSettings(false)}
             title="Close"
             aria-label="Close"
@@ -143,7 +145,7 @@ export default function GameSettingsModal({
               onClick={() => setShowImportDialog(true)}
               title="Import from Cloud"
             >
-              <CloudDownloadIcon size={18} />
+              <FolderOpen size={18} />
             </button>
           </div>
           {/* Reset Button */}

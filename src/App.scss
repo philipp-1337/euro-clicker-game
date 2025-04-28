@@ -259,7 +259,8 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 500;
   color: map.get($colors, text-dark);
 
-  .header-clickstats {
+  .header-clickstats,
+  .header-playtime {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -283,9 +284,9 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .settings-modal-close {
-  background: #eee !important;
+  background: transparent !important;
   color: #333 !important;
-  padding: 4px 10px !important;
+  padding: 0 !important;
   min-width: 0 !important;
 }
 
