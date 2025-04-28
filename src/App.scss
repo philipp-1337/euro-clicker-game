@@ -228,7 +228,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 // Buttons
 .floating-click-button {
-  // Default: bottom right
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -276,7 +275,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
-// Clicker section
 .clicker-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -692,5 +690,12 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     padding: 10px 0;
     font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .floating-click-button {
+    width: 100px;
+    height: 100px;
   }
 }
