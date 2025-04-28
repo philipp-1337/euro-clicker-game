@@ -10,22 +10,18 @@ import {
   Save as SaveIcon,
   Trash2 as TrashIcon,
   BarChart2 as BarChartIcon,
-  LineChart as LineChartIcon,
-  Key as KeyIcon,
-  BadgeInfo as IdIcon,
-  Timer as TimerIcon,
-  Check as CheckIcon,
+  Eye as EyeIcon,
+  EyeOff as EyeOffIcon,
+  Clock as ClockIcon,
+  RefreshCw as RefreshIcon,
 } from 'lucide-react';
 
 export default function GameHeader(props) {
-  // ...alle States/Handler aus dem Hook...
   const {
     renderEnvironmentLabel,
     formatPlayTime,
     isSaving,
     saveMessage,
-    showStats,
-    setShowStats,
     showImportDialog,
     setShowImportDialog,
     importUuid,
@@ -35,8 +31,6 @@ export default function GameHeader(props) {
     cloudSaveMode,
     setCloudSaveMode,
     handleSave,
-    showUuid,
-    setShowUuid,
     cloudUuid,
     floatingClicks,
     triggerSaveFeedback,
@@ -47,6 +41,15 @@ export default function GameHeader(props) {
 
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
+  // Local UI state for toggles
+  const [showPlaytime, setShowPlaytime] = useState(true);
+  const [showClickStats, setShowClickStats] = useState(false);
+
+  // Cloud Save Confirm Modal State
+  const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
+  const [pendingCloudSaveValue, setPendingCloudSaveValue] = useState(null);
+
+  // Remove cloudUuid/showUuid from header if cloudSaveMode is now only in settings
 
   return (
     <>
@@ -64,161 +67,49 @@ export default function GameHeader(props) {
       <div className="money-display">
         {formatNumber(money)} €
         {totalMoneyPerSecond > 0 && (
-          <span className="per-second" style={{ fontSize: '1rem', marginLeft: 12, color: '#2ecc71' }}>
+          <span className="per-second">
             +{formatNumber(totalMoneyPerSecond)} €/s
           </span>
         )}
       </div>
-      <div className="playtime-display">
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
-          <TimerIcon size={18} style={{ verticalAlign: 'middle', marginRight: 2 }} />
-          {formatPlayTime(playTime)}
-        </span>
-
-        {/* Cloud-Save Toggle */}
-        <button
-          className={`header-button${cloudSaveMode ? ' active' : ''}`}
-          onClick={() => {
-            const next = !cloudSaveMode;
-            setCloudSaveMode(next);
-            window.dispatchEvent(new CustomEvent('game:cloudsavemode', { detail: { cloudSaveMode: next } }));
-          }}
-          title={cloudSaveMode ? "Cloud-Save: ON" : "Cloud-Save: OFF"}
-          style={{ marginRight: 8 }}
-        >
-          {cloudSaveMode ? <CloudIcon size={18} style={{ verticalAlign: 'middle' }} /> : <SaveIcon size={18} style={{ verticalAlign: 'middle' }} />}
-        </button>
-
+      {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
+      <div className="header-actions">
         <button
           className="header-button"
-          onClick={handleSave}
-          title={cloudSaveMode ? "Save to Cloud" : "Save"}
-        >
-          {isSaving ? <CheckIcon size={18} style={{ verticalAlign: 'middle' }} /> : (cloudSaveMode
-            ? <CloudUploadIcon size={18} style={{ verticalAlign: 'middle' }} />
-            : <SaveIcon size={18} style={{ verticalAlign: 'middle' }} />)}
-        </button>
-
-        <button
-          className="header-button"
-          onClick={() => {
-            const confirmReset = window.confirm('Are you sure you want to reset your game progress?');
-            if (confirmReset) {
-              localStorage.clear();
-              window.location.reload();
-            }
-          }}
-          title="Reset Game"
-        >
-          <TrashIcon size={18} style={{ verticalAlign: 'middle' }} />
-        </button>
-
-        <button
-          className="header-button"
-          onClick={() => setShowStats(s => !s)}
-          title="Show Click Stats"
-          style={{ marginLeft: 8 }}
-        >
-          {showStats
-            ? <BarChartIcon size={18} style={{ verticalAlign: 'middle' }} />
-            : <LineChartIcon size={18} style={{ verticalAlign: 'middle' }} />}
-        </button>
-        {showStats && (
-          <span style={{ marginLeft: 8, fontWeight: 500 }}>
-            Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
-          </span>
-        )}
-        <button
-          className="header-button"
-          onClick={() => setShowImportDialog(true)}
-          title="Import from Cloud"
-        >
-          <CloudDownloadIcon size={18} style={{ verticalAlign: 'middle' }} />
-        </button>
-        {cloudUuid && (
-          <button
-            className="header-button"
-            onClick={() => setShowUuid(v => !v)}
-            title="Show/Hide Cloud Save UUID"
-            style={{ marginLeft: 8 }}
-          >
-            {showUuid
-              ? <KeyIcon size={18} style={{ verticalAlign: 'middle' }} />
-              : <IdIcon size={18} style={{ verticalAlign: 'middle' }} />}
-          </button>
-        )}
-        {cloudUuid && showUuid && (
-          <span
-            style={{
-              marginLeft: 8,
-              fontSize: '0.85em',
-              background: '#eee',
-              borderRadius: 4,
-              padding: '2px 6px',
-              userSelect: 'all',
-              cursor: 'pointer'
-            }}
-            title="Your Cloud Save UUID (copy & use on other device)"
-            onClick={() => {
-              navigator.clipboard?.writeText(cloudUuid);
-              triggerSaveFeedback('UUID copied');
-            }}
-          >
-            UUID: {cloudUuid}
-          </span>
-        )}
-        {/* Settings Icon in die gleiche Reihe */}
-        <button
-          className="header-button"
-          style={{ marginLeft: 10, verticalAlign: 'middle' }}
           onClick={() => setShowSettings(true)}
           title="Settings"
           aria-label="Settings"
         >
           <SettingsIcon size={20} />
         </button>
+        <button
+          className="header-button"
+          onClick={handleSave}
+          title="Save"
+          aria-label="Save"
+        >
+          {cloudSaveMode
+            ? <CloudUploadIcon size={20} />
+            : <SaveIcon size={20} />
+          }
+        </button>
+        {showClickStats && (
+          <span className="header-clickstats">
+            Clicks: {String(floatingClicks ?? 0).padStart(5, '0')}
+          </span>
+        )}
+        {showPlaytime && (
+          <span className="header-playtime">{formatPlayTime(playTime)}</span>
+        )}
       </div>
-      {showImportDialog && (
-        <div className="import-modal-backdrop">
-          <div className="import-modal-content">
-            <h3>Import Cloud Save</h3>
-            <input
-              type="text"
-              className="import-modal-input"
-              placeholder="Enter UUID"
-              value={importUuid}
-              onChange={e => setImportUuid(e.target.value)}
-              autoFocus
-            />
-            {importError && <div className="import-modal-error">{importError}</div>}
-            <div className="import-modal-actions">
-              <button
-                className="import-modal-btn"
-                onClick={handleImportCloud}
-                style={{ marginRight: 0 }}
-              >
-                Import
-              </button>
-              <button
-                className="import-modal-btn"
-                onClick={() => setShowImportDialog(false)}
-                style={{ background: '#eee', color: '#333' }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
       {/* Settings Modal */}
       {showSettings && (
-        <div className="import-modal-backdrop">
-          <div className="import-modal-content">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ marginBottom: 0 }}>Settings</h3>
+        <div className="modal-backdrop">
+          <div className="modal-content">
+            <div className="settings-modal-header">
+              <h3>Settings</h3>
               <button
-                className="import-modal-btn"
-                style={{ background: '#eee', color: '#333', padding: '4px 10px', minWidth: 0 }}
+                className="modal-btn settings-modal-close"
                 onClick={() => setShowSettings(false)}
                 title="Close"
                 aria-label="Close"
@@ -226,10 +117,168 @@ export default function GameHeader(props) {
                 <CloseIcon size={20} />
               </button>
             </div>
-            {/* Hier können Settings-Inhalte eingefügt werden */}
-            <div style={{ marginTop: 18, minHeight: 40, textAlign: 'center', color: '#888' }}>
-              Settings content coming soon...
+            <div className="settings-modal-content">
+              {/* Spielzeit Toggle */}
+              <div className="settings-row">
+                <ClockIcon size={20} className="settings-icon" />
+                <span className="settings-label">Show Playtime</span>
+                <button
+                  className="header-button"
+                  onClick={() => setShowPlaytime(v => !v)}
+                  title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+                >
+                  {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+                </button>
+              </div>
+              {/* Clicker Statistik Toggle */}
+              <div className="settings-row">
+                <BarChartIcon size={20} className="settings-icon" />
+                <span className="settings-label">Show Click Stats</span>
+                <button
+                  className="header-button"
+                  onClick={() => setShowClickStats(v => !v)}
+                  title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+                >
+                  {showClickStats ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+                </button>
+              </div>
+              {/* Cloud Save Toggle */}
+              <div className="settings-row">
+                <CloudIcon size={20} className="settings-icon" />
+                <span className="settings-label">Enable Cloud Save</span>
+                <button
+                  className={`header-button${cloudSaveMode ? ' active' : ''}`}
+                  onClick={() => {
+                    const next = !cloudSaveMode;
+                    if (!cloudSaveMode && next) {
+                      // Cloud Save wird aktiviert: Bestätigungsmodal anzeigen
+                      setPendingCloudSaveValue(true);
+                      setShowCloudSaveConfirm(true);
+                    } else {
+                      // Direkt deaktivieren ohne Modal
+                      setCloudSaveMode(next);
+                      window.dispatchEvent(new CustomEvent('game:cloudsavemode', { detail: { cloudSaveMode: next } }));
+                    }
+                  }}
+                  title={cloudSaveMode ? "Cloud-Save: ON" : "Cloud-Save: OFF"}
+                >
+                  {cloudSaveMode ? <CloudIcon size={18} /> : <SaveIcon size={18} />}
+                </button>
+              </div>
+              {/* Cloud UUID Anzeige */}
+              {cloudSaveMode && cloudUuid && (
+                <div className="settings-row settings-row-uuid">
+                  <span
+                    className="settings-uuid"
+                    title="Your Cloud Save UUID (copy & use on other device)"
+                    onClick={() => {
+                      navigator.clipboard?.writeText(cloudUuid);
+                      triggerSaveFeedback('UUID copied');
+                    }}
+                  >
+                    {cloudUuid}
+                  </span>
+                </div>
+              )}
+              {/* Import from Cloud */}
+              <div className="settings-row">
+                <CloudDownloadIcon size={20} className="settings-icon" />
+                <span className="settings-label">Import from Cloud</span>
+                <button
+                  className="header-button"
+                  onClick={() => setShowImportDialog(true)}
+                  title="Import from Cloud"
+                >
+                  <CloudDownloadIcon size={18} />
+                </button>
+              </div>
+              {/* Reset Button */}
+              <div className="settings-row">
+                <TrashIcon size={20} className="settings-icon" />
+                <span className="settings-label">Reset Game</span>
+                <button
+                  className="header-button"
+                  onClick={() => {
+                    const confirmReset = window.confirm('Are you sure you want to reset your game progress?');
+                    if (confirmReset) {
+                      localStorage.clear();
+                      window.location.reload();
+                    }
+                  }}
+                  title="Reset Game"
+                >
+                  <RefreshIcon size={18} />
+                </button>
+              </div>
             </div>
+            {/* Import Modal im Modal */}
+            {showImportDialog && (
+              <div className="modal-backdrop" style={{ zIndex: 10000 }}>
+                <div className="modal-content" style={{ maxWidth: 400 }}>
+                  <h3>Import Cloud Save</h3>
+                  <input
+                    type="text"
+                    className="modal-input"
+                    placeholder="Enter UUID"
+                    value={importUuid}
+                    onChange={e => setImportUuid(e.target.value)}
+                    autoFocus
+                  />
+                  {importError && <div className="modal-error">{importError}</div>}
+                  <div className="modal-actions">
+                    <button
+                      className="modal-btn"
+                      onClick={handleImportCloud}
+                      style={{ marginRight: 0 }}
+                    >
+                      Import
+                    </button>
+                    <button
+                      className="modal-btn"
+                      onClick={() => setShowImportDialog(false)}
+                      style={{ background: '#eee', color: '#333' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+            {/* Cloud Save Confirm Modal */}
+            {showCloudSaveConfirm && (
+              <div className="modal-backdrop" style={{ zIndex: 10001 }}>
+                <div className="modal-content" style={{ maxWidth: 420 }}>
+                  <h3>Enable Cloud Save</h3>
+                  <p style={{ marginBottom: 18 }}>
+                    Your game progress will be saved anonymously in the cloud. You will receive a unique ID (UUID) that you can use to restore your progress on any device.<br /><br />
+                    Do you want to enable Cloud Save now?
+                  </p>
+                  <div className="modal-actions">
+                    <button
+                      className="modal-btn"
+                      onClick={() => {
+                        setCloudSaveMode(true);
+                        window.dispatchEvent(new CustomEvent('game:cloudsavemode', { detail: { cloudSaveMode: true } }));
+                        setShowCloudSaveConfirm(false);
+                        setPendingCloudSaveValue(null);
+                      }}
+                    >
+                      Okay
+                    </button>
+                    <button
+                      className="modal-btn"
+                      style={{ background: '#eee', color: '#333' }}
+                      onClick={() => {
+                        setShowCloudSaveConfirm(false);
+                        setPendingCloudSaveValue(null);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
