@@ -7,7 +7,7 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import 'App.scss';
 
-export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) { // Neuer Prop
+export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
@@ -63,6 +63,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     isInterventionsUnlocked,
     unlockInterventions,
     interventionsUnlockCost,
+    gameState, // <--- hinzufügen
+    loadGameState, // <--- hinzufügen
     } = useClickerGame(easyMode);
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
@@ -93,15 +95,25 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
 
   // --- Fix: UI bleibt sichtbar, wenn einmal freigeschaltet, auch wenn das Geld wieder unter 10 € fällt ---
   // Merke, ob ClickerButtons und UpgradeTabs schon einmal angezeigt wurden
-  const [clickerButtonsUnlocked, setClickerButtonsUnlocked] = useState(false);
-  const [upgradeTabsUnlocked, setUpgradeTabsUnlocked] = useState(false);
+  const [clickerButtonsUnlocked, setClickerButtonsUnlocked] = useState(
+    uiProgress.gameStarted && money >= 10
+  );
+  const [upgradeTabsUnlocked, setUpgradeTabsUnlocked] = useState(
+    uiProgress.gameStarted && money >= 10 && allButtonsClicked
+  );
 
-  if (uiProgress.gameStarted && money >= 10 && !clickerButtonsUnlocked) {
-    setClickerButtonsUnlocked(true);
-  }
-  if (uiProgress.gameStarted && money >= 10 && allButtonsClicked && !upgradeTabsUnlocked) {
-    setUpgradeTabsUnlocked(true);
-  }
+  // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
+  useEffect(() => {
+    if (uiProgress.gameStarted && money >= 10 && !clickerButtonsUnlocked) {
+      setClickerButtonsUnlocked(true);
+    }
+  }, [uiProgress.gameStarted, money, clickerButtonsUnlocked]);
+
+  useEffect(() => {
+    if (uiProgress.gameStarted && money >= 10 && allButtonsClicked && !upgradeTabsUnlocked) {
+      setUpgradeTabsUnlocked(true);
+    }
+  }, [uiProgress.gameStarted, money, allButtonsClicked, upgradeTabsUnlocked]);
 
   return (
     <div className="game-container">
@@ -114,7 +126,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           playTime={playTime}
           onSaveGame={saveGame}
           totalMoneyPerSecond={totalMoneyPerSecond}
-          floatingClicks={floatingClicks} // <-- floatingClicks weitergeben
+          floatingClicks={floatingClicks}
+          gameState={gameState} // <--- weitergeben
+          onImportCloudSave={loadGameState} // <--- Import-Handler
         />
       )}
 
