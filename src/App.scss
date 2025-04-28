@@ -620,6 +620,98 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
+// --- Import Modal Styles ---
+.import-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.import-modal-content {
+  background: map.get($backgrounds, off-white);
+  padding: 32px 28px 24px 28px;
+  border-radius: 14px;
+  min-width: 320px;
+  max-width: 95vw;
+  box-shadow: 0 2px 18px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-family: $font-family;
+  animation: fadeIn 0.2s;
+}
+
+.import-modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: map.get($colors, primary);
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.import-modal-input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  font-size: 1.05rem;
+  border: 1.5px solid map.get($colors, blue);
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: map.get($colors, primary);
+  transition: border 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: map.get($colors, dark-blue);
+    background: #f4faff;
+  }
+}
+
+.import-modal-error {
+  color: map.get($colors, red);
+  margin-bottom: 10px;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.import-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.import-modal-btn {
+  @include button-base;
+  background: linear-gradient(to bottom, map.get($colors, blue), map.get($colors, dark-blue));
+  color: map.get($colors, white);
+  padding: 8px 22px;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(to bottom, map.get($colors, dark-blue), map.get($colors, blue));
+    transform: translateY(-1px) scale(1.04);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
 // Responsive design
 @media (max-width: 600px) {
 

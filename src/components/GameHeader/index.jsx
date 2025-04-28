@@ -19,7 +19,6 @@ export default function GameHeader(props) {
     cloudSaveMode,
     setCloudSaveMode,
     handleSave,
-    handleExportCloud,
     showUuid,
     setShowUuid,
     cloudUuid,
@@ -143,24 +142,34 @@ export default function GameHeader(props) {
         )}
       </div>
       {showImportDialog && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.3)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{
-            background: '#fff', padding: 24, borderRadius: 10, minWidth: 320, boxShadow: '0 2px 12px rgba(0,0,0,0.15)'
-          }}>
+        <div className="import-modal-backdrop">
+          <div className="import-modal-content">
             <h3>Import Cloud Save</h3>
             <input
               type="text"
+              className="import-modal-input"
               placeholder="Enter UUID"
               value={importUuid}
               onChange={e => setImportUuid(e.target.value)}
-              style={{ width: '100%', marginBottom: 8, padding: 6, fontSize: 16 }}
+              autoFocus
             />
-            {importError && <div style={{ color: 'red', marginBottom: 8 }}>{importError}</div>}
-            <button onClick={handleImportCloud} style={{ marginRight: 8 }}>Import</button>
-            <button onClick={() => setShowImportDialog(false)}>Cancel</button>
+            {importError && <div className="import-modal-error">{importError}</div>}
+            <div className="import-modal-actions">
+              <button
+                className="import-modal-btn"
+                onClick={handleImportCloud}
+                style={{ marginRight: 0 }}
+              >
+                Import
+              </button>
+              <button
+                className="import-modal-btn"
+                onClick={() => setShowImportDialog(false)}
+                style={{ background: '#eee', color: '#333' }}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
