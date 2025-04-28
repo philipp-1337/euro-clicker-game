@@ -47,9 +47,6 @@ export default function GameHeader(props) {
 
   // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
-  const [pendingCloudSaveValue, setPendingCloudSaveValue] = useState(null);
-
-  // Remove cloudUuid/showUuid from header if cloudSaveMode is now only in settings
 
   return (
     <>
@@ -152,7 +149,6 @@ export default function GameHeader(props) {
                     const next = !cloudSaveMode;
                     if (!cloudSaveMode && next) {
                       // Cloud Save wird aktiviert: Bestätigungsmodal anzeigen
-                      setPendingCloudSaveValue(true);
                       setShowCloudSaveConfirm(true);
                     } else {
                       // Direkt deaktivieren ohne Modal
@@ -260,7 +256,10 @@ export default function GameHeader(props) {
                         setCloudSaveMode(true);
                         window.dispatchEvent(new CustomEvent('game:cloudsavemode', { detail: { cloudSaveMode: true } }));
                         setShowCloudSaveConfirm(false);
-                        setPendingCloudSaveValue(null);
+                        // Initial cloud save trigger
+                        if (typeof handleSave === 'function') {
+                          setTimeout(() => handleSave(), 0);
+                        }
                       }}
                     >
                       Okay
@@ -270,7 +269,6 @@ export default function GameHeader(props) {
                       style={{ background: '#eee', color: '#333' }}
                       onClick={() => {
                         setShowCloudSaveConfirm(false);
-                        setPendingCloudSaveValue(null);
                       }}
                     >
                       Cancel
