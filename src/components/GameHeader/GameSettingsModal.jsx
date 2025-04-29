@@ -1,3 +1,4 @@
+import React from "react";
 import {
   X as CloseIcon,
   Cloud as CloudIcon,
@@ -13,7 +14,18 @@ import {
   ClipboardCopyIcon,
   IdCardIcon,
   FolderOpen,
+  RotateCwIcon,
+  TabletSmartphoneIcon,
 } from "lucide-react";
+
+// Hilfsfunktion für Standalone-Detection
+function isStandaloneMobile() {
+  // iOS
+  if (window.navigator.standalone) return true;
+  // Android/Chrome
+  if (window.matchMedia('(display-mode: browser)').matches) return true;
+  return false;
+}
 
 export default function GameSettingsModal({
   showSettings,
@@ -36,6 +48,12 @@ export default function GameSettingsModal({
   handleImportCloud,
   handleSave,
 }) {
+  const showReloadButton = isStandaloneMobile();
+
+  // Neue States für Custom Confirm Modals
+  const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+  const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
+
   if (!showSettings) return null;
 
   return (
@@ -148,21 +166,27 @@ export default function GameSettingsModal({
               <FolderOpen size={18} />
             </button>
           </div>
+          {/* App Reload Button für Standalone Mobile */}
+          {showReloadButton && (
+            <div className="settings-row">
+              <TabletSmartphoneIcon size={20} className="settings-icon" />
+              <span className="settings-label">Reload App</span>
+              <button
+                className="header-button"
+                onClick={() => setShowReloadConfirm(true)}
+                title="Reload App"
+              >
+                <RotateCwIcon size={18} />
+              </button>
+            </div>
+          )}
           {/* Reset Button */}
           <div className="settings-row">
             <TrashIcon size={20} className="settings-icon" />
             <span className="settings-label">Reset Game</span>
             <button
               className="header-button"
-              onClick={() => {
-                const confirmReset = window.confirm(
-                  "Are you sure you want to reset your game progress?"
-                );
-                if (confirmReset) {
-                  localStorage.clear();
-                  window.location.reload();
-                }
-              }}
+              onClick={() => setShowResetConfirm(true)}
               title="Reset Game"
             >
               <RefreshIcon size={18} />
@@ -239,6 +263,66 @@ export default function GameSettingsModal({
                   onClick={() => {
                     setShowCloudSaveConfirm(false);
                   }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Custom Confirm Modal: Reset Game */}
+        {showResetConfirm && (
+          <div className="modal-backdrop" style={{ zIndex: 10002 }}>
+            <div className="modal-content" style={{ maxWidth: 400 }}>
+              <h3>Reset Game</h3>
+              <p style={{ marginBottom: 18 }}>
+                Are you sure you want to reset your game progress?<br />
+                <b>This cannot be undone.</b>
+              </p>
+              <div className="modal-actions">
+                <button
+                  className="modal-btn"
+                  style={{ background: "#e74c3c", color: "#fff" }}
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                >
+                  Reset
+                </button>
+                <button
+                  className="modal-btn"
+                  style={{ background: "#eee", color: "#333" }}
+                  onClick={() => setShowResetConfirm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Custom Confirm Modal: Reload App */}
+        {showReloadConfirm && (
+          <div className="modal-backdrop" style={{ zIndex: 10002 }}>
+            <div className="modal-content" style={{ maxWidth: 400 }}>
+              <h3>Reload App</h3>
+              <p style={{ marginBottom: 18 }}>
+                Reload now?<br />
+                Your saved progress is kept.
+              </p>
+              <div className="modal-actions">
+                <button
+                  className="modal-btn"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  Reload
+                </button>
+                <button
+                  className="modal-btn"
+                  style={{ background: "#eee", color: "#333" }}
+                  onClick={() => setShowReloadConfirm(false)}
                 >
                   Cancel
                 </button>
