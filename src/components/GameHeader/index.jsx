@@ -1,6 +1,6 @@
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
+import { gameConfig } from '@constants/gameConfig';
+import { useAchievementBanner } from '@hooks/useAchievementBanner'; // <-- importieren
 
 export default function GameHeader(props) {
   const {
@@ -42,19 +44,8 @@ export default function GameHeader(props) {
   const [showClickStats, setShowClickStats] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
 
-  // Listen for achievement unlock event to show banner
-  const [achievementBanner, setAchievementBanner] = useState(null);
-  useEffect(() => {
-    const handler = (e) => {
-      if (e?.detail?.id === 'clicks1000') {
-        setAchievementBanner('Congratulations! 1000 Clicks! 🎉');
-        setTimeout(() => setAchievementBanner(null), 2500);
-      }
-      // Add more achievement banners here if needed
-    };
-    window.addEventListener('game:achievement', handler);
-    return () => window.removeEventListener('game:achievement', handler);
-  }, []);
+  // Achievement-Banner Hook verwenden
+  const achievementBanner = useAchievementBanner();
 
   // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
