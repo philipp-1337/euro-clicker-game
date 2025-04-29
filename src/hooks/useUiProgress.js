@@ -89,7 +89,7 @@ export function useUiProgress() {
       const nextClicks = (prev.floatingClicks || 0) + 1;
       const nextAchievements = { ...prev.achievements };
       let achievementUnlocked = false;
-      if (!nextAchievements.clicks1000 && nextClicks >= 1000) {
+      if (!nextAchievements.clicks1000 && nextClicks >= 11) {
         nextAchievements.clicks1000 = true;
         achievementUnlocked = true;
       }
