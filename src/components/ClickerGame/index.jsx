@@ -16,6 +16,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     setButtonClicked,
     floatingClicks,
     incrementFloatingClicks,
+    achievements,
   } = useUiProgress();
 
   const {
@@ -127,8 +128,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           onSaveGame={saveGame}
           totalMoneyPerSecond={totalMoneyPerSecond}
           floatingClicks={floatingClicks}
-          gameState={gameState} // <--- weitergeben
-          onImportCloudSave={loadGameState} // <--- Import-Handler
+          gameState={gameState}
+          onImportCloudSave={loadGameState}
+          achievements={achievements} // <-- pass achievements
         />
       )}
 

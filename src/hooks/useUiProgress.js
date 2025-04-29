@@ -26,6 +26,7 @@ export function useUiProgress() {
       clickedButtons: [false, false, false, false, false],
       floatingClicks: 0,
       cloudSaveMode: false,
+      achievements: {}, // <-- add achievements
     };
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -85,8 +86,20 @@ export function useUiProgress() {
   // FloatingClickButton Klicks erhöhen
   const incrementFloatingClicks = useCallback(() => {
     setUiProgress(prev => {
-      const next = { ...prev, floatingClicks: (prev.floatingClicks || 0) + 1 };
+      const nextClicks = (prev.floatingClicks || 0) + 1;
+      const nextAchievements = { ...prev.achievements };
+      let achievementUnlocked = false;
+      if (!nextAchievements.clicks1000 && nextClicks >= 1000) {
+        nextAchievements.clicks1000 = true;
+        achievementUnlocked = true;
+      }
+      // Add more achievements here if needed
+      const next = { ...prev, floatingClicks: nextClicks, achievements: nextAchievements };
       saveUiProgress(next);
+      // Notify achievement unlock (for banner)
+      if (achievementUnlocked && window && window.dispatchEvent) {
+        window.dispatchEvent(new CustomEvent('game:achievement', { detail: { id: 'clicks1000' } }));
+      }
       return next;
     });
   }, []);
@@ -133,5 +146,6 @@ export function useUiProgress() {
     incrementFloatingClicks,
     cloudSaveMode,
     setCloudSaveMode,
+    achievements: uiProgress.achievements || {},
   };
 }
