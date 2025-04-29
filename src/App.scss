@@ -202,6 +202,9 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s ease;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 
   &:hover {
     opacity: 1;
