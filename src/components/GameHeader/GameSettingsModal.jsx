@@ -23,7 +23,7 @@ function isStandaloneMobile() {
   // iOS
   if (window.navigator.standalone) return true;
   // Android/Chrome
-  if (window.matchMedia('(display-mode: browser)').matches) return true;
+  if (window.matchMedia('(display-mode: standalone)').matches) return true;
   return false;
 }
 
@@ -62,7 +62,7 @@ export default function GameSettingsModal({
         <div className="settings-modal-header">
           <h3>Settings</h3>
           <button
-            className="header-button"
+            className="settings-button"
             style={{ marginLeft: "auto" }}
             onClick={() => setShowSettings(false)}
             title="Close"
@@ -77,7 +77,7 @@ export default function GameSettingsModal({
             <ClockIcon size={20} className="settings-icon" />
             <span className="settings-label">Show Playtime</span>
             <button
-              className="header-button"
+              className="settings-button"
               onClick={() => setShowPlaytime((v) => !v)}
               title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
             >
@@ -89,7 +89,7 @@ export default function GameSettingsModal({
             <BarChartIcon size={20} className="settings-icon" />
             <span className="settings-label">Show Click Stats</span>
             <button
-              className="header-button"
+              className="settings-button"
               onClick={() => setShowClickStats((v) => !v)}
               title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
             >
@@ -105,7 +105,7 @@ export default function GameSettingsModal({
             <CloudIcon size={20} className="settings-icon" />
             <span className="settings-label">Enable Cloud Save</span>
             <button
-              className={`header-button${cloudSaveMode ? " active" : ""}`}
+              className={`settings-button${cloudSaveMode ? " active" : ""}`}
               onClick={() => {
                 const next = !cloudSaveMode;
                 if (!cloudSaveMode && next) {
@@ -143,7 +143,7 @@ export default function GameSettingsModal({
                   {cloudUuid}
                 </span> 
                 <button
-                  className="header-button"
+                  className="settings-button"
                   onClick={() => {
                     navigator.clipboard?.writeText(cloudUuid);
                     triggerSaveFeedback("UUID copied");
@@ -159,7 +159,7 @@ export default function GameSettingsModal({
             <CloudDownloadIcon size={20} className="settings-icon" />
             <span className="settings-label">Import from Cloud</span>
             <button
-              className="header-button"
+              className="settings-button"
               onClick={() => setShowImportDialog(true)}
               title="Import from Cloud"
             >
@@ -172,7 +172,7 @@ export default function GameSettingsModal({
               <TabletSmartphoneIcon size={20} className="settings-icon" />
               <span className="settings-label">Reload App</span>
               <button
-                className="header-button"
+                className="settings-button"
                 onClick={() => setShowReloadConfirm(true)}
                 title="Reload App"
               >
@@ -185,7 +185,7 @@ export default function GameSettingsModal({
             <TrashIcon size={20} className="settings-icon" />
             <span className="settings-label">Reset Game</span>
             <button
-              className="header-button"
+              className="settings-button"
               onClick={() => setShowResetConfirm(true)}
               title="Reset Game"
             >

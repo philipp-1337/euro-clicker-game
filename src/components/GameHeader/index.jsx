@@ -66,7 +66,7 @@ export default function GameHeader(props) {
       {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
       <div className="header-actions">
         <button
-          className="header-button"
+          className="settings-button"
           onClick={() => setShowSettings(true)}
           title="Settings"
           aria-label="Settings"
@@ -74,7 +74,7 @@ export default function GameHeader(props) {
           <SettingsIcon size={20} />
         </button>
         <button
-          className="header-button"
+          className="settings-button"
           onClick={handleSave}
           title="Save"
           aria-label="Save"
