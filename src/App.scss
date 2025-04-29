@@ -115,24 +115,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
-@keyframes popIn {
-  0% {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-
-  60% {
-    transform: scale(1.1);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-// Mixins für gemeinsame Stile
-
 // Hauptcontainer
 .game-container {
   max-width: 800px;
@@ -232,10 +214,8 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  // gap: 8px;
   z-index: 10001;
-  animation: popIn 0.4s;
-  // Ensure same position as .save-feedback-banner
   position: fixed;
   top: 10px;
   left: 50%;

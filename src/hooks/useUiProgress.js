@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { gameConfig } from '@constants/gameConfig';
 
 const UI_PROGRESS_KEY = 'clickerUiProgress';
 
@@ -89,7 +90,12 @@ export function useUiProgress() {
       const nextClicks = (prev.floatingClicks || 0) + 1;
       const nextAchievements = { ...prev.achievements };
       let achievementUnlocked = false;
-      if (!nextAchievements.clicks1000 && nextClicks >= 11) {
+
+      // Hole die benötigten Klicks aus gameConfig
+      const clicks1000Config = gameConfig.achievements.find(a => a.id === 'clicks1000');
+      const requiredClicks = clicks1000Config?.requiredClicks ?? 1000;
+
+      if (!nextAchievements.clicks1000 && nextClicks >= requiredClicks) {
         nextAchievements.clicks1000 = true;
         achievementUnlocked = true;
       }
