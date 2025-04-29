@@ -314,6 +314,9 @@ export default function GameSettingsModal({
                 <button
                   className="modal-btn"
                   onClick={() => {
+                    if (typeof handleSave === "function") {
+                      setTimeout(() => handleSave(), 0);
+                    }
                     window.location.reload();
                   }}
                 >
