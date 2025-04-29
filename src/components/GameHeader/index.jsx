@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
-import { gameConfig } from '@constants/gameConfig';
 import { useAchievementBanner } from '@hooks/useAchievementBanner'; // <-- importieren
 
 export default function GameHeader(props) {
