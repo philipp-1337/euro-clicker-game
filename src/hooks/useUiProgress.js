@@ -27,7 +27,9 @@ export function useUiProgress() {
       clickedButtons: [false, false, false, false, false],
       floatingClicks: 0,
       cloudSaveMode: false,
-      achievements: {}, // <-- add achievements
+      achievements: {},
+      showPlaytime: true,      // <--- Default: eingeblendet
+      showClickStats: false,   // <--- Default: ausgeblendet
     };
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -144,6 +146,32 @@ export function useUiProgress() {
     return () => window.removeEventListener('game:cloudsavemode', handler);
   }, [setCloudSaveMode]);
 
+  // Setter für showPlaytime
+  const setShowPlaytime = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showPlaytime === 'boolean' ? prev.showPlaytime : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showPlaytime: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
+  // Setter für showClickStats
+  const setShowClickStats = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showClickStats === 'boolean' ? prev.showClickStats : false;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showClickStats: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   return {
     uiProgress,
     setGameStarted,
@@ -153,5 +181,9 @@ export function useUiProgress() {
     cloudSaveMode,
     setCloudSaveMode,
     achievements: uiProgress.achievements || {},
+    showPlaytime: typeof uiProgress.showPlaytime === 'boolean' ? uiProgress.showPlaytime : true,
+    setShowPlaytime,
+    showClickStats: typeof uiProgress.showClickStats === 'boolean' ? uiProgress.showClickStats : false,
+    setShowClickStats,
   };
 }
