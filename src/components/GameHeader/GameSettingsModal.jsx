@@ -24,7 +24,7 @@ function isStandaloneMobile() {
   // iOS
   if (window.navigator.standalone) return true;
   // Android/Chrome
-  if (window.matchMedia('(display-mode: browser)').matches) return true;
+  if (window.matchMedia('(display-mode: standalone)').matches) return true;
   return false;
 }
 
