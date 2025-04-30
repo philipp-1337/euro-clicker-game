@@ -12,6 +12,7 @@ import {
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
 import { useAchievementBanner } from '@hooks/useAchievementBanner'; // <-- importieren
+import { useUiProgress } from '@hooks/useUiProgress'; // <--- importieren
 
 export default function GameHeader(props) {
   const {
@@ -39,12 +40,18 @@ export default function GameHeader(props) {
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
   // Local UI state for toggles
-  const [showPlaytime, setShowPlaytime] = useState(true);
-  const [showClickStats, setShowClickStats] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
 
   // Achievement-Banner Hook verwenden
   const achievementBanner = useAchievementBanner();
+
+  // UI-Progress für Playtime/ClickStats persistente Anzeige
+  const {
+    showPlaytime,
+    setShowPlaytime,
+    showClickStats,
+    setShowClickStats,
+  } = useUiProgress();
 
   // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
