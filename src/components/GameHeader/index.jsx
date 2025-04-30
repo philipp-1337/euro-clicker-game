@@ -56,6 +56,7 @@ export default function GameHeader(props) {
 
   // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
+  const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
 
   return (
     <>
@@ -140,6 +141,8 @@ export default function GameHeader(props) {
         setCloudSaveMode={setCloudSaveMode}
         showCloudSaveConfirm={showCloudSaveConfirm}
         setShowCloudSaveConfirm={setShowCloudSaveConfirm}
+        showCloudSaveDisableConfirm={showCloudSaveDisableConfirm}
+        setShowCloudSaveDisableConfirm={setShowCloudSaveDisableConfirm}
         cloudUuid={cloudUuid}
         triggerSaveFeedback={triggerSaveFeedback}
         showImportDialog={showImportDialog}

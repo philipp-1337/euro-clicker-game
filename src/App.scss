@@ -319,7 +319,13 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 
   .settings-label {
+    background: none; 
+    border: none; 
+    padding: 0; cursor: pointer; 
     flex: 1;
+    font-family: $font-family;
+    font-size: 1rem;
+    text-align: left
   }
 
   .settings-uuid {

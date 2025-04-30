@@ -66,6 +66,7 @@ export default function useGameHeaderLogic(props) {
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importUuid, setImportUuid] = useState('');
   const [importError, setImportError] = useState('');
+  const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
 
   const triggerSaveFeedback = useCallback((message = 'Game saved') => {
     setSaveMessage(message);
@@ -93,12 +94,18 @@ export default function useGameHeaderLogic(props) {
   useEffect(() => {
     const handler = (e) => {
       if (e?.detail && typeof e.detail.cloudSaveMode === 'boolean') {
-        setCloudSaveMode(e.detail.cloudSaveMode);
+        const next = e.detail.cloudSaveMode;
+        if (!next && cloudUuid) {
+          // Wenn Cloud Save deaktiviert wird, zeige Bestätigungsdialog
+          setShowCloudSaveDisableConfirm(true);
+        } else {
+          setCloudSaveMode(next);
+        }
       }
     };
     window.addEventListener('game:cloudsavemode', handler);
     return () => window.removeEventListener('game:cloudsavemode', handler);
-  }, []);
+  }, [cloudUuid]);
 
   // Persist cloudSaveMode in clickerUiProgress on change
   useEffect(() => {
@@ -198,5 +205,7 @@ export default function useGameHeaderLogic(props) {
     totalMoneyPerSecond,
     onSaveGame,
     gameState,
+    showCloudSaveDisableConfirm,
+    setShowCloudSaveDisableConfirm,
   };
 }
