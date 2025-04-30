@@ -29,7 +29,7 @@ export const gameConfig = {
       { name: 'E-Cigarettes', cost: 70000, income: 70 },
       { name: 'Pharma', cost: 80000, income: 80 },
       { name: 'National Airline', cost: 90000, income: 90 },
-      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 }, // <-- Added
+      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 },
     ],
 
     stateBuildings: [
@@ -55,7 +55,7 @@ export const gameConfig = {
         description: 'Reach 1000 total clicks.',
         icon: 'MousePointerClick', // Lucide icon name as string
         color: '#4caf50',
-        requiredClicks: 1000,
+        requiredClicks: 13,
       },
       {
         id: 'faststart',
