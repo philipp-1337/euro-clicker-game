@@ -236,6 +236,9 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   vertical-align: middle;
   line-height: 1.2;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .per-second {
