@@ -103,14 +103,6 @@ If you encounter any issues:
 3. Delete the `node_modules` folder and run `npm install` again
 4. If there are display problems, clear your browser cache
 
-## Future Features
-
-- Save game progress in local storage
-- Offline progress
-- Prestige system
-- Achievements
-- Additional types of upgrades
-
 ## Contributing
 
 Contributions are welcome! Feel free to report bugs or create pull requests.

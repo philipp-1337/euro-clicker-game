@@ -7,13 +7,9 @@ import {
   Save as SaveIcon,
   MousePointerClick as MousePointerClickIcon,
   HourglassIcon,
-  Trophy,
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
-import AchievementsModal from './AchievementsModal';
-import { useAchievements } from '@hooks/useAchievements';
 import { useUiProgress } from '@hooks/useUiProgress';
-import { gameConfig } from '@constants/gameConfig';
 
 export default function GameHeader(props) {
   const {
@@ -41,10 +37,6 @@ export default function GameHeader(props) {
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
   // Local UI state for toggles
-  const [showAchievements, setShowAchievements] = useState(false);
-
-  // Achievement-Banner Hook verwenden
-  const { achievementBanner } = useAchievements(gameConfig);
 
   // UI-Progress für Playtime/ClickStats persistente Anzeige
   const {
@@ -63,12 +55,6 @@ export default function GameHeader(props) {
       {isSaving && (
         <div className="save-feedback-banner">
           {saveMessage}
-        </div>
-      )}
-      {achievementBanner && (
-        <div className="save-feedback-banner achievement-banner">
-          <Trophy size={20} style={{ marginRight: 6, verticalAlign: 'middle' }} />
-          <span style={{ verticalAlign: 'middle' }}>{achievementBanner}</span>
         </div>
       )}
       <div className="game-header-container">
@@ -106,17 +92,6 @@ export default function GameHeader(props) {
             : <SaveIcon size={20} />
           }
         </button>
-        {/* Trophy icon for achievements */}
-        {Object.values(props.achievements || {}).some(Boolean) && (
-          <button
-            className="settings-button"
-            onClick={() => setShowAchievements(true)}
-            title="Achievements"
-            aria-label="Achievements"
-          >
-            <Trophy size={20} />
-          </button>
-        )}
         {showClickStats && (
           <span className="header-clickstats">
             <MousePointerClickIcon size={20} />
@@ -152,11 +127,6 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
-      />
-      <AchievementsModal
-        show={showAchievements}
-        onClose={() => setShowAchievements(false)}
-        achievements={props.achievements}
       />
     </>
   );

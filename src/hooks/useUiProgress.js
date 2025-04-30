@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { gameConfig } from '@constants/gameConfig';
 
 const UI_PROGRESS_KEY = 'clickerUiProgress';
 
@@ -27,7 +26,6 @@ export function useUiProgress() {
       clickedButtons: [false, false, false, false, false],
       floatingClicks: 0,
       cloudSaveMode: false,
-      achievements: {},
       showPlaytime: true,      // <--- Default: eingeblendet
       showClickStats: false,   // <--- Default: ausgeblendet
     };
@@ -89,25 +87,8 @@ export function useUiProgress() {
   // FloatingClickButton Klicks erhöhen
   const incrementFloatingClicks = useCallback(() => {
     setUiProgress(prev => {
-      const nextClicks = (prev.floatingClicks || 0) + 1;
-      const nextAchievements = { ...prev.achievements };
-      let achievementUnlocked = false;
-
-      // Hole die benötigten Klicks aus gameConfig
-      const clicks100Config = gameConfig.achievements.find(a => a.id === 'clicks100');
-      const requiredClicks = clicks100Config?.requiredClicks ?? 1000;
-
-      if (!nextAchievements.clicks100 && nextClicks >= requiredClicks) {
-        nextAchievements.clicks100 = true;
-        achievementUnlocked = true;
-      }
-      // Add more achievements here if needed
-      const next = { ...prev, floatingClicks: nextClicks, achievements: nextAchievements };
+      const next = { ...prev, floatingClicks: (prev.floatingClicks || 0) + 1 };
       saveUiProgress(next);
-      // Notify achievement unlock (for banner)
-      if (achievementUnlocked && window && window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('game:achievement', { detail: { id: 'clicks100' } }));
-      }
       return next;
     });
   }, []);
@@ -180,7 +161,6 @@ export function useUiProgress() {
     incrementFloatingClicks,
     cloudSaveMode,
     setCloudSaveMode,
-    achievements: uiProgress.achievements || {},
     showPlaytime: typeof uiProgress.showPlaytime === 'boolean' ? uiProgress.showPlaytime : true,
     setShowPlaytime,
     showClickStats: typeof uiProgress.showClickStats === 'boolean' ? uiProgress.showClickStats : false,
