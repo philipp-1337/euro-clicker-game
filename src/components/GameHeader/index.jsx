@@ -11,8 +11,9 @@ import {
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
-import { useAchievementBanner } from '@hooks/useAchievementBanner'; // <-- importieren
-import { useUiProgress } from '@hooks/useUiProgress'; // <--- importieren
+import { useAchievements } from '@hooks/useAchievements';
+import { useUiProgress } from '@hooks/useUiProgress';
+import { gameConfig } from '@constants/gameConfig';
 
 export default function GameHeader(props) {
   const {
@@ -43,7 +44,7 @@ export default function GameHeader(props) {
   const [showAchievements, setShowAchievements] = useState(false);
 
   // Achievement-Banner Hook verwenden
-  const achievementBanner = useAchievementBanner();
+  const { achievementBanner } = useAchievements(gameConfig);
 
   // UI-Progress für Playtime/ClickStats persistente Anzeige
   const {
