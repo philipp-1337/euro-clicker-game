@@ -194,13 +194,8 @@ export default function useClickerGame(easyMode = false) {
   }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
 
   const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
-
-  // Spielstand-Speichern
-  const stableLoadGameState = useCallback((state) => {
-    loadGameState(state);
-  }, [loadGameState]);
   
-  const { saveGame } = useLocalStorage(gameState, stableLoadGameState);
+  const { saveGame } = useLocalStorage(gameState, loadGameState);
 
   return {
     // Hauptzustände
