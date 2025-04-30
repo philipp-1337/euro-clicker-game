@@ -327,7 +327,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     font-family: $font-family;
     font-size: 1rem;
     text-align: left;
-    color: map.get($colors, text-dark);
+
     -webkit-appearance: none;
     appearance: none;
     -webkit-tap-highlight-color: transparent;

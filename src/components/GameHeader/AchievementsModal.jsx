@@ -4,7 +4,7 @@ import { useAchievements } from '@hooks/useAchievements';
 import { gameConfig } from '@constants/gameConfig';
 
 export default function AchievementsModal({ show, onClose, achievements = {} }) {
-  const ACHIEVEMENTS = useAchievements(gameConfig);
+  const { achievements: ACHIEVEMENTS } = useAchievements(gameConfig);
 
   if (!show) return null;
   return (
