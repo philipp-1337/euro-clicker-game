@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { db } from '../firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 // Hilfsfunktion für UUID
 function generateUUID() {
@@ -84,10 +84,26 @@ export default function useCloudSave() {
     }
   };
 
+  // Lösche Spielstand aus der Cloud (Firestore)
+  const deleteFromCloud = async (uuid) => {
+    if (!uuid) return;
+    setCloudStatus('deleting');
+    try {
+      await deleteDoc(doc(db, 'saves', uuid));
+      localStorage.removeItem('cloudSaveUuid');
+      setCloudUuid(null);
+      setCloudStatus('deleted');
+    } catch (e) {
+      setCloudStatus('error');
+      throw e;
+    }
+  };
+
   return {
     cloudUuid,
     exportToCloud,
     importFromCloud,
+    deleteFromCloud,
     cloudStatus,
     setCloudUuid,
   };

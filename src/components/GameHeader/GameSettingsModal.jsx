@@ -17,13 +17,14 @@ import {
   RotateCwIcon,
   TabletSmartphoneIcon,
 } from "lucide-react";
+import useCloudSave from '@hooks/useCloudSave';
 
 // Hilfsfunktion für Standalone-Detection
 function isStandaloneMobile() {
   // iOS
   if (window.navigator.standalone) return true;
   // Android/Chrome
-  if (window.matchMedia('(display-mode: standalone)').matches) return true;
+  if (window.matchMedia('(display-mode: browser)').matches) return true;
   return false;
 }
 
@@ -38,6 +39,8 @@ export default function GameSettingsModal({
   setCloudSaveMode,
   showCloudSaveConfirm,
   setShowCloudSaveConfirm,
+  showCloudSaveDisableConfirm,
+  setShowCloudSaveDisableConfirm,
   cloudUuid,
   triggerSaveFeedback,
   showImportDialog,
@@ -49,10 +52,9 @@ export default function GameSettingsModal({
   handleSave,
 }) {
   const showReloadButton = isStandaloneMobile();
-
-  // Neue States für Custom Confirm Modals
-  const [showResetConfirm, setShowResetConfirm] = React.useState(false);
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
+  const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+  const { deleteFromCloud } = useCloudSave();
 
   if (!showSettings) return null;
 
@@ -75,7 +77,13 @@ export default function GameSettingsModal({
           {/* Spielzeit Toggle */}
           <div className="settings-row">
             <ClockIcon size={20} className="settings-icon" />
-            <span className="settings-label">Show Playtime</span>
+            <button
+              className="settings-label"
+              onClick={() => setShowPlaytime((v) => !v)}
+              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+            >
+              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
+            </button>
             <button
               className="settings-button"
               onClick={() => setShowPlaytime((v) => !v)}
@@ -87,7 +95,13 @@ export default function GameSettingsModal({
           {/* Clicker Statistik Toggle */}
           <div className="settings-row">
             <BarChartIcon size={20} className="settings-icon" />
-            <span className="settings-label">Show Click Stats</span>
+            <button
+              className="settings-label"
+              onClick={() => setShowClickStats((v) => !v)}
+              title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+            >
+              {showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+            </button>
             <button
               className="settings-button"
               onClick={() => setShowClickStats((v) => !v)}
@@ -103,13 +117,35 @@ export default function GameSettingsModal({
           {/* Cloud Save Toggle */}
           <div className="settings-row">
             <CloudIcon size={20} className="settings-icon" />
-            <span className="settings-label">Enable Cloud Save</span>
+            <button
+              className="settings-label"
+              onClick={() => {
+                const next = !cloudSaveMode;
+                if (!cloudSaveMode && next) {
+                  setShowCloudSaveConfirm(true);
+                } else if (cloudSaveMode && !next) {
+                  setShowCloudSaveDisableConfirm(true);
+                } else {
+                  setCloudSaveMode(next);
+                  window.dispatchEvent(
+                    new CustomEvent("game:cloudsavemode", {
+                      detail: { cloudSaveMode: next },
+                    })
+                  );
+                }
+              }}
+              title={cloudSaveMode ? "Deactivate Cloud-Save" : "Activate Cloud-Save"}
+            >
+              {cloudSaveMode ? "Disable Cloud Save" : "Enable Cloud Save"}
+            </button>
             <button
               className={`settings-button${cloudSaveMode ? " active" : ""}`}
               onClick={() => {
                 const next = !cloudSaveMode;
                 if (!cloudSaveMode && next) {
                   setShowCloudSaveConfirm(true);
+                } else if (cloudSaveMode && !next) {
+                  setShowCloudSaveDisableConfirm(true);
                 } else {
                   setCloudSaveMode(next);
                   window.dispatchEvent(
@@ -157,7 +193,13 @@ export default function GameSettingsModal({
           {/* Import from Cloud */}
           <div className="settings-row">
             <CloudDownloadIcon size={20} className="settings-icon" />
-            <span className="settings-label">Import from Cloud</span>
+            <button
+              className="settings-label"
+              onClick={() => setShowImportDialog(true)}
+              title="Import from Cloud"
+            >
+              Import from Cloud
+            </button>
             <button
               className="settings-button"
               onClick={() => setShowImportDialog(true)}
@@ -170,7 +212,13 @@ export default function GameSettingsModal({
           {showReloadButton && (
             <div className="settings-row">
               <TabletSmartphoneIcon size={20} className="settings-icon" />
-              <span className="settings-label">Reload App</span>
+              <button
+                className="settings-label"
+                onClick={() => setShowReloadConfirm(true)}
+                title="Reload App"
+              >
+                Reload App
+              </button>
               <button
                 className="settings-button"
                 onClick={() => setShowReloadConfirm(true)}
@@ -183,7 +231,13 @@ export default function GameSettingsModal({
           {/* Reset Button */}
           <div className="settings-row">
             <TrashIcon size={20} className="settings-icon" />
-            <span className="settings-label">Reset Game</span>
+            <button
+              className="settings-label"
+              onClick={() => setShowResetConfirm(true)}
+              title="Reset Game"
+            >
+              Reset Game
+            </button>
             <button
               className="settings-button"
               onClick={() => setShowResetConfirm(true)}
@@ -270,30 +324,45 @@ export default function GameSettingsModal({
             </div>
           </div>
         )}
-        {/* Custom Confirm Modal: Reset Game */}
-        {showResetConfirm && (
-          <div className="modal-backdrop" style={{ zIndex: 10002 }}>
-            <div className="modal-content" style={{ maxWidth: 400 }}>
-              <h3>Reset Game</h3>
+        {/* Cloud Save Disable Confirm Modal */}
+        {showCloudSaveDisableConfirm && (
+          <div className="modal-backdrop" style={{ zIndex: 10001 }}>
+            <div className="modal-content" style={{ maxWidth: 420 }}>
+              <h3>Disable Cloud Save</h3>
               <p style={{ marginBottom: 18 }}>
-                Are you sure you want to reset your game progress?<br />
-                <b>This cannot be undone.</b>
+                Your game progress will be removed from the cloud. You will no longer be able to restore your progress on other devices.
+                <br />
+                <br />
+                Do you want to disable Cloud Save and remove your data from the cloud?
               </p>
               <div className="modal-actions">
                 <button
                   className="modal-btn"
-                  style={{ background: "#e74c3c", color: "#fff" }}
-                  onClick={() => {
-                    localStorage.clear();
-                    window.location.reload();
+                  onClick={async () => {
+                    try {
+                      await deleteFromCloud(cloudUuid);
+                      setCloudSaveMode(false);
+                      window.dispatchEvent(
+                        new CustomEvent("game:cloudsavemode", {
+                          detail: { cloudSaveMode: false },
+                        })
+                      );
+                      setShowCloudSaveDisableConfirm(false);
+                      triggerSaveFeedback('Cloud save disabled');
+                    } catch (error) {
+                      console.error('Error disabling cloud save:', error);
+                      triggerSaveFeedback('Error disabling cloud save');
+                    }
                   }}
                 >
-                  Reset
+                  Yes, Disable
                 </button>
                 <button
                   className="modal-btn"
                   style={{ background: "#eee", color: "#333" }}
-                  onClick={() => setShowResetConfirm(false)}
+                  onClick={() => {
+                    setShowCloudSaveDisableConfirm(false);
+                  }}
                 >
                   Cancel
                 </button>
@@ -326,6 +395,37 @@ export default function GameSettingsModal({
                   className="modal-btn"
                   style={{ background: "#eee", color: "#333" }}
                   onClick={() => setShowReloadConfirm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Custom Confirm Modal: Reset Game */}
+        {showResetConfirm && (
+          <div className="modal-backdrop" style={{ zIndex: 10002 }}>
+            <div className="modal-content" style={{ maxWidth: 400 }}>
+              <h3>Reset Game</h3>
+              <p style={{ marginBottom: 18 }}>
+                Are you sure you want to reset your game progress?<br />
+                <b>This cannot be undone.</b>
+              </p>
+              <div className="modal-actions">
+                <button
+                  className="modal-btn"
+                  style={{ background: "#e74c3c", color: "#fff" }}
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                >
+                  Reset
+                </button>
+                <button
+                  className="modal-btn"
+                  style={{ background: "#eee", color: "#333" }}
+                  onClick={() => setShowResetConfirm(false)}
                 >
                   Cancel
                 </button>
