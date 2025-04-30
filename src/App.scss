@@ -236,9 +236,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: inline-block;
   vertical-align: middle;
   line-height: 1.2;
-  color: inherit;
-  -webkit-appearance: none;
-  appearance: none;
 }
 
 .per-second {
@@ -324,11 +321,18 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   .settings-label {
     background: none; 
     border: none; 
-    padding: 0; cursor: pointer; 
+    padding: 0; 
+    cursor: pointer; 
     flex: 1;
     font-family: $font-family;
     font-size: 1rem;
-    text-align: left
+    text-align: left;
+    color: map.get($colors, text-dark);
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
   }
 
   .settings-uuid {
