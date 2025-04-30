@@ -50,12 +50,12 @@ export const gameConfig = {
     // Achievements config (static, no JSX/icons)
     achievements: [
       {
-        id: 'clicks1000',
-        label: '1000 Clicks',
-        description: 'Reach 1000 total clicks.',
+        id: 'clicks100',
+        label: '100 Clicks',
+        description: 'Reach 100 total clicks.',
         icon: 'MousePointerClick', // Lucide icon name as string
         color: '#4caf50',
-        requiredClicks: 13,
+        requiredClicks: 100,
       },
       {
         id: 'faststart',

@@ -94,11 +94,11 @@ export function useUiProgress() {
       let achievementUnlocked = false;
 
       // Hole die benötigten Klicks aus gameConfig
-      const clicks1000Config = gameConfig.achievements.find(a => a.id === 'clicks1000');
-      const requiredClicks = clicks1000Config?.requiredClicks ?? 1000;
+      const clicks100Config = gameConfig.achievements.find(a => a.id === 'clicks100');
+      const requiredClicks = clicks100Config?.requiredClicks ?? 1000;
 
-      if (!nextAchievements.clicks1000 && nextClicks >= requiredClicks) {
-        nextAchievements.clicks1000 = true;
+      if (!nextAchievements.clicks100 && nextClicks >= requiredClicks) {
+        nextAchievements.clicks100 = true;
         achievementUnlocked = true;
       }
       // Add more achievements here if needed
@@ -106,7 +106,7 @@ export function useUiProgress() {
       saveUiProgress(next);
       // Notify achievement unlock (for banner)
       if (achievementUnlocked && window && window.dispatchEvent) {
-        window.dispatchEvent(new CustomEvent('game:achievement', { detail: { id: 'clicks1000' } }));
+        window.dispatchEvent(new CustomEvent('game:achievement', { detail: { id: 'clicks100' } }));
       }
       return next;
     });
