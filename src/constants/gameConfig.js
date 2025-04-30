@@ -47,33 +47,6 @@ export const gameConfig = {
       { name: 'Tax Haven Subsidies', costPerSecond: -30, satisfactionValue: 0, dissatisfactionValue: 25 }
     ],
 
-    // Achievements config (static, no JSX/icons)
-    achievements: [
-      {
-        id: 'clicks100',
-        label: '100 Clicks',
-        description: 'Reach 100 total clicks.',
-        icon: 'MousePointerClick', // Lucide icon name as string
-        color: '#4caf50',
-        requiredClicks: 100,
-      },
-      {
-        id: 'faststart',
-        label: 'Speedy Start',
-        description: 'Reach 100€ in under 60 seconds.',
-        icon: 'Rocket',
-        color: '#2196f3',
-      },
-      {
-        id: 'playhour',
-        label: 'One Hour Played',
-        description: 'Play for 1 hour total.',
-        icon: 'Timer',
-        color: '#ff9800',
-      },
-      // Add more achievements here
-    ],
-
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level
     upgradeCooldownReduction: 0.9, // -10% pro Level
