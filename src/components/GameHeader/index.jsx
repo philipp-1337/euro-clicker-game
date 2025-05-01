@@ -79,14 +79,6 @@ export default function GameHeader(props) {
       <div className="header-actions">
         <button
           className="settings-button"
-          onClick={() => setShowAchievements(true)}
-          title="Achievements"
-          aria-label="Achievements"
-        >
-          <TrophyIcon size={20} />
-        </button>
-        <button
-          className="settings-button"
           onClick={() => setShowSettings(true)}
           title="Settings"
           aria-label="Settings"
@@ -103,6 +95,14 @@ export default function GameHeader(props) {
             ? <CloudUploadIcon size={20} />
             : <SaveIcon size={20} />
           }
+        </button>
+        <button
+          className="settings-button"
+          onClick={() => setShowAchievements(true)}
+          title="Achievements"
+          aria-label="Achievements"
+        >
+          <TrophyIcon size={20} />
         </button>
         {showClickStats && (
           <span className="header-clickstats">

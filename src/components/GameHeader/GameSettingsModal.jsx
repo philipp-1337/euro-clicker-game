@@ -78,7 +78,7 @@ export default function GameSettingsModal({
           <div className="settings-row">
             <ClockIcon size={20} className="settings-icon" />
             <button
-              className="settings-label"
+              className="settings-label btn"
               onClick={() => setShowPlaytime((v) => !v)}
               title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
             >
@@ -96,7 +96,7 @@ export default function GameSettingsModal({
           <div className="settings-row">
             <BarChartIcon size={20} className="settings-icon" />
             <button
-              className="settings-label"
+              className="settings-label btn"
               onClick={() => setShowClickStats((v) => !v)}
               title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
             >
@@ -118,7 +118,7 @@ export default function GameSettingsModal({
           <div className="settings-row">
             <CloudIcon size={20} className="settings-icon" />
             <button
-              className="settings-label"
+              className="settings-label btn"
               onClick={() => {
                 const next = !cloudSaveMode;
                 if (!cloudSaveMode && next) {
@@ -194,7 +194,7 @@ export default function GameSettingsModal({
           <div className="settings-row">
             <CloudDownloadIcon size={20} className="settings-icon" />
             <button
-              className="settings-label"
+              className="settings-label btn"
               onClick={() => setShowImportDialog(true)}
               title="Import from Cloud"
             >
@@ -213,7 +213,7 @@ export default function GameSettingsModal({
             <div className="settings-row">
               <TabletSmartphoneIcon size={20} className="settings-icon" />
               <button
-                className="settings-label"
+                className="settings-label btn"
                 onClick={() => setShowReloadConfirm(true)}
                 title="Reload App"
               >
@@ -232,7 +232,7 @@ export default function GameSettingsModal({
           <div className="settings-row">
             <TrashIcon size={20} className="settings-icon" />
             <button
-              className="settings-label"
+              className="settings-label btn"
               onClick={() => setShowResetConfirm(true)}
               title="Reset Game"
             >
