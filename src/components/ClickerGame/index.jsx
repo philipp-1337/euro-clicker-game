@@ -4,6 +4,7 @@ import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
+import Achievements from './Achievements';
 import useClickerGame from '@hooks/useClickerGame';
 import 'App.scss';
 
@@ -132,7 +133,16 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
         />
       )}
 
-      {/* ClickerButtons erst ab 10 €, aber nach Freischaltung immer sichtbar */}
+      {/* Achievements component */}
+      {uiProgress.gameStarted && (
+        <Achievements
+          money={money}
+          totalClicks={floatingClicks}
+          gameTime={playTime}
+        />
+      )}
+
+      {/* ClickerButtons erst ab 10 €, aber nach Freischaltung immer sichtbar */}
       {uiProgress.gameStarted && clickerButtonsUnlocked && (
         <div className="clicker-buttons-fade">
           <ClickerButtons 
