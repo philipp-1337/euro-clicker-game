@@ -96,14 +96,16 @@ export default function GameHeader(props) {
             : <SaveIcon size={20} />
           }
         </button>
+        {props.hasAnyAchievement && (
         <button
           className="settings-button"
           onClick={() => setShowAchievements(true)}
           title="Achievements"
           aria-label="Achievements"
         >
-          {props.hasAnyAchievement && <TrophyIcon size={20} />}
+          <TrophyIcon size={20} />
         </button>
+        )}
         {showClickStats && (
           <span className="header-clickstats">
             <MousePointerClickIcon size={20} />
