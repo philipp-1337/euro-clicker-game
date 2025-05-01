@@ -64,7 +64,7 @@ export const useAchievements = (money, totalClicks, gameTime) => {
       setUnlockedAchievements(prev => [...prev, ...newUnlocks]);
       setAchievements(updatedAchievements);
     }
-  }, [money, totalClicks, gameTime]);
+  }, [money, totalClicks, gameTime, achievements]);
 
   return {
     achievements,
