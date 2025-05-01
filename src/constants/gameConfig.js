@@ -136,22 +136,19 @@ export const gameConfig = {
         name: 'Click Master',
         description: 'Reach 100 total clicks',
         target: 100,
-        icon: '👆'
       },
       fastMoney: {
         id: 'fastMoney',
         name: 'Quick Cash',
-        description: 'Reach 100€ in under 60 seconds',
-        target: 100,
+        description: 'Reach 222€ in under 60 seconds',
+        target: 222,
         timeLimit: 60,
-        icon: '⚡'
       },
       longPlay: {
         id: 'longPlay',
         name: 'Dedicated Player',
         description: 'Play for 1 hour total',
         target: 3600, // 1 hour in seconds
-        icon: '⏱️'
       }
     }
   };
