@@ -39,7 +39,15 @@ export const useAchievements = (money, totalClicks, gameTime) => {
     const moneyAchievement = updatedAchievements.fastMoney;
     if (moneyAchievement && !moneyAchievement.unlocked) {
       moneyAchievement.progress = money;
-      // console.log('Money achievement progress:', moneyAchievement.progress, 'target:', moneyAchievement.target, 'time:', gameTime, 'timeLimit:', moneyAchievement.timeLimit);
+      // Kennzeichnung, wenn nicht mehr erreichbar
+      if (
+        money < moneyAchievement.target &&
+        gameTime > moneyAchievement.timeLimit
+      ) {
+        moneyAchievement.unattainable = true;
+      } else {
+        moneyAchievement.unattainable = false;
+      }
       if (money >= moneyAchievement.target && gameTime <= moneyAchievement.timeLimit) {
         console.log('Money achievement condition met!');
         moneyAchievement.unlocked = true;

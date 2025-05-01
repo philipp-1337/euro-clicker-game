@@ -33,11 +33,15 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
             <p>Game Time: {formatTime(gameTime)}</p>
           </div> */}
           {Object.values(achievements).map((achievement) => (
-            <div key={achievement.id} className="settings-row">
+            <div key={achievement.id} className={`settings-row${achievement.unattainable ? ' unattainable' : ''}`} style={achievement.unattainable ? {opacity: 0.5} : {}}>
               <TrophyIcon size={20} className={`settings-icon ${achievement.unlocked ? 'unlocked' : ''}`} />
               <span className="settings-label">{achievement.name}</span>
               <span className={`achievement-status ${achievement.unlocked ? 'unlocked' : ''}`}>
-                {achievement.unlocked ? 'Unlocked' : `${Math.floor((achievement.progress / achievement.target) * 100)}%`}
+                {achievement.unlocked
+                  ? 'Unlocked'
+                  : achievement.unattainable
+                    ? 'Nicht mehr erreichbar'
+                    : `${Math.floor((achievement.progress / achievement.target) * 100)}%`}
               </span>
             </div>
           ))}

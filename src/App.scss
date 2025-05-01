@@ -997,30 +997,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
 }
 
-// Achievement notification animation
-@keyframes achievementUnlock {
-  0% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  10% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  90% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-.achievement.unlocked {
-  animation: achievementUnlock 3s ease-in-out forwards;
-}
-
 .achievement-notification {
   position: fixed;
   top: 10px;
@@ -1037,7 +1013,6 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   display: flex;
   align-items: center;
   gap: 8px;
-  animation: achievementUnlock 3s ease-in-out forwards;
 
   .achievement-icon {
     color: #000;
