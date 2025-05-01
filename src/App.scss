@@ -966,6 +966,42 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
   }
 }
+// ... existing styles ...
+
+.achievement-status {
+  margin-left: auto;
+  font-weight: bold;
+  
+  &.unlocked {
+    color: #4CAF50;
+  }
+}
+
+.achievement-stats {
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+
+  p {
+    margin: 5px 0;
+  }
+}
+
+.achievement-status {
+  margin-left: auto;
+  font-weight: bold;
+  
+  &.unlocked {
+    color: #4CAF50;
+  }
+}
+
+.settings-icon {
+  &.unlocked {
+    color: #4CAF50;
+  }
+}
 
 // Achievement notification animation
 @keyframes achievementUnlock {

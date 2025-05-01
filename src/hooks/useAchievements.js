@@ -26,7 +26,7 @@ export const useAchievements = (money, totalClicks, gameTime) => {
     const clicksAchievement = updatedAchievements.totalClicks;
     if (clicksAchievement && !clicksAchievement.unlocked) {
       clicksAchievement.progress = totalClicks;
-      console.log('Clicks achievement progress:', clicksAchievement.progress, 'target:', clicksAchievement.target);
+      // console.log('Clicks achievement progress:', clicksAchievement.progress, 'target:', clicksAchievement.target);
       if (totalClicks >= clicksAchievement.target) {
         console.log('Clicks achievement condition met!');
         clicksAchievement.unlocked = true;
@@ -39,7 +39,7 @@ export const useAchievements = (money, totalClicks, gameTime) => {
     const moneyAchievement = updatedAchievements.fastMoney;
     if (moneyAchievement && !moneyAchievement.unlocked) {
       moneyAchievement.progress = money;
-      console.log('Money achievement progress:', moneyAchievement.progress, 'target:', moneyAchievement.target, 'time:', gameTime, 'timeLimit:', moneyAchievement.timeLimit);
+      // console.log('Money achievement progress:', moneyAchievement.progress, 'target:', moneyAchievement.target, 'time:', gameTime, 'timeLimit:', moneyAchievement.timeLimit);
       if (money >= moneyAchievement.target && gameTime <= moneyAchievement.timeLimit) {
         console.log('Money achievement condition met!');
         moneyAchievement.unlocked = true;
