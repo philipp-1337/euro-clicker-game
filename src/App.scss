@@ -321,8 +321,25 @@ $transition-slow: 0.4s ease;
     user-select: none;
     
     &.btn {
-      cursor: pointer; 
-
+      cursor: pointer;
+      /* iOS/Safari Button-Override: Einheitliches Styling */
+      color: inherit !important;
+      background: transparent !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      
+      &:active,
+      &:focus,
+      &:visited {
+        color: inherit !important;
+        background: transparent !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
     }
   }
 
