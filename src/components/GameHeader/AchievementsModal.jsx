@@ -1,15 +1,15 @@
 import React from 'react';
 import { X as CloseIcon, Trophy as TrophyIcon } from 'lucide-react';
-import { formatNumber } from '@utils/calculators';
+// import { formatNumber } from '@utils/calculators';
 
 export default function AchievementsModal({ showAchievements, setShowAchievements, achievements, money, totalClicks, gameTime }) {
   if (!showAchievements) return null;
 
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    return `${hours}h ${minutes}m`;
-  };
+  // const formatTime = (seconds) => {
+  //   const hours = Math.floor(seconds / 3600);
+  //   const minutes = Math.floor((seconds % 3600) / 60);
+  //   return `${hours}h ${minutes}m`;
+  // };
 
   return (
     <div className="modal-backdrop">
@@ -27,11 +27,11 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
           </button>
         </div>
         <div className="settings-modal-content">
-          <div className="achievement-stats">
+          {/* <div className="achievement-stats">
             <p>Total Money: {formatNumber(money)} €</p>
             <p>Total Clicks: {totalClicks}</p>
             <p>Game Time: {formatTime(gameTime)}</p>
-          </div>
+          </div> */}
           {Object.values(achievements).map((achievement) => (
             <div key={achievement.id} className="settings-row">
               <TrophyIcon size={20} className={`settings-icon ${achievement.unlocked ? 'unlocked' : ''}`} />
