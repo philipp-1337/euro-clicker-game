@@ -6,6 +6,7 @@ import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import { useAchievements } from '@hooks/useAchievements';
+import AchievementNotification from './AchievementNotification';
 import 'App.scss';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
@@ -68,7 +69,38 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     loadGameState, // <--- hinzufügen
   } = useClickerGame(easyMode);
 
-  const { achievements } = useAchievements(money, floatingClicks, playTime);
+  const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
+  const [notificationQueue, setNotificationQueue] = useState([]);
+  const [showAchievement, setShowAchievement] = useState(null);
+
+  // Hilfsfunktion: Gibt true zurück, sobald mindestens ein Achievement freigeschaltet wurde
+  const hasAnyAchievement = Object.values(achievements).some(a => a.unlocked);
+
+  // Wenn neue Achievements freigeschaltet werden, zur Queue hinzufügen
+  useEffect(() => {
+    if (unlockedAchievements.length > 0) {
+      setNotificationQueue(prev => [...prev, ...unlockedAchievements]);
+      clearUnlockedAchievements();
+    }
+  }, [unlockedAchievements, clearUnlockedAchievements]);
+
+  // Immer wenn showAchievement null wird und noch etwas in der Queue ist, das nächste anzeigen
+  useEffect(() => {
+    if (!showAchievement && notificationQueue.length > 0) {
+      setShowAchievement(notificationQueue[0]);
+    }
+  }, [notificationQueue, showAchievement]);
+
+  // Wenn ein Achievement angezeigt wird, nach 3s wieder ausblenden und aus Queue entfernen
+  useEffect(() => {
+    if (showAchievement) {
+      const timer = setTimeout(() => {
+        setShowAchievement(null);
+        setNotificationQueue(prev => prev.slice(1));
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAchievement]);
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
@@ -120,6 +152,16 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
 
   return (
     <div className="game-container">
+      {/* Achievement Notification */}
+      {showAchievement && (
+        <AchievementNotification
+          achievement={showAchievement}
+          onClose={() => {
+            setShowAchievement(null);
+            setNotificationQueue(prev => prev.slice(1));
+          }}
+        />
+      )}
       {/* GameHeader (mit Money, Income, Save, Reset, Playtime) erst nach erstem Klick */}
       {uiProgress.gameStarted && (
         <GameHeader
@@ -133,6 +175,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           gameState={gameState}
           onImportCloudSave={loadGameState}
           achievements={achievements}
+          hasAnyAchievement={hasAnyAchievement}
         />
       )}
 
