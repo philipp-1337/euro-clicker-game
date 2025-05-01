@@ -1,11 +1,11 @@
 import { useUiProgress } from '@hooks/useUiProgress';
-import { useState, useEffect } from 'react'; // Importiere useEffect
+import { useState, useEffect } from 'react';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
-import Achievements from './Achievements';
 import useClickerGame from '@hooks/useClickerGame';
+import { useAchievements } from '@hooks/useAchievements';
 import 'App.scss';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
@@ -66,7 +66,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     interventionsUnlockCost,
     gameState, // <--- hinzufügen
     loadGameState, // <--- hinzufügen
-    } = useClickerGame(easyMode);
+  } = useClickerGame(easyMode);
+
+  const { achievements } = useAchievements(money, floatingClicks, playTime);
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
@@ -130,15 +132,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           floatingClicks={floatingClicks}
           gameState={gameState}
           onImportCloudSave={loadGameState}
-        />
-      )}
-
-      {/* Achievements component */}
-      {uiProgress.gameStarted && (
-        <Achievements
-          money={money}
-          totalClicks={floatingClicks}
-          gameTime={playTime}
+          achievements={achievements}
         />
       )}
 

@@ -7,8 +7,10 @@ import {
   Save as SaveIcon,
   MousePointerClick as MousePointerClickIcon,
   HourglassIcon,
+  Trophy as TrophyIcon,
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
+import AchievementsModal from './AchievementsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
 
 export default function GameHeader(props) {
@@ -50,6 +52,8 @@ export default function GameHeader(props) {
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
 
+  const [showAchievements, setShowAchievements] = useState(false);
+
   return (
     <>
       {isSaving && (
@@ -73,6 +77,14 @@ export default function GameHeader(props) {
       </div>
       {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
       <div className="header-actions">
+        <button
+          className="settings-button"
+          onClick={() => setShowAchievements(true)}
+          title="Achievements"
+          aria-label="Achievements"
+        >
+          <TrophyIcon size={20} />
+        </button>
         <button
           className="settings-button"
           onClick={() => setShowSettings(true)}
@@ -127,6 +139,14 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
+      />
+      <AchievementsModal
+        showAchievements={showAchievements}
+        setShowAchievements={setShowAchievements}
+        achievements={props.achievements}
+        money={props.money}
+        totalClicks={props.floatingClicks}
+        gameTime={props.playTime}
       />
     </>
   );
