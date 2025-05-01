@@ -762,7 +762,7 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
 .modal-content h3 {
   margin-top: 0;
-  margin-bottom: 18px;
+  // margin-bottom: 18px;
   color: map.get($colors, primary);
   font-size: 1.25rem;
   text-align: center;
@@ -1021,4 +1021,54 @@ $font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   .achievement-message {
     font-weight: 600;
   }
+}
+
+.achievement-description {
+  font-size: 0.85em;
+  color: #888;
+  font-weight: 400;
+  margin-top: 2px;
+}
+.settings-icon.locked {
+  color: #bbb;
+}
+
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.achievement-row {
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  gap: 14px;
+  margin-right: 6px;
+  padding: 8px 0;
+}
+
+.achievement-icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-width: 36px;
+}
+
+.achievement-info {
+  display: flex;
+  flex: 1 1;
+  flex-direction: column;
+}
+
+.achievement-label {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: #2c3e50
+}
+
+.achievement-desc {
+  color: #666;
+  font-size: .97em;
 }
