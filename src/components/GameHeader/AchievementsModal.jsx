@@ -13,7 +13,7 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content">
+      <div className="modal-content achievement">
         <div className="settings-modal-header">
           <h3>Achievements</h3>
           <button
@@ -52,13 +52,6 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
                   </span>
                 </span>
                 {achievement.unlocked && <PartyPopperIcon size={20} color="#f50057" style={{ marginLeft: 8 }} />}
-                {/* <span className={`achievement-status ${achievement.unlocked ? 'unlocked' : ''}`}>
-                  {achievement.unlocked
-                    ? 'Unlocked'
-                    : achievement.unattainable
-                      ? 'Nicht mehr erreichbar'
-                      : `${Math.floor((achievement.progress / achievement.target) * 100)}%`}
-                </span> */}
               </div>
             );
           })}

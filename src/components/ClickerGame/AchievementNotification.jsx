@@ -20,7 +20,7 @@ export default function AchievementNotification({ achievement, onClose }) {
     <div className="achievement-notification">
       <TrophyIcon size={22} className="achievement-icon" />
       <span className="achievement-message">
-        Unlocked: <strong>{achievement.name}</strong>
+        {achievement.name}
       </span>
     </div>
   );
