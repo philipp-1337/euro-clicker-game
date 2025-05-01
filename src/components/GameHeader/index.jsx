@@ -102,7 +102,7 @@ export default function GameHeader(props) {
           title="Achievements"
           aria-label="Achievements"
         >
-          <TrophyIcon size={20} />
+          {props.hasAnyAchievement && <TrophyIcon size={20} />}
         </button>
         {showClickStats && (
           <span className="header-clickstats">
