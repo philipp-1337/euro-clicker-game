@@ -1,5 +1,5 @@
 import { useUiProgress } from '@hooks/useUiProgress';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
@@ -73,16 +73,44 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   const [notificationQueue, setNotificationQueue] = useState([]);
   const [showAchievement, setShowAchievement] = useState(null);
 
+  // Hilfsfunktionen für Notification-Status
+  const getSeenAchievementNotifications = useCallback(() => {
+    try {
+      const raw = localStorage.getItem('achievementNotificationsSeen');
+      if (!raw) return [];
+      return JSON.parse(raw);
+    } catch {
+      return [];
+    }
+  }, []);
+
+  const markAchievementNotificationSeen = useCallback((id) => {
+    try {
+      const seen = getSeenAchievementNotifications();
+      if (!seen.includes(id)) {
+        const updated = [...seen, id];
+        localStorage.setItem('achievementNotificationsSeen', JSON.stringify(updated));
+      }
+    } catch {}
+  }, [getSeenAchievementNotifications]);
+
+  const hasSeenAchievementNotification = useCallback((id) => {
+    return getSeenAchievementNotifications().includes(id);
+  }, [getSeenAchievementNotifications]);
+
   // Hilfsfunktion: Gibt true zurück, sobald mindestens ein Achievement freigeschaltet wurde
   const hasAnyAchievement = Object.values(achievements).some(a => a.unlocked);
 
-  // Wenn neue Achievements freigeschaltet werden, zur Queue hinzufügen
+  // Wenn neue Achievements freigeschaltet werden, zur Queue hinzufügen (nur wenn noch nicht gesehen)
   useEffect(() => {
     if (unlockedAchievements.length > 0) {
-      setNotificationQueue(prev => [...prev, ...unlockedAchievements]);
+      const unseen = unlockedAchievements.filter(a => !hasSeenAchievementNotification(a.id));
+      if (unseen.length > 0) {
+        setNotificationQueue(prev => [...prev, ...unseen]);
+      }
       clearUnlockedAchievements();
     }
-  }, [unlockedAchievements, clearUnlockedAchievements]);
+  }, [unlockedAchievements, clearUnlockedAchievements, hasSeenAchievementNotification]);
 
   // Immer wenn showAchievement null wird und noch etwas in der Queue ist, das nächste anzeigen
   useEffect(() => {
@@ -94,13 +122,15 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   // Wenn ein Achievement angezeigt wird, nach 3s wieder ausblenden und aus Queue entfernen
   useEffect(() => {
     if (showAchievement) {
+      // Markiere als gesehen, sobald angezeigt
+      markAchievementNotificationSeen(showAchievement.id);
       const timer = setTimeout(() => {
         setShowAchievement(null);
         setNotificationQueue(prev => prev.slice(1));
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [showAchievement]);
+  }, [showAchievement, markAchievementNotificationSeen]);
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
