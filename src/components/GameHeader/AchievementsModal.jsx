@@ -47,7 +47,7 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
                   <span className="achievement-desc">
                     {achievement.unlocked ? achievement.description
                       : achievement.unattainable
-                        ? 'Nicht mehr erreichbar'
+                        ? 'Failed'
                         : `${Math.floor((achievement.progress / achievement.target) * 100)}%`}
                   </span>
                 </span>
