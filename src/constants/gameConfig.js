@@ -134,8 +134,8 @@ export const gameConfig = {
       totalClicks: {
         id: 'totalClicks',
         name: 'Click Master',
-        description: 'Reach 100 total clicks',
-        target: 100,
+        description: 'Reach 1000 total clicks',
+        target: 1000,
       },
       fastMoney: {
         id: 'fastMoney',
@@ -147,8 +147,8 @@ export const gameConfig = {
       longPlay: {
         id: 'longPlay',
         name: 'Dedicated Player',
-        description: 'Play for 1 hour total',
-        target: 3600, // 1 hour in seconds
+        description: 'Play for 5 hour total',
+        target: 18000, // 5 hour in seconds
       }
     }
   };
