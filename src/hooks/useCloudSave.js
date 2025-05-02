@@ -37,6 +37,7 @@ export default function useCloudSave() {
       const clickerSave = localStorage.getItem(CLICKER_SAVE_KEY) || null;
       const clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
       const startTime = localStorage.getItem(START_TIME_KEY) || null;
+      const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
 
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
@@ -44,6 +45,7 @@ export default function useCloudSave() {
         clickerSave,
         clickerUiProgress,
         startTime,
+        achievementNotificationsSeen,
       });
       setCloudStatus('saved');
       return uuid;
@@ -68,6 +70,7 @@ export default function useCloudSave() {
       if (data.clickerSave) localStorage.setItem(CLICKER_SAVE_KEY, data.clickerSave);
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
+      if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
 
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand
       const {
@@ -75,6 +78,7 @@ export default function useCloudSave() {
         clickerSave,
         clickerUiProgress,
         startTime,
+        achievementNotificationsSeen,
         ...gameState
       } = data;
       return gameState;
