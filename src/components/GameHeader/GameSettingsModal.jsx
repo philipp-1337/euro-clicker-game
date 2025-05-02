@@ -55,11 +55,21 @@ export default function GameSettingsModal({
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+  // Dark Mode State (global und persistiert im Savegame)
   const [isDarkMode, setIsDarkMode] = React.useState(() => {
+    // Zuerst aus clickerSave laden, dann localStorage fallback
+    try {
+      const saveRaw = localStorage.getItem('clickerSave');
+      if (saveRaw) {
+        const save = JSON.parse(saveRaw);
+        if (typeof save.darkMode === 'boolean') return save.darkMode;
+      }
+    } catch {}
     return localStorage.getItem('darkMode') === 'true';
   });
   const { deleteFromCloud } = useCloudSave();
 
+  // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
   React.useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark');
@@ -67,7 +77,35 @@ export default function GameSettingsModal({
       document.body.classList.remove('dark');
     }
     localStorage.setItem('darkMode', isDarkMode);
+    // clickerSave aktualisieren
+    try {
+      const saveRaw = localStorage.getItem('clickerSave');
+      if (saveRaw) {
+        const save = JSON.parse(saveRaw);
+        if (save.darkMode !== isDarkMode) {
+          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
+        }
+      }
+    } catch {}
   }, [isDarkMode]);
+
+  // Dark Mode nach Cloud Import anwenden (Listener)
+  React.useEffect(() => {
+    const handler = (e) => {
+      try {
+        // Nach Cloud Import: clickerSave prüfen
+        const saveRaw = localStorage.getItem('clickerSave');
+        if (saveRaw) {
+          const save = JSON.parse(saveRaw);
+          if (typeof save.darkMode === 'boolean') {
+            setIsDarkMode(save.darkMode);
+          }
+        }
+      } catch {}
+    };
+    window.addEventListener('game:cloudimported', handler);
+    return () => window.removeEventListener('game:cloudimported', handler);
+  }, []);
 
   if (!showSettings) return null;
 
@@ -229,7 +267,7 @@ export default function GameSettingsModal({
               onClick={() => setIsDarkMode((v) => !v)}
               title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
             >
-              {isDarkMode ? "Enable Dark Mode" : "Disable Dark Mode"} <span
+              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} <span
                   className="settings-uuid">alpha</span>
             </button>
             <button

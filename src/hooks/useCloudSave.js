@@ -34,7 +34,20 @@ export default function useCloudSave() {
     setCloudStatus('saving');
     try {
       // Hole zusätzliche Daten aus LocalStorage
-      const clickerSave = localStorage.getItem(CLICKER_SAVE_KEY) || null;
+      let clickerSave = localStorage.getItem(CLICKER_SAVE_KEY) || null;
+      // --- PATCH: darkMode in clickerSave sicherstellen ---
+      try {
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode !== null) {
+          let saveObj = clickerSave ? JSON.parse(clickerSave) : {};
+          if (saveObj.darkMode !== (darkMode === 'true')) {
+            saveObj.darkMode = (darkMode === 'true');
+            clickerSave = JSON.stringify(saveObj);
+            localStorage.setItem(CLICKER_SAVE_KEY, clickerSave);
+          }
+        }
+      } catch {}
+      // --- ENDE PATCH ---
       const clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
       const startTime = localStorage.getItem(START_TIME_KEY) || null;
       const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
@@ -71,6 +84,17 @@ export default function useCloudSave() {
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
       if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
+
+      // Dark Mode nach Import anwenden
+      try {
+        if (data.clickerSave) {
+          const save = JSON.parse(data.clickerSave);
+          if (typeof save.darkMode === 'boolean') {
+            // Event für Dark Mode Änderung dispatchen
+            window.dispatchEvent(new Event('game:cloudimported'));
+          }
+        }
+      } catch {}
 
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand
       const {
