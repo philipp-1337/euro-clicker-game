@@ -994,12 +994,65 @@ $transition-slow: 0.4s ease;
   }
 }
 
-// .settings-icon {
-//   &.unlocked {
-//     color: #4CAF50;
-//   }
-// }
+// --- DARK MODE ---
+body.dark {
+  background: #181c20 !important;
+  color: #e1e6eb !important;
+}
 
-// .settings-icon.locked {
-//   color: #bbb;
-// }
+body.dark .modal-content,
+body.dark .settings-modal-header,
+body.dark .settings-modal-content {
+  background: #20242a !important;
+  color: #e1e6eb !important;
+}
+
+body.dark .modal-btn,
+body.dark .settings-button,
+body.dark .segmented-btn,
+body.dark .upgrade-button,
+body.dark .clicker-button {
+  // background: linear-gradient(to bottom, #23272e, #181c20) !important;
+  color: #e1e6eb !important;
+  // border: 1.5px solid #23272e !important;
+}
+
+body.dark .modal-input {
+  background: #23272e !important;
+  color: #e1e6eb !important;
+  // border-color: #444 !important;
+}
+
+body.dark .modal-error {
+  color: #ff7675 !important;
+}
+
+body.dark .game-title,
+body.dark .section-title {
+  color: #e1e6eb !important;
+}
+
+body.dark .env-label {
+  background: #23272e !important;
+  color: #e1e6eb !important;
+}
+
+body.dark .save-feedback-banner,
+body.dark .achievement-notification {
+  background: #23272e !important;
+  color: #e1e6eb !important;
+}
+
+body.dark .update-banner {
+  background: linear-gradient(90deg, #23272e 0%, #181c20 100%) !important;
+  color: #e1e6eb !important;
+}
+
+body.dark .settings-uuid {
+  background: #23272e !important;
+  color: #e1e6eb !important;
+}
+
+body.dark .modal-actions {
+  background: none !important;
+}

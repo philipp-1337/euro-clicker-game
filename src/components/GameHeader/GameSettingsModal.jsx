@@ -16,6 +16,7 @@ import {
   FolderOpen,
   RotateCwIcon,
   TabletSmartphoneIcon,
+  SunMoon as SunMoonIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 
@@ -54,7 +55,19 @@ export default function GameSettingsModal({
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+  const [isDarkMode, setIsDarkMode] = React.useState(() => {
+    return localStorage.getItem('darkMode') === 'true';
+  });
   const { deleteFromCloud } = useCloudSave();
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', isDarkMode);
+  }, [isDarkMode]);
 
   if (!showSettings) return null;
 
@@ -206,6 +219,26 @@ export default function GameSettingsModal({
               title="Import from Cloud"
             >
               <FolderOpen size={18} />
+            </button>
+          </div>
+          {/* Dark Mode Toggle */}
+          <div className="settings-row">
+            <SunMoonIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setIsDarkMode((v) => !v)}
+              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+            >
+              {isDarkMode ? "Enable Dark Mode" : "Disable Dark Mode"} <span
+                  className="settings-uuid">alpha</span>
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setIsDarkMode((v) => !v)}
+              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              aria-label="Dark Mode Toggle"
+            >
+              <SunMoonIcon size={18} style={{ color: isDarkMode ? "#ffe066" : undefined }} />
             </button>
           </div>
           {/* App Reload Button für Standalone Mobile */}
