@@ -17,8 +17,11 @@ import {
   RotateCwIcon,
   TabletSmartphoneIcon,
   SunMoon as SunMoonIcon,
+  CrownIcon,
+  MedalIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
+import LeaderboardModal from "./LeaderboardModal";
 
 // Hilfsfunktion für Standalone-Detection
 function isStandaloneMobile() {
@@ -68,6 +71,12 @@ export default function GameSettingsModal({
     return localStorage.getItem('darkMode') === 'true';
   });
   const { deleteFromCloud } = useCloudSave();
+
+  // Leaderboard State
+  const [showLeaderboardEnable, setShowLeaderboardEnable] = React.useState(false);
+  const [leaderboardName, setLeaderboardName] = React.useState("");
+  const [showLeaderboard, setShowLeaderboard] = React.useState(false);
+  const leaderboardMode = typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true';
 
   // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
   React.useEffect(() => {
@@ -279,6 +288,45 @@ export default function GameSettingsModal({
               <SunMoonIcon size={18} style={{ color: isDarkMode ? "#ffe066" : undefined }} />
             </button>
           </div>
+          {/* Leaderboard Toggle Button */}
+          {!leaderboardMode ? (
+            <div className="settings-row">
+              <CrownIcon size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setShowLeaderboardEnable(true)}
+                title="Enable Leaderboard Mode"
+              >
+                Enable Leaderboard <span
+                  className="settings-uuid">alpha</span>
+              </button>
+              <button
+                className="settings-button"
+                onClick={() => setShowLeaderboardEnable(true)}
+                title="Enable Leaderboard Mode"
+              >
+                <MedalIcon size={18} />
+              </button>
+            </div>
+          ) : (
+            <div className="settings-row">
+              <CrownIcon size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setShowResetConfirm(true)}
+                title="Disable Leaderboard Mode"
+              >
+                Disable Leaderboard
+              </button>
+              <button
+                className="settings-button"
+                onClick={() => setShowResetConfirm(true)}
+                title="Disable Leaderboard Mode"
+              >
+                <MedalIcon size={18} />
+              </button>
+            </div>
+          )}
           {/* App Reload Button für Standalone Mobile */}
           {showReloadButton && (
             <div className="settings-row">
@@ -441,6 +489,51 @@ export default function GameSettingsModal({
             </div>
           </div>
         )}
+        {/* Leaderboard Enable Modal */}
+        {showLeaderboardEnable && (
+          <div className="modal-backdrop" style={{ zIndex: 10002 }}>
+            <div className="modal-content" style={{ maxWidth: 420 }}>
+              <h3>Enable Leaderboard Mode</h3>
+              <p style={{ marginBottom: 18 }}>
+                In Leaderboard Mode, your goal is to reach <b>100,000 €</b> as fast as possible.<br />
+                <br />
+                Enter your name below. When you click OK, your progress will be reset and the game will restart.<br />
+                <b>This cannot be undone.</b><br />
+                When you reach 100,000 €, your name, playtime and number of clicks will be saved to the global leaderboard.<br />
+              </p>
+              <input
+                className="modal-input"
+                type="text"
+                maxLength={18}
+                placeholder="Enter your name"
+                value={leaderboardName}
+                onChange={e => setLeaderboardName(e.target.value)}
+                style={{ marginBottom: 18, width: "100%" }}
+              />
+              <div className="modal-actions">
+                <button
+                  className="modal-btn"
+                  disabled={!leaderboardName.trim()}
+                  onClick={() => {
+                    localStorage.clear();
+                    localStorage.setItem("leaderboardMode", "true");
+                    localStorage.setItem("leaderboardName", leaderboardName.trim());
+                    window.location.reload();
+                  }}
+                >
+                  OK
+                </button>
+                <button
+                  className="modal-btn"
+                  style={{ background: "#eee", color: "#333" }}
+                  onClick={() => setShowLeaderboardEnable(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Custom Confirm Modal: Reload App */}
         {showReloadConfirm && (
           <div className="modal-backdrop" style={{ zIndex: 10002 }}>
@@ -503,6 +596,10 @@ export default function GameSettingsModal({
               </div>
             </div>
           </div>
+        )}
+        {/* Leaderboard Modal */}
+        {showLeaderboard && (
+          <LeaderboardModal show={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
         )}
       </div>
     </div>

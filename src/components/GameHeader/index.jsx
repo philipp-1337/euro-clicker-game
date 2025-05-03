@@ -8,9 +8,11 @@ import {
   MousePointerClick as MousePointerClickIcon,
   HourglassIcon,
   Trophy as TrophyIcon,
+  Crown as CrownIcon,
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
+import LeaderboardModal from './LeaderboardModal'; // Import LeaderboardModal
 import { useUiProgress } from '@hooks/useUiProgress';
 
 export default function GameHeader(props) {
@@ -53,6 +55,10 @@ export default function GameHeader(props) {
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
 
   const [showAchievements, setShowAchievements] = useState(false);
+
+  // Leaderboard-Mode Detection
+  const leaderboardMode = typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true';
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   return (
     <>
@@ -106,6 +112,16 @@ export default function GameHeader(props) {
           <TrophyIcon size={20} />
         </button>
         )}
+        {/* Crown Icon für Leaderboard-Mode */}
+        {leaderboardMode && (
+          <button
+            className="settings-button"
+            onClick={() => setShowLeaderboard(true)}
+            title="Show Leaderboard"
+          >
+            <CrownIcon size={22} />
+          </button>
+        )}
         {showClickStats && (
           <span className="header-clickstats">
             <MousePointerClickIcon size={20} />
@@ -150,6 +166,10 @@ export default function GameHeader(props) {
         totalClicks={props.floatingClicks}
         gameTime={props.playTime}
       />
+      {/* Leaderboard Modal */}
+      {showLeaderboard && (
+        <LeaderboardModal show={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
+      )}
     </>
   );
 }

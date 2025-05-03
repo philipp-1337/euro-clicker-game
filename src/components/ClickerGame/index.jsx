@@ -8,6 +8,8 @@ import useClickerGame from '@hooks/useClickerGame';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import AchievementNotification from './AchievementNotification';
+import LeaderboardModal from '../GameHeader/LeaderboardModal';
+import useLeaderboardSubmit from '@hooks/useLeaderboardSubmit';
 import 'App.scss';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
@@ -66,12 +68,11 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     isInterventionsUnlocked,
     unlockInterventions,
     interventionsUnlockCost,
-    gameState, // <--- hinzufügen
-    loadGameState, // <--- hinzufügen
+    gameState,
+    loadGameState,
   } = useClickerGame(easyMode);
 
   const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
-  // ACHIEVEMENT-NOTIFICATION-LOGIK IN HOOK AUSGELAGERT
   const {
     showAchievement,
     setShowAchievement,
@@ -106,6 +107,18 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   const [upgradeTabsUnlocked, setUpgradeTabsUnlocked] = useState(
     uiProgress.gameStarted && money >= 10 && allButtonsClicked
   );
+
+  // --- Leaderboard State & Submission ---
+  const {
+    showLeaderboard,
+    setShowLeaderboard
+  } = useLeaderboardSubmit({
+    leaderboardMode: typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true',
+    money,
+    leaderboardName: typeof window !== 'undefined' ? localStorage.getItem('leaderboardName') : null,
+    floatingClicks,
+    playTime
+  });
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
   useEffect(() => {
@@ -218,6 +231,11 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
 
       {/* FloatingClickButton immer sichtbar */}
       <FloatingClickButton onClick={handleFloatingClick} centerMode={floatingCenterMode} />
+
+      {/* Leaderboard Modal */}
+      {showLeaderboard && (
+        <LeaderboardModal show={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
+      )}
     </div>
   );
 }
