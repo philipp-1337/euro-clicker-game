@@ -1056,3 +1056,56 @@ body.dark .settings-uuid {
 body.dark .modal-actions {
   background: none !important;
 }
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 8px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 1.04rem;
+  margin-bottom: 0;
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+  }
+  th {
+    background: map.get($backgrounds, lighter-blue);
+    color: map.get($colors, primary);
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-bottom: 2px solid #e0e0e0;
+    letter-spacing: 0.01em;
+  }
+  tr {
+    transition: background 0.18s;
+  }
+  tr:not(:last-child) td {
+    border-bottom: 1px solid #f0f0f0;
+  }
+  td {
+    color: map.get($colors, text-dark);
+    font-weight: 500;
+    background: transparent;
+  }
+  tr:hover td {
+    background: #f7fbff;
+  }
+}
+
+.leaderboard-table tr.me td {
+  background: map.get($colors, off-white) !important;
+  color: map.get($colors, text-dark) !important;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 10px 6px;
+    font-size: 0.97rem;
+  }
+}
