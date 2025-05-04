@@ -152,3 +152,6 @@ export const gameConfig = {
       }
     }
   };
+
+// Checkpoints für Leaderboard/Meilensteine
+export const CHECKPOINTS = [100000];
