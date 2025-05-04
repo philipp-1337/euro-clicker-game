@@ -203,8 +203,8 @@ export default function GameSettingsModal({
               onClick={() => setIsDarkMode((v) => !v)}
               title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
             >
-              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} <span
-                  className="settings-uuid">alpha</span>
+              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} 
+              {/* <span className="settings-uuid">alpha</span> */}
             </button>
             <button
               className="settings-button"
