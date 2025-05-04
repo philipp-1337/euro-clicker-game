@@ -28,6 +28,7 @@ export function useUiProgress() {
       cloudSaveMode: false,
       showPlaytime: true,      // <--- Default: eingeblendet
       showClickStats: false,   // <--- Default: ausgeblendet
+      showLeaderboard: true,   // <--- Default: Leaderboard-Button sichtbar
     };
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -140,6 +141,19 @@ export function useUiProgress() {
     });
   }, []);
 
+  // Setter für showLeaderboard
+  const setShowLeaderboard = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showLeaderboard === 'boolean' ? prev.showLeaderboard : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showLeaderboard: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   // Setter für showClickStats
   const setShowClickStats = useCallback((valueOrUpdater) => {
     setUiProgress(prev => {
@@ -165,5 +179,7 @@ export function useUiProgress() {
     setShowPlaytime,
     showClickStats: typeof uiProgress.showClickStats === 'boolean' ? uiProgress.showClickStats : false,
     setShowClickStats,
+    showLeaderboard: typeof uiProgress.showLeaderboard === 'boolean' ? uiProgress.showLeaderboard : true,
+    setShowLeaderboard,
   };
 }

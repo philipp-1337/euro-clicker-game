@@ -16,8 +16,6 @@ import LeaderboardModal from './LeaderboardModal'; // Import LeaderboardModal
 import { useUiProgress } from '@hooks/useUiProgress';
 
 export default function GameHeader(props) {
-  const leaderboardMode = typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true';
-
   const {
     renderEnvironmentLabel,
     formatPlayTime,
@@ -38,18 +36,20 @@ export default function GameHeader(props) {
     money,
     playTime,
     totalMoneyPerSecond,
-  } = useGameHeaderLogic({ ...props, leaderboardMode });
+  } = useGameHeaderLogic({ ...props });
 
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
-  // Local UI state for toggles
 
-  // UI-Progress für Playtime/ClickStats persistente Anzeige
+  // UI-Toggles (Playtime, ClickStats, Leaderboard) aus useUiProgress
   const {
+    uiProgress,
     showPlaytime,
     setShowPlaytime,
     showClickStats,
     setShowClickStats,
+    showLeaderboard,
+    setShowLeaderboard,
   } = useUiProgress();
 
   // Cloud Save Confirm Modal State
@@ -58,7 +58,8 @@ export default function GameHeader(props) {
 
   const [showAchievements, setShowAchievements] = useState(false);
 
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  // Lokaler State für das Leaderboard-Modal
+  const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
   return (
     <>
@@ -113,10 +114,10 @@ export default function GameHeader(props) {
         </button>
         )}
         {/* Crown Icon für Leaderboard-Mode */}
-        {leaderboardMode && (
+        {uiProgress.showLeaderboard && (
           <button
             className="settings-button"
-            onClick={() => setShowLeaderboard(true)}
+            onClick={() => setShowLeaderboardModal(true)}
             title="Show Leaderboard"
           >
             <CrownIcon size={22} />
@@ -142,6 +143,8 @@ export default function GameHeader(props) {
         setShowPlaytime={setShowPlaytime}
         showClickStats={showClickStats}
         setShowClickStats={setShowClickStats}
+        showLeaderboard={showLeaderboard}
+        setShowLeaderboard={setShowLeaderboard}
         cloudSaveMode={cloudSaveMode}
         setCloudSaveMode={setCloudSaveMode}
         showCloudSaveConfirm={showCloudSaveConfirm}
@@ -157,7 +160,6 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
-        leaderboardMode={leaderboardMode}
       />
       <AchievementsModal
         showAchievements={showAchievements}
@@ -168,8 +170,8 @@ export default function GameHeader(props) {
         gameTime={props.playTime}
       />
       {/* Leaderboard Modal */}
-      {showLeaderboard && (
-        <LeaderboardModal show={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
+      {showLeaderboardModal && uiProgress.showLeaderboard && (
+        <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
     </>
   );

@@ -8,9 +8,7 @@ import useClickerGame from '@hooks/useClickerGame';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import AchievementNotification from './AchievementNotification';
-import LeaderboardModal from '../GameHeader/LeaderboardModal';
-import useLeaderboardSubmit from '@hooks/useLeaderboardSubmit';
-import 'App.scss';
+import { CHECKPOINTS } from '@constants/gameConfig';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
   const [activeTab, setActiveTab] = useState('basic');
@@ -108,17 +106,34 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     uiProgress.gameStarted && money >= 10 && allButtonsClicked
   );
 
-  // --- Leaderboard State & Submission ---
-  const {
-    showLeaderboard,
-    setShowLeaderboard
-  } = useLeaderboardSubmit({
-    leaderboardMode: typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true',
-    money,
-    leaderboardName: typeof window !== 'undefined' ? localStorage.getItem('leaderboardName') : null,
-    floatingClicks,
-    playTime
-  });
+  // Leaderboard Submission: immer aktiv (kein Mode mehr)
+  const [leaderboardName, setLeaderboardName] = useState("");
+  const [checkpointReached, setCheckpointReached] = useState(false);
+  const [showLeaderboardCongrats, setShowLeaderboardCongrats] = useState(false);
+  const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (CHECKPOINTS.some(cp => money >= cp) && !leaderboardSubmitted && !checkpointReached) {
+      setCheckpointReached(true);
+      setShowLeaderboardCongrats(true);
+    }
+  }, [money, leaderboardSubmitted, checkpointReached]);
+
+  // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
+  const handleLeaderboardSubmit = async () => {
+    if (!leaderboardName.trim()) return;
+    // Firestore Submission wie in useLeaderboardSubmit.js
+    const { addDoc, collection } = await import('firebase/firestore');
+    const { db } = await import('../../firebase');
+    await addDoc(collection(db, 'leaderboard'), {
+      name: leaderboardName.trim(),
+      playtime: playTime,
+      clicks: floatingClicks,
+      timestamp: Date.now(),
+    });
+    setLeaderboardSubmitted(true);
+    setShowLeaderboardCongrats(false);
+  };
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
   useEffect(() => {
@@ -169,13 +184,69 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
         />
       )}
 
+      {/* Modal für Leaderboard-Checkpoint */}
+      {showLeaderboardCongrats && (
+        <div className="modal-backdrop" style={{ zIndex: 10002 }}>
+          <div className="modal-content" style={{ maxWidth: 420 }}>
+            <h3>Herzlichen Glückwunsch!</h3>
+            <p>
+              Du hast einen Meilenstein erreicht ({CHECKPOINTS.find(cp => money >= cp).toLocaleString('de-DE')} €)!<br />
+              Möchtest du deinen Namen für das Leaderboard eintragen?
+            </p>
+            <input
+              className="modal-input"
+              type="text"
+              maxLength={18}
+              placeholder="Dein Name für das Leaderboard"
+              value={leaderboardName}
+              onChange={e => setLeaderboardName(e.target.value)}
+              style={{ marginBottom: 18, width: "100%" }}
+            />
+            <div className="modal-actions">
+              <button
+                className="modal-btn"
+                disabled={!leaderboardName.trim()}
+                onClick={handleLeaderboardSubmit}
+              >
+                Eintragen
+              </button>
+              <button
+                className="modal-btn"
+                style={{ background: "#eee", color: "#333" }}
+                onClick={() => setShowLeaderboardCongrats(false)}
+              >
+                Später
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ClickerButtons erst ab 10 €, aber nach Freischaltung immer sichtbar */}
       {uiProgress.gameStarted && clickerButtonsUnlocked && (
-        <div className="clicker-buttons-fade">
-          <ClickerButtons 
-            buttons={buttons} 
-            cooldowns={cooldowns} 
-            handleClick={handleClickerButton} 
+        <div className="clicker-buttons-wrapper">
+          <ClickerButtons
+            money={money}
+            buttons={buttons}
+            cooldowns={cooldowns}
+            handleClick={handleClickerButton}
+            floatingClicks={floatingClicks}
+            incrementFloatingClicks={incrementFloatingClicks}
+            cooldownUpgradeLevels={cooldownUpgradeLevels}
+            valueUpgradeLevels={valueUpgradeLevels}
+            cooldownUpgradeCosts={cooldownUpgradeCosts}
+            valueUpgradeCosts={valueUpgradeCosts}
+            buyCooldownUpgrade={buyCooldownUpgrade}
+            buyValueUpgrade={buyValueUpgrade}
+            managers={managers}
+            buyManager={buyManager}
+            managerCosts={managerCosts}
+            investments={investments}
+            buyInvestment={buyInvestment}
+            isInvestmentUnlocked={isInvestmentUnlocked}
+            unlockInvestments={unlockInvestments}
+            totalIncomePerSecond={totalMoneyPerSecond}
+            satisfaction={satisfaction}
+            dissatisfaction={dissatisfaction}
           />
         </div>
       )}
@@ -231,11 +302,6 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
 
       {/* FloatingClickButton immer sichtbar */}
       <FloatingClickButton onClick={handleFloatingClick} centerMode={floatingCenterMode} />
-
-      {/* Leaderboard Modal */}
-      {showLeaderboard && (
-        <LeaderboardModal show={showLeaderboard} onClose={() => setShowLeaderboard(false)} />
-      )}
     </div>
   );
 }
