@@ -106,18 +106,54 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     uiProgress.gameStarted && money >= 10 && allButtonsClicked
   );
 
-  // Leaderboard Submission: immer aktiv (kein Mode mehr)
+  // Leaderboard-Checkpoint-Tracking im Local Storage
+  const LEADERBOARD_CHECKPOINTS_KEY = 'leaderboardCheckpointsReached';
+
+  function getReachedCheckpointsFromStorage() {
+    try {
+      const stored = localStorage.getItem(LEADERBOARD_CHECKPOINTS_KEY);
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function addCheckpointToStorage(checkpoint) {
+    const reached = getReachedCheckpointsFromStorage();
+    if (!reached.includes(checkpoint)) {
+      reached.push(checkpoint);
+      localStorage.setItem(LEADERBOARD_CHECKPOINTS_KEY, JSON.stringify(reached));
+    }
+  }
+
   const [leaderboardName, setLeaderboardName] = useState("");
   const [checkpointReached, setCheckpointReached] = useState(false);
   const [showLeaderboardCongrats, setShowLeaderboardCongrats] = useState(false);
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
+  const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
 
+  // Leaderboard-Checkpoint-Modal nur zeigen, wenn dieser Checkpoint noch nicht im Local Storage ist
   useEffect(() => {
-    if (CHECKPOINTS.some(cp => money >= cp) && !leaderboardSubmitted && !checkpointReached) {
+    const checkpoint = CHECKPOINTS.find(cp => money >= cp);
+    setCurrentCheckpoint(checkpoint || null);
+    if (
+      checkpoint &&
+      !leaderboardSubmitted &&
+      !checkpointReached &&
+      !getReachedCheckpointsFromStorage().includes(checkpoint)
+    ) {
       setCheckpointReached(true);
       setShowLeaderboardCongrats(true);
     }
   }, [money, leaderboardSubmitted, checkpointReached]);
+
+  // Nach Submit oder "Maybe later" Checkpoint im Local Storage speichern
+  const handleLeaderboardCongratsClose = () => {
+    if (currentCheckpoint) {
+      addCheckpointToStorage(currentCheckpoint);
+    }
+    setShowLeaderboardCongrats(false);
+  };
 
   // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
   const handleLeaderboardSubmit = async () => {
@@ -132,7 +168,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
       timestamp: Date.now(),
     });
     setLeaderboardSubmitted(true);
-    setShowLeaderboardCongrats(false);
+    handleLeaderboardCongratsClose();
   };
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
@@ -188,7 +224,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
       {showLeaderboardCongrats && (
         <div className="modal-backdrop" style={{ zIndex: 10002 }}>
           <div className="modal-content" style={{ maxWidth: 420 }}>
-            <h3>Congratulations!</h3>
+            <div className="settings-modal-header">
+              <h3>Congratulations!</h3>
+            </div>
             <p>
               You have reached a milestone ({CHECKPOINTS.find(cp => money >= cp).toLocaleString('en-US')} €)!<br />
               Do you want to enter your name for the leaderboard?
@@ -212,8 +250,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
               </button>
               <button
                 className="modal-btn"
-                style={{ background: "#eee", color: "#333" }}
-                onClick={() => setShowLeaderboardCongrats(false)}
+                onClick={handleLeaderboardCongratsClose}
               >
                 Maybe later
               </button>

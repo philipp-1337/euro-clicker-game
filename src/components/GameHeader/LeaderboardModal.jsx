@@ -53,6 +53,9 @@ export default function LeaderboardModal({ show, onClose }) {
             <CloseIcon size={20} />
           </button>
         </div>
+        <p style={{ margin: '8px 0 0 0', fontSize: 15, textAlign: 'left' }}>
+          Goal: The fastest time to reach 100.000 €!
+        </p>
         <div className="settings-modal-content">
           {loading ? (
             <div>Loading...</div>
