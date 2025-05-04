@@ -360,7 +360,9 @@ export default function GameSettingsModal({
         {showImportDialog && (
           <div className="modal-backdrop" style={{ zIndex: 10000 }}>
             <div className="modal-content" style={{ maxWidth: 400 }}>
-              <h3>Import Cloud Save</h3>
+              <div className="settings-modal-header">
+                <h3>Import Cloud Save</h3>
+              </div>
               <input
                 type="text"
                 className="modal-input"
@@ -392,7 +394,9 @@ export default function GameSettingsModal({
         {showCloudSaveConfirm && (
           <div className="modal-backdrop" style={{ zIndex: 10001 }}>
             <div className="modal-content" style={{ maxWidth: 420 }}>
+              <div className="settings-modal-header">
               <h3>Enable Cloud Save</h3>
+              </div>
               <p>
                 Your game progress will be saved anonymously in the cloud. You
                 will receive a unique ID (UUID) that you can use to restore your
@@ -435,7 +439,9 @@ export default function GameSettingsModal({
         {showCloudSaveDisableConfirm && (
           <div className="modal-backdrop" style={{ zIndex: 10001 }}>
             <div className="modal-content" style={{ maxWidth: 420 }}>
+              <div className="settings-modal-header">
               <h3>Disable Cloud Save</h3>
+              </div>
               <p>
                 Your game progress will be removed from the cloud. You will no longer be able to restore your progress on other devices.
                 <br />
@@ -480,7 +486,9 @@ export default function GameSettingsModal({
         {showReloadConfirm && (
           <div className="modal-backdrop" style={{ zIndex: 10002 }}>
             <div className="modal-content" style={{ maxWidth: 400 }}>
+              <div className="settings-modal-header">
               <h3>Reload App</h3>
+              </div>
               <p>
                 Reload now?<br />
                 Your saved progress is kept.
@@ -511,7 +519,9 @@ export default function GameSettingsModal({
         {showResetConfirm && (
           <div className="modal-backdrop" style={{ zIndex: 10002 }}>
             <div className="modal-content" style={{ maxWidth: 400 }}>
+              <div className="settings-modal-header">
               <h3>Reset Game</h3>
+              </div>
               <p>
                 Are you sure you want to reset your game progress?<br />
               </p>
