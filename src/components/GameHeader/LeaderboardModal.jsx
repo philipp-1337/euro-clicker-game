@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
+import { formatPlaytime } from '../../utils/calculators';
 
 export default function LeaderboardModal({ show, onClose }) {
   const [entries, setEntries] = useState([]);
@@ -95,11 +96,4 @@ export default function LeaderboardModal({ show, onClose }) {
       </div>
     </div>
   );
-}
-
-function formatPlaytime(seconds) {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  if (min > 0) return `${min}m ${sec}s`;
-  return `${sec}s`;
 }

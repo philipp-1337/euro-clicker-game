@@ -18,7 +18,7 @@ import { useUiProgress } from '@hooks/useUiProgress';
 export default function GameHeader(props) {
   const {
     renderEnvironmentLabel,
-    formatPlayTime,
+    formatPlaytime,
     isSaving,
     saveMessage,
     showImportDialog,
@@ -132,7 +132,7 @@ export default function GameHeader(props) {
         {showPlaytime && (
           <span className="header-playtime">
             <HourglassIcon size={20} />
-            {formatPlayTime(playTime)}</span>
+            {formatPlaytime(playTime)}</span>
         )}
       </div>
       {/* Settings Modal */}
