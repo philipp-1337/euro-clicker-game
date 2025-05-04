@@ -188,16 +188,16 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
       {showLeaderboardCongrats && (
         <div className="modal-backdrop" style={{ zIndex: 10002 }}>
           <div className="modal-content" style={{ maxWidth: 420 }}>
-            <h3>Herzlichen Glückwunsch!</h3>
+            <h3>Congratulations!</h3>
             <p>
-              Du hast einen Meilenstein erreicht ({CHECKPOINTS.find(cp => money >= cp).toLocaleString('de-DE')} €)!<br />
-              Möchtest du deinen Namen für das Leaderboard eintragen?
+              You have reached a milestone ({CHECKPOINTS.find(cp => money >= cp).toLocaleString('en-US')} €)!<br />
+              Do you want to enter your name for the leaderboard?
             </p>
             <input
               className="modal-input"
               type="text"
               maxLength={18}
-              placeholder="Dein Name für das Leaderboard"
+              placeholder="Your name for the leaderboard"
               value={leaderboardName}
               onChange={e => setLeaderboardName(e.target.value)}
               style={{ marginBottom: 18, width: "100%" }}
@@ -208,14 +208,14 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
                 disabled={!leaderboardName.trim()}
                 onClick={handleLeaderboardSubmit}
               >
-                Eintragen
+                Submit
               </button>
               <button
                 className="modal-btn"
                 style={{ background: "#eee", color: "#333" }}
                 onClick={() => setShowLeaderboardCongrats(false)}
               >
-                Später
+                Maybe later
               </button>
             </div>
           </div>
