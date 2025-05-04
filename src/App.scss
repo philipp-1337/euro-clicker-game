@@ -679,7 +679,7 @@ $transition-slow: 0.4s ease;
 
 .premium-upgrade-description {
   margin: 0 0 15px 0;
-  color: map.get($colors, light-gray);
+  color: map.get($colors, dark-hue);
   font-size: 0.95rem;
 }
 
@@ -893,19 +893,19 @@ $transition-slow: 0.4s ease;
 
   // Alternative style for last button
   &:last-of-type {
-    background-color: map-get($backgrounds, off-dark);
-    color: map-get($colors, white);
+    background-color: map.get($backgrounds, off-dark);
+    color: map.get($colors, white);
 
     &:hover:not(.disabled) {
-      background-color: map-get($backgrounds, darker);
-      border-color: map-get($backgrounds, dark);
+      background-color: map.get($backgrounds, darker);
+      border-color: map.get($backgrounds, dark);
       transform: translateY(-1px) scale(1.04);
     }
 
     &:active:not(.disabled) {
-      background-color: map-get($backgrounds, dark);
-      color: map-get($backgrounds, lighter-blue);
-      border-color: map-get($backgrounds, darker);
+      background-color: map.get($backgrounds, dark);
+      color: map.get($backgrounds, lighter-blue);
+      border-color: map.get($backgrounds, darker);
       transform: translateY(1px) scale(0.98);
     }
   }
@@ -1027,13 +1027,12 @@ $transition-slow: 0.4s ease;
   .achievements-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
     margin-top: 16px;
   }
   
   .achievement-row {
     align-items: center;
-    border-bottom: 1px solid #eee;
+    // border-bottom: 1px solid #eee;
     display: flex;
     gap: 14px;
     margin-right: 6px;
@@ -1150,16 +1149,16 @@ body.dark .modal-btn {
 }
 
 body.dark .modal-btn:last-of-type {
-  background-color: map-get($backgrounds, darker);
+  background-color: map.get($backgrounds, darker);
   transition: background-color 0.2s, transform 0.1s;
 
   &:hover:not(.disabled) {
-    background-color: map-get($backgrounds, dark);
+    background-color: map.get($backgrounds, dark);
     transform: translateY(-1px) scale(1.04);
   }
 
   &:active:not(.disabled) {
-    background-color: map-get($backgrounds, off-dark);
+    background-color: map.get($backgrounds, off-dark);
     transform: translateY(1px) scale(0.98);
   }
 
@@ -1191,4 +1190,66 @@ body.dark .modal-actions {
 
 body.dark .leaderboard-table {
   background: map.get($backgrounds, transparent-white-90) !important;
+}
+
+body.dark {
+  // Achievement Modal spezifisch
+  .modal-content.achievement {
+    background-color: map.get($backgrounds, dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  .achievement-row {
+    // border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: map.get($colors, text-light);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+
+    &.unattainable {
+      opacity: 0.5;
+    }
+
+    .achievement-icon {
+      color: map.get($colors, text-light);
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      min-width: 36px;
+    }
+
+    .achievement-icon .settings-icon.locked {
+      color: map.get($colors, grey);
+    }
+
+    .achievement-icon .settings-icon.unlocked {
+      color: map.get($colors, highlight) !important;
+    }
+
+    .achievement-label {
+      font-weight: 600;
+      color: map.get($colors, text-light);
+    }
+
+    .achievement-desc {
+      font-size: 0.85rem;
+      color: map.get($colors, text-muted);
+    }
+
+    .achievement-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+    }
+  }
+
+  .achievements-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-color: map.get($colors, text-light) transparent;
+  }
+
+  .settings-modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
 }
