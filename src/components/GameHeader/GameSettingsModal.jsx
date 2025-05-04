@@ -18,6 +18,8 @@ import {
   TabletSmartphoneIcon,
   SunMoon as SunMoonIcon,
   CrownIcon,
+  MoonIcon,
+  SunIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 
@@ -119,7 +121,6 @@ export default function GameSettingsModal({
           <h3>Settings</h3>
           <button
             className="settings-button"
-            style={{ marginLeft: "auto" }}
             onClick={() => setShowSettings(false)}
             title="Close"
             aria-label="Close"
@@ -128,6 +129,8 @@ export default function GameSettingsModal({
           </button>
         </div>
         <div className="settings-modal-content">
+          {/* Display options */}
+          <h4 className="settings-section-title">Display options</h4>
           {/* Spielzeit Toggle */}
           <div className="settings-row">
             <ClockIcon size={20} className="settings-icon" />
@@ -177,7 +180,7 @@ export default function GameSettingsModal({
               title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
               type="button"
             >
-              {showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
+              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
             </button>
             <button
               className={`settings-button${showLeaderboard ? " active" : ""}`}
@@ -185,9 +188,39 @@ export default function GameSettingsModal({
               title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
               type="button"
             >
-              <CrownIcon size={18} color={showLeaderboard ? undefined : "#bbb"} />
+              {showLeaderboard ? (
+                <EyeIcon size={18} />
+              ) : (
+                <EyeOffIcon size={18} />
+              )}
             </button>
           </div>
+          {/* Dark Mode Toggle */}
+          <div className="settings-row">
+            <SunMoonIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setIsDarkMode((v) => !v)}
+              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+            >
+              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} <span
+                  className="settings-uuid">alpha</span>
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setIsDarkMode((v) => !v)}
+              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              aria-label="Dark Mode Toggle"
+            >
+              {isDarkMode ? (
+                <SunIcon size={18} />
+              ) : (
+                <MoonIcon size={18} />
+              )}
+            </button>
+          </div>
+          {/* Save options */}
+          <h4 className="settings-section-title">Save game options</h4>
           {/* Cloud Save Toggle */}
           <div className="settings-row">
             <CloudIcon size={20} className="settings-icon" />
@@ -282,26 +315,8 @@ export default function GameSettingsModal({
               <FolderOpen size={18} />
             </button>
           </div>
-          {/* Dark Mode Toggle */}
-          <div className="settings-row">
-            <SunMoonIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
-            >
-              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} <span
-                  className="settings-uuid">alpha</span>
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
-              aria-label="Dark Mode Toggle"
-            >
-              <SunMoonIcon size={18} style={{ color: isDarkMode ? "#ffe066" : undefined }} />
-            </button>
-          </div>
+          {/* Danger Zone */}
+          <h4 className="settings-section-title">Danger Zone</h4>
           {/* App Reload Button für Standalone Mobile */}
           {showReloadButton && (
             <div className="settings-row">
@@ -366,7 +381,6 @@ export default function GameSettingsModal({
                 <button
                   className="modal-btn"
                   onClick={() => setShowImportDialog(false)}
-                  style={{ background: "#eee", color: "#333" }}
                 >
                   Cancel
                 </button>
@@ -379,7 +393,7 @@ export default function GameSettingsModal({
           <div className="modal-backdrop" style={{ zIndex: 10001 }}>
             <div className="modal-content" style={{ maxWidth: 420 }}>
               <h3>Enable Cloud Save</h3>
-              <p style={{ marginBottom: 18 }}>
+              <p>
                 Your game progress will be saved anonymously in the cloud. You
                 will receive a unique ID (UUID) that you can use to restore your
                 progress on any device.
@@ -407,7 +421,6 @@ export default function GameSettingsModal({
                 </button>
                 <button
                   className="modal-btn"
-                  style={{ background: "#eee", color: "#333" }}
                   onClick={() => {
                     setShowCloudSaveConfirm(false);
                   }}
@@ -423,7 +436,7 @@ export default function GameSettingsModal({
           <div className="modal-backdrop" style={{ zIndex: 10001 }}>
             <div className="modal-content" style={{ maxWidth: 420 }}>
               <h3>Disable Cloud Save</h3>
-              <p style={{ marginBottom: 18 }}>
+              <p>
                 Your game progress will be removed from the cloud. You will no longer be able to restore your progress on other devices.
                 <br />
                 <br />
@@ -453,7 +466,6 @@ export default function GameSettingsModal({
                 </button>
                 <button
                   className="modal-btn"
-                  style={{ background: "#eee", color: "#333" }}
                   onClick={() => {
                     setShowCloudSaveDisableConfirm(false);
                   }}
@@ -469,7 +481,7 @@ export default function GameSettingsModal({
           <div className="modal-backdrop" style={{ zIndex: 10002 }}>
             <div className="modal-content" style={{ maxWidth: 400 }}>
               <h3>Reload App</h3>
-              <p style={{ marginBottom: 18 }}>
+              <p>
                 Reload now?<br />
                 Your saved progress is kept.
               </p>
@@ -487,7 +499,6 @@ export default function GameSettingsModal({
                 </button>
                 <button
                   className="modal-btn"
-                  style={{ background: "#eee", color: "#333" }}
                   onClick={() => setShowReloadConfirm(false)}
                 >
                   Cancel
@@ -501,14 +512,15 @@ export default function GameSettingsModal({
           <div className="modal-backdrop" style={{ zIndex: 10002 }}>
             <div className="modal-content" style={{ maxWidth: 400 }}>
               <h3>Reset Game</h3>
-              <p style={{ marginBottom: 18 }}>
+              <p>
                 Are you sure you want to reset your game progress?<br />
+              </p>
+              <p>
                 <b>This cannot be undone.</b>
               </p>
               <div className="modal-actions">
                 <button
-                  className="modal-btn"
-                  style={{ background: "#e74c3c", color: "#fff" }}
+                  className="modal-btn danger"
                   onClick={() => {
                     localStorage.clear();
                     window.location.reload();
@@ -518,7 +530,6 @@ export default function GameSettingsModal({
                 </button>
                 <button
                   className="modal-btn"
-                  style={{ background: "#eee", color: "#333" }}
                   onClick={() => setShowResetConfirm(false)}
                 >
                   Cancel
