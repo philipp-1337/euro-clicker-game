@@ -48,13 +48,16 @@ export default function useCloudSave() {
         }
       } catch {}
       // --- ENDE PATCH ---
-      const clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
-      const startTime = localStorage.getItem(START_TIME_KEY) || null;
-      const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
+      let clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
+      let startTime = localStorage.getItem(START_TIME_KEY) || null;
+      let achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
       // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
       const leaderboardMode = localStorage.getItem('leaderboardMode');
       const leaderboardName = localStorage.getItem('leaderboardName');
       // --- ENDE LEADERBOARD PATCH ---
+      // --- LEADERBOARD CHECKPOINTS PATCH ---
+      const leaderboardCheckpointsReached = localStorage.getItem('leaderboardCheckpointsReached');
+      // --- ENDE LEADERBOARD CHECKPOINTS PATCH ---
 
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
@@ -65,6 +68,7 @@ export default function useCloudSave() {
         achievementNotificationsSeen,
         leaderboardMode,
         leaderboardName,
+        leaderboardCheckpointsReached,
       });
       setCloudStatus('saved');
       return uuid;
@@ -98,6 +102,9 @@ export default function useCloudSave() {
         localStorage.setItem('leaderboardName', data.leaderboardName);
       }
       // --- ENDE LEADERBOARD PATCH ---
+      // --- LEADERBOARD CHECKPOINTS PATCH ---
+      if (data.leaderboardCheckpointsReached) localStorage.setItem('leaderboardCheckpointsReached', data.leaderboardCheckpointsReached);
+      // --- ENDE LEADERBOARD CHECKPOINTS PATCH ---
 
       // Dark Mode nach Import anwenden
       try {
@@ -119,6 +126,7 @@ export default function useCloudSave() {
         achievementNotificationsSeen,
         leaderboardMode,
         leaderboardName,
+        leaderboardCheckpointsReached,
         ...gameState
       } = data;
       return gameState;

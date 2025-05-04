@@ -9,6 +9,7 @@ import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
+import useCloudSave from '@hooks/useCloudSave';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
   const [activeTab, setActiveTab] = useState('basic');
@@ -77,6 +78,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     setNotificationQueue,
     hasAnyAchievement,
   } = useAchievementNotifications(achievements, unlockedAchievements, clearUnlockedAchievements);
+
+  // --- Cloud Save Hook ---
+  const { exportToCloud, cloudUuid } = useCloudSave();
+  const cloudSaveMode = uiProgress.cloudSaveMode;
 
   // Handler für FloatingClickButton
   const handleFloatingClick = () => {
@@ -147,10 +152,26 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     }
   }, [money, leaderboardSubmitted, checkpointReached]);
 
-  // Nach Submit oder "Maybe later" Checkpoint im Local Storage speichern
-  const handleLeaderboardCongratsClose = () => {
+  // Nach Submit oder "Maybe later" Checkpoint im Local Storage speichern und Spielstand sichern
+  const handleLeaderboardCongratsClose = async () => {
     if (currentCheckpoint) {
       addCheckpointToStorage(currentCheckpoint);
+    }
+    // Save game state (cloud or local)
+    if (cloudSaveMode) {
+      try {
+        // Force new UUID if missing (first cloud save)
+        if (!cloudUuid) {
+          await exportToCloud({ ...gameState });
+        } else {
+          await exportToCloud({ ...gameState });
+        }
+      } catch (e) {
+        // Optionally show error to user
+        console.error('Cloud save failed:', e);
+      }
+    } else if (typeof saveGame === 'function') {
+      saveGame();
     }
     setShowLeaderboardCongrats(false);
   };
@@ -168,6 +189,22 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
       timestamp: Date.now(),
     });
     setLeaderboardSubmitted(true);
+    // Save game state (cloud or local)
+    if (cloudSaveMode) {
+      try {
+        // Force new UUID if missing (first cloud save)
+        if (!cloudUuid) {
+          await exportToCloud({ ...gameState });
+        } else {
+          await exportToCloud({ ...gameState });
+        }
+      } catch (e) {
+        // Optionally show error to user
+        console.error('Cloud save failed:', e);
+      }
+    } else if (typeof saveGame === 'function') {
+      saveGame();
+    }
     handleLeaderboardCongratsClose();
   };
 
