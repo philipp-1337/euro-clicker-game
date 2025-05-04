@@ -157,3 +157,19 @@ export const formatNumber = (num) => {
     const cost = baseCost * Math.pow(growthFactor, level);
     return easyMode ? cost * getCostMultiplier(true) : cost;
   };
+
+  /**
+   * Formats a playtime in seconds as Xh Ym Zs, Ym Zs, or Zs
+   * @param {number} seconds - Playtime in seconds
+   * @returns {string} Formatted playtime string
+   */
+  export function formatPlaytime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+    return [
+      hours > 0 ? `${hours}h` : null,
+      minutes > 0 || hours > 0 ? `${minutes}m` : null,
+      `${secs}s`
+    ].filter(Boolean).join(' ');
+  }

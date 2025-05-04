@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useCloudSave from '@hooks/useCloudSave';
+import { formatPlaytime } from '../utils/calculators';
 
 export default function useGameHeaderLogic(props) {
   const {
@@ -45,17 +46,6 @@ export default function useGameHeaderLogic(props) {
       </span>
     );
   }, [environment, easyMode, toggleEasyMode, canToggleEasyMode]);
-
-  const formatPlayTime = (totalSeconds) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return [
-      hours > 0 ? `${hours}h` : null,
-      minutes > 0 || hours > 0 ? `${minutes}m` : null,
-      `${seconds}s`
-    ].filter(Boolean).join(' ');
-  };
 
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -183,7 +173,7 @@ export default function useGameHeaderLogic(props) {
   return {
     environment,
     renderEnvironmentLabel,
-    formatPlayTime,
+    formatPlaytime,
     isSaving,
     saveMessage,
     showStats,
