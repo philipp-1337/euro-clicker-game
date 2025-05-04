@@ -16,6 +16,8 @@ import LeaderboardModal from './LeaderboardModal'; // Import LeaderboardModal
 import { useUiProgress } from '@hooks/useUiProgress';
 
 export default function GameHeader(props) {
+  const leaderboardMode = typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true';
+
   const {
     renderEnvironmentLabel,
     formatPlayTime,
@@ -36,7 +38,7 @@ export default function GameHeader(props) {
     money,
     playTime,
     totalMoneyPerSecond,
-  } = useGameHeaderLogic(props);
+  } = useGameHeaderLogic({ ...props, leaderboardMode });
 
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
@@ -56,8 +58,6 @@ export default function GameHeader(props) {
 
   const [showAchievements, setShowAchievements] = useState(false);
 
-  // Leaderboard-Mode Detection
-  const leaderboardMode = typeof window !== 'undefined' && localStorage.getItem('leaderboardMode') === 'true';
   const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   return (
@@ -157,6 +157,7 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
+        leaderboardMode={leaderboardMode}
       />
       <AchievementsModal
         showAchievements={showAchievements}

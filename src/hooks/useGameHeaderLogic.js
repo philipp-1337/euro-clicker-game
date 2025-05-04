@@ -12,6 +12,7 @@ export default function useGameHeaderLogic(props) {
     floatingClicks,
     gameState,
     onImportCloudSave,
+    leaderboardMode, // Add this line
   } = props;
 
   const [environment, setEnvironment] = useState('production');
@@ -28,8 +29,23 @@ export default function useGameHeaderLogic(props) {
   }, [onEasyModeToggle, easyMode]);
 
   const renderEnvironmentLabel = useCallback(() => {
-    if (environment === 'production') return null;
+    if (environment === 'production' && !leaderboardMode) return null;
     let labelText = environment;
+
+    if (leaderboardMode) {
+      // In production nur "Leaderboard" anzeigen
+      const display = environment === 'production' ? 'Leaderboard' : `${labelText} (Leaderboard)`;
+      return (
+        <span
+          className={`env-label ${environment} leaderboard-mode`}
+          title="Leaderboard Mode active"
+          style={{ cursor: 'not-allowed', opacity: 0.7 }}
+        >
+          {display}
+        </span>
+      );
+    }
+
     const displayText = easyMode ? `${labelText} (easy)` : labelText;
     return (
       <span
@@ -40,7 +56,7 @@ export default function useGameHeaderLogic(props) {
         {displayText}
       </span>
     );
-  }, [environment, easyMode, toggleEasyMode]);
+  }, [environment, easyMode, toggleEasyMode, leaderboardMode]);
 
   const formatPlayTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
