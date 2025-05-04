@@ -23,24 +23,28 @@ export default function useGameHeaderLogic(props) {
     else setEnvironment('production');
   }, []);
 
+  // Hilfsfunktion: Easy Mode darf nur in localhost und alpha aktiviert werden
+  const canToggleEasyMode = environment === 'localhost' || environment === 'alpha';
+
   const toggleEasyMode = useCallback(() => {
-    if (onEasyModeToggle) onEasyModeToggle(!easyMode);
-  }, [onEasyModeToggle, easyMode]);
+    if (canToggleEasyMode && onEasyModeToggle) onEasyModeToggle(!easyMode);
+  }, [canToggleEasyMode, onEasyModeToggle, easyMode]);
 
   const renderEnvironmentLabel = useCallback(() => {
+    if (environment === 'production') return null;
     let labelText = environment;
-
     const displayText = easyMode ? `${labelText} (easy)` : labelText;
     return (
       <span
         className={`env-label ${environment}`}
-        onClick={toggleEasyMode}
-        title="Toggle Easy Mode"
+        onClick={canToggleEasyMode ? toggleEasyMode : undefined}
+        title={canToggleEasyMode ? "Toggle Easy Mode" : "Easy Mode nur in localhost und alpha verfügbar"}
+        style={!canToggleEasyMode ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
       >
         {displayText}
       </span>
     );
-  }, [environment, easyMode, toggleEasyMode]);
+  }, [environment, easyMode, toggleEasyMode, canToggleEasyMode]);
 
   const formatPlayTime = (totalSeconds) => {
     const hours = Math.floor(totalSeconds / 3600);
