@@ -51,6 +51,10 @@ export default function useCloudSave() {
       const clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
       const startTime = localStorage.getItem(START_TIME_KEY) || null;
       const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
+      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
+      const leaderboardMode = localStorage.getItem('leaderboardMode');
+      const leaderboardName = localStorage.getItem('leaderboardName');
+      // --- ENDE LEADERBOARD PATCH ---
 
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
@@ -59,6 +63,8 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
+        leaderboardMode,
+        leaderboardName,
       });
       setCloudStatus('saved');
       return uuid;
@@ -84,6 +90,14 @@ export default function useCloudSave() {
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
       if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
+      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
+      if (data.leaderboardMode !== undefined && data.leaderboardMode !== null) {
+        localStorage.setItem('leaderboardMode', data.leaderboardMode);
+      }
+      if (data.leaderboardName !== undefined && data.leaderboardName !== null) {
+        localStorage.setItem('leaderboardName', data.leaderboardName);
+      }
+      // --- ENDE LEADERBOARD PATCH ---
 
       // Dark Mode nach Import anwenden
       try {
@@ -103,6 +117,8 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
+        leaderboardMode,
+        leaderboardName,
         ...gameState
       } = data;
       return gameState;
