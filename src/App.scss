@@ -303,7 +303,7 @@ $transition-slow: 0.4s ease;
 .settings-row {
   display: flex;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 
   .settings-icon {
     margin-right: 10px;
@@ -362,7 +362,7 @@ $transition-slow: 0.4s ease;
   font-weight: 600;
   color: map.get($colors, text-dark);
   font-size: 1.08em;
-  margin: 18px 0 12px 0;
+  margin: 20px 0 12px 0;
 
   &:first-of-type {
     margin-top: 0;
@@ -720,7 +720,7 @@ $transition-slow: 0.4s ease;
 .update-banner {
   position: fixed;
   left: 50%;
-  bottom: 30px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
   transform: translateX(-50%);
   min-width: 280px;
   max-width: 95vw;
@@ -740,14 +740,10 @@ $transition-slow: 0.4s ease;
   font-size: 1.05rem;
   font-weight: 500;
   z-index: 2002;
-  // border: 2px solid #fffbe6;
   animation: fadeIn 0.3s;
 
-  // Abstand für iOS/iPadOS "safe area"
-  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-
   span {
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.01em;
   }
 
@@ -760,7 +756,6 @@ $transition-slow: 0.4s ease;
     padding: 7px 22px;
     font-size: 1rem;
     border-radius: 8px;
-    font-weight: 600;
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
     transition: background 0.2s, transform 0.1s;
 
@@ -926,6 +921,7 @@ $transition-slow: 0.4s ease;
 
   .env-label {
     display: block !important;
+    margin-left: 0 !important;
   }
 
   .button-container {
@@ -970,11 +966,11 @@ $transition-slow: 0.4s ease;
   .update-banner {
     flex-direction: column;
     gap: 10px;
-    padding: 14px 10px calc(14px + env(safe-area-inset-bottom, 0px)) 10px;
+    padding: 14px 10px 14px 10px;
     min-width: 0;
     width: 95vw;
     left: 50%;
-    bottom: 12px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
     font-size: 0.98rem;
     border-radius: 12px;
   }
@@ -1010,7 +1006,6 @@ $transition-slow: 0.4s ease;
   padding: 8px 16px;
   border-radius: 6px;
   font-size: 0.9rem;
-  font-weight: 500;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   z-index: 999;
   display: flex;
@@ -1027,7 +1022,7 @@ $transition-slow: 0.4s ease;
   .achievements-list {
     display: flex;
     flex-direction: column;
-    margin-top: 16px;
+    margin-top: 20px;
   }
   
   .achievement-row {
