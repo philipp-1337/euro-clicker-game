@@ -1,0 +1,61 @@
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/variables" as *;
+
+// Hauptcontainer
+.game-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: $font-family;
+}
+
+// Floating Click Button (global über dem Container)
+.floating-click-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #ff6b6b, #e67e22);
+  color: map.get($colors, white);
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, width 0.3s, height 0.3s, left 0.3s, top 0.3s,
+    right 0.3s, bottom 0.3s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+  }
+
+  &.center-mode {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vw;
+    max-width: 350px;
+    max-height: 350px;
+    min-width: 180px;
+    min-height: 180px;
+    font-size: 2.5rem;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    z-index: 2000;
+  }
+}

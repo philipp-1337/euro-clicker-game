@@ -1,0 +1,162 @@
+// Tab components
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
+// Tabs
+.upgrade-tabs {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0 15px;
+  border-bottom: 2px solid #e0e0e0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: relative;
+
+  &::after,
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.2s;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.upgrade-tabs-inner {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  margin: 0 auto;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, gray);
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    color: map.get($colors, primary);
+  }
+
+  &.active {
+    color: map.get($colors, primary);
+    font-weight: 600;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: map.get($backgrounds, blue);
+    }
+  }
+}
+
+// UpgradeTabs Fade-In Animation
+.upgrade-tabs-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// ClickerButtons Fade-In Animation
+.clicker-buttons-fade {
+  animation: fadeIn 0.4s ease;
+}
+
+// Upgrade sections
+.upgrade-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.upgrade-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+// Premium section
+.premium-section {
+  animation: fadeIn 0.3s ease;
+}
+
+.premium-upgrade-card {
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #3498db;
+
+  &.experimental {
+    border-left: 4px solid #e74c3c;
+  }
+}
+
+.experimental-label {
+  color: map.get($colors, red);
+  font-weight: bold;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.premium-upgrade-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: map.get($colors, primary);
+  }
+}
+
+.premium-icon {
+  color: map.get($colors, orange);
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.premium-upgrade-description {
+  margin: 0 0 15px 0;
+  color: map.get($colors, dark-hue);
+  font-size: 0.95rem;
+}
+
+.premium-upgrade-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.premium-upgrade-level {
+  font-size: 0.9rem;
+  color: map.get($colors, dark-hue);
+}

@@ -1,0 +1,257 @@
+// Buttons
+@use "sass:map";
+@use "sass:list";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+@use "../abstracts/functions" as *;
+
+// Base button styles
+.floating-click-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #ff6b6b, #e67e22);
+  color: map.get($colors, white);
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, width 0.3s, height 0.3s, left 0.3s, top 0.3s,
+    right 0.3s, bottom 0.3s;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background: linear-gradient(to bottom, #e67e22, #d35400);
+  }
+
+  &.center-mode {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 50vw;
+    height: 50vw;
+    max-width: 350px;
+    max-height: 350px;
+    min-width: 180px;
+    min-height: 180px;
+    font-size: 2.5rem;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    z-index: 2000;
+  }
+}
+
+.clicker-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.button-container {
+  flex: 1;
+  min-width: 120px;
+  max-width: 160px;
+}
+
+.clicker-button {
+  @include button-base;
+  width: 100%;
+  height: 80px;
+  font-size: 1rem;
+  font-weight: bold;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.upgrade-button {
+  @include button-base;
+  width: 120px;
+  height: 70px;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+// Button variants
+@each $name, $colors in $button-colors {
+  .clicker-button.#{$name},
+  .upgrade-button.#{$name} {
+    @include color-variant(list.nth($colors, 1), list.nth($colors, 2));
+  }
+}
+
+// Cooldown indicators
+.cooldown-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 0.8rem;
+}
+
+.cooldown-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 6px;
+  width: 100%;
+  background-color: map.get($backgrounds, transparent-white-30);
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
+.cooldown-progress-fill {
+  height: 100%;
+  background-color: map.get($backgrounds, transparent-white-90);
+  transition: width 0.1s linear;
+}
+
+.cooldown-text {
+  position: absolute;
+  bottom: 8px;
+  font-size: 0.75rem;
+  color: map.get($colors, white);
+  text-shadow: 0 0 2px black;
+}
+
+// Settings Button
+.settings-button {
+  background: none;
+  border: none;
+  margin-top: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease, color 0.2s, transform 0.2s;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+
+  &:hover {
+    color: black;
+    transform: scale(1.1);
+  }
+}
+
+// Segmented buttons
+.segmented-btn-group {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.segmented-btn {
+  border: 1px solid #3498db;
+  background: #fff;
+  color: map.get($colors, blue);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+
+  &.active {
+    background: #3498db;
+    color: map.get($colors, white);
+  }
+}
+
+// Premium upgrade button
+.premium-upgrade-button {
+  background-color: map.get($colors, blue);
+  color: map.get($colors, white);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(.disabled) {
+    background-color: map.get($colors, dark-hue);
+    transform: translateY(-1px);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Modal buttons
+.modal-btn {
+  @include button-base;
+  background-color: map.get($colors, blue);
+  color: map.get($colors, white);
+  padding: 8px 22px;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+  transition: background-color 0.2s, transform 0.1s;
+
+  &:hover:not(.disabled) {
+    background-color: map.get($colors, dark-blue);
+    transform: translateY(-1px) scale(1.04);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px) scale(0.98);
+  }
+
+  &.danger {
+    background-color: map.get($colors, red);
+
+    &:hover:not(.disabled) {
+      background-color: map.get($colors, dark-red);
+    }
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  // Alternative style for last button
+  &:last-of-type {
+    background-color: map.get($backgrounds, off-dark);
+    color: map.get($colors, white);
+
+    &:hover:not(.disabled) {
+      background-color: map.get($backgrounds, darker);
+      border-color: map.get($backgrounds, dark);
+      transform: translateY(-1px) scale(1.04);
+    }
+
+    &:active:not(.disabled) {
+      background-color: map.get($backgrounds, dark);
+      color: map.get($backgrounds, lighter-blue);
+      border-color: map.get($backgrounds, darker);
+      transform: translateY(1px) scale(0.98);
+    }
+  }
+}

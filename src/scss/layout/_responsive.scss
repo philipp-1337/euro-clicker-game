@@ -1,0 +1,98 @@
+@use "../abstracts/colors" as *;
+@use "../abstracts/variables" as *;
+
+// Mobile responsive styles (max-width: 600px)
+@media (max-width: 600px) {
+  // Button layout adjustments
+  .clicker-buttons,
+  .upgrade-buttons {
+    gap: 8px;
+  }
+
+  // Display adjustments
+  .money-display .per-second,
+  .section-title .section-label {
+    display: block;
+  }
+
+  .env-label {
+    display: block !important;
+    margin-left: 0 !important;
+  }
+
+  .button-container {
+    min-width: 100px;
+  }
+
+  // Tab adjustments
+  .upgrade-tabs {
+    gap: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow-x: auto;
+    justify-content: flex-start;
+
+    &::after,
+    &::before {
+      display: none;
+    }
+  }
+
+  .tab-button {
+    min-width: 120px;
+    flex: 0 0 auto;
+    font-size: 0.95rem;
+    padding: 10px 10px;
+  }
+
+  // Upgrade button adjustments
+  .upgrade-button {
+    width: 100px;
+    height: 65px;
+    font-size: 0.8rem;
+  }
+
+  // Premium section adjustments
+  .premium-upgrade-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .premium-upgrade-button {
+    width: 100%;
+  }
+
+  // Update banner adjustments
+  .update-banner {
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 10px 14px 10px;
+    min-width: 0;
+    width: 95vw;
+    left: 50%;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+    font-size: 0.98rem;
+    border-radius: 12px;
+  }
+
+  .update-banner button {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 1.05rem;
+  }
+
+  // Leaderboard table adjustments
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 10px 6px;
+    font-size: 0.97rem;
+  }
+}
+
+// Desktop responsive styles (min-width: 1024px)
+@media (min-width: 1024px) {
+  .floating-click-button {
+    width: 120px;
+    height: 120px;
+  }
+}

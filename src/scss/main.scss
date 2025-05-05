@@ -1,0 +1,32 @@
+// Main SCSS Datei
+// Diese Datei importiert alle anderen SCSS Module
+
+// Abstracts
+@use 'abstracts/variables';
+@use 'abstracts/colors';
+@use 'abstracts/functions';
+@use 'abstracts/mixins';
+
+// Base Styles
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/animations';
+
+// Layout
+@use 'layout/game-container';
+@use 'layout/header';
+@use 'layout/sections';
+
+// Components
+@use 'components/buttons';
+@use 'components/modals';
+@use 'components/tabs';
+@use 'components/achievements';
+@use 'components/leaderboard';
+@use 'components/displays';
+
+// Themes
+@use 'themes/dark-mode';
+
+// Responsive styles (oder können in jeweilige Komponenten eingebaut werden)
+@use 'layout/responsive';
