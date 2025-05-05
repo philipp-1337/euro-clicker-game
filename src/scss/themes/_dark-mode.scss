@@ -13,7 +13,6 @@ body.dark {
   .modal-content,
   .settings-modal-header,
   .settings-modal-content,
-  .header-playtime,
   .modal-input {
     background: map.get($backgrounds, dark) !important;
     color: map.get($colors, text-light) !important;
@@ -28,7 +27,9 @@ body.dark {
   .game-title,
   .section-title,
   .modal-content h3,
-  .settings-section-title {
+  .settings-section-title,
+  .header-playtime,
+  .header-clickstats {
     color: map.get($colors, text-light) !important;
   }
 

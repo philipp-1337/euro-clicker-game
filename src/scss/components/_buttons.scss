@@ -139,15 +139,21 @@
 
 // Settings Button
 .settings-button {
+  align-items: center;
+  appearance: none;
+  -webkit-appearance: none;
+  backface-visibility: hidden;
   background: none;
   border: none;
-  margin-top: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: opacity 0.2s ease, color 0.2s, transform 0.2s;
   color: inherit;
-  -webkit-appearance: none;
-  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 1rem;
+  justify-content: center;
+  margin-top: 4px;
+  transform-origin: center center;
+  transition: opacity 0.2s ease, color 0.2s, transform 0.2s;
+  will-change: transform;
 
   &:hover {
     color: black;
