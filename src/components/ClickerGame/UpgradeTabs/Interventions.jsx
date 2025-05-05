@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const interventions = [
   { id: 'intervention1', label: 'Intervention 1', perk: 'Effect of Intervention 1', cost: 100, requiresSatisfaction: 10 },
