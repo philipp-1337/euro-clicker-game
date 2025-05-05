@@ -1,0 +1,134 @@
+// Achievement components
+@use "sass:map";
+@use "sass:list";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
+.achievement-notification {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(45deg, #ffd700, #ffa500);
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .achievement-message {
+    font-weight: 600;
+  }
+}
+
+.achievement {
+  .achievements-list {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .achievement-row {
+    align-items: center;
+    display: flex;
+    gap: 14px;
+    margin-right: 6px;
+    padding: 8px 0;
+  }
+  
+  .achievement-icon {
+    align-items: center;
+    color: #000;
+    display: flex;
+    font-size: 24px;
+    justify-content: center;
+    min-width: 36px;
+  }
+  
+  .achievement-info {
+    display: flex;
+    flex: 1 1;
+    flex-direction: column;
+    
+    .achievement-label {
+      font-size: 1.05em;
+      font-weight: 700;
+      color: #2c3e50
+    }
+    
+    .achievement-desc {
+      color: #666;
+      font-size: .97em;
+    }
+  }
+
+  &.modal-content {
+    background-color: map.get($backgrounds, off-white);
+  }
+}
+
+// Dark mode specific achievement styles
+body.dark {
+  // Achievement Modal specific
+  .modal-content.achievement {
+    background-color: map.get($backgrounds, dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  .achievement-row {
+    color: map.get($colors, text-light);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+
+    &.unattainable {
+      opacity: 0.5;
+    }
+
+    .achievement-icon {
+      color: map.get($colors, text-light);
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      min-width: 36px;
+    }
+
+    .achievement-icon .settings-icon.locked {
+      color: map.get($colors, grey);
+    }
+
+    .achievement-icon .settings-icon.unlocked {
+      color: map.get($colors, highlight) !important;
+    }
+
+    .achievement-label {
+      font-weight: 600;
+      color: map.get($colors, text-light);
+    }
+
+    .achievement-desc {
+      font-size: 0.85rem;
+      color: map.get($colors, text-muted);
+    }
+
+    .achievement-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+    }
+  }
+
+  .achievements-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-color: map.get($colors, text-light) transparent;
+  }
+
+  .settings-modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}

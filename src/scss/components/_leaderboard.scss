@@ -1,0 +1,60 @@
+// Leaderboard components
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 8px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+  background: map.get($backgrounds, transparent-white-30);
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 1.04rem;
+  margin-bottom: 0;
+  
+  th, td {
+    padding: 12px 14px;
+    text-align: left;
+  }
+  
+  th {
+    color: map.get($colors, primary);
+    font-weight: 700;
+    font-size: 1.05rem;
+    border-bottom: 2px solid map.get($colors, gray);
+    letter-spacing: 0.01em;
+    background: map.get($backgrounds, lighter-blue) !important;
+  }
+  
+  tr {
+    transition: background 0.18s;
+  }
+  
+  tr:not(:last-child) td {
+    border-bottom: 1px solid map.get($colors, gray);
+  }
+  
+  td {
+    color: map.get($colors, text-dark);
+    font-weight: 500;
+    background: transparent;
+  }
+  
+  tr:hover td {
+    background: map.get($backgrounds, lighter-blue) !important;
+  }
+}
+
+.leaderboard-table tr.me td {
+  background: map.get($colors, off-white) !important;
+  color: map.get($colors, text-dark) !important;
+  font-weight: 700;
+}
+
+// Dark mode specific leaderboard styles
+body.dark .leaderboard-table {
+  background: map.get($backgrounds, transparent-white-90) !important;
+}

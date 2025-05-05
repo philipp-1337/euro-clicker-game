@@ -1,0 +1,95 @@
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/variables" as *;
+
+// Typografie-Regeln
+body {
+  font-family: $font-family;
+}
+
+// Titel und Überschriften
+.game-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: map.get($colors, primary);
+}
+
+.section-title {
+  margin: 25px 0 15px;
+  color: map.get($colors, primary);
+  text-align: center;
+}
+
+// Section label styles (für Investments und StateInfrastructure)
+.section-label {
+  font-size: 0.9rem;
+  margin-left: 12px;
+  color: #2ecc71;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+// Spezielle Textklassen
+.per-second {
+  font-size: 1rem;
+  margin-left: 12px;
+  color: #2ecc71;
+}
+
+// Environment Labels
+.env-label {
+  font-size: 0.5em;
+  margin-left: 10px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: super;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 400;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  &.beta {
+    color: map.get($colors, secondary);
+    background-color: map.get($backgrounds, light);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+
+  &.localhost {
+    color: map.get($colors, accent);
+    background-color: map.get($backgrounds, lighter-blue);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+}
+
+// Settings-Überschriften
+.settings-section-title {
+  font-weight: 600;
+  color: map.get($colors, text-dark);
+  font-size: 1.08em;
+  margin: 20px 0 12px 0;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  &:last-of-type {
+    font-weight: 700;
+    color: map.get($colors, red);
+    margin-top: 22px;
+  }
+}

@@ -1,0 +1,243 @@
+// Modal components
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s;
+}
+
+.modal-content {
+  @include modal-base;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  font-family: $font-family;
+
+  .settings-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0;
+
+    h3 {
+      margin: 0;
+      color: map.get($colors, primary);
+      font-size: 1.25rem;
+      text-align: center;
+    }
+
+    .settings-button {
+      margin-left: auto !important;
+    }
+  }
+
+  p {
+    margin: 18px 0;
+
+    & + p {
+      margin-top: 0;
+    }
+  }
+}
+
+.modal-input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 10px 12px;
+  font-size: 1.05rem;
+  border: 1.5px solid map.get($colors, blue);
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: map.get($colors, primary);
+  transition: border 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: map.get($colors, dark-blue);
+    background: #f4faff;
+  }
+}
+
+.modal-error {
+  color: map.get($colors, red);
+  margin-bottom: 10px;
+  font-size: 0.98rem;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+// Settings Modal Styles
+.settings-modal-close {
+  background: transparent !important;
+  color: #333 !important;
+  padding: 0 !important;
+  min-width: 0 !important;
+}
+
+.settings-modal-content {
+  margin-top: 18px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+
+  .settings-icon {
+    margin-right: 10px;
+  }
+
+  .settings-label {
+    background: none; 
+    border: none; 
+    padding: 0; 
+    flex: 1;
+    font-family: $font-family;
+    font-size: 1rem;
+    text-align: left;
+
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    user-select: none;
+    
+    &.btn {
+      cursor: pointer;
+      /* iOS/Safari Button-Override: Einheitliches Styling */
+      color: inherit !important;
+      background: transparent !important;
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      
+      &:active,
+      &:focus,
+      &:visited {
+        color: inherit !important;
+        background: transparent !important;
+        -webkit-appearance: none !important;
+        appearance: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+      }
+    }
+  }
+
+  .settings-uuid {
+    flex: 1;
+    font-size: 0.80em;
+    background: #eee;
+    border-radius: 4px;
+    padding: 2px 6px;
+    user-select: all;
+    cursor: pointer;
+  }
+}
+
+.settings-section-title {
+  font-weight: 600;
+  color: map.get($colors, text-dark);
+  font-size: 1.08em;
+  margin: 20px 0 12px 0;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  &:last-of-type {
+    font-weight: 700;
+    color: map.get($colors, red);
+    margin-top: 22px;
+  }
+}
+
+// Update Banner
+.update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+  transform: translateX(-50%);
+  min-width: 280px;
+  max-width: 95vw;
+  background: gradient-background(
+    map.get($backgrounds, lighter-blue),
+    map.get($backgrounds, off-white)
+  );
+  color: map.get($colors, primary);
+  padding: 16px 28px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  font-family: $font-family;
+  font-size: 1.05rem;
+  font-weight: 500;
+  z-index: 2002;
+  animation: fadeIn 0.3s;
+
+  span {
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  button {
+    @include button-base;
+    background: linear-gradient(to bottom,
+        map.get($colors, blue),
+        map.get($colors, dark-blue));
+    color: map.get($colors, white);
+    padding: 7px 22px;
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
+    transition: background 0.2s, transform 0.1s;
+
+    &:hover:not(.disabled) {
+      transform: translateY(-1px) scale(1.04);
+    }
+
+    &:active:not(.disabled) {
+      transform: translateY(1px) scale(0.98);
+    }
+  }
+}
+
+// Feedback Banner
+.save-feedback-banner {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2ecc71;
+  color: map.get($colors, white);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+}

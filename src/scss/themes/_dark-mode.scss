@@ -1,0 +1,151 @@
+@use "sass:map";
+@use "sass:list";
+@use "../abstracts/colors" as *;
+@use "../abstracts/functions" as *;
+@use "../abstracts/variables" as *;
+
+// --- DARK MODE ---
+body.dark {
+  background: map.get($backgrounds, darker) !important;
+  color: map.get($colors, text-light) !important;
+
+  // Modal styles in dark mode
+  .modal-content,
+  .settings-modal-header,
+  .settings-modal-content,
+  .header-playtime,
+  .modal-input {
+    background: map.get($backgrounds, dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  // Button & text elements in dark mode
+  .modal-btn,
+  .settings-button,
+  .segmented-btn,
+  .upgrade-button,
+  .clicker-button,
+  .game-title,
+  .section-title,
+  .modal-content h3,
+  .settings-section-title {
+    color: map.get($colors, text-light) !important;
+  }
+
+  // Special button states in dark mode
+  .modal-btn {
+    &.danger {
+      background: map.get($colors, dark-red);
+
+      &:hover:not(.disabled) {
+        background: map.get($colors, red);
+      }
+    }
+  }
+
+  .modal-btn:last-of-type {
+    background-color: map.get($backgrounds, darker);
+    transition: background-color 0.2s, transform 0.1s;
+
+    &:hover:not(.disabled) {
+      background-color: map.get($backgrounds, dark);
+      transform: translateY(-1px) scale(1.04);
+    }
+
+    &:active:not(.disabled) {
+      background-color: map.get($backgrounds, off-dark);
+      transform: translateY(1px) scale(0.98);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // UI elements in dark mode
+  .env-label,
+  .save-feedback-banner,
+  .achievement-notification,
+  .settings-uuid {
+    background: map.get($backgrounds, off-dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  .update-banner {
+    background: gradient-background(
+      map.get($backgrounds, off-dark),
+      map.get($backgrounds, darker)
+    ) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  .modal-actions {
+    background: none !important;
+  }
+
+  .leaderboard-table {
+    background: map.get($backgrounds, transparent-white-90) !important;
+  }
+
+  // Achievement styles in dark mode
+  .modal-content.achievement {
+    background-color: map.get($backgrounds, dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+
+  .achievement-row {
+    color: map.get($colors, text-light);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+
+    &.unattainable {
+      opacity: 0.5;
+    }
+
+    .achievement-icon {
+      color: map.get($colors, text-light);
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      min-width: 36px;
+
+      .settings-icon {
+        &.locked {
+          color: map.get($colors, grey);
+        }
+
+        &.unlocked {
+          color: map.get($colors, highlight) !important;
+        }
+      }
+    }
+
+    .achievement-label {
+      font-weight: 600;
+      color: map.get($colors, text-light);
+    }
+
+    .achievement-desc {
+      font-size: 0.85rem;
+      color: map.get($colors, text-muted);
+    }
+
+    .achievement-info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+    }
+  }
+
+  .achievements-list {
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-color: map.get($colors, text-light) transparent;
+  }
+
+  .settings-modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}

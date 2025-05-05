@@ -1,0 +1,98 @@
+// Display components
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
+// Displays
+.money-display {
+  @include card-base;
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: map.get($colors, primary);
+}
+
+.playtime-display {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+  color: map.get($colors, text-dark);
+  margin-top: -20px;
+  margin-bottom: 25px;
+  opacity: 0.8;
+}
+
+.section-title {
+  margin: 25px 0 15px;
+  color: map.get($colors, primary);
+  text-align: center;
+}
+
+// Section label styles (for Investments and StateInfrastructure)
+.section-label {
+  font-size: 0.9rem;
+  margin-left: 12px;
+  color: #2ecc71;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+
+.per-second {
+  font-size: 1rem;
+  margin-left: 12px;
+  color: #2ecc71;
+}
+
+// Environment Labels
+.env-label {
+  font-size: 0.5em;
+  margin-left: 10px;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: super;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 400;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  &.beta {
+    color: map.get($colors, secondary);
+    background-color: map.get($backgrounds, light);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+
+  &.localhost {
+    color: map.get($colors, accent);
+    background-color: map.get($backgrounds, lighter-blue);
+
+    &.easy {
+      color: map.get($colors, warning);
+      font-weight: bold;
+    }
+  }
+}
+
+// Icons
+.spinning-icon {
+  animation: spin 1.5s linear infinite;
+  width: 16px;
+  height: 16px;
+  margin-bottom: 2px;
+}
+
+.check-icon {
+  width: 18px;
+  height: 18px;
+}

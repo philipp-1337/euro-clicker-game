@@ -1,0 +1,78 @@
+@use "sass:list";
+@use "sass:map";
+@use "./colors" as *;
+
+// Common mixins für die gesamte Anwendung
+
+// Flex centering
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flex column centering
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// Basis für Karten-Elemente
+@mixin card-base {
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+}
+
+// Basis für Modals
+@mixin modal-base {
+  background: map.get($backgrounds, off-white);
+  border-radius: 14px;
+  box-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+  padding: 32px 28px 24px 28px;
+  min-width: 320px;
+  max-width: 95vw;
+}
+
+// Basis für Achievement-Elemente
+@mixin achievement-base {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Basis für Buttons
+@mixin button-base {
+  border: none;
+  border-radius: 8px;
+  color: map.get($colors, white);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(.disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  &.disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Button Farbvarianten
+@mixin color-variant($color1, $color2) {
+  background: linear-gradient(to bottom, $color1, $color2);
+}

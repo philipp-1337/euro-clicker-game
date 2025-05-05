@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Trophy as TrophyIcon } from 'lucide-react';
-import 'App.scss';
 
 export default function AchievementNotification({ achievement, onClose }) {
   const [visible, setVisible] = useState(true);
