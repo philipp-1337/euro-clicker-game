@@ -1,197 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const techTree = [
-  {
-    id: 'root',
-    label: 'Choose your path',
-    children: ['autocracy', 'democracy'],
-  },
-  {
-    id: 'autocracy',
-    label: 'Autocracy',
-    perk: 'Placeholder: Autocratic Perk 1',
-    children: ['auto2'],
-  },
-  {
-    id: 'auto2',
-    label: 'Autocracy II',
-    perk: 'Placeholder: Autocratic Perk 2',
-    children: ['auto3'],
-  },
-  {
-    id: 'auto3',
-    label: 'Autocracy III',
-    perk: 'Placeholder: Autocratic Perk 3',
-    children: ['auto4'],
-  },
-  {
-    id: 'auto4',
-    label: 'Autocracy IV',
-    perk: 'Placeholder: Autocratic Perk 4',
-    children: [],
-  },
-  {
-    id: 'democracy',
-    label: 'Democracy',
-    perk: 'Placeholder: Democratic Perk 1',
-    children: ['demo2'],
-  },
-  {
-    id: 'demo2',
-    label: 'Democracy II',
-    perk: 'Placeholder: Democratic Perk 2',
-    children: ['demo3'],
-  },
-  {
-    id: 'demo3',
-    label: 'Democracy III',
-    perk: 'Placeholder: Democratic Perk 3',
-    children: ['demo4'],
-  },
-  {
-    id: 'demo4',
-    label: 'Democracy IV',
-    perk: 'Placeholder: Democratic Perk 4',
-    children: [],
-  },
+const interventions = [
+  { id: 'intervention1', label: 'Intervention 1', perk: 'Effect of Intervention 1', cost: 100, requiresSatisfaction: 10 },
+  { id: 'intervention2', label: 'Intervention 2', perk: 'Effect of Intervention 2', cost: 200 },
+  { id: 'intervention3', label: 'Intervention 3', perk: 'Effect of Intervention 3', cost: 300 },
+  { id: 'intervention4', label: 'Intervention 4', perk: 'Effect of Intervention 4', cost: 400 },
+  { id: 'intervention5', label: 'Intervention 5', perk: 'Effect of Intervention 5', cost: 500 },
+  { id: 'intervention6', label: 'Intervention 6', perk: 'Effect of Intervention 6', cost: 600 },
+  { id: 'intervention7', label: 'Intervention 7', perk: 'Effect of Intervention 7', cost: 700 },
+  { id: 'intervention8', label: 'Intervention 8', perk: 'Effect of Intervention 8', cost: 800 },
 ];
 
-function renderPath(pathNodes, unlocked, onUnlock, selectedPath, satisfaction, dissatisfaction) {
-  // Render a vertical column for a path (autocracy or democracy)
-  return (
-    <div className="techtree-path-column">
-      {pathNodes.map((node, idx) => {
-        const isUnlocked = unlocked.includes(node.id);
-        const isSelectable = !isUnlocked && (idx === 0 ? unlocked.includes('root') : unlocked.includes(pathNodes[idx - 1].id));
-        let unlockDisabled = false;
-        let unlockTooltip = '';
-        if (node.id === 'autocracy') {
-          unlockDisabled = dissatisfaction < 10;
-          unlockTooltip = 'Requires Dissatisfaction ≥ 10';
-        }
-        if (node.id === 'democracy') {
-          unlockDisabled = satisfaction < 10;
-          unlockTooltip = 'Requires Satisfaction ≥ 10';
-        }
-        return (
-          <div key={node.id} className={`techtree-node${isUnlocked ? ' unlocked' : ''}${isSelectable ? ' selectable' : ''}`}>
-            <div className="techtree-label">{node.label}</div>
-            {node.perk && <div className="techtree-perk">{node.perk}</div>}
-            {isSelectable && !isUnlocked && (
-              <button
-                className="techtree-unlock-btn"
-                onClick={() => onUnlock(node.id)}
-                disabled={unlockDisabled}
-                title={unlockDisabled ? unlockTooltip : ''}
-              >
-                Unlock
-              </button>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+export default function Interventions({ money, setMoney, satisfaction }) {
+  const [unlocked, setUnlocked] = useState([]);
 
-export default function Interventions({ satisfaction = 0, dissatisfaction = 0 }) {
-  const [unlocked, setUnlocked] = useState(['root']);
-  const [selectedPath, setSelectedPath] = useState(null);
-
-  const handleUnlock = (id) => {
-    if (id === 'autocracy' && dissatisfaction >= 10) {
-      setSelectedPath(id);
-      setUnlocked(prev => [...prev, id]);
-    } else if (id === 'democracy' && satisfaction >= 10) {
-      setSelectedPath(id);
-      setUnlocked(prev => [...prev, id]);
-    } else if (selectedPath && id.startsWith(selectedPath)) {
+  const handleUnlock = (id, cost) => {
+    if (money >= cost && !unlocked.includes(id)) {
+      setMoney(prev => prev - cost);
       setUnlocked(prev => [...prev, id]);
     }
   };
 
-  // Prepare columns for each path
-  const autocracyPath = [
-    techTree.find(n => n.id === 'autocracy'),
-    techTree.find(n => n.id === 'auto2'),
-    techTree.find(n => n.id === 'auto3'),
-    techTree.find(n => n.id === 'auto4'),
-  ];
-  const democracyPath = [
-    techTree.find(n => n.id === 'democracy'),
-    techTree.find(n => n.id === 'demo2'),
-    techTree.find(n => n.id === 'demo3'),
-    techTree.find(n => n.id === 'demo4'),
-  ];
-
-  // Only show the chosen path after selection
-  let showAutocracy = !selectedPath || selectedPath === 'autocracy';
-  let showDemocracy = !selectedPath || selectedPath === 'democracy';
-
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">Interventions Tech Tree</h2>
-      <div className="techtree-horizontal-container">
-        <div className="techtree-root-label">Choose your path</div>
-        <div className="techtree-paths-row">
-          {showAutocracy && renderPath(autocracyPath, unlocked, handleUnlock, selectedPath, satisfaction, dissatisfaction)}
-          {showDemocracy && renderPath(democracyPath, unlocked, handleUnlock, selectedPath, satisfaction, dissatisfaction)}
-        </div>
+      <h2 className="section-title">Interventions</h2>
+      <div className="interventions-grid">
+        {interventions.map(intervention => {
+          const isReadyToBuy = !unlocked.includes(intervention.id) && 
+            (!intervention.requiresSatisfaction || satisfaction >= intervention.requiresSatisfaction);
+
+          return (
+            <div key={intervention.id} className="intervention-card">
+              <h3>{intervention.label}</h3>
+              <p>{intervention.perk}</p>
+              <button
+                onClick={() => handleUnlock(intervention.id, intervention.cost)}
+                disabled={!isReadyToBuy || money < intervention.cost}
+                className={`intervention-button ${unlocked.includes(intervention.id) ? 'unlocked' : ''}`}
+              >
+                {unlocked.includes(intervention.id) ? 'Unlocked' : `${intervention.cost} €`}
+              </button>
+            </div>
+          );
+        })}
       </div>
       <style>{`
-        .techtree-horizontal-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+        .interventions-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 20px;
         }
-        .techtree-root-label {
-          font-weight: bold;
-          margin-bottom: 16px;
-          font-size: 1.1em;
-        }
-        .techtree-paths-row {
-          display: flex;
-          flex-direction: row;
-          gap: 40px;
-          justify-content: center;
-          align-items: flex-start;
-        }
-        .techtree-path-column {
-          display: flex;
-          flex-direction: column;
-          gap: 18px;
-          align-items: center;
-        }
-        .techtree-node {
-          border: 1px solid #bbb;
-          border-radius: 8px;
-          padding: 12px 18px;
-          min-width: 220px;
+        .intervention-card {
           background: #f9f9f9;
-          position: relative;
-          margin: 0;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          padding: 16px;
+          text-align: center;
         }
-        .techtree-node.unlocked {
-          border-color: #4caf50;
-          background: #e8f5e9;
-        }
-        .techtree-node.selectable {
-          border-style: dashed;
-        }
-        .techtree-label {
-          font-weight: bold;
-          margin-bottom: 4px;
-        }
-        .techtree-perk {
+        .intervention-button {
+          margin-top: 10px;
+          padding: 8px 16px;
           font-size: 0.95em;
-          color: #666;
-          margin-bottom: 6px;
-        }
-        .techtree-unlock-btn {
-          padding: 4px 12px;
-          font-size: 0.95em;
-          margin-bottom: 4px;
           cursor: pointer;
+        }
+        .intervention-button.unlocked {
+          background: #4caf50;
+          color: white;
+          cursor: not-allowed;
         }
       `}</style>
     </div>
