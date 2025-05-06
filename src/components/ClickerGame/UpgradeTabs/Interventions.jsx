@@ -45,7 +45,7 @@ export default function Interventions({ money = 0, setMoney = () => {}, satisfac
               <button
                 onClick={() => handleUnlock(intervention.id, intervention.cost)}
                 disabled={!isReadyToBuy || money < intervention.cost}
-                className={`intervention-button ${unlocked.includes(intervention.id) ? 'unlocked' : ''}`}
+                className={`premium-upgrade-button ${!isReadyToBuy || money < intervention.cost ? 'disabled' : ''}`}
               >
                 {unlocked.includes(intervention.id) ? 'Activated' : `${intervention.cost} €`}
               </button>
@@ -66,15 +66,23 @@ export default function Interventions({ money = 0, setMoney = () => {}, satisfac
           padding: 16px;
           text-align: center;
         }
-        .intervention-button {
+        .premium-upgrade-button {
           margin-top: 10px;
-          padding: 8px 16px;
-          font-size: 0.95em;
+          padding: 10px 20px;
+          font-size: 1em;
+          font-weight: bold;
+          color: #fff;
+          background-color: #007bff;
+          border: none;
+          border-radius: 5px;
           cursor: pointer;
+          transition: background-color 0.3s ease;
         }
-        .intervention-button.unlocked {
-          background: #4caf50;
-          color: white;
+        .premium-upgrade-button:hover:not(.disabled) {
+          background-color: #0056b3;
+        }
+        .premium-upgrade-button.disabled {
+          background-color: #6c757d;
           cursor: not-allowed;
         }
       `}</style>
