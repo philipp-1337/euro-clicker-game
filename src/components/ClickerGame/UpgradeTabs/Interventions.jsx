@@ -11,13 +11,22 @@ const interventions = [
   { id: 'intervention8', label: 'Intervention 8', perk: 'Effect of Intervention 8', cost: 800 },
 ];
 
-export default function Interventions({ money, setMoney, satisfaction }) {
+export default function Interventions({ money = 0, setMoney = () => {}, satisfaction = 0 }) {
   const [unlocked, setUnlocked] = useState([]);
 
   const handleUnlock = (id, cost) => {
+    console.log('Attempting to unlock:', { id, cost, money, unlocked });
     if (money >= cost && !unlocked.includes(id)) {
-      setMoney(prev => prev - cost);
+      setMoney(prev => {
+        if (typeof prev !== 'number') {
+          console.error('Invalid money state:', prev);
+          return prev;
+        }
+        return prev - cost;
+      });
       setUnlocked(prev => [...prev, id]);
+    } else {
+      console.warn('Cannot unlock:', { id, cost, money, unlocked });
     }
   };
 
