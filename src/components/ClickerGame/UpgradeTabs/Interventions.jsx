@@ -47,7 +47,7 @@ export default function Interventions({ money = 0, setMoney = () => {}, satisfac
                 disabled={!isReadyToBuy || money < intervention.cost}
                 className={`intervention-button ${unlocked.includes(intervention.id) ? 'unlocked' : ''}`}
               >
-                {unlocked.includes(intervention.id) ? 'Unlocked' : `${intervention.cost} €`}
+                {unlocked.includes(intervention.id) ? 'Activated' : `${intervention.cost} €`}
               </button>
             </div>
           );
