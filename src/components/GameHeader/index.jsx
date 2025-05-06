@@ -12,7 +12,8 @@ import {
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
-import LeaderboardModal from './LeaderboardModal'; // Import LeaderboardModal
+import LeaderboardModal from './LeaderboardModal';
+import MoneyBanner from '@components/MoneyBanner';
 import { useUiProgress } from '@hooks/useUiProgress';
 
 export default function GameHeader(props) {
@@ -74,7 +75,7 @@ export default function GameHeader(props) {
           {renderEnvironmentLabel()}
         </h1>
       </div>
-      <div className="money-display">
+      <div id="money-display" className="money-display">
         {formatNumber(money)} €
         {totalMoneyPerSecond > 0 && (
           <span className="per-second">
@@ -169,6 +170,7 @@ export default function GameHeader(props) {
         totalClicks={props.floatingClicks}
         gameTime={props.playTime}
       />
+      <MoneyBanner money={formatNumber(money)} />
       {/* Leaderboard Modal */}
       {showLeaderboardModal && uiProgress.showLeaderboard && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />

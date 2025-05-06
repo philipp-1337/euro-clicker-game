@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'; // Importiere useRef
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
+import './scss/components/_money-banner.scss';
 
 function App() {
   // Initialisiere easyMode basierend auf localStorage
@@ -56,20 +57,8 @@ function App() {
     saveGameRef.current = saveFn;
   };
 
-  // // TEST: Banner manuell anzeigen (nur für lokale Entwicklung)
-  // const triggerTestUpdateBanner = () => {
-  //   // Simuliere ein Service Worker Update-Event
-  //   window.dispatchEvent(new CustomEvent('swUpdateReady', { detail: { waiting: { postMessage: () => {} } } }));
-  // };
-
   return (
     <div className="App">
-      {/* TEST-BUTTON NUR LOKAL */}
-      {/* {window.location.hostname === 'localhost' && (
-        <button style={{ position: 'fixed', top: 10, right: 10, zIndex: 9999 }} onClick={triggerTestUpdateBanner}>
-          Test Update-Banner
-        </button>
-      )} */}
       {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}
