@@ -87,7 +87,7 @@ export default function LeaderboardModal({ show, onClose }) {
                           />
                         )}
                       </td>
-                      <td>{formatPlaytime(entry.playtime)}</td>
+                      <td>{formatPlaytime(entry.playtime, true)}</td>
                       <td>{entry.clicks}</td>
                     </tr>
                   );

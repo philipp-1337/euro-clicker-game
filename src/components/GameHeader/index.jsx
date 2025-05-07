@@ -134,7 +134,7 @@ export default function GameHeader(props) {
         {showPlaytime && (
           <span className="header-playtime">
             <HourglassIcon size={20} />
-            {formatPlaytime(playTime)}</span>
+            {formatPlaytime(playTime, false)}</span>
         )}
       </div>
       {/* Settings Modal */}
