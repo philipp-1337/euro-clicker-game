@@ -15,6 +15,7 @@ import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner';
 import { useUiProgress } from '@hooks/useUiProgress';
+import SideMenu from '../SideMenu/SideMenu';
 
 export default function GameHeader(props) {
   const {
@@ -175,6 +176,12 @@ export default function GameHeader(props) {
       {showLeaderboardModal && uiProgress.showLeaderboard && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
+      <SideMenu 
+        onOpenSettings={() => setShowSettings(true)} 
+        showLeaderboard={showLeaderboard}
+        onToggleLeaderboard={() => setShowLeaderboardModal(true)}
+        onOpenAchievements={() => setShowAchievements(true)}
+      />
     </>
   );
 }
