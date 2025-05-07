@@ -5,18 +5,20 @@ import {
   Home as HomeIcon,
   Settings as SettingsIcon,
   BarChart2 as StatsIcon,
-  Award as AchievementsIcon,
-  HelpCircle as HelpIcon,
+  Award as AchievementsIcon,  
   Info as InfoIcon,
   CrownIcon
 } from 'lucide-react';
+import AboutModal from '../AboutModal/AboutModal';
 
 export default function SideMenu({ 
   onOpenSettings, 
   showLeaderboard, 
-  onToggleLeaderboard 
+  onToggleLeaderboard,
+  onOpenAchievements
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function SideMenu({
         <div className="sidemenu-content">
           <div 
             className="sidemenu-item" 
-            onClick={() => handleMenuItemClick(() => window.location.reload())}
+            onClick={() => setIsOpen(false)}
           >
             <HomeIcon size={20} className="sidemenu-icon" />
             <span>Home</span>
@@ -92,13 +94,13 @@ export default function SideMenu({
             <span>Settings</span>
           </div>
 
-          <div 
+          {/* <div 
             className="sidemenu-item" 
             onClick={() => handleMenuItemClick()}
           >
             <StatsIcon size={20} className="sidemenu-icon" />
             <span>Statistics</span>
-          </div>
+          </div> */}
 
           {showLeaderboard !== undefined && (
             <div 
@@ -112,7 +114,7 @@ export default function SideMenu({
 
           <div 
             className="sidemenu-item" 
-            onClick={() => handleMenuItemClick()}
+            onClick={() => handleMenuItemClick(onOpenAchievements)}
           >
             <AchievementsIcon size={20} className="sidemenu-icon" />
             <span>Achievements</span>
@@ -120,15 +122,7 @@ export default function SideMenu({
 
           <div 
             className="sidemenu-item" 
-            onClick={() => handleMenuItemClick()}
-          >
-            <HelpIcon size={20} className="sidemenu-icon" />
-            <span>Help</span>
-          </div>
-
-          <div 
-            className="sidemenu-item" 
-            onClick={() => handleMenuItemClick()}
+            onClick={() => handleMenuItemClick(() => setShowAbout(true))}
           >
             <InfoIcon size={20} className="sidemenu-icon" />
             <span>About</span>
@@ -139,6 +133,8 @@ export default function SideMenu({
           Euro Clicker Game v1.0
         </div>
       </div>
+      {/* About Modal */}
+      <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
     </>
   );
 }

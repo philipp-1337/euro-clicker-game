@@ -176,13 +176,11 @@ export default function GameHeader(props) {
       {showLeaderboardModal && uiProgress.showLeaderboard && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
-       <SideMenu 
+      <SideMenu 
         onOpenSettings={() => setShowSettings(true)} 
         showLeaderboard={showLeaderboard}
-        onToggleLeaderboard={() => {
-          // Hier kannst du die Logik zum Öffnen des Leaderboards einfügen
-          // z.B. setShowLeaderboardModal(true) oder ähnliches
-        }}
+        onToggleLeaderboard={() => setShowLeaderboardModal(true)}
+        onOpenAchievements={() => setShowAchievements(true)}
       />
     </>
   );

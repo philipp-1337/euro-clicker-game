@@ -92,6 +92,7 @@
 
 .menu-toggle-button {
   @include button-base;
+  color: (map.get($colors, text-dark));
   position: fixed;
   top: 16px;
   left: 16px;
