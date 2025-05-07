@@ -4,7 +4,7 @@ import {
   X as CloseIcon,
   Home as HomeIcon,
   Settings as SettingsIcon,
-  BarChart2 as StatsIcon,
+  // BarChart2 as StatsIcon,
   Award as AchievementsIcon,  
   Info as InfoIcon,
   CrownIcon
