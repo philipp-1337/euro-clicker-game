@@ -60,7 +60,7 @@ export default function SideMenu({
 
       <div className={`sidemenu ${isOpen ? 'open' : ''}`}>
         <div className="sidemenu-header">
-          <h3>Euro Clicker</h3>
+          <h3>Euro Clicker Game</h3>
           <button 
             className="settings-button" 
             onClick={() => setIsOpen(false)}
