@@ -13,7 +13,7 @@ import {
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
-import MoneyBanner from '@components/MoneyBanner';
+import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
 import { useUiProgress } from '@hooks/useUiProgress';
 import SideMenu from '../SideMenu/SideMenu';
 
