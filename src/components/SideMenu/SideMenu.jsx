@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Menu as MenuIcon,
   X as CloseIcon,
   Home as HomeIcon,
   Settings as SettingsIcon,
@@ -12,12 +11,14 @@ import {
 import AboutModal from '../AboutModal/AboutModal';
 
 export default function SideMenu({ 
+  isOpen,
+  setIsOpen,
   onOpenSettings, 
   showLeaderboard, 
   onToggleLeaderboard,
   onOpenAchievements
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+
   const [showAbout, setShowAbout] = useState(false);
 
   // Close menu when clicking outside
@@ -32,7 +33,7 @@ export default function SideMenu({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
 
   // Prevent body scrolling when menu is open
   useEffect(() => {
@@ -44,7 +45,7 @@ export default function SideMenu({
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, setIsOpen]);
 
   const handleMenuItemClick = (action) => {
     if (action) {
@@ -55,14 +56,6 @@ export default function SideMenu({
 
   return (
     <>
-      <button 
-        className="menu-toggle-button" 
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle menu"
-      >
-        <MenuIcon size={24} />
-      </button>
-
       <div className={`sidemenu-backdrop ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)} />
 
       <div className={`sidemenu ${isOpen ? 'open' : ''}`}>

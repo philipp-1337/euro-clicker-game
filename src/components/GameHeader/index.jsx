@@ -9,6 +9,7 @@ import {
   HourglassIcon,
   Trophy as TrophyIcon,
   Crown as CrownIcon,
+  Menu as MenuIcon,
 } from 'lucide-react';
 import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -63,6 +64,9 @@ export default function GameHeader(props) {
   // Lokaler State für das Leaderboard-Modal
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
+  // SideMenu State
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+
   return (
     <>
       {isSaving && (
@@ -86,6 +90,14 @@ export default function GameHeader(props) {
       </div>
       {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
       <div className="header-actions">
+        <button
+          className="menu-toggle-button"
+          onClick={() => setIsSideMenuOpen(true)}
+          title="Menü"
+          aria-label="Menü"
+        >
+          <MenuIcon size={22} />
+        </button>
         <button
           className="settings-button"
           onClick={() => setShowSettings(true)}
@@ -177,6 +189,8 @@ export default function GameHeader(props) {
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
       <SideMenu 
+        isOpen={isSideMenuOpen}
+        setIsOpen={setIsSideMenuOpen}
         onOpenSettings={() => setShowSettings(true)} 
         showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
