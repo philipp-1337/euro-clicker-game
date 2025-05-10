@@ -31,7 +31,7 @@
     h3 {
       margin: 0;
       color: map.get($colors, primary);
-      font-size: 1.25rem;
+      font-size: 1.15rem;
     }
   }
 
@@ -120,16 +120,20 @@
 // Dark Mode Support
 body.dark {
   .sidemenu {
-    background-color: #222;
+    background-color:  map.get($backgrounds, dark);
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
 
     .sidemenu-header {
-      border-bottom-color: #333;
+      border-bottom-color: map.get($colors, primary);
+
+      h3 {
+        color: map.get($colors, text-light);
+      }
     }
 
     .sidemenu-item {
       &:hover {
-        background-color: #2a2a2a;
+        background-color:  map.get($backgrounds, darker);
       }
 
       &.active {
@@ -138,8 +142,8 @@ body.dark {
     }
 
     .sidemenu-footer {
-      border-top-color: #333;
-      color: #666;
+      border-top-color: map.get($colors, primary);
+      color: map.get($colors, secondary);
     }
   }
 
