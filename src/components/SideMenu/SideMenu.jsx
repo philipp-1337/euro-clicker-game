@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   X as CloseIcon,
   Home as HomeIcon,
@@ -9,6 +9,7 @@ import {
   CrownIcon
 } from 'lucide-react';
 import AboutModal from '../AboutModal/AboutModal';
+import { useModal } from '../../hooks/useModal';
 
 export default function SideMenu({ 
   isOpen,
@@ -18,34 +19,10 @@ export default function SideMenu({
   onToggleLeaderboard,
   onOpenAchievements
 }) {
-
   const [showAbout, setShowAbout] = useState(false);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isOpen && !event.target.closest('.sidemenu') && !event.target.closest('.menu-toggle-button')) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, setIsOpen]);
-
-  // Prevent body scrolling when menu is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen, setIsOpen]);
+  const menuRef = useModal(isOpen, () => setIsOpen(false), {
+    excludeElements: ['.menu-toggle-button']
+  });
 
   const handleMenuItemClick = (action) => {
     if (action) {
@@ -58,7 +35,7 @@ export default function SideMenu({
     <>
       <div className={`sidemenu-backdrop ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)} />
 
-      <div className={`sidemenu ${isOpen ? 'open' : ''}`}>
+      <div ref={menuRef} className={`sidemenu ${isOpen ? 'open' : ''}`}>
         <div className="sidemenu-header">
           <h3>Euro Clicker Game</h3>
           <button 

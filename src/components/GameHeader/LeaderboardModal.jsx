@@ -3,10 +3,12 @@ import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
 import { formatPlaytime } from '../../utils/calculators';
+import { useModal } from '../../hooks/useModal';
 
 export default function LeaderboardModal({ show, onClose }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const modalRef = useModal(show, onClose);
 
   useEffect(() => {
     if (!show) return;

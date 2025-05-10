@@ -1,8 +1,11 @@
 import React from 'react';
 import { X as CloseIcon, Trophy as TrophyIcon, Lock as LockIcon, PartyPopperIcon } from 'lucide-react';
+import { useModal } from '../../hooks/useModal';
 // import { formatNumber } from '@utils/calculators';
 
 export default function AchievementsModal({ showAchievements, setShowAchievements, achievements, money, totalClicks, gameTime }) {
+  const modalRef = useModal(showAchievements, () => setShowAchievements(false));
+
   if (!showAchievements) return null;
 
   // const formatTime = (seconds) => {
@@ -13,7 +16,7 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content achievement">
+      <div ref={modalRef} className="modal-content achievement">
         <div className="settings-modal-header">
           <h3>Achievements</h3>
           <button

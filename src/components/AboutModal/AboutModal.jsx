@@ -1,12 +1,15 @@
 import React from 'react';
 import { X as CloseIcon, Github as GithubIcon, Coffee as CoffeeIcon } from 'lucide-react';
+import { useModal } from '../../hooks/useModal';
 
 export default function AboutModal({ show, onClose }) {
+  const modalRef = useModal(show, onClose);
+
   if (!show) return null;
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content" style={{ maxWidth: 600, maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+      <div ref={modalRef} className="modal-content" style={{ maxWidth: 600, maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
         <div className="settings-modal-header">
           <h3>About Euro Clicker Game</h3>
           <button

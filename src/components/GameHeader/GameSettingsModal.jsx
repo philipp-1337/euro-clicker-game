@@ -22,6 +22,7 @@ import {
   SunIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
+import { useModal } from '../../hooks/useModal';
 
 // Hilfsfunktion für Standalone-Detection
 function isStandaloneMobile() {
@@ -57,6 +58,7 @@ export default function GameSettingsModal({
   handleImportCloud,
   handleSave,
 }) {
+  const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
@@ -116,7 +118,7 @@ export default function GameSettingsModal({
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content">
+      <div ref={modalRef} className="modal-content">
         <div className="settings-modal-header">
           <h3>Settings</h3>
           <button
