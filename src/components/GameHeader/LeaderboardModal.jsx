@@ -42,7 +42,7 @@ export default function LeaderboardModal({ show, onClose }) {
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content" style={{ maxWidth: 480 }}>
+      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480 }}>
         <div className="settings-modal-header">
           <h3>Leaderboard</h3>
           <button
