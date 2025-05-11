@@ -20,8 +20,8 @@ import {
   MoonIcon,
   SunIcon,
   MousePointerClickIcon,
-  Award as AwardIcon, // Or TrophyIcon if you prefer
   BarChart2 as BarChart2Icon,
+  AwardIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '../../hooks/useModal';
@@ -140,68 +140,24 @@ export default function SettingsModal({
         <div className="settings-modal-content">
           {/* Display options */}
           <h4 className="settings-section-title">Display options</h4>
-          {/* Spielzeit Toggle */}
+          {/* Statistics Button Toggle */}
           <div className="settings-row">
-            <ClockIcon size={20} className="settings-icon" />
+            <BarChart2Icon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            >
-              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            >
-              {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
-            </button>
-          </div>
-          {/* Clicker Counter Toggle */}
-          <div className="settings-row">
-            <MousePointerClickIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            >
-              {showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            >
-              {showClickStats ? (
-                <EyeIcon size={18} />
-              ) : (
-                <EyeOffIcon size={18} />
-              )}
-            </button>
-          </div>
-          {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
-          <div className="settings-row">
-            <CrownIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
               type="button"
             >
-              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
+              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
             </button>
             <button
-              className={`settings-button${showLeaderboard ? " active" : ""}`}
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
+              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
               type="button"
             >
-              {showLeaderboard ? (
-                <EyeIcon size={18} />
-              ) : (
-                <EyeOffIcon size={18} />
-              )}
+              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
@@ -226,24 +182,68 @@ export default function SettingsModal({
               </button>
             </div>
           )}
-          {/* Statistics Button Toggle */}
+          {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
           <div className="settings-row">
-            <BarChart2Icon size={20} className="settings-icon" />
+            <CrownIcon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
-              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              onClick={() => setShowLeaderboard((v) => !v)}
+              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
               type="button"
             >
-              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
             </button>
             <button
-              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
-              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
-              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              className={`settings-button${showLeaderboard ? " active" : ""}`}
+              onClick={() => setShowLeaderboard((v) => !v)}
+              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
               type="button"
             >
-              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+              {showLeaderboard ? (
+                <EyeIcon size={18} />
+              ) : (
+                <EyeOffIcon size={18} />
+              )}
+            </button>
+          </div>
+          {/* Clicker Counter Toggle */}
+          <div className="settings-row">
+            <MousePointerClickIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setShowClickStats((v) => !v)}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
+            >
+              {showClickStats ? "Hide Click Counter" : "Show Click Counter"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setShowClickStats((v) => !v)}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
+            >
+              {showClickStats ? (
+                <EyeIcon size={18} />
+              ) : (
+                <EyeOffIcon size={18} />
+              )}
+            </button>
+          </div>
+          {/* Spielzeit Toggle */}
+          <div className="settings-row">
+            <ClockIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setShowPlaytime((v) => !v)}
+              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+            >
+              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setShowPlaytime((v) => !v)}
+              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+            >
+              {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Dark Mode Toggle */}

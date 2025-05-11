@@ -7,10 +7,10 @@ import {
   Save as SaveIcon,
   MousePointerClick as MousePointerClickIcon,
   HourglassIcon,
-  Trophy as TrophyIcon,
   Crown as CrownIcon,
   Menu as MenuIcon,
   BarChart2 as BarChart2Icon,
+  AwardIcon,
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -134,7 +134,7 @@ export default function GameHeader(props) {
           title="Achievements"
           aria-label="Achievements"
         >
-          <TrophyIcon size={20} />
+          <AwardIcon size={20} />
         </button>
         )}
         {/* Crown Icon für Leaderboard-Mode */}
