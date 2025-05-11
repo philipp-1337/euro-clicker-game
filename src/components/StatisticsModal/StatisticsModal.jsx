@@ -15,7 +15,6 @@ export default function StatisticsModal({
 
   // Berechne die Zeit, die die App/der Browser geschlossen war
   const timeAppClosed = Math.max(0, playTime - (activePlayTime + inactivePlayTime));
-
   if (!show) return null;
 
   return (
