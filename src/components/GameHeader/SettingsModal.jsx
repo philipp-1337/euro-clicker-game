@@ -33,7 +33,7 @@ function isStandaloneMobile() {
   return false;
 }
 
-export default function GameSettingsModal({
+export default function SettingsModal({
   showSettings,
   setShowSettings,
   showPlaytime,

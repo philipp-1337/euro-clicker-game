@@ -11,7 +11,7 @@ import {
   Crown as CrownIcon,
   Menu as MenuIcon,
 } from 'lucide-react';
-import GameSettingsModal from './GameSettingsModal';
+import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
@@ -155,7 +155,7 @@ export default function GameHeader(props) {
         )}
       </div>
       {/* Settings Modal */}
-      <GameSettingsModal
+      <SettingsModal
         showSettings={showSettings}
         setShowSettings={setShowSettings}
         showPlaytime={showPlaytime}
