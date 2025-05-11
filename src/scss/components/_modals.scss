@@ -166,7 +166,7 @@
     margin-top: 0;
   }
 
-  &:last-of-type {
+  &.danger {
     font-weight: 700;
     color: map.get($colors, red);
     margin-top: 22px;
