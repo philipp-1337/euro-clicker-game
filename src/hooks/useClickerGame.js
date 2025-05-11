@@ -13,7 +13,7 @@ import useStateInfrastructure from './useStateInfrastructure';
 export default function useClickerGame(easyMode = false) {
 
   // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
-  const { playTime, ensureStartTime } = usePlaytime();
+  const { playTime, ensureStartTime, isGameStarted } = usePlaytime(); // isGameStarted hier holen
 
   // Überprüfe, ob die Startzeit gesetzt ist
   const wrappedHandleClick = (index) => {
@@ -43,6 +43,8 @@ export default function useClickerGame(easyMode = false) {
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
+    activePlayTime, setActivePlayTime, // activePlayTime bleibt
+    offlineTime, setOfflineTime,     // setOfflineTime wird jetzt benötigt
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -197,6 +199,65 @@ export default function useClickerGame(easyMode = false) {
   
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 
+  // Effekt zum Zählen der aktiven und inaktiven Spielzeit
+  useEffect(() => {
+    let activeIntervalId;
+    let inactiveIntervalId;
+
+    const clearAllTimers = () => {
+      clearInterval(activeIntervalId);
+      clearInterval(inactiveIntervalId);
+      activeIntervalId = null;
+      inactiveIntervalId = null;
+    };
+
+    const startActiveTimer = () => {
+      clearAllTimers();
+      activeIntervalId = setInterval(() => {
+        setActivePlayTime(prev => prev + 1);
+      }, 1000);
+    };
+
+    const startInactiveTimer = () => {
+      clearAllTimers();
+      inactiveIntervalId = setInterval(() => {
+        setOfflineTime(prev => prev + 1);
+      }, 1000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (!isGameStarted) { // Wenn das Spiel nicht gestartet ist, nichts tun
+        clearAllTimers();
+        return;
+      }
+      if (document.visibilityState === 'visible') {
+        startActiveTimer();
+      } else {
+        startInactiveTimer();
+      }
+    };
+
+    if (!isGameStarted) {
+      // Stelle sicher, dass Timer aus sind und kein Listener hängt, wenn das Spiel nicht gestartet ist
+      clearAllTimers();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      return; // Frühzeitiger Ausstieg, wenn das Spiel nicht gestartet ist
+    }
+
+    // Initiale Einrichtung der Timer und des Listeners, wenn das Spiel gestartet ist
+    if (document.visibilityState === 'visible') {
+      startActiveTimer();
+    } else {
+      startInactiveTimer();
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearAllTimers();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [setActivePlayTime, setOfflineTime, isGameStarted]); // Abhängigkeiten: Setter und isGameStarted
+
   return {
     // Hauptzustände
     money,
@@ -211,6 +272,8 @@ export default function useClickerGame(easyMode = false) {
     satisfaction,
     dissatisfaction,
     stateBuildings,
+    activePlayTime,
+    offlineTime,
     
     // Funktionen
     handleClick: wrappedHandleClick,

@@ -74,6 +74,8 @@ export const gameConfig = {
       dissatisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
     },
+    activePlayTime: 0, // Initial aktive Spielzeit
+    offlineTime: 0,    // Initial kumulierte Offline-Zeit
 
     // Upgrade-Multiplikatoren
     upgrades: {

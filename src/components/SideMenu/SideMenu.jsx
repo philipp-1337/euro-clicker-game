@@ -3,7 +3,7 @@ import {
   X as CloseIcon,
   Home as HomeIcon,
   Settings as SettingsIcon,
-  // BarChart2 as StatsIcon,
+  BarChart2 as StatsIcon,
   Award as AchievementsIcon,  
   Info as InfoIcon,
   CrownIcon
@@ -17,7 +17,8 @@ export default function SideMenu({
   onOpenSettings, 
   showLeaderboard, 
   onToggleLeaderboard,
-  onOpenAchievements
+  onOpenAchievements,
+  onOpenStatistics // Neue Prop
 }) {
   const [showAbout, setShowAbout] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
@@ -64,13 +65,13 @@ export default function SideMenu({
             <span>Settings</span>
           </div>
 
-          {/* <div 
+          <div 
             className="sidemenu-item" 
-            onClick={() => handleMenuItemClick()}
+            onClick={() => handleMenuItemClick(onOpenStatistics)}
           >
             <StatsIcon size={20} className="sidemenu-icon" />
             <span>Statistics</span>
-          </div> */}
+          </div>
 
           {showLeaderboard !== undefined && (
             <div 

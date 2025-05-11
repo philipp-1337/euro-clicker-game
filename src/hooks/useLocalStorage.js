@@ -18,9 +18,10 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     hasLoaded.current = true;
 
     if (hasSavedGame(STORAGE_KEY)) {
-      const savedGame = loadGameState(STORAGE_KEY);
-      if (savedGame) {
-        loadGameStateHook(savedGame);
+      const savedGameData = loadGameState(STORAGE_KEY); // Utility function from @utils/localStorage
+      if (savedGameData) {
+        const { lastSaved, ...actualGameState } = savedGameData; // lastSaved wird hier nicht mehr benötigt für offlineTime
+        loadGameStateHook(actualGameState);
       }
     }
   }, [loadGameStateHook]);

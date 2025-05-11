@@ -1,0 +1,54 @@
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+@use "sass:map";
+
+.statistics-modal-content {
+  // Erbt die meisten Stile von .modal-content
+
+  .statistics-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px; // Etwas mehr Platz nach oben
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: 12px 5px; // Etwas mehr vertikales Padding, weniger horizontales
+      border-bottom: 1px solid #e9ecef; // Hellerer Separator
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .stats-icon {
+        margin-right: 15px; // Mehr Abstand für das Icon
+        color: map.get($colors, primary);
+        flex-shrink: 0; // Verhindert, dass das Icon schrumpft
+      }
+
+      .stats-label {
+        flex-grow: 1;
+        font-weight: 500;
+        color: map.get($colors, text-dark);
+      }
+
+      .stats-value {
+        font-weight: 600; // Etwas dicker für den Wert
+        color: map.get($colors, primary);
+        text-align: right; // Wert rechtsbündig
+      }
+    }
+  }
+}
+
+body.dark {
+  .statistics-modal-content .statistics-list li {
+    border-bottom-color: rgba(map.get($colors, text-light), 0.15);
+
+    .stats-icon,
+    .stats-label,
+    .stats-value {
+      color: map.get($colors, text-light);
+    }
+  }
+}

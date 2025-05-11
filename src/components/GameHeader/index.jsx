@@ -15,6 +15,7 @@ import GameSettingsModal from './GameSettingsModal';
 import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
+import StatisticsModal from '../StatisticsModal/StatisticsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
 import SideMenu from '../SideMenu/SideMenu';
 
@@ -63,6 +64,10 @@ export default function GameHeader(props) {
 
   // Lokaler State für das Leaderboard-Modal
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
+
+  // State für das Statistics Modal
+  const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+
 
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -188,6 +193,15 @@ export default function GameHeader(props) {
       {showLeaderboardModal && uiProgress.showLeaderboard && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
+      {/* Statistics Modal */}
+      <StatisticsModal
+        show={showStatisticsModal}
+        onClose={() => setShowStatisticsModal(false)}
+        playTime={props.playTime}
+        activePlayTime={props.activePlayTime}
+        inactivePlayTime={props.offlineTime}
+        totalClicks={floatingClicks} // Klicks hier übergeben
+      />
       <SideMenu 
         isOpen={isSideMenuOpen}
         setIsOpen={setIsSideMenuOpen}
@@ -195,6 +209,7 @@ export default function GameHeader(props) {
         showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
+        onOpenStatistics={() => setShowStatisticsModal(true)}
       />
     </>
   );
