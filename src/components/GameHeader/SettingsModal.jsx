@@ -5,7 +5,6 @@ import {
   CloudDownload as CloudDownloadIcon,
   CloudOff as CloudOffIcon,
   Trash2 as TrashIcon,
-  BarChart2 as BarChartIcon,
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
   Clock as ClockIcon,
@@ -20,6 +19,7 @@ import {
   CrownIcon,
   MoonIcon,
   SunIcon,
+  MousePointerClickIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '../../hooks/useModal';
@@ -151,20 +151,20 @@ export default function SettingsModal({
               {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
-          {/* Clicker Statistik Toggle */}
+          {/* Clicker Counter Toggle */}
           <div className="settings-row">
-            <BarChartIcon size={20} className="settings-icon" />
+            <MousePointerClickIcon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
               onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             >
-              {showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              {showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             </button>
             <button
               className="settings-button"
               onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             >
               {showClickStats ? (
                 <EyeIcon size={18} />

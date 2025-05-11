@@ -1,5 +1,5 @@
 import React from 'react';
-import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, ZapOff as ZapOffIcon, MousePointerClick as MousePointerClickIcon } from 'lucide-react';
+import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, ZapOff as ZapOffIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 import { formatPlaytime } from '../../utils/calculators';
 
@@ -42,7 +42,7 @@ export default function StatisticsModal({
               <span className="stats-value">{formatPlaytime(activePlayTime, false)}</span>
             </li>
             <li>
-              <ZapOffIcon size={20} className="stats-icon" />
+              <ClockFadingIcon size={20} className="stats-icon" />
               <span className="stats-label">Inactive Playtime:</span>
               <span className="stats-value">{formatPlaytime(inactivePlayTime, false)}</span>
             </li>
