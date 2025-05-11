@@ -20,6 +20,8 @@ import {
   MoonIcon,
   SunIcon,
   MousePointerClickIcon,
+  Award as AwardIcon, // Or TrophyIcon if you prefer
+  BarChart2 as BarChart2Icon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '../../hooks/useModal';
@@ -57,6 +59,11 @@ export default function SettingsModal({
   importError,
   handleImportCloud,
   handleSave,
+  hasAnyAchievement, // Neue Prop
+  showAchievementsHeaderButton,
+  setShowAchievementsHeaderButton,
+  showStatisticsHeaderButton,
+  setShowStatisticsHeaderButton,
 }) {
   const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
@@ -195,6 +202,48 @@ export default function SettingsModal({
               ) : (
                 <EyeOffIcon size={18} />
               )}
+            </button>
+          </div>
+          {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
+          {hasAnyAchievement && (
+            <div className="settings-row">
+              <AwardIcon size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
+                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+                type="button"
+              >
+                {showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+              </button>
+              <button
+                className={`settings-button${showAchievementsHeaderButton ? " active" : ""}`}
+                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
+                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+                type="button"
+              >
+                {showAchievementsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+              </button>
+            </div>
+          )}
+          {/* Statistics Button Toggle */}
+          <div className="settings-row">
+            <BarChart2Icon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              type="button"
+            >
+              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+            </button>
+            <button
+              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              type="button"
+            >
+              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Dark Mode Toggle */}

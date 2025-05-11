@@ -29,6 +29,8 @@ export function useUiProgress() {
       showPlaytime: true,      // <--- Default: eingeblendet
       showClickStats: false,   // <--- Default: ausgeblendet
       showLeaderboard: true,   // <--- Default: Leaderboard-Button sichtbar
+      showAchievementsHeaderButton: true, // Default: Achievements button in header is visible
+      showStatisticsHeaderButton: false,  // Default: Statistics button in header is hidden
     };
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -167,6 +169,32 @@ export function useUiProgress() {
     });
   }, []);
 
+  // Setter for showAchievementsHeaderButton
+  const setShowAchievementsHeaderButton = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showAchievementsHeaderButton === 'boolean' ? prev.showAchievementsHeaderButton : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showAchievementsHeaderButton: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
+  // Setter for showStatisticsHeaderButton
+  const setShowStatisticsHeaderButton = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showStatisticsHeaderButton === 'boolean' ? prev.showStatisticsHeaderButton : false;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showStatisticsHeaderButton: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   return {
     uiProgress,
     setGameStarted,
@@ -181,5 +209,9 @@ export function useUiProgress() {
     setShowClickStats,
     showLeaderboard: typeof uiProgress.showLeaderboard === 'boolean' ? uiProgress.showLeaderboard : true,
     setShowLeaderboard,
+    showAchievementsHeaderButton: typeof uiProgress.showAchievementsHeaderButton === 'boolean' ? uiProgress.showAchievementsHeaderButton : true,
+    setShowAchievementsHeaderButton,
+    showStatisticsHeaderButton: typeof uiProgress.showStatisticsHeaderButton === 'boolean' ? uiProgress.showStatisticsHeaderButton : false,
+    setShowStatisticsHeaderButton,
   };
 }

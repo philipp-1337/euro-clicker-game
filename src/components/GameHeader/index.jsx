@@ -10,6 +10,7 @@ import {
   Trophy as TrophyIcon,
   Crown as CrownIcon,
   Menu as MenuIcon,
+  BarChart2 as BarChart2Icon,
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -54,6 +55,10 @@ export default function GameHeader(props) {
     setShowClickStats,
     showLeaderboard,
     setShowLeaderboard,
+    showAchievementsHeaderButton,
+    setShowAchievementsHeaderButton,
+    showStatisticsHeaderButton,
+    setShowStatisticsHeaderButton,
   } = useUiProgress();
 
   // Cloud Save Confirm Modal State
@@ -122,7 +127,7 @@ export default function GameHeader(props) {
             : <SaveIcon size={20} />
           }
         </button>
-        {props.hasAnyAchievement && (
+        {uiProgress.showAchievementsHeaderButton && props.hasAnyAchievement && (
         <button
           className="settings-button"
           onClick={() => setShowAchievements(true)}
@@ -140,6 +145,17 @@ export default function GameHeader(props) {
             title="Show Leaderboard"
           >
             <CrownIcon size={22} />
+          </button>
+        )}
+        {/* Statistics Button */}
+        {uiProgress.showStatisticsHeaderButton && (
+          <button
+            className="settings-button"
+            onClick={() => setShowStatisticsModal(true)}
+            title="Statistics"
+            aria-label="Statistics"
+          >
+            <BarChart2Icon size={20} />
           </button>
         )}
         {showClickStats && (
@@ -179,6 +195,11 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
+        hasAnyAchievement={props.hasAnyAchievement} // Prop hier weitergeben
+        showAchievementsHeaderButton={showAchievementsHeaderButton}
+        setShowAchievementsHeaderButton={setShowAchievementsHeaderButton}
+        showStatisticsHeaderButton={showStatisticsHeaderButton}
+        setShowStatisticsHeaderButton={setShowStatisticsHeaderButton}
       />
       <AchievementsModal
         showAchievements={showAchievements}
