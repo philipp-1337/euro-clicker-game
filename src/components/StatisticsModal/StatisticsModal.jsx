@@ -1,5 +1,5 @@
 import React from 'react';
-import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, ZapOff as ZapOffIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
+import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 import { formatPlaytime } from '../../utils/calculators';
 
@@ -8,7 +8,7 @@ export default function StatisticsModal({
   onClose,
   playTime,
   activePlayTime,
-  inactivePlayTime, // Wird offlineTime sein
+  inactivePlayTime,
   totalClicks
 }) {
   const modalRef = useModal(show, onClose);
