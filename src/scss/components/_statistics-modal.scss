@@ -44,6 +44,10 @@
 body.dark {
   .statistics-modal-content .statistics-list li {
     border-bottom-color: rgba(map.get($colors, text-light), 0.15);
+    
+    &:last-child {
+      border-bottom: none;
+    }
 
     .stats-icon,
     .stats-label,

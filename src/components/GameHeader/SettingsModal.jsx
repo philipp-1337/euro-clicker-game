@@ -318,7 +318,7 @@ export default function SettingsModal({
             </button>
           </div>
           {/* Danger Zone */}
-          <h4 className="settings-section-title">Danger Zone</h4>
+          <h4 className="settings-section-title danger">Danger Zone</h4>
           {/* App Reload Button für Standalone Mobile */}
           {showReloadButton && (
             <div className="settings-row">
