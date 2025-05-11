@@ -9,11 +9,15 @@ import {
   HourglassIcon,
   Trophy as TrophyIcon,
   Crown as CrownIcon,
+  Menu as MenuIcon,
 } from 'lucide-react';
-import GameSettingsModal from './GameSettingsModal';
+import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
-import LeaderboardModal from './LeaderboardModal'; // Import LeaderboardModal
+import LeaderboardModal from './LeaderboardModal';
+import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
+import StatisticsModal from '../StatisticsModal/StatisticsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
+import SideMenu from '../SideMenu/SideMenu';
 
 export default function GameHeader(props) {
   const {
@@ -61,6 +65,13 @@ export default function GameHeader(props) {
   // Lokaler State für das Leaderboard-Modal
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
 
+  // State für das Statistics Modal
+  const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+
+
+  // SideMenu State
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+
   return (
     <>
       {isSaving && (
@@ -74,7 +85,7 @@ export default function GameHeader(props) {
           {renderEnvironmentLabel()}
         </h1>
       </div>
-      <div className="money-display">
+      <div id="money-display" className="money-display">
         {formatNumber(money)} €
         {totalMoneyPerSecond > 0 && (
           <span className="per-second">
@@ -84,6 +95,14 @@ export default function GameHeader(props) {
       </div>
       {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
       <div className="header-actions">
+        <button
+          className="menu-toggle-button"
+          onClick={() => setIsSideMenuOpen(true)}
+          title="Menü"
+          aria-label="Menü"
+        >
+          <MenuIcon size={22} />
+        </button>
         <button
           className="settings-button"
           onClick={() => setShowSettings(true)}
@@ -132,11 +151,11 @@ export default function GameHeader(props) {
         {showPlaytime && (
           <span className="header-playtime">
             <HourglassIcon size={20} />
-            {formatPlaytime(playTime)}</span>
+            {formatPlaytime(playTime, false)}</span>
         )}
       </div>
       {/* Settings Modal */}
-      <GameSettingsModal
+      <SettingsModal
         showSettings={showSettings}
         setShowSettings={setShowSettings}
         showPlaytime={showPlaytime}
@@ -169,10 +188,29 @@ export default function GameHeader(props) {
         totalClicks={props.floatingClicks}
         gameTime={props.playTime}
       />
+      <MoneyBanner money={formatNumber(money)} />
       {/* Leaderboard Modal */}
       {showLeaderboardModal && uiProgress.showLeaderboard && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
+      {/* Statistics Modal */}
+      <StatisticsModal
+        show={showStatisticsModal}
+        onClose={() => setShowStatisticsModal(false)}
+        playTime={props.playTime}
+        activePlayTime={props.activePlayTime}
+        inactivePlayTime={props.offlineTime}
+        totalClicks={floatingClicks} // Klicks hier übergeben
+      />
+      <SideMenu 
+        isOpen={isSideMenuOpen}
+        setIsOpen={setIsSideMenuOpen}
+        onOpenSettings={() => setShowSettings(true)} 
+        showLeaderboard={showLeaderboard}
+        onToggleLeaderboard={() => setShowLeaderboardModal(true)}
+        onOpenAchievements={() => setShowAchievements(true)}
+        onOpenStatistics={() => setShowStatisticsModal(true)}
+      />
     </>
   );
 }

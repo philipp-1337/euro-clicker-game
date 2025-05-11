@@ -5,7 +5,6 @@ import {
   CloudDownload as CloudDownloadIcon,
   CloudOff as CloudOffIcon,
   Trash2 as TrashIcon,
-  BarChart2 as BarChartIcon,
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
   Clock as ClockIcon,
@@ -20,8 +19,10 @@ import {
   CrownIcon,
   MoonIcon,
   SunIcon,
+  MousePointerClickIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
+import { useModal } from '../../hooks/useModal';
 
 // Hilfsfunktion für Standalone-Detection
 function isStandaloneMobile() {
@@ -32,7 +33,7 @@ function isStandaloneMobile() {
   return false;
 }
 
-export default function GameSettingsModal({
+export default function SettingsModal({
   showSettings,
   setShowSettings,
   showPlaytime,
@@ -57,6 +58,7 @@ export default function GameSettingsModal({
   handleImportCloud,
   handleSave,
 }) {
+  const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
@@ -116,7 +118,7 @@ export default function GameSettingsModal({
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content">
+      <div ref={modalRef} className="modal-content">
         <div className="settings-modal-header">
           <h3>Settings</h3>
           <button
@@ -149,20 +151,20 @@ export default function GameSettingsModal({
               {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
-          {/* Clicker Statistik Toggle */}
+          {/* Clicker Counter Toggle */}
           <div className="settings-row">
-            <BarChartIcon size={20} className="settings-icon" />
+            <MousePointerClickIcon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
               onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             >
-              {showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              {showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             </button>
             <button
               className="settings-button"
               onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Stats" : "Show Click Stats"}
+              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
             >
               {showClickStats ? (
                 <EyeIcon size={18} />

@@ -1,0 +1,154 @@
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
+.sidemenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 265px;
+  background-color: map.get($colors, white);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  .sidemenu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+
+    h3 {
+      margin: 0;
+      color: map.get($colors, primary);
+      font-size: 1.15rem;
+    }
+  }
+
+  .sidemenu-content {
+    flex: 1;
+    padding: 16px;
+  }
+
+  .sidemenu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+
+    &.active {
+      background-color: rgba(map.get($colors, primary), 0.1);
+      color: map.get($colors, primary);
+    }
+
+    .sidemenu-icon {
+      margin-right: 12px;
+    }
+  }
+
+  .sidemenu-footer {
+    padding: 16px;
+    border-top: 1px solid #eee;
+    font-size: 0.8rem;
+    text-align: center;
+    color: #888;
+  }
+}
+
+.sidemenu-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.menu-toggle-button {
+  @include button-base;
+  color: (map.get($colors, text-dark));
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: map.get($colors, white);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Dark Mode Support
+body.dark {
+  .sidemenu {
+    background-color:  map.get($backgrounds, dark);
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+
+    .sidemenu-header {
+      border-bottom-color: map.get($colors, primary);
+
+      h3 {
+        color: map.get($colors, text-light);
+      }
+    }
+
+    .sidemenu-item {
+      &:hover {
+        background-color:  map.get($backgrounds, darker);
+      }
+
+      &.active {
+        background-color: rgba(map.get($colors, primary), 0.2);
+      }
+    }
+
+    .sidemenu-footer {
+      border-top-color: map.get($colors, primary);
+      color: map.get($colors, secondary);
+    }
+  }
+
+  .menu-toggle-button {
+    background-color: #333;
+    color: #eee;
+  }
+}

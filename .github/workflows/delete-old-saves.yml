@@ -1,7 +1,7 @@
 name: Delete Old Firestore Saves
 on:
   schedule:
-    - cron: '0 2 * * *' # Täglich um 02:00 UTC
+    - cron: '0 2 * * 0' # Sonntags um 02:00 UTC
   workflow_dispatch: # Optional: manuell auslösbar
     inputs:
       days:

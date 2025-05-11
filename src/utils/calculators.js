@@ -161,12 +161,25 @@ export const formatNumber = (num) => {
   /**
    * Formats a playtime in seconds as Xh Ym Zs, Ym Zs, or Zs
    * @param {number} seconds - Playtime in seconds
+   * @param {boolean} showSecondsAfterHour - Whether to show seconds for times >= 1 hour
    * @returns {string} Formatted playtime string
    */
-  export function formatPlaytime(seconds) {
+  export function formatPlaytime(seconds, showSecondsAfterHour = true) {
+    if (!seconds) return '0s';
+    
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
+    
+    // Wenn mehr als eine Stunde und showSecondsAfterHour=false, keine Sekunden anzeigen
+    if (hours >= 1 && !showSecondsAfterHour) {
+      return [
+        hours > 0 ? `${hours}h` : null,
+        `${minutes}m`
+      ].filter(Boolean).join(' ');
+    }
+    
+    // Ansonsten vollständiges Format mit Sekunden
     return [
       hours > 0 ? `${hours}h` : null,
       minutes > 0 || hours > 0 ? `${minutes}m` : null,

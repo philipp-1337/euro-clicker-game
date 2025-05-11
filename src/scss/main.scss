@@ -24,6 +24,9 @@
 @use 'components/achievements';
 @use 'components/leaderboard';
 @use 'components/displays';
+@use 'components/money-banner';
+@use 'components/statistics-modal';
+@use 'components/sidemenu';
 
 // Themes
 @use 'themes/dark-mode';

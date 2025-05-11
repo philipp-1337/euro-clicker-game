@@ -3,10 +3,12 @@ import { db } from "../../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
 import { formatPlaytime } from '../../utils/calculators';
+import { useModal } from '../../hooks/useModal';
 
 export default function LeaderboardModal({ show, onClose }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
+  const modalRef = useModal(show, onClose);
 
   useEffect(() => {
     if (!show) return;
@@ -40,7 +42,7 @@ export default function LeaderboardModal({ show, onClose }) {
 
   return (
     <div className="modal-backdrop">
-      <div className="modal-content" style={{ maxWidth: 480 }}>
+      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480 }}>
         <div className="settings-modal-header">
           <h3>Leaderboard</h3>
           <button
@@ -87,7 +89,7 @@ export default function LeaderboardModal({ show, onClose }) {
                           />
                         )}
                       </td>
-                      <td>{formatPlaytime(entry.playtime)}</td>
+                      <td>{formatPlaytime(entry.playtime, true)}</td>
                       <td>{entry.clicks}</td>
                     </tr>
                   );
