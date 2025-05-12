@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -199,47 +199,64 @@ export default function useClickerGame(easyMode = false) {
   
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 
+   // State for "Welcome Back" modal
+   const [lastInactiveDuration, setLastInactiveDuration] = useState(0);
+   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
+   const clearLastInactiveDuration = useCallback(() => {
+     setLastInactiveDuration(0);
+   }, []);
+
   // Effekt zum Zählen der aktiven und inaktiven Spielzeit
   useEffect(() => {
     let activeIntervalId;
-    let inactiveIntervalId;
+    // inactiveIntervalId wird nicht mehr benötigt
 
-    const clearAllTimers = () => {
+    const clearActiveTimer = () => { // Umbenannt, da nur noch der aktive Timer so verwaltet wird
       clearInterval(activeIntervalId);
-      clearInterval(inactiveIntervalId);
       activeIntervalId = null;
-      inactiveIntervalId = null;
     };
 
     const startActiveTimer = () => {
-      clearAllTimers();
+      clearActiveTimer(); // Stellt sicher, dass nicht mehrere aktive Timer laufen
       activeIntervalId = setInterval(() => {
         setActivePlayTime(prev => prev + 1);
       }, 1000);
     };
 
-    const startInactiveTimer = () => {
-      clearAllTimers();
-      inactiveIntervalId = setInterval(() => {
-        setInactivePlayTime(prev => prev + 1);
-      }, 1000);
-    };
+    // startInactiveTimer wird nicht mehr benötigt
 
     const handleVisibilityChange = () => {
       if (!isGameStarted) { // Wenn das Spiel nicht gestartet ist, nichts tun
-        clearAllTimers();
+        clearActiveTimer();
+        inactiveStartTimeRef.current = null; // Ensure reset if game not started
         return;
       }
       if (document.visibilityState === 'visible') {
         startActiveTimer();
+        if (inactiveStartTimeRef.current) {
+          const inactiveMs = Date.now() - inactiveStartTimeRef.current;
+          // Addiere die gerade beendete Inaktivitätsdauer zur Gesamt-Inaktivitätszeit
+          const currentInactiveSeconds = Math.floor(inactiveMs / 1000);
+          if (currentInactiveSeconds > 0) {
+            setInactivePlayTime(prev => prev + currentInactiveSeconds);
+          }
+          
+          inactiveStartTimeRef.current = null; // Reset after calculating
+          const inactiveSeconds = Math.floor(inactiveMs / 1000);
+          // Show modal if inactive for more than 5 seconds
+          if (inactiveSeconds > 5) { 
+            setLastInactiveDuration(inactiveSeconds);
+          }
+        }
       } else {
-        startInactiveTimer();
+        clearActiveTimer(); // Stoppe den aktiven Timer, wenn der Tab in den Hintergrund geht
+        inactiveStartTimeRef.current = Date.now(); // Record time when tab becomes hidden
       }
     };
 
     if (!isGameStarted) {
       // Stelle sicher, dass Timer aus sind und kein Listener hängt, wenn das Spiel nicht gestartet ist
-      clearAllTimers();
+      clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       return; // Frühzeitiger Ausstieg, wenn das Spiel nicht gestartet ist
     }
@@ -247,13 +264,15 @@ export default function useClickerGame(easyMode = false) {
     // Initiale Einrichtung der Timer und des Listeners, wenn das Spiel gestartet ist
     if (document.visibilityState === 'visible') {
       startActiveTimer();
+      // Wenn das Spiel startet und der Tab sichtbar ist, aber vorher ein inactiveStartTimeRef gesetzt war (z.B. durch schnelles Neuladen im Hidden-State),
+      // sollte dieser hier ggf. verarbeitet oder genullt werden, um falsche Berechnungen zu vermeiden.
+      // Für den Moment ist es aber okay, da inactiveStartTimeRef.current nur gesetzt wird, wenn der Tab *aktiv* in den Hintergrund geht.
     } else {
-      startInactiveTimer();
+      inactiveStartTimeRef.current = Date.now(); // Wenn das Spiel geladen wird und der Tab bereits unsichtbar ist
     }
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
-      clearAllTimers();
+      clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [setActivePlayTime, setInactivePlayTime, isGameStarted]);
@@ -275,7 +294,7 @@ export default function useClickerGame(easyMode = false) {
     activePlayTime,
     inactivePlayTime,
     
-    // Funktionen
+    // Funktionen 
     handleClick: wrappedHandleClick,
     playTime,
     buyManager,
@@ -307,6 +326,8 @@ export default function useClickerGame(easyMode = false) {
     unlockInvestmentCost,
     unlockStateCost,
     interventionsUnlockCost,
-    investmentCostMultiplier
+    investmentCostMultiplier,
+    lastInactiveDuration,
+    clearLastInactiveDuration
   };
 }

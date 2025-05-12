@@ -9,6 +9,7 @@ import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
+import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 
 export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
@@ -71,6 +72,8 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     loadGameState,
     activePlayTime,
     inactivePlayTime,
+    lastInactiveDuration,      // Get new state from hook
+    clearLastInactiveDuration, // Get new function from hook
   } = useClickerGame(easyMode);
 
   const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
@@ -223,6 +226,15 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     }
   }, [uiProgress.gameStarted, money, allButtonsClicked, upgradeTabsUnlocked]);
 
+  // State and effect for WelcomeBackModal
+  const [showWelcomeBackModal, setShowWelcomeBackModal] = useState(false);
+  useEffect(() => {
+    if (lastInactiveDuration > 0 && uiProgress.gameStarted) { // Only if game has started
+      setShowWelcomeBackModal(true);
+    }
+  }, [lastInactiveDuration, uiProgress.gameStarted]);
+
+
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
     if (registerSaveGameHandler && typeof registerSaveGameHandler === 'function') {
@@ -232,6 +244,18 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
 
   return (
     <div className="game-container">
+      {/* Welcome Back Modal */}
+      {showWelcomeBackModal && (
+        <WelcomeBackModal
+          show={showWelcomeBackModal}
+          duration={lastInactiveDuration}
+          onClose={() => {
+            setShowWelcomeBackModal(false);
+            clearLastInactiveDuration(); // Reset the trigger in the hook
+          }}
+        />
+      )}
+
       {/* Achievement Notification */}
       {showAchievement && (
         <AchievementNotification
