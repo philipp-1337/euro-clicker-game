@@ -12,14 +12,9 @@ export default function StatisticsModal({
   totalClicks
 }) {
   const modalRef = useModal(show, onClose);
-  let lastTimeAppClosed = null;
 
   // Berechne die Zeit, die die App/der Browser geschlossen war
-  const timeAppClosed = Math.round(Math.max(0, playTime - (activePlayTime + inactivePlayTime)));
-
-  if (lastTimeAppClosed === null || Math.abs(timeAppClosed - lastTimeAppClosed) >= 1) {
-    lastTimeAppClosed = timeAppClosed;
-  }
+  const timeAppClosed = Math.max(0, playTime - (activePlayTime + inactivePlayTime));
 
   if (!show) return null;
 
@@ -53,7 +48,7 @@ export default function StatisticsModal({
             <li>
               <PowerIcon size={20} className="stats-icon" />
               <span className="stats-label">Offline:</span>
-              <span className="stats-value">{formatPlaytime(lastTimeAppClosed, false)}</span>
+              <span className="stats-value">{formatPlaytime(timeAppClosed, false)}</span>
             </li>
             <li>
               <HourglassIcon size={20} className="stats-icon" />
