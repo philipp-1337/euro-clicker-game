@@ -44,6 +44,9 @@ export default function useGameState(easyMode = false) {
   const [activePlayTime, setActivePlayTime] = useState(gameConfig.initialState.activePlayTime ?? 0);
   const [inactivePlayTime, setInactivePlayTime] = useState(gameConfig.initialState.inactivePlayTime ?? 0);
 
+  // State to store the calculated offline duration on initial load
+  const [initialOfflineDuration, setInitialOfflineDuration] = useState(0);
+
   // Interventions-Tab-Status
   const [isInterventionsUnlocked, setIsInterventionsUnlocked] = useState(
     gameConfig.initialState.isInterventionsUnlocked ?? false
@@ -71,6 +74,7 @@ export default function useGameState(easyMode = false) {
     isInterventionsUnlocked,
     activePlayTime,
     inactivePlayTime,
+    lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -101,6 +105,17 @@ export default function useGameState(easyMode = false) {
     setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
     setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0); // Beibehaltung der aktiven Zeit
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+
+    // Calculate initial offline duration if lastSaved timestamp exists in saved state
+    if (savedState.lastSaved) {
+      console.log('[useGameState] loadGameState: savedState.lastSaved exists.', { lastSavedTimestamp: savedState.lastSaved, lastSavedDate: new Date(savedState.lastSaved).toISOString() });
+      const currentTime = Date.now();
+      console.log('[useGameState] loadGameState: Current time for calculation:', new Date(currentTime).toISOString());
+      const offlineMs = currentTime - savedState.lastSaved;
+      const offlineSeconds = Math.floor(offlineMs / 1000);
+      console.log(`[useGameState] loadGameState: Calculated initialOfflineDuration: ${offlineSeconds}s (offlineMs: ${offlineMs})`);
+      setInitialOfflineDuration(offlineSeconds);
+    }
   };
 
   return {
@@ -125,6 +140,7 @@ export default function useGameState(easyMode = false) {
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
+    initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load
     gameState,

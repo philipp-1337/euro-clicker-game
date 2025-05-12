@@ -20,8 +20,7 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     if (hasSavedGame(STORAGE_KEY)) {
       const savedGameData = loadGameState(STORAGE_KEY); // Utility function from @utils/localStorage
       if (savedGameData) {
-        const { lastSaved, ...actualGameState } = savedGameData;
-        loadGameStateHook(actualGameState);
+        loadGameStateHook(savedGameData); // Pass the entire loaded object, including lastSaved
       }
     }
   }, [loadGameStateHook]);
@@ -29,15 +28,17 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
   // Alle 30 Sekunden speichern (aber verwende Ref, nicht Dependency)
   useEffect(() => {
     const saveInterval = setInterval(() => {
-      saveGame(); // ✅ nutzt die Funktion, die das Event sendet
+      console.log('[LocalStorage] Auto-saving game...');
+      saveGameState(STORAGE_KEY, latestGameState.current); // Ruft die util-Funktion direkt auf
+      window.dispatchEvent(new Event('game:autosaved'));
     }, 30000);
     return () => clearInterval(saveInterval);
   }, []);
 
   const saveGame = () => {
-    console.log('[AutoSave] Triggered');
+    console.log('[LocalStorage] Manual/Explicit saveGame function called. Saving state:', latestGameState.current);
     saveGameState(STORAGE_KEY, latestGameState.current);
-    window.dispatchEvent(new Event('game:autosaved')); 
+    window.dispatchEvent(new Event('game:manualsaved')); // Eigenes Event für manuelle Speicherung
   };
 
   return { saveGame };

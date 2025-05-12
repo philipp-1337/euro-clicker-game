@@ -9,6 +9,7 @@ export const saveGameState = (key, data) => {
         ...data,
         lastSaved: new Date().getTime()
       });
+        console.log('[LocalStorageUtil] Saving. Timestamp being saved:', new Date(JSON.parse(serializedData).lastSaved).toISOString(), 'Full data:', JSON.parse(serializedData));
       localStorage.setItem(key, serializedData);
       return true;
     } catch (error) {

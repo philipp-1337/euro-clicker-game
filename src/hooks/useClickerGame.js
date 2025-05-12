@@ -45,6 +45,7 @@ export default function useClickerGame(easyMode = false) {
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
+    initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -200,7 +201,17 @@ export default function useClickerGame(easyMode = false) {
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 
    // State for "Welcome Back" modal
-   const [lastInactiveDuration, setLastInactiveDuration] = useState(0);
+   // This state will be updated either by initialOfflineDuration on load
+   // or by the visibilitychange handler during a session.
+   const [lastInactiveDuration, setLastInactiveDuration] = useState(0); // Initialize to 0
+
+   // Effect to set lastInactiveDuration based on initialOfflineDuration after load
+   useEffect(() => {
+     console.log('[useClickerGame] Effect for initialOfflineDuration. Value:', initialOfflineDuration);
+     if (initialOfflineDuration > 0) {
+       setLastInactiveDuration(initialOfflineDuration);
+     }
+   }, [initialOfflineDuration]); // Watch initialOfflineDuration
    const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
    const clearLastInactiveDuration = useCallback(() => {
      setLastInactiveDuration(0);
@@ -264,9 +275,11 @@ export default function useClickerGame(easyMode = false) {
     // Initiale Einrichtung der Timer und des Listeners, wenn das Spiel gestartet ist
     if (document.visibilityState === 'visible') {
       startActiveTimer();
-      // Wenn das Spiel startet und der Tab sichtbar ist, aber vorher ein inactiveStartTimeRef gesetzt war (z.B. durch schnelles Neuladen im Hidden-State),
-      // sollte dieser hier ggf. verarbeitet oder genullt werden, um falsche Berechnungen zu vermeiden.
-      // Für den Moment ist es aber okay, da inactiveStartTimeRef.current nur gesetzt wird, wenn der Tab *aktiv* in den Hintergrund geht.
+      // If the game loads and is immediately visible, nullify inactiveStartTimeRef.
+      // This prevents handleVisibilityChange from calculating a duration from a potentially
+      // lingering ref if the tab was hidden just before a full reload.
+      // initialOfflineDuration already covers the time before this load.
+      inactiveStartTimeRef.current = null;
     } else {
       inactiveStartTimeRef.current = Date.now(); // Wenn das Spiel geladen wird und der Tab bereits unsichtbar ist
     }

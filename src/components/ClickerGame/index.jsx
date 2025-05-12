@@ -229,11 +229,12 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   // State and effect for WelcomeBackModal
   const [showWelcomeBackModal, setShowWelcomeBackModal] = useState(false);
   useEffect(() => {
-    if (lastInactiveDuration > 0 && uiProgress.gameStarted) { // Only if game has started
+    console.log('[ClickerGame] WelcomeBackModal effect. lastInactiveDuration:', lastInactiveDuration, 'uiProgress.gameStarted:', uiProgress.gameStarted);
+    // Show modal if inactive duration (from reload or tab hide) is more than 5 seconds
+    if (lastInactiveDuration > 5 && uiProgress.gameStarted) {
       setShowWelcomeBackModal(true);
     }
   }, [lastInactiveDuration, uiProgress.gameStarted]);
-
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
