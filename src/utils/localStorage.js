@@ -40,7 +40,7 @@ export const saveGameState = (key, data) => {
    * @param {Object} savedState - The saved game state
    * @returns {number} Time elapsed in seconds
    */
-  export const getOfflineTime = (savedState) => {
+  export const getInactivePlayTime = (savedState) => {
     if (!savedState || !savedState.lastSaved) return 0;
     
     const now = new Date().getTime();

@@ -70,7 +70,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     gameState,
     loadGameState,
     activePlayTime,
-    offlineTime,
+    inactivePlayTime,
   } = useClickerGame(easyMode);
 
   const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
@@ -257,7 +257,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           achievements={achievements}
           hasAnyAchievement={hasAnyAchievement}
           activePlayTime={activePlayTime}
-          offlineTime={offlineTime}
+          inactivePlayTime={inactivePlayTime}
         />
       )}
 

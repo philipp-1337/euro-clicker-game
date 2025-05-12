@@ -220,7 +220,7 @@ export default function GameHeader(props) {
         onClose={() => setShowStatisticsModal(false)}
         playTime={props.playTime}
         activePlayTime={props.activePlayTime}
-        inactivePlayTime={props.offlineTime}
+        inactivePlayTime={props.inactivePlayTime}
         totalClicks={floatingClicks} // Klicks hier übergeben
       />
       <SideMenu 

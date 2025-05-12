@@ -42,7 +42,7 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.isStateUnlocked ?? false
   );
   const [activePlayTime, setActivePlayTime] = useState(gameConfig.initialState.activePlayTime ?? 0);
-  const [offlineTime, setOfflineTime] = useState(gameConfig.initialState.offlineTime ?? 0);
+  const [inactivePlayTime, setInactivePlayTime] = useState(gameConfig.initialState.inactivePlayTime ?? 0);
 
   // Interventions-Tab-Status
   const [isInterventionsUnlocked, setIsInterventionsUnlocked] = useState(
@@ -70,7 +70,7 @@ export default function useGameState(easyMode = false) {
     isStateUnlocked,
     isInterventionsUnlocked,
     activePlayTime,
-    offlineTime,
+    inactivePlayTime,
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -100,7 +100,7 @@ export default function useGameState(easyMode = false) {
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
     setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
     setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0); // Beibehaltung der aktiven Zeit
-    setOfflineTime(savedState.offlineTime ?? gameConfig.initialState.offlineTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+    setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
   };
 
   return {
@@ -124,7 +124,7 @@ export default function useGameState(easyMode = false) {
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
-    offlineTime, setOfflineTime,
+    inactivePlayTime, setInactivePlayTime,
    
     // Save/Load
     gameState,

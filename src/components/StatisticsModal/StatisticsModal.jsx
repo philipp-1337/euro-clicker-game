@@ -15,6 +15,7 @@ export default function StatisticsModal({
 
   // Berechne die Zeit, die die App/der Browser geschlossen war
   const timeAppClosed = Math.max(0, playTime - (activePlayTime + inactivePlayTime));
+
   if (!show) return null;
 
   return (
@@ -35,24 +36,24 @@ export default function StatisticsModal({
           <h4 className="settings-section-title">Playtime</h4>
           <ul className="statistics-list">
             <li>
-              <HourglassIcon size={20} className="stats-icon" />
-              <span className="stats-label">Total Playtime:</span>
-              <span className="stats-value">{formatPlaytime(playTime, true)}</span>
-            </li>
-            <li>
               <ActivityIcon size={20} className="stats-icon" />
-              <span className="stats-label">Active Playtime:</span>
-              <span className="stats-value">{formatPlaytime(activePlayTime, true)}</span>
+              <span className="stats-label">Active:</span>
+              <span className="stats-value">{formatPlaytime(activePlayTime, false)}</span>
             </li>
             <li>
               <ClockFadingIcon size={20} className="stats-icon" />
-              <span className="stats-label">Inactive Playtime:</span>
-              <span className="stats-value">{formatPlaytime(inactivePlayTime, true)}</span>
+              <span className="stats-label">Inactive:</span>
+              <span className="stats-value">{formatPlaytime(inactivePlayTime, false)}</span>
             </li>
             <li>
               <PowerIcon size={20} className="stats-icon" />
-              <span className="stats-label">Time with App Closed:</span>
-              <span className="stats-value">{formatPlaytime(timeAppClosed, true)}</span>
+              <span className="stats-label">Offline:</span>
+              <span className="stats-value">{formatPlaytime(timeAppClosed, false)}</span>
+            </li>
+            <li>
+              <HourglassIcon size={20} className="stats-icon" />
+              <span className="stats-label">Total:</span>
+              <span className="stats-value">{formatPlaytime(playTime, false)}</span>
             </li>
           </ul>
           <ul className="statistics-list">

@@ -43,8 +43,8 @@ export default function useClickerGame(easyMode = false) {
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
-    activePlayTime, setActivePlayTime, // activePlayTime bleibt
-    offlineTime, setOfflineTime,     // setOfflineTime wird jetzt benötigt
+    activePlayTime, setActivePlayTime,
+    inactivePlayTime, setInactivePlayTime,
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -221,7 +221,7 @@ export default function useClickerGame(easyMode = false) {
     const startInactiveTimer = () => {
       clearAllTimers();
       inactiveIntervalId = setInterval(() => {
-        setOfflineTime(prev => prev + 1);
+        setInactivePlayTime(prev => prev + 1);
       }, 1000);
     };
 
@@ -256,7 +256,7 @@ export default function useClickerGame(easyMode = false) {
       clearAllTimers();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [setActivePlayTime, setOfflineTime, isGameStarted]); // Abhängigkeiten: Setter und isGameStarted
+  }, [setActivePlayTime, setInactivePlayTime, isGameStarted]);
 
   return {
     // Hauptzustände
@@ -273,7 +273,7 @@ export default function useClickerGame(easyMode = false) {
     dissatisfaction,
     stateBuildings,
     activePlayTime,
-    offlineTime,
+    inactivePlayTime,
     
     // Funktionen
     handleClick: wrappedHandleClick,
