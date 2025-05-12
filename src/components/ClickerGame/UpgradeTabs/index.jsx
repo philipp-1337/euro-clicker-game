@@ -41,9 +41,10 @@ export default function UpgradeTabs({
   isInterventionsUnlocked,
   unlockInterventions,
   interventionsUnlockCost,
-  isOfflineEarningsUnlocked, // Neu
-  unlockOfflineEarnings,     // Neu
-  offlineEarningsUnlockCost  // Neu
+  offlineEarningsLevel,      // New
+  currentOfflineEarningsFactor, // New
+  buyOfflineEarningsLevel,     // New
+  offlineEarningsLevelCost   // New
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -115,9 +116,10 @@ export default function UpgradeTabs({
           isInterventionsUnlocked={isInterventionsUnlocked}
           unlockInterventions={unlockInterventions}
           interventionsUnlockCost={interventionsUnlockCost}
-          isOfflineEarningsUnlocked={isOfflineEarningsUnlocked} // Neu
-          unlockOfflineEarnings={unlockOfflineEarnings}         // Neu
-          offlineEarningsUnlockCost={offlineEarningsUnlockCost} // Neu
+          offlineEarningsLevel={offlineEarningsLevel}                 // New
+          currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
+          buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
+          offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
         />
       )
     ))}

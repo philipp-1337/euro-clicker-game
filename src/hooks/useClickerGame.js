@@ -45,8 +45,7 @@ export default function useClickerGame(easyMode = false) {
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
-    isOfflineEarningsUnlocked, setIsOfflineEarningsUnlocked, // Get new state
-    offlineEarningsFactor, // Get factor
+    offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
     initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
   } = gameStateHook;
   
@@ -200,21 +199,26 @@ export default function useClickerGame(easyMode = false) {
 
   const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
 
-    // Unlock Offline Earnings
-  // Use a calculation similar to other premium upgrades for consistency, even with exponent 1
-  const offlineEarningsUnlockCost = useMemo(() => 
-    gameConfig.premiumUpgrades.unlockOfflineEarnings.baseCost *
-    Math.pow(gameConfig.premiumUpgrades.unlockOfflineEarnings.costExponent, 0) * // Level is effectively 0 for a one-time unlock
-    costMultiplier,
-  [costMultiplier]);
+  // Offline Earnings Upgrade
+  const currentOfflineEarningsFactor = useMemo(() =>
+    offlineEarningsLevel * gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel,
+    [offlineEarningsLevel]
+  );
 
-  const unlockOfflineEarnings = useCallback(() => {
-    if (money >= offlineEarningsUnlockCost && !isOfflineEarningsUnlocked) {
+  const offlineEarningsLevelCost = useMemo(() =>
+    gameConfig.premiumUpgrades.offlineEarnings.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, offlineEarningsLevel) *
+    costMultiplier,
+    [offlineEarningsLevel, costMultiplier]
+  );
+
+  const buyOfflineEarningsLevel = useCallback(() => {
+    if (money >= offlineEarningsLevelCost) {
       ensureStartTime?.();
-      setMoney(prev => prev - offlineEarningsUnlockCost);
-      setIsOfflineEarningsUnlocked(true);
+      setMoney(prev => prev - offlineEarningsLevelCost);
+      setOfflineEarningsLevel(prev => prev + 1);
     }
-  }, [money, offlineEarningsUnlockCost, isOfflineEarningsUnlocked, setMoney, setIsOfflineEarningsUnlocked, ensureStartTime]);
+  }, [money, offlineEarningsLevelCost, setMoney, setOfflineEarningsLevel, ensureStartTime]);
 
   
   const { saveGame } = useLocalStorage(gameState, loadGameState);
@@ -238,14 +242,14 @@ export default function useClickerGame(easyMode = false) {
   // Effect to calculate offline earnings when lastInactiveDuration changes
   // This uses 'offlineEarningsFactor'
   useEffect(() => {
-  if (isOfflineEarningsUnlocked && lastInactiveDuration > 0 && totalMoneyPerSecond > 0) {
-    const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * offlineEarningsFactor);
+  if (offlineEarningsLevel > 0 && lastInactiveDuration > 0 && totalMoneyPerSecond > 0) {
+    const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * currentOfflineEarningsFactor);
     setCalculatedOfflineEarnings(earnings);
     console.log(`[useClickerGame] Calculated offline earnings: ${earnings} for duration ${lastInactiveDuration}s`);
   } else {
     setCalculatedOfflineEarnings(0);
   }
-  }, [lastInactiveDuration, isOfflineEarningsUnlocked, totalMoneyPerSecond, offlineEarningsFactor]);
+  }, [lastInactiveDuration, offlineEarningsLevel, totalMoneyPerSecond, currentOfflineEarningsFactor]);
 
   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
 
@@ -343,7 +347,7 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
-    isOfflineEarningsUnlocked,
+    // isOfflineEarningsUnlocked, // No longer directly used, derived from offlineEarningsLevel
     isStateUnlocked,
     isInterventionsUnlocked,
     totalMoneyPerSecond,
@@ -386,8 +390,10 @@ export default function useClickerGame(easyMode = false) {
     unlockStateCost,
     interventionsUnlockCost,
     investmentCostMultiplier,
-    offlineEarningsUnlockCost,
-    unlockOfflineEarnings,
+    offlineEarningsLevel, // Export new state
+    currentOfflineEarningsFactor, // Export new calculated factor
+    offlineEarningsLevelCost, // Export new cost
+    buyOfflineEarningsLevel, // Export new buy function
     lastInactiveDuration,
     clearLastInactiveDuration,
     calculatedOfflineEarnings,

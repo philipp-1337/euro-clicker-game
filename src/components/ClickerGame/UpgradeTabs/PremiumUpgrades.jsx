@@ -24,9 +24,10 @@ export default function PremiumUpgrades({
   unlockInterventions,
   isInterventionsUnlocked,
   interventionsUnlockCost,
-  isOfflineEarningsUnlocked, // Neu
-  unlockOfflineEarnings,     // Neu
-  offlineEarningsUnlockCost  // Neu
+  offlineEarningsLevel,      // New: Current level of offline earnings
+  currentOfflineEarningsFactor, // New: Calculated effective factor
+  buyOfflineEarningsLevel,     // New: Function to buy next level
+  offlineEarningsLevelCost   // New: Cost for the next level
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -35,6 +36,10 @@ export default function PremiumUpgrades({
 
   const globalCostReductionPercentage = getPercentage(
     gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor
+  );
+
+  const offlineEarningsIncreasePerLevelPercentage = getPercentage(
+    1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel // Convert 0.02 to 2%
   );
 
   return (
@@ -50,7 +55,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalMultiplierLevel} (×{formatNumber(globalMultiplier)})
+            Level: {globalMultiplierLevel} (Currently: x{formatNumber(globalMultiplier)})
           </div>
           <button
             onClick={buyGlobalMultiplier}
@@ -71,7 +76,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalPriceDecreaseLevel} (Cost Factor: ×{(globalPriceDecrease ?? 1).toFixed(2)})
+            Level: {globalPriceDecreaseLevel} (Currently: x{(globalPriceDecrease ?? 1).toFixed(2)})
           </div>
           <button
             onClick={buyGlobalPriceDecrease}
@@ -89,18 +94,18 @@ export default function PremiumUpgrades({
           <h3>Offline Earnings</h3>
         </div>
         <p className="premium-upgrade-description">
-          Earn a percentage of your income per second while the game is closed or in the background.
+          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsIncreasePerLevelPercentage}%.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Status: {isOfflineEarningsUnlocked ? 'Unlocked' : 'Locked'}
+            Level: {offlineEarningsLevel} (Currently: {formatNumber(currentOfflineEarningsFactor * 100)}%)
           </div>
           <button
-            onClick={unlockOfflineEarnings}
-            disabled={money < offlineEarningsUnlockCost || isOfflineEarningsUnlocked}
-            className={`premium-upgrade-button ${money < offlineEarningsUnlockCost || isOfflineEarningsUnlocked ? 'disabled' : ''}`}
+            onClick={buyOfflineEarningsLevel}
+            disabled={money < offlineEarningsLevelCost}
+            className={`premium-upgrade-button ${money < offlineEarningsLevelCost ? 'disabled' : ''}`}
           >
-            {isOfflineEarningsUnlocked ? 'Unlocked' : `${formatNumber(offlineEarningsUnlockCost)} €`}
+            {formatNumber(offlineEarningsLevelCost)} €
           </button>
         </div>
       </div>

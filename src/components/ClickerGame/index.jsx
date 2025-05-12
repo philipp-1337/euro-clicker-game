@@ -66,11 +66,12 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     unlockStateCost,
     investmentCostMultiplier,
     isInterventionsUnlocked,
-    isOfflineEarningsUnlocked, // Neu
     unlockInterventions,
     interventionsUnlockCost,
-    offlineEarningsUnlockCost, // Neu
-    unlockOfflineEarnings,     // Neu
+    offlineEarningsLevel,      // New
+    currentOfflineEarningsFactor, // New
+    offlineEarningsLevelCost,  // New
+    buyOfflineEarningsLevel,     // New
     gameState,
     loadGameState,
     activePlayTime,
@@ -256,7 +257,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           show={showWelcomeBackModal}
           duration={lastInactiveDuration}
           offlineEarnings={calculatedOfflineEarnings} // Weitergeben
-          isOfflineEarningsUnlocked={isOfflineEarningsUnlocked} // Weitergeben
+          isOfflineEarningsUnlocked={offlineEarningsLevel > 0} // Updated logic
           onClose={() => {
             setShowWelcomeBackModal(false);
             clearLastInactiveDuration(); // Reset the trigger in the hook
@@ -406,10 +407,11 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
             isInterventionsUnlocked={isInterventionsUnlocked}
             unlockInterventions={unlockInterventions}
             interventionsUnlockCost={interventionsUnlockCost}
-            isOfflineEarningsUnlocked={isOfflineEarningsUnlocked} // Neu
-            unlockOfflineEarnings={unlockOfflineEarnings}         // Neu
-            offlineEarningsUnlockCost={offlineEarningsUnlockCost} // Neu
             investmentCostMultiplier={investmentCostMultiplier}
+            offlineEarningsLevel={offlineEarningsLevel}               // New
+            currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
+            buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
+            offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
           />
         </div>
       )}

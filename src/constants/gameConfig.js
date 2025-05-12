@@ -73,8 +73,7 @@ export const gameConfig = {
       satisfaction: 0,
       dissatisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
-      isOfflineEarningsUnlocked: false, // Neu für Offline-Einnahmen
-      offlineEarningsFactor: 0.25, // 25% der normalen Einnahmen pro Sekunde offline
+      offlineEarningsLevel: 0, // Level for offline earnings
     },
     activePlayTime: 0, // Initial aktive Spielzeit
     inactivePlayTime: 0,    // Initial kumulierte inaktive Spiel-Zeit
@@ -95,13 +94,17 @@ export const gameConfig = {
       },
       globalPriceDecrease: {
         baseCost: 2500,
-        costExponent: 1.75, // z.B. exponentiell steigend, anpassbar
+        costExponent: 1.60, // z.B. exponentiell steigend, anpassbar
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
+      },
+      offlineEarnings: { // Changed from unlockOfflineEarnings
+        baseCost: 4000,
+        costExponent: 1.45, // Cost scaling per level
+        effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
       unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
       unlockInterventionsCost: 50000, // Kosten für die Freischaltung des Interventions-Tabs
-      unlockOfflineEarnings: { baseCost: 7500, costExponent: 1 }, // Kosten für Offline-Einnahmen, kein exponentielles Wachstum hier
     },
 
     // Timing-Konstanten
