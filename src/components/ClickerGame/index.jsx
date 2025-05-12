@@ -66,14 +66,19 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     unlockStateCost,
     investmentCostMultiplier,
     isInterventionsUnlocked,
+    isOfflineEarningsUnlocked, // Neu
     unlockInterventions,
     interventionsUnlockCost,
+    offlineEarningsUnlockCost, // Neu
+    unlockOfflineEarnings,     // Neu
     gameState,
     loadGameState,
     activePlayTime,
     inactivePlayTime,
     lastInactiveDuration,      // Get new state from hook
     clearLastInactiveDuration, // Get new function from hook
+    calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
+    claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
   } = useClickerGame(easyMode);
 
   const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
@@ -250,9 +255,12 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
         <WelcomeBackModal
           show={showWelcomeBackModal}
           duration={lastInactiveDuration}
+          offlineEarnings={calculatedOfflineEarnings} // Weitergeben
+          isOfflineEarningsUnlocked={isOfflineEarningsUnlocked} // Weitergeben
           onClose={() => {
             setShowWelcomeBackModal(false);
             clearLastInactiveDuration(); // Reset the trigger in the hook
+            claimOfflineEarnings(); // Offline-Einnahmen beanspruchen
           }}
         />
       )}
@@ -398,6 +406,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
             isInterventionsUnlocked={isInterventionsUnlocked}
             unlockInterventions={unlockInterventions}
             interventionsUnlockCost={interventionsUnlockCost}
+            isOfflineEarningsUnlocked={isOfflineEarningsUnlocked} // Neu
+            unlockOfflineEarnings={unlockOfflineEarnings}         // Neu
+            offlineEarningsUnlockCost={offlineEarningsUnlockCost} // Neu
             investmentCostMultiplier={investmentCostMultiplier}
           />
         </div>

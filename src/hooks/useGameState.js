@@ -52,6 +52,10 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.isInterventionsUnlocked ?? false
   );
 
+  // State für Offline-Einnahmen
+  const [isOfflineEarningsUnlocked, setIsOfflineEarningsUnlocked] = useState(gameConfig.initialState.isOfflineEarningsUnlocked);
+  const offlineEarningsFactor = gameConfig.initialState.offlineEarningsFactor; // Faktor ist konstant aus Config
+
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
@@ -74,6 +78,8 @@ export default function useGameState(easyMode = false) {
     isInterventionsUnlocked,
     activePlayTime,
     inactivePlayTime,
+    isOfflineEarningsUnlocked, // Hinzufügen zum Spielzustand
+    // offlineEarningsFactor wird nicht gespeichert, da es aus der Config kommt
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -104,6 +110,7 @@ export default function useGameState(easyMode = false) {
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
     setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
     setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0); // Beibehaltung der aktiven Zeit
+    setIsOfflineEarningsUnlocked(savedState.isOfflineEarningsUnlocked ?? gameConfig.initialState.isOfflineEarningsUnlocked);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
 
     // Calculate initial offline duration if lastSaved timestamp exists in saved state
@@ -140,6 +147,8 @@ export default function useGameState(easyMode = false) {
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
+    isOfflineEarningsUnlocked, setIsOfflineEarningsUnlocked, // Expose new state and setter
+    offlineEarningsFactor, // Expose factor
     initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load

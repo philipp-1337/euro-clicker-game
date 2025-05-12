@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent, Landmark, Shield } from 'lucide-react';
+import { DollarSign, Star, Percent, Landmark, Shield, HistoryIcon } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -23,7 +23,10 @@ export default function PremiumUpgrades({
   unlockStateCost,
   unlockInterventions,
   isInterventionsUnlocked,
-  interventionsUnlockCost
+  interventionsUnlockCost,
+  isOfflineEarningsUnlocked, // Neu
+  unlockOfflineEarnings,     // Neu
+  offlineEarningsUnlockCost  // Neu
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -76,6 +79,28 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < globalPriceDecreaseCost ? 'disabled' : ''}`}
           >
             {isNaN(globalPriceDecreaseCost) ? 'Error' : `${formatNumber(globalPriceDecreaseCost)} €`}
+          </button>
+        </div>
+      </div>
+      {/* Unlock Offline Earnings */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <HistoryIcon className="premium-icon" />
+          <h3>Offline Earnings</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Earn a percentage of your income per second while the game is closed or in the background.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Status: {isOfflineEarningsUnlocked ? 'Unlocked' : 'Locked'}
+          </div>
+          <button
+            onClick={unlockOfflineEarnings}
+            disabled={money < offlineEarningsUnlockCost || isOfflineEarningsUnlocked}
+            className={`premium-upgrade-button ${money < offlineEarningsUnlockCost || isOfflineEarningsUnlocked ? 'disabled' : ''}`}
+          >
+            {isOfflineEarningsUnlocked ? 'Unlocked' : `${formatNumber(offlineEarningsUnlockCost)} €`}
           </button>
         </div>
       </div>

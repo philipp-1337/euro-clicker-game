@@ -1,9 +1,9 @@
 import React from 'react';
 import { X as CloseIcon, Zap as ZapIcon } from 'lucide-react'; // Using ZapIcon for a "recharged" feel
 import { useModal } from '@hooks/useModal';
-import { formatPlaytime } from '@utils/calculators';
+import { formatPlaytime, formatNumber } from '@utils/calculators';
 
-export default function WelcomeBackModal({ show, onClose, duration }) {
+export default function WelcomeBackModal({ show, onClose, duration, offlineEarnings, isOfflineEarningsUnlocked }) {
   const modalRef = useModal(show, onClose);
 
   if (!show) return null;
@@ -26,9 +26,13 @@ export default function WelcomeBackModal({ show, onClose, duration }) {
         <div className="settings-modal-content">
           <ZapIcon size={48} style={{ margin: '20px auto', color: '#f39c12' }} />
           <p>You were away for {formatPlaytime(duration, true)}.</p>
-          {/* You could add information about offline earnings here if that feature exists */}
+          {isOfflineEarningsUnlocked && offlineEarnings > 0 && (
+            <p style={{ marginTop: '10px', fontWeight: 'bold', color: '#2ecc71' }}>
+              You earned {formatNumber(offlineEarnings)} € while you were away!
+            </p>
+          )}
           <button className="modal-btn" onClick={onClose} style={{ marginTop: '10px', width: '100%' }}>
-            Continue Playing
+            Claim & Continue
           </button>
         </div>
       </div>

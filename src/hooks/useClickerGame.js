@@ -45,6 +45,8 @@ export default function useClickerGame(easyMode = false) {
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
+    isOfflineEarningsUnlocked, setIsOfflineEarningsUnlocked, // Get new state
+    offlineEarningsFactor, // Get factor
     initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
   } = gameStateHook;
   
@@ -197,6 +199,23 @@ export default function useClickerGame(easyMode = false) {
   }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
 
   const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
+
+    // Unlock Offline Earnings
+  // Use a calculation similar to other premium upgrades for consistency, even with exponent 1
+  const offlineEarningsUnlockCost = useMemo(() => 
+    gameConfig.premiumUpgrades.unlockOfflineEarnings.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.unlockOfflineEarnings.costExponent, 0) * // Level is effectively 0 for a one-time unlock
+    costMultiplier,
+  [costMultiplier]);
+
+  const unlockOfflineEarnings = useCallback(() => {
+    if (money >= offlineEarningsUnlockCost && !isOfflineEarningsUnlocked) {
+      ensureStartTime?.();
+      setMoney(prev => prev - offlineEarningsUnlockCost);
+      setIsOfflineEarningsUnlocked(true);
+    }
+  }, [money, offlineEarningsUnlockCost, isOfflineEarningsUnlocked, setMoney, setIsOfflineEarningsUnlocked, ensureStartTime]);
+
   
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 
@@ -205,6 +224,9 @@ export default function useClickerGame(easyMode = false) {
    // or by the visibilitychange handler during a session.
    const [lastInactiveDuration, setLastInactiveDuration] = useState(0); // Initialize to 0
 
+   // State for calculated offline earnings
+   const [calculatedOfflineEarnings, setCalculatedOfflineEarnings] = useState(0);
+
    // Effect to set lastInactiveDuration based on initialOfflineDuration after load
    useEffect(() => {
      console.log('[useClickerGame] Effect for initialOfflineDuration. Value:', initialOfflineDuration);
@@ -212,9 +234,32 @@ export default function useClickerGame(easyMode = false) {
        setLastInactiveDuration(initialOfflineDuration);
      }
    }, [initialOfflineDuration]); // Watch initialOfflineDuration
-   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
-   const clearLastInactiveDuration = useCallback(() => {
+
+  // Effect to calculate offline earnings when lastInactiveDuration changes
+  // This uses 'offlineEarningsFactor'
+  useEffect(() => {
+  if (isOfflineEarningsUnlocked && lastInactiveDuration > 0 && totalMoneyPerSecond > 0) {
+    const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * offlineEarningsFactor);
+    setCalculatedOfflineEarnings(earnings);
+    console.log(`[useClickerGame] Calculated offline earnings: ${earnings} for duration ${lastInactiveDuration}s`);
+  } else {
+    setCalculatedOfflineEarnings(0);
+  }
+  }, [lastInactiveDuration, isOfflineEarningsUnlocked, totalMoneyPerSecond, offlineEarningsFactor]);
+
+  const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
+
+  const claimOfflineEarnings = useCallback(() => {
+    if (calculatedOfflineEarnings > 0) {
+      setMoney(prev => prev + calculatedOfflineEarnings);
+      console.log(`[useClickerGame] Claimed offline earnings: ${calculatedOfflineEarnings}`);
+      setCalculatedOfflineEarnings(0); // Reset after claiming
+    }
+  }, [calculatedOfflineEarnings, setMoney]);
+
+  const clearLastInactiveDuration = useCallback(() => {
      setLastInactiveDuration(0);
+     setCalculatedOfflineEarnings(0); // Auch berechnete Einnahmen zurücksetzen
    }, []);
 
   // Effekt zum Zählen der aktiven und inaktiven Spielzeit
@@ -298,6 +343,7 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
+    isOfflineEarningsUnlocked,
     isStateUnlocked,
     isInterventionsUnlocked,
     totalMoneyPerSecond,
@@ -340,7 +386,11 @@ export default function useClickerGame(easyMode = false) {
     unlockStateCost,
     interventionsUnlockCost,
     investmentCostMultiplier,
+    offlineEarningsUnlockCost,
+    unlockOfflineEarnings,
     lastInactiveDuration,
-    clearLastInactiveDuration
+    clearLastInactiveDuration,
+    calculatedOfflineEarnings,
+    claimOfflineEarnings,
   };
 }
