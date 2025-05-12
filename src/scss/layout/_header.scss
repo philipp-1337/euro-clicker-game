@@ -19,8 +19,20 @@
   }
 
   .header-icon {
-    vertical-align: middle;
-    margin-right: 4px;
+    // width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: map.get($colors, white);
+    // box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+
+    // &:hover {
+    //   background-color: map.get($colors, primary);
+    //   color: map.get($colors, white);
+    // }
   }
 }
 

@@ -98,7 +98,6 @@ export default function GameHeader(props) {
           </span>
         )}
       </div>
-      {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
       <div className="header-actions">
         <button
           className="menu-toggle-button"
@@ -108,16 +107,18 @@ export default function GameHeader(props) {
         >
           <MenuIcon size={22} />
         </button>
+        {/* Settings Button */}
         <button
-          className="settings-button"
+          className="settings-button header-icon"
           onClick={() => setShowSettings(true)}
           title="Settings"
           aria-label="Settings"
         >
           <SettingsIcon size={20} />
         </button>
+        {/* Cloud / Save Button */}
         <button
-          className="settings-button"
+          className="settings-button header-icon"
           onClick={handleSave}
           title="Save"
           aria-label="Save"
@@ -127,9 +128,21 @@ export default function GameHeader(props) {
             : <SaveIcon size={20} />
           }
         </button>
+        {/* Statistics Button */}
+        {uiProgress.showStatisticsHeaderButton && (
+          <button
+            className="settings-button header-icon"
+            onClick={() => setShowStatisticsModal(true)}
+            title="Statistics"
+            aria-label="Statistics"
+          >
+            <BarChart2Icon size={20} />
+          </button>
+        )}
+        {/* Achievements Button */}
         {uiProgress.showAchievementsHeaderButton && props.hasAnyAchievement && (
         <button
-          className="settings-button"
+          className="settings-button header-icon"
           onClick={() => setShowAchievements(true)}
           title="Achievements"
           aria-label="Achievements"
@@ -140,24 +153,14 @@ export default function GameHeader(props) {
         {/* Crown Icon für Leaderboard-Mode */}
         {uiProgress.showLeaderboard && (
           <button
-            className="settings-button"
+            className="settings-button header-icon"
             onClick={() => setShowLeaderboardModal(true)}
             title="Show Leaderboard"
           >
             <CrownIcon size={22} />
           </button>
         )}
-        {/* Statistics Button */}
-        {uiProgress.showStatisticsHeaderButton && (
-          <button
-            className="settings-button"
-            onClick={() => setShowStatisticsModal(true)}
-            title="Statistics"
-            aria-label="Statistics"
-          >
-            <BarChart2Icon size={20} />
-          </button>
-        )}
+        {/* Playtime und Click-Statistik */}
         {showClickStats && (
           <span className="header-clickstats">
             <MousePointerClickIcon size={20} />
