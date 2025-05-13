@@ -1,12 +1,21 @@
 import { formatNumber } from '@utils/calculators';  // Import von formatNumber
+import { useRef } from 'react';
+
+// Load sound effect
+const clickSound = new Audio('/sounds/click-sound.mp3');
 
 export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
+  const handleButtonClick = (index) => {
+    clickSound.play(); // Play sound effect when button is clicked
+    handleClick(index); // Trigger the click logic
+  };
+
   return (
     <div className="clicker-buttons">
       {buttons.map((button, index) => (
         <div key={index} className="button-container">
           <button
-            onClick={() => handleClick(index)}
+            onClick={() => handleButtonClick(index)}
             disabled={cooldowns[index] > 0}
             className={`clicker-button ${button.colorClass} ${cooldowns[index] > 0 ? 'disabled' : ''}`}
           >
