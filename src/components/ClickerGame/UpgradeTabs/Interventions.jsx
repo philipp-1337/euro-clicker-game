@@ -14,13 +14,10 @@ const interventions = [
 
 export default function Interventions({ money = 0, setMoney = () => {}, unlocked = [], setUnlocked = () => {} }) {
   const handleUnlock = (id, cost) => {
-    if (money >= cost && !unlocked.includes(id)) {
-      setMoney(prev => {
-        const updatedMoney = prev - cost;
-        return updatedMoney >= 0 ? updatedMoney : prev; // Ensure money doesn't go negative
-      });
-      setUnlocked(prev => [...prev, id]);
-    }
+    if (money < cost || unlocked.includes(id)) return; // Exit if not enough money or already unlocked
+
+    setMoney(prevMoney => prevMoney - cost); // Deduct the cost using functional update
+    setUnlocked(prevUnlocked => [...prevUnlocked, id]); // Add the intervention to the unlocked list using functional update
   };
 
   return (
