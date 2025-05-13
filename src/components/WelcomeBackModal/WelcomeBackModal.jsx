@@ -32,7 +32,7 @@ export default function WelcomeBackModal({ show, onClose, duration, offlineEarni
             </p>
           )}
           <button className="modal-btn" onClick={onClose} style={{ marginTop: '10px', width: '100%' }}>
-            Claim & Continue
+            Continue playing
           </button>
         </div>
       </div>
