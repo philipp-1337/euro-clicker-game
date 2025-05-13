@@ -6,6 +6,9 @@ import {
 import { gameConfig } from '@constants/gameConfig';
 import { Check } from 'lucide-react';
 
+// Load sound effect
+const clickSound = new Audio('/sounds/value-click.mp3');
+
 export default function BasicUpgrades({ 
     buttons, 
     valueUpgradeCosts, 
@@ -25,6 +28,11 @@ export default function BasicUpgrades({
   // Prozentsatz für Cooldown-Upgrade aus der gameConfig berechnen
   const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
 
+  const handleValueUpgradeClick = (index) => {
+    clickSound.play(); // Play sound effect when value upgrade is bought
+    buyValueUpgrade(index);
+  };
+
   if (!managerCosts || managerCosts.length === 0) {
     return null; // Oder ein Lade-Indikator, falls du möchtest
   }
@@ -37,7 +45,7 @@ export default function BasicUpgrades({
           {buttons.map((button, index) => (
             <button
               key={`value-${index}`}
-              onClick={() => buyValueUpgrade(index)}
+              onClick={() => handleValueUpgradeClick(index)}
               disabled={money < valueUpgradeCosts[index]}
               className={`upgrade-button ${button.colorClass} ${money < valueUpgradeCosts[index] ? 'disabled' : ''}`}
             >
