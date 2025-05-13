@@ -89,8 +89,8 @@ export default function LeaderboardModal({ show, onClose }) {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Playtime</th>
-                  <th>Active Time</th>
+                  <th>Total</th>
+                  <th>Active</th>
                   <th>Clicks</th>
                 </tr>
               </thead>
@@ -100,21 +100,23 @@ export default function LeaderboardModal({ show, onClose }) {
                   const isFirst = idx === 0;
                   return (
                     <tr key={entry.id} className={isMe ? 'me' : ''}>
-                      <td>
-                        {entry.name}
+                      <td title={entry.name}> 
+                        <div className="leaderboard-name-cell">
+                          {entry.name}
+                        </div>
                         {isFirst && (
                           <MedalIcon
                             size={18}
                             color={isMe ? '#d4a900' : '#f5b400'}
-                            style={{ marginLeft: 7, verticalAlign: 'middle' }}
+                            style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
                             title="Platz 1"
                           />
                         )}
                       </td>
-                      <td>{formatPlaytime(entry.playtime, true)}</td>
+                      <td>{formatPlaytime(entry.playtime, true, true)}</td>
                       <td>
                         {typeof entry.activePlaytime === 'number'
-                          ? formatPlaytime(entry.activePlaytime, true)
+                          ? formatPlaytime(entry.activePlaytime, true, true)
                           : 'N/A'}
                       </td>
                       <td>{entry.clicks}</td>

@@ -161,12 +161,30 @@ export const formatNumber = (num) => {
   /**
    * Formats a playtime in seconds as Xh Ym Zs, Ym Zs, or Zs
    * @param {number} seconds - Playtime in seconds
-   * @param {boolean} showSecondsAfterHour - Whether to show seconds for times >= 1 hour
+   * @param {boolean} [showSecondsAfterHour=true] - Whether to show seconds for times >= 1 hour (only for default format)
+   * @param {boolean} [useColonFormat=false] - Whether to use colon-separated format (e.g., 1:31:12)
    * @returns {string} Formatted playtime string
    */
-  export function formatPlaytime(seconds, showSecondsAfterHour = true) {
+  export function formatPlaytime(seconds, showSecondsAfterHour = true, useColonFormat = false) {
     if (!seconds) return '0s';
     
+    // Doppelpunkt-Format nur anwenden, wenn useColonFormat true ist UND die Zeit >= 60 Sekunden beträgt.
+    if (useColonFormat && seconds >= 60) {
+      const h = Math.floor(seconds / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      const s = seconds % 60;
+  
+      const s_padded = s.toString().padStart(2, '0');
+  
+      if (h > 0) {
+        const m_padded = m.toString().padStart(2, '0');
+        return `${h}:${m_padded}:${s_padded}`;
+      } else { // m muss > 0 sein, da seconds >= 60 und h == 0
+        return `${m}:${s_padded}`;
+      }
+    }
+
+    // Standard "langes" Format (Xh Ym Zs) oder Fallback für useColonFormat bei < 60 Sekunden
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;

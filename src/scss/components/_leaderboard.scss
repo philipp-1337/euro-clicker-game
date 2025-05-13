@@ -46,6 +46,14 @@
   tr:hover td {
     background: map.get($backgrounds, lighter-blue) !important;
   }
+
+  .leaderboard-name-cell {
+    max-width: 70px; // Max width for the name cell
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle; // Ensure icon and text align well
+  }
 }
 
 .leaderboard-table tr.me td {
