@@ -214,7 +214,7 @@ export default function GameHeader(props) {
       />
       <MoneyBanner money={formatNumber(money)} />
       {/* Leaderboard Modal */}
-      {showLeaderboardModal && uiProgress.showLeaderboard && (
+      {showLeaderboardModal && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
       {/* Statistics Modal */}
@@ -230,7 +230,6 @@ export default function GameHeader(props) {
         isOpen={isSideMenuOpen}
         setIsOpen={setIsSideMenuOpen}
         onOpenSettings={() => setShowSettings(true)} 
-        showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
         onOpenStatistics={() => setShowStatisticsModal(true)}

@@ -14,8 +14,7 @@ import { useModal } from '../../hooks/useModal';
 export default function SideMenu({ 
   isOpen,
   setIsOpen,
-  onOpenSettings, 
-  showLeaderboard, 
+  onOpenSettings,
   onToggleLeaderboard,
   onOpenAchievements,
   onOpenStatistics // Neue Prop
@@ -73,15 +72,13 @@ export default function SideMenu({
             <span>Statistics</span>
           </div>
 
-          {showLeaderboard !== undefined && (
-            <div 
-              className="sidemenu-item" 
-              onClick={() => handleMenuItemClick(onToggleLeaderboard)}
-            >
-              <CrownIcon size={20} className="sidemenu-icon" />
-              <span>Leaderboard</span>
-            </div>
-          )}
+          <div 
+            className="sidemenu-item" 
+            onClick={() => handleMenuItemClick(onToggleLeaderboard)}
+          >
+            <CrownIcon size={20} className="sidemenu-icon" />
+            <span>Leaderboard</span>
+          </div>
 
           <div 
             className="sidemenu-item" 
