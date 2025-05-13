@@ -103,15 +103,15 @@ export default function LeaderboardModal({ show, onClose }) {
                       <td title={entry.name}> 
                         <div className="leaderboard-name-cell">
                           {entry.name}
+                          {isFirst && (
+                            <MedalIcon
+                              size={18}
+                              color={isMe ? '#d4a900' : '#f5b400'}
+                              style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
+                              title="Platz 1"
+                            />
+                          )}
                         </div>
-                        {isFirst && (
-                          <MedalIcon
-                            size={18}
-                            color={isMe ? '#d4a900' : '#f5b400'}
-                            style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
-                            title="Platz 1"
-                          />
-                        )}
                       </td>
                       <td>{formatPlaytime(entry.playtime, true, true)}</td>
                       <td>
