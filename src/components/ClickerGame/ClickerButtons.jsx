@@ -1,5 +1,5 @@
 import { formatNumber } from '@utils/calculators';  // Import von formatNumber
-import { useRef } from 'react';
+//import { useRef } from 'react';
 
 // Load sound effect
 const clickSound = new Audio('/sounds/click-sound.mp3');
