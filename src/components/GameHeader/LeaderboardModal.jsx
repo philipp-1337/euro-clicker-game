@@ -21,12 +21,33 @@ export default function LeaderboardModal({ show, onClose }) {
         querySnapshot.forEach((doc) => {
           data.push({ id: doc.id, ...doc.data() });
         });
-        // Sortiere im Frontend nach playtime und clicks, falls Felder vorhanden
+        // Sortiere im Frontend
         data.sort((a, b) => {
-          if (typeof a.playtime !== 'number' || typeof b.playtime !== 'number') return 0;
-          if (a.playtime !== b.playtime) return a.playtime - b.playtime;
-          if (typeof a.clicks !== 'number' || typeof b.clicks !== 'number') return 0;
-          return a.clicks - b.clicks;
+          // 1. Sort by total playtime (ascending)
+          if (typeof a.playtime === 'number' && typeof b.playtime === 'number') {
+            if (a.playtime !== b.playtime) {
+              return a.playtime - b.playtime;
+            }
+          } else if (typeof a.playtime === 'number') {
+            return -1; // a has playtime, b doesn't, so a comes first
+          } else if (typeof b.playtime === 'number') {
+            return 1;  // b has playtime, a doesn't, so b comes first
+          }
+
+          // 2. Sort by active playtime (ascending)
+          // Treat N/A (non-number) as "later" by assigning Infinity
+          const aActive = typeof a.activePlaytime === 'number' ? a.activePlaytime : Infinity;
+          const bActive = typeof b.activePlaytime === 'number' ? b.activePlaytime : Infinity;
+
+          if (aActive !== bActive) {
+            return aActive - bActive;
+          }
+
+          // 3. Sort by clicks (ascending)
+          if (typeof a.clicks === 'number' && typeof b.clicks === 'number') {
+            return a.clicks - b.clicks;
+          }
+          return 0; // Default if all criteria are equal or incomparable
         });
         setEntries(data);
       } catch (e) {
@@ -69,6 +90,7 @@ export default function LeaderboardModal({ show, onClose }) {
                 <tr>
                   <th>Name</th>
                   <th>Playtime</th>
+                  <th>Active Time</th>
                   <th>Clicks</th>
                 </tr>
               </thead>
@@ -90,6 +112,11 @@ export default function LeaderboardModal({ show, onClose }) {
                         )}
                       </td>
                       <td>{formatPlaytime(entry.playtime, true)}</td>
+                      <td>
+                        {typeof entry.activePlaytime === 'number'
+                          ? formatPlaytime(entry.activePlaytime, true)
+                          : 'N/A'}
+                      </td>
                       <td>{entry.clicks}</td>
                     </tr>
                   );

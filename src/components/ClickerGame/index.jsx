@@ -197,6 +197,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
       name: leaderboardName.trim(),
       playtime: playTime,
       clicks: floatingClicks,
+      activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
     });
     setLeaderboardSubmitted(true);
