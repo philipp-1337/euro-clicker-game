@@ -6,7 +6,7 @@ import {
   CloudUpload as CloudUploadIcon,
   Save as SaveIcon,
   MousePointerClick as MousePointerClickIcon,
-  HourglassIcon,
+  ClockIcon,
   Crown as CrownIcon,
   Menu as MenuIcon,
   BarChart2 as BarChart2Icon,
@@ -163,16 +163,17 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
-          {/* Playtime und Click-Statistik */}
+          {/* Click-Counter */}
           {showClickStats && (
             <span className="header-clickstats">
               <MousePointerClickIcon size={20} />
               {String(floatingClicks ?? 0).padStart(5, '0')}
             </span>
           )}
+          {/* Playtime */}
           {showPlaytime && (
             <span className="header-playtime">
-              <HourglassIcon size={20} />
+              <ClockIcon size={20} />
               {formatPlaytime(playTime, false)}</span>
           )}
         </div>

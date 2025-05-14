@@ -1,5 +1,5 @@
 import React from 'react';
-import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, PowerOff as PowerOffIcon } from 'lucide-react';
+import { X as CloseIcon, ClockIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 import { formatPlaytime } from '../../utils/calculators';
 
@@ -40,12 +40,12 @@ export default function StatisticsModal({
               <span className="stats-value">{formatPlaytime(activePlayTime, false)}</span>
             </li>
             <li>
-              <PowerOffIcon size={20} className="stats-icon" />
+              <ClockFadingIcon size={20} className="stats-icon" />
               <span className="stats-label">Absence Time:</span>
               <span className="stats-value">{formatPlaytime(absenceTime, false)}</span>
             </li>
             <li>
-              <HourglassIcon size={20} className="stats-icon" />
+              <ClockIcon size={20} className="stats-icon" />
               <span className="stats-label">Total Playtime:</span>
               <span className="stats-value">{formatPlaytime(playTime, false)}</span>
             </li>
