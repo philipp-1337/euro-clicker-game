@@ -34,12 +34,10 @@
 }
 
 .upgrade-tabs-inner {
-  display: flex;
+  @include flex-center;
   gap: clamp(5px, 2vw, 16px);
   min-width: max-content;
-  margin: 0 auto;
-  justify-content: center;
-  align-items: center;
+  margin: 0 auto 8px auto;
   width: 100%;
 }
 

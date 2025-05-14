@@ -29,7 +29,8 @@ body.dark {
   .modal-content h3,
   .settings-section-title,
   .header-playtime,
-  .header-clickstats {
+  .header-clickstats,
+  .tab-button.active {
     color: map.get($colors, text-light) !important;
   }
 
