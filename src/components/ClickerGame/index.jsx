@@ -12,7 +12,7 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 
-export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler }) {
+export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler, musicPlaying, setMusicPlaying }) {
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
@@ -94,6 +94,9 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   const { exportToCloud, cloudUuid } = useCloudSave();
   const cloudSaveMode = uiProgress.cloudSaveMode;
 
+  // Track if music has started
+  const [musicStarted, setMusicStarted] = useState(false);
+
   // Handler für FloatingClickButton
   const handleFloatingClick = () => {
     if (!uiProgress.gameStarted) setGameStarted();
@@ -105,6 +108,11 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
   const handleClickerButton = (index) => {
     setButtonClicked(index);
     handleClick(index);
+    // Start background music on first manual click
+    if (!musicStarted && typeof setMusicPlaying === 'function') {
+      setMusicPlaying(true);
+      setMusicStarted(true);
+    }
   };
 
   // UpgradeTabs erst anzeigen, wenn alle Buttons mindestens einmal geklickt wurden
