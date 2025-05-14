@@ -9,6 +9,8 @@ function App() {
   const [showUpdateBanner, setShowUpdateBanner] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState(null);
   const saveGameRef = useRef(null); // Ref für die saveGame Funktion
+  const audioRef = useRef(null);
+  const [musicPlaying, setMusicPlaying] = useState(false);
 
   useEffect(() => {
     const handleUpdateReady = (event) => {
@@ -23,6 +25,15 @@ function App() {
       window.removeEventListener('swUpdateReady', handleUpdateReady);
     };
   }, []);
+
+  // Optional: Start music on first user interaction if autoplay is blocked
+  useEffect(() => {
+    if (musicPlaying && audioRef.current) {
+      audioRef.current.play();
+    } else if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  }, [musicPlaying]);
 
   // Handler für Easy-Mode-Toggle
   const handleEasyModeToggle = (isEasyMode) => {
@@ -59,11 +70,20 @@ function App() {
 
   return (
     <div className="App">
+      {/* Background music */}
+      <audio
+        ref={audioRef}
+        src="/sounds/background-music.mp3"
+        loop
+        style={{ display: 'none' }}
+      />
       {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}
         onEasyModeToggle={handleEasyModeToggle}
         registerSaveGameHandler={registerSaveGameHandler}
+        musicPlaying={musicPlaying}
+        setMusicPlaying={setMusicPlaying}
       />
     </div>
   );
