@@ -5,9 +5,8 @@
 
 // Tabs
 .upgrade-tabs {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  @include mask;
+  @include flex-center;
   width: 100%;
   margin: 20px 0 15px;
   border-bottom: 2px solid #e0e0e0;
@@ -36,7 +35,7 @@
 
 .upgrade-tabs-inner {
   display: flex;
-  gap: 0;
+  gap: clamp(5px, 2vw, 16px);
   min-width: max-content;
   margin: 0 auto;
   justify-content: center;
@@ -45,7 +44,7 @@
 }
 
 .tab-button {
-  padding: 10px 20px;
+  // padding: 10px 20px;
   background: none;
   border: none;
   font-size: 1rem;

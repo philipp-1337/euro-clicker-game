@@ -2,27 +2,42 @@
 @use "../abstracts/colors" as *;
 @use "../abstracts/mixins" as *;
 
-// Header actions (zentriert, spacing, responsive)
+// Header actions (scrollbarer Container)
 .header-actions {
-  @include flex-center;
-  gap: clamp(10px, 4vw, 32px);
-  margin-top: -10px;
-  margin-bottom: 25px;
+  display: flex; // Erforderlich, damit margin:auto auf dem Kind wirkt
+  @include mask;
+  color: map.get($colors, text-dark);
   font-size: 1rem;
   font-weight: 500;
-  color: map.get($colors, text-dark);
+  gap: clamp(10px, 4vw, 32px);
+  margin-bottom: 25px;
+  margin-top: -10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;  
+}
 
-  .header-clickstats,
-  .header-playtime {
-    @include flex-center;
-    gap: 4px;
-  }
-
+.header-actions-content {
+  @include flex-center;
+  gap: clamp(10px, 4vw, 32px); // Behält den dynamischen Abstand bei
+  margin: 0 auto; // Zentriert den Inhaltsblock, wenn er in den Container passt
+  width: fit-content; // Wichtig, damit margin:auto funktioniert und der Block nicht die volle Breite einnimmt
   .header-icon {
     height: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .header-playtime,
+  .header-clickstats {
+    @include flex-center;
+    white-space: nowrap; // Verhindert das Umbrechen des Textes innerhalb dieser Elemente
+
+    svg {
+      margin-right: 2px;
+    }
   }
 }
 

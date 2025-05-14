@@ -1,8 +1,14 @@
 @use "../abstracts/colors" as *;
 @use "../abstracts/variables" as *;
+@use "../abstracts/mixins" as *;
 
 // Mobile responsive styles (max-width: 600px)
 @media (max-width: 600px) {
+  // Header actions adjustments for small screens
+  .header-actions {
+    justify-content: flex-start; // Ensure items align to the left for scrolling
+  }
+
   // Button layout adjustments
   .clicker-buttons,
   .upgrade-buttons {
@@ -26,9 +32,6 @@
 
   // Tab adjustments
   .upgrade-tabs {
-    gap: 0;
-    padding-left: 4px;
-    padding-right: 4px;
     overflow-x: auto;
     justify-content: flex-start;
 
@@ -39,10 +42,8 @@
   }
 
   .tab-button {
-    min-width: 120px;
     flex: 0 0 auto;
     font-size: 0.95rem;
-    padding: 10px 10px;
   }
 
   // Upgrade button adjustments

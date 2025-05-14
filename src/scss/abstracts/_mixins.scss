@@ -11,6 +11,20 @@
   justify-content: center;
 }
 
+// Flex left
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// Maske für den Fade-Effekt an den Rändern
+@mixin mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+  padding: 0 10px;
+}
+
 // Flex column centering
 @mixin flex-column-center {
   display: flex;
