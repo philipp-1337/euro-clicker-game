@@ -24,6 +24,8 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  max-height: 85vh; // Maximale Höhe für das Modal festlegen
+
   font-family: $font-family;
 
   .settings-modal-header {
@@ -96,6 +98,9 @@
 
 .settings-modal-content {
   margin-top: 18px;
+  flex-grow: 1; // Erlaubt dem Inhaltsbereich, den verfügbaren Platz auszufüllen
+  overflow-y: auto; // Vertikales Scrollen aktivieren, wenn nötig
+  padding-right: 10px; // Platz für die Scrollleiste, um Überlappung zu vermeiden
 }
 
 .settings-row {
