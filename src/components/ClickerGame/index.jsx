@@ -111,6 +111,12 @@ export default function ClickerGame({
   const handleFloatingClick = () => {
     if (!uiProgress.gameStarted) setGameStarted();
     incrementFloatingClicks();
+    // Start background music on first manual click (on floating button)
+    if (musicEnabled && !musicStarted && typeof setMusicPlaying === 'function') {
+      setMusicPlaying(true);
+      setMusicStarted(true);
+    }
+    // Add quick money from floating click
     addQuickMoney();
   };
 
@@ -118,11 +124,6 @@ export default function ClickerGame({
   const handleClickerButton = (index) => {
     setButtonClicked(index);
     handleClick(index);
-    // Start background music on first manual click
-    if (musicEnabled && !musicStarted && typeof setMusicPlaying === 'function') {
-      setMusicPlaying(true);
-      setMusicStarted(true);
-    }
   };
 
   // UpgradeTabs erst anzeigen, wenn alle Buttons mindestens einmal geklickt wurden
