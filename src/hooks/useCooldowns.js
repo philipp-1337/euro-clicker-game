@@ -18,7 +18,7 @@ export default function useCooldowns(cooldowns, setCooldowns, managers, buttons,
       });
       playSound('click'); // Play the click sound
     }
-  }, [cooldowns, buttons, setMoney, setCooldowns]);
+  }, [cooldowns, buttons, setMoney, setCooldowns, playSound]);
 
   // Cooldown-Timer
   useEffect(() => {

@@ -5,7 +5,7 @@ import useSoundEffects from './useSoundEffects'; // Import the new hook
 export default function useManagers(money, setMoney, managers, setManagers, ensureStartTime) {
   const { playSound } = useSoundEffects(); // Use the sound effects hook
   const buyManager = useCallback((index, cost) => {
-    if (money >= cost && !managers[index]) {
+    if (money >= cost && !managers[index]) { // Check if manager is not already bought
       playSound('manager'); // Play sound effect when a manager is purchased
       ensureStartTime?.();
       setMoney(prevMoney => prevMoney - cost);
@@ -15,7 +15,7 @@ export default function useManagers(money, setMoney, managers, setManagers, ensu
         return newManagers;
       });
     }
-  }, [money, managers, setMoney, setManagers, ensureStartTime]);
+  }, [money, managers, setMoney, setManagers, ensureStartTime, playSound]);
 
   return { buyManager };
 }
