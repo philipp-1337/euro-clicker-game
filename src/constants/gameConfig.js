@@ -162,4 +162,7 @@ export const gameConfig = {
   };
 
 // Checkpoints für Leaderboard/Meilensteine
-export const CHECKPOINTS = [100000];
+export const CHECKPOINTS = [
+  { value: 100000, id: '100k', label: '100,000 €', firestoreCollection: 'leaderboard_100k' }, // Beispiel für separate Collections
+  { value: 1000000000, id: '1B', label: '1 Billion €', firestoreCollection: 'leaderboard_1B' }  // oder wir filtern eine Collection
+];

@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
 import { formatPlaytime } from '../../utils/calculators';
 import { useModal } from '../../hooks/useModal';
+import { CHECKPOINTS } from "@constants/gameConfig"; // Import CHECKPOINTS
 
 export default function LeaderboardModal({ show, onClose }) {
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const modalRef = useModal(show, onClose);
+  const [activeTab, setActiveTab] = useState(CHECKPOINTS[0].id); // Default to the first checkpoint's ID
 
   useEffect(() => {
     if (!show) return;
     setLoading(true);
     const fetchLeaderboard = async () => {
       try {
-        // Erstmal alle Einträge ohne Sortierung laden, um Fehler mit orderBy zu vermeiden
-        const querySnapshot = await getDocs(collection(db, "leaderboard"));
+        // Query for entries matching the activeTab's goal
+        const leaderboardQuery = query(
+          collection(db, "leaderboard"),
+          where("goal", "==", activeTab)
+          // Firestore allows orderBy only on the field used in the first where clause if it's an inequality,
+          // or on any field if the where clause is an equality.
+          // For complex sorting (playtime, then activePlaytime, then clicks), client-side sorting is simpler here.
+        );
+        const querySnapshot = await getDocs(leaderboardQuery);
         const data = [];
         querySnapshot.forEach((doc) => {
           data.push({ id: doc.id, ...doc.data() });
@@ -57,9 +66,13 @@ export default function LeaderboardModal({ show, onClose }) {
       }
     };
     fetchLeaderboard();
-  }, [show]);
+  }, [show, activeTab]); // Re-fetch when activeTab changes
 
   if (!show) return null;
+
+  const goalDescription = activeTab === '100k'
+    ? `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '100k')?.label || '100,000 €'}!`
+    : `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '1B')?.label || '1 Billion €'}!`;
 
   return (
     <div className="modal-backdrop">
@@ -76,8 +89,22 @@ export default function LeaderboardModal({ show, onClose }) {
             <CloseIcon size={20} />
           </button>
         </div>
-        <p style={{ margin: '8px 0 0 0', fontSize: 15, textAlign: 'left' }}>
-          Goal: The fastest time to reach 100.000 €!
+        <div className="upgrade-tabs" style={{ borderBottom: 'none', marginTop: '10px', marginBottom: '5px' }}>
+          <div className="upgrade-tabs-inner">
+            {CHECKPOINTS.map(checkpoint => (
+              <button
+                key={checkpoint.id}
+                className={`tab-button ${activeTab === checkpoint.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(checkpoint.id)}
+              >
+                {checkpoint.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p style={{ margin: '8px 0 10px 0', fontSize: 15, textAlign: 'center' }}>
+          {goalDescription}
         </p>
         <div className="settings-modal-content">
           {loading ? (

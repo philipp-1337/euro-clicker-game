@@ -162,30 +162,44 @@ export default function ClickerGame({
   }
 
   const [leaderboardName, setLeaderboardName] = useState("");
-  const [checkpointReached, setCheckpointReached] = useState(false);
+  // const [checkpointReached, setCheckpointReached] = useState(false);
   const [showLeaderboardCongrats, setShowLeaderboardCongrats] = useState(false);
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
   const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
 
   // Leaderboard-Checkpoint-Modal nur zeigen, wenn dieser Checkpoint noch nicht im Local Storage ist
   useEffect(() => {
-    const checkpoint = CHECKPOINTS.find(cp => money >= cp);
-    setCurrentCheckpoint(checkpoint || null);
-    if (
-      checkpoint &&
-      !leaderboardSubmitted &&
-      !checkpointReached &&
-      !getReachedCheckpointsFromStorage().includes(checkpoint)
-    ) {
-      setCheckpointReached(true);
-      setShowLeaderboardCongrats(true);
+    const reachedCheckpointsInStorage = getReachedCheckpointsFromStorage();
+
+    // Finde den höchsten Checkpoint, der erreicht wurde UND noch nicht im Local Storage ist.
+    // Iteriere rückwärts, um den höchsten zuerst zu finden.
+    const newTargetCheckpoint = CHECKPOINTS.slice().reverse().find(cp =>
+      money >= cp.value && !reachedCheckpointsInStorage.includes(cp.id)
+    );
+
+    if (newTargetCheckpoint) {
+      // Zeige das Modal, wenn wir einen neuen Ziel-Checkpoint gefunden haben,
+      // der sich von dem aktuell im Modal angezeigten unterscheidet,
+      // oder wenn aktuell kein Modal für einen Checkpoint angezeigt wird.
+      if (!currentCheckpoint || currentCheckpoint.id !== newTargetCheckpoint.id) {
+        setCurrentCheckpoint(newTargetCheckpoint);
+        // Optional: Name aus Local Storage vorbefüllen, falls vorhanden
+        setLeaderboardName(localStorage.getItem('leaderboardName') || "");
+        setShowLeaderboardCongrats(true);
+        setLeaderboardSubmitted(false); // Wichtig: Zurücksetzen für den neuen Checkpoint
+      }
     }
-  }, [money, leaderboardSubmitted, checkpointReached]);
+    // Die Abhängigkeiten stellen sicher, dass der Effekt neu bewertet wird, wenn sich das Geld ändert,
+    // der aktuelle Checkpoint (für den das Modal ggf. offen ist) sich ändert,
+    // oder der Status des Modals/der Einreichung sich ändert.
+  }, [money, currentCheckpoint, showLeaderboardCongrats, leaderboardSubmitted]);
 
   // Nach Submit oder "Maybe later" Checkpoint im Local Storage speichern und Spielstand sichern
   const handleLeaderboardCongratsClose = async () => {
-    if (currentCheckpoint) {
-      addCheckpointToStorage(currentCheckpoint);
+    // Diese Funktion wird jetzt hauptsächlich für den "Maybe later"-Button verwendet.
+    // Wenn "Submit" geklickt wurde, kümmert sich handleLeaderboardSubmit um Speicherung und Schließen.
+    if (currentCheckpoint && !leaderboardSubmitted) { // Nur hinzufügen, wenn "Maybe later" geklickt wurde
+      addCheckpointToStorage(currentCheckpoint.id);
     }
     // Save game state (cloud or local)
     if (cloudSaveMode) {
@@ -204,17 +218,20 @@ export default function ClickerGame({
       saveGame();
     }
     setShowLeaderboardCongrats(false);
+    // leaderboardSubmitted bleibt true, wenn es so war, bis ein neuer Checkpoint anvisiert wird.
   };
 
   // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
   const handleLeaderboardSubmit = async () => {
-    if (!leaderboardName.trim()) return;
+    if (!leaderboardName.trim() || !currentCheckpoint) return;
+
     // Firestore Submission wie in useLeaderboardSubmit.js
     const { addDoc, collection } = await import('firebase/firestore');
     const { db } = await import('../../firebase');
     await addDoc(collection(db, 'leaderboard'), {
       name: leaderboardName.trim(),
       playtime: playTime,
+      goal: currentCheckpoint.id, // Die ID des erreichten Ziels hinzufügen
       clicks: floatingClicks,
       activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
@@ -222,6 +239,7 @@ export default function ClickerGame({
     setLeaderboardSubmitted(true);
     // Save game state (cloud or local)
     if (cloudSaveMode) {
+      // Die Logik zum Speichern in der Cloud bleibt hier gleich
       try {
         // Force new UUID if missing (first cloud save)
         if (!cloudUuid) {
@@ -236,7 +254,8 @@ export default function ClickerGame({
     } else if (typeof saveGame === 'function') {
       saveGame();
     }
-    handleLeaderboardCongratsClose();
+    addCheckpointToStorage(currentCheckpoint.id); // Bei erfolgreichem Submit auch im Storage vermerken
+    setShowLeaderboardCongrats(false); // Modal direkt schließen
   };
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
@@ -327,10 +346,10 @@ export default function ClickerGame({
               <h3>Congratulations!</h3>
             </div>
             <p>
-              You have reached a milestone ({CHECKPOINTS.find(cp => money >= cp).toLocaleString('en-US')} €)!<br />
-              Do you want to enter your name for the leaderboard?
-            </p>
-            <input
+              You have reached a milestone ({currentCheckpoint ? currentCheckpoint.label : 'a goal'})!<br />
+               Do you want to enter your name for the leaderboard?
+             </p>
+             <input
               className="modal-input"
               type="text"
               maxLength={18}
