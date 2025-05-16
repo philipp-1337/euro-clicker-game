@@ -4,10 +4,10 @@ import {
   calculateCooldownUpgradePercentage 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
+import useSoundEffects from '@hooks/useSoundEffects'; // Import the new hook
 import { Check } from 'lucide-react';
 
 // Load sound effect
-const clickSound = new Audio('/sounds/value-click.mp3');
 
 export default function BasicUpgrades({ 
     buttons, 
@@ -22,6 +22,8 @@ export default function BasicUpgrades({
     managerCosts,
     valueMultipliers
 }) {
+  const { playSound } = useSoundEffects(); // Use the sound effects hook
+
   // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
   
@@ -29,7 +31,7 @@ export default function BasicUpgrades({
   const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
 
   const handleValueUpgradeClick = (index) => {
-    clickSound.play(); // Play sound effect when value upgrade is bought
+    playSound('valueUpgrade'); // Play sound effect when value upgrade is bought
     buyValueUpgrade(index);
   };
 
