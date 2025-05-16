@@ -60,8 +60,8 @@ function playSoundInternal(name, soundEffectsEnabled) {
   if (!audioContext || !audioBuffers[name]) {
     // If not initialized yet or sound failed to load, queue or log
     if (!isInitialized) {
-        // Queue the play request until initialized
-        initializationListeners.push(() => playSound(name));
+        // Queue the play request until initialized, passing the current soundEffectsEnabled state
+        initializationListeners.push(() => playSoundInternal(name, soundEffectsEnabled));
     } else {
         console.warn(`AudioContext not available or sound "${name}" not loaded.`);
     }
@@ -130,7 +130,7 @@ export default function useSoundEffects(soundEffectsEnabled) {
 
     // Return the playSound function and the ready state
     return {
-      playSound: useCallback((name) => playSoundInternal(name, soundEffectsEnabled), [soundEffectsEnabled, isReady]),
+      playSound: useCallback((name) => playSoundInternal(name, soundEffectsEnabled), [soundEffectsEnabled]),
       isReady
     };
 }
