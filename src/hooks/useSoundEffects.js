@@ -51,8 +51,12 @@ async function initializeAudio() {
   }
 }
 
-// Function to play a sound
-function playSound(name) {
+// Internal function to play a sound, checks enabled status
+function playSoundInternal(name, soundEffectsEnabled) {
+  if (!soundEffectsEnabled) {
+    // console.log('Sound effects disabled, not playing:', name);
+    return;
+  }
   if (!audioContext || !audioBuffers[name]) {
     // If not initialized yet or sound failed to load, queue or log
     if (!isInitialized) {
@@ -74,7 +78,7 @@ function playSound(name) {
   }
 }
 
-export default function useSoundEffects() {
+export default function useSoundEffects(soundEffectsEnabled) {
     // Use a state to track if the hook is ready (sounds loaded)
     const [isReady, setIsReady] = useState(isInitialized);
 
@@ -125,5 +129,8 @@ export default function useSoundEffects() {
 
 
     // Return the playSound function and the ready state
-    return { playSound: useCallback(playSound, []), isReady };
+    return {
+      playSound: useCallback((name) => playSoundInternal(name, soundEffectsEnabled), [soundEffectsEnabled, isReady]),
+      isReady
+    };
 }

@@ -44,7 +44,8 @@ export default function UpgradeTabs({
   offlineEarningsLevel,      // New
   currentOfflineEarningsFactor, // New
   buyOfflineEarningsLevel,     // New
-  offlineEarningsLevelCost   // New
+  offlineEarningsLevelCost,   // New
+  soundEffectsEnabled, // New prop
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -120,6 +121,7 @@ export default function UpgradeTabs({
           currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
           buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
           offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
+          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
         />
       )
     ))}

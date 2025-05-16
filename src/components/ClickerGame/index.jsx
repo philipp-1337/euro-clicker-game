@@ -12,7 +12,17 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 
-export default function ClickerGame({ easyMode = false, onEasyModeToggle, registerSaveGameHandler, musicPlaying, setMusicPlaying }) {
+export default function ClickerGame({
+  easyMode = false,
+  onEasyModeToggle,
+  registerSaveGameHandler,
+  musicPlaying, // This is from App.js, not used directly here for control
+  setMusicPlaying,
+  musicEnabled, // New
+  setMusicEnabled, // New
+  soundEffectsEnabled, // New
+  setSoundEffectsEnabled // New
+}) {
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
@@ -80,7 +90,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     clearLastInactiveDuration, // Get new function from hook
     calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
     claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
-  } = useClickerGame(easyMode);
+  } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
   const {
@@ -109,7 +119,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
     setButtonClicked(index);
     handleClick(index);
     // Start background music on first manual click
-    if (!musicStarted && typeof setMusicPlaying === 'function') {
+    if (musicEnabled && !musicStarted && typeof setMusicPlaying === 'function') {
       setMusicPlaying(true);
       setMusicStarted(true);
     }
@@ -301,6 +311,10 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
           hasAnyAchievement={hasAnyAchievement}
           activePlayTime={activePlayTime}
           inactivePlayTime={inactivePlayTime}
+          musicEnabled={musicEnabled} // Pass down
+          setMusicEnabled={setMusicEnabled} // Pass down
+          soundEffectsEnabled={soundEffectsEnabled} // Pass down
+          setSoundEffectsEnabled={setSoundEffectsEnabled} // Pass down
         />
       )}
 
@@ -421,6 +435,7 @@ export default function ClickerGame({ easyMode = false, onEasyModeToggle, regist
             currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
             buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
             offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
+            soundEffectsEnabled={soundEffectsEnabled} // Pass down
           />
         </div>
       )}

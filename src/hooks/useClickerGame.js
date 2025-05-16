@@ -10,7 +10,7 @@ import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
 import useStateInfrastructure from './useStateInfrastructure';
 
-export default function useClickerGame(easyMode = false) {
+export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
 
   // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
   const { playTime, ensureStartTime, isGameStarted } = usePlaytime(); // isGameStarted hier holen
@@ -115,7 +115,7 @@ export default function useClickerGame(easyMode = false) {
   
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime);
+  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
   // Managerkosten dynamisch berechnen
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
@@ -159,7 +159,7 @@ export default function useClickerGame(easyMode = false) {
 
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
-    cooldowns, setCooldowns, managers, buttons, money, setMoney
+    cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled
   );
 
 

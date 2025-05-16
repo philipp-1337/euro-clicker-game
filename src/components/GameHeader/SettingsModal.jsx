@@ -20,6 +20,9 @@ import {
   MoonIcon,
   SunIcon,
   MousePointerClickIcon,
+  Music2 as MusicIcon,
+  Volume2 as SoundEffectsIcon,
+  VolumeX as MuteIcon,
   BarChart2 as BarChart2Icon,
   AwardIcon,
 } from "lucide-react";
@@ -62,6 +65,10 @@ export default function SettingsModal({
   hasAnyAchievement, // Neue Prop
   showAchievementsHeaderButton,
   setShowAchievementsHeaderButton,
+  musicEnabled, // New
+  setMusicEnabled, // New
+  soundEffectsEnabled, // New
+  setSoundEffectsEnabled, // New
   showStatisticsHeaderButton,
   setShowStatisticsHeaderButton,
 }) {
@@ -268,6 +275,46 @@ export default function SettingsModal({
               ) : (
                 <MoonIcon size={18} />
               )}
+            </button>
+          </div>
+          {/* Audio Settings */}
+          <h4 className="settings-section-title">Audio Settings</h4>
+          {/* Background Music Toggle */}
+          <div className="settings-row">
+            <MusicIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setMusicEnabled(v => !v)}
+              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+            >
+              {musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setMusicEnabled(v => !v)}
+              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+              aria-label="Background Music Toggle"
+            >
+              {musicEnabled ? <MusicIcon size={18} /> : <MuteIcon size={18} />}
+            </button>
+          </div>
+          {/* Sound Effects Toggle */}
+          <div className="settings-row">
+            <SoundEffectsIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setSoundEffectsEnabled(v => !v)}
+              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+            >
+              {soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setSoundEffectsEnabled(v => !v)}
+              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+              aria-label="Sound Effects Toggle"
+            >
+              {soundEffectsEnabled ? <SoundEffectsIcon size={18} /> : <MuteIcon size={18} />}
             </button>
           </div>
           {/* Save options */}

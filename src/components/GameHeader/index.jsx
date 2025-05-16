@@ -208,6 +208,10 @@ export default function GameHeader(props) {
         setShowAchievementsHeaderButton={setShowAchievementsHeaderButton}
         showStatisticsHeaderButton={showStatisticsHeaderButton}
         setShowStatisticsHeaderButton={setShowStatisticsHeaderButton}
+        musicEnabled={props.musicEnabled} // Pass down
+        setMusicEnabled={props.setMusicEnabled} // Pass down
+        soundEffectsEnabled={props.soundEffectsEnabled} // Pass down
+        setSoundEffectsEnabled={props.setSoundEffectsEnabled} // Pass down
       />
       <AchievementsModal
         showAchievements={showAchievements}

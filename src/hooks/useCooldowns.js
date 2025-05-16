@@ -2,8 +2,8 @@ import { useCallback, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useSoundEffects from './useSoundEffects'; // Import the new hook
 
-export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney) {
-  const { playSound } = useSoundEffects(); // Use the sound effects hook
+export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled) {
+  const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
 
   const handleClick = useCallback((index, isManager = false) => {
     if (cooldowns[index] <= 0) {

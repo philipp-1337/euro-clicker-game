@@ -20,9 +20,10 @@ export default function BasicUpgrades({
     managers,
     buyManager,
     managerCosts,
-    valueMultipliers
+    valueMultipliers,
+    soundEffectsEnabled, // New prop
 }) {
-  const { playSound } = useSoundEffects(); // Use the sound effects hook
+  const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
 
   // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);

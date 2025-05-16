@@ -58,6 +58,9 @@ export default function useCloudSave() {
       // --- LEADERBOARD CHECKPOINTS PATCH ---
       const leaderboardCheckpointsReached = localStorage.getItem('leaderboardCheckpointsReached');
       // --- ENDE LEADERBOARD CHECKPOINTS PATCH ---
+      // Hole Audio-Einstellungen aus LocalStorage
+      const musicEnabledSetting = localStorage.getItem('musicEnabled');
+      const soundEffectsEnabledSetting = localStorage.getItem('soundEffectsEnabled');
 
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
@@ -69,6 +72,8 @@ export default function useCloudSave() {
         leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
+        musicEnabledSetting,
+        soundEffectsEnabledSetting,
       });
       setCloudStatus('saved');
       return uuid;
@@ -105,6 +110,13 @@ export default function useCloudSave() {
       // --- LEADERBOARD CHECKPOINTS PATCH ---
       if (data.leaderboardCheckpointsReached) localStorage.setItem('leaderboardCheckpointsReached', data.leaderboardCheckpointsReached);
       // --- ENDE LEADERBOARD CHECKPOINTS PATCH ---
+      // Schreibe Audio-Einstellungen zurück in LocalStorage
+      if (data.musicEnabledSetting !== undefined && data.musicEnabledSetting !== null) {
+        localStorage.setItem('musicEnabled', data.musicEnabledSetting);
+      }
+      if (data.soundEffectsEnabledSetting !== undefined && data.soundEffectsEnabledSetting !== null) {
+        localStorage.setItem('soundEffectsEnabled', data.soundEffectsEnabledSetting);
+      }
 
       // Dark Mode nach Import anwenden
       try {
@@ -127,9 +139,11 @@ export default function useCloudSave() {
         leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
-        ...gameState
+        musicEnabledSetting,
+        soundEffectsEnabledSetting,
+        ...gameStateForApp
       } = data;
-      return gameState;
+      return gameStateForApp;
     } catch (e) {
       setCloudStatus('error');
       throw e;

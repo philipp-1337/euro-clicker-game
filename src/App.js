@@ -11,6 +11,10 @@ function App() {
   const saveGameRef = useRef(null); // Ref für die saveGame Funktion
   const audioRef = useRef(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
+  // Audio settings states
+  const [musicEnabled, setMusicEnabled] = useState((localStorage.getItem('musicEnabled') ?? 'true') === 'true');
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState((localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true');
+
 
   useEffect(() => {
     const handleUpdateReady = (event) => {
@@ -28,12 +32,20 @@ function App() {
 
   // Optional: Start music on first user interaction if autoplay is blocked
   useEffect(() => {
-    if (musicPlaying && audioRef.current) {
-      audioRef.current.play();
+    if (musicPlaying && musicEnabled && audioRef.current) {
+      audioRef.current.play().catch(error => console.warn("Music play failed:", error));
     } else if (audioRef.current) {
       audioRef.current.pause();
     }
-  }, [musicPlaying]);
+  }, [musicPlaying, musicEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', musicEnabled.toString());
+  }, [musicEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('soundEffectsEnabled', soundEffectsEnabled.toString());
+  }, [soundEffectsEnabled]);
 
   // Handler für Easy-Mode-Toggle
   const handleEasyModeToggle = (isEasyMode) => {
@@ -84,6 +96,10 @@ function App() {
         registerSaveGameHandler={registerSaveGameHandler}
         musicPlaying={musicPlaying}
         setMusicPlaying={setMusicPlaying}
+        musicEnabled={musicEnabled}
+        setMusicEnabled={setMusicEnabled}
+        soundEffectsEnabled={soundEffectsEnabled}
+        setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
     </div>
   );
