@@ -32,6 +32,7 @@ export default function PremiumUpgrades({
   currentCriticalClickChance, // New: Calculated critical click chance
   buyCriticalClickChanceLevel, // New: Function to buy next critical click chance level
   criticalClickChanceCost,   // New: Cost for the next critical click chance level
+  managers, // Add managers prop
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -65,6 +66,9 @@ export default function PremiumUpgrades({
   const offlineEarningsCostIncreasePercentage = getPercentage(
     gameConfig.premiumUpgrades.offlineEarnings.costExponent
   );
+
+  // Check if any manager is bought
+  const hasAnyManager = managers ? managers.some(manager => manager === true) : false;
 
   return (
     <div className="upgrade-section premium-section">
@@ -121,7 +125,7 @@ export default function PremiumUpgrades({
         </div>
         <p className="premium-upgrade-description">
           Each click on the floating Euro button has a chance to grant your current income per second instead of +1€. Each level increases this chance by {criticalClickChanceEffectPercentage}%.
-          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level.
+          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100 (100% chance). Requires at least one manager.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -129,10 +133,11 @@ export default function PremiumUpgrades({
           </div>
           <button
             onClick={buyCriticalClickChanceLevel}
-            disabled={money < criticalClickChanceCost}
-            className={`premium-upgrade-button ${money < criticalClickChanceCost ? 'disabled' : ''}`}
+            disabled={money < criticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager}
+            className={`premium-upgrade-button ${money < criticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager ? 'disabled' : ''}`}
+            title={!hasAnyManager ? "Requires at least one manager to be purchased." : ""}
           >
-            {formatNumber(criticalClickChanceCost)} €
+            {criticalClickChanceLevel >= 100 ? 'Max Level' : `${formatNumber(criticalClickChanceCost)} €`}
           </button>
         </div>
       </div>
