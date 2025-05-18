@@ -45,6 +45,10 @@ export default function UpgradeTabs({
   currentOfflineEarningsFactor, // New
   buyOfflineEarningsLevel,     // New
   offlineEarningsLevelCost,   // New
+  criticalClickChanceLevel,      // New
+  currentCriticalClickChance, // New
+  buyCriticalClickChanceLevel,     // New
+  criticalClickChanceCost,   // New
   soundEffectsEnabled, // New prop
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
@@ -121,6 +125,10 @@ export default function UpgradeTabs({
           currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
           buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
           offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
+          criticalClickChanceLevel={criticalClickChanceLevel} // New
+          currentCriticalClickChance={currentCriticalClickChance} // New
+          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
+          criticalClickChanceCost={criticalClickChanceCost} // New
           soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
         />
       )

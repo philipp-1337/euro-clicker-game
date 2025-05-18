@@ -74,6 +74,7 @@ export const gameConfig = {
       dissatisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
       offlineEarningsLevel: 0, // Level for offline earnings
+      criticalClickChanceLevel: 0, // Level for critical click chance upgrade
     },
     activePlayTime: 0, // Initial aktive Spielzeit
     inactivePlayTime: 0,    // Initial kumulierte inaktive Spiel-Zeit
@@ -90,16 +91,21 @@ export const gameConfig = {
     premiumUpgrades: {
       globalMultiplier: {
         baseCost: 1000,
-        costExponent: 1.75
+        costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
       },
       globalPriceDecrease: {
-        baseCost: 2500,
-        costExponent: 1.60, // z.B. exponentiell steigend, anpassbar
+        baseCost: 2000,
+        costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
+      },
+      criticalClickChance: { // New upgrade configuration
+        baseCost: 3000,
+        costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
+        effectPerLevel: 0.01 // 1% chance increase per level
       },
       offlineEarnings: { // Changed from unlockOfflineEarnings
         baseCost: 4000,
-        costExponent: 1.45, // Cost scaling per level
+        costExponent: 1.7, // Cost scaling per level
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs

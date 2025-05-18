@@ -55,6 +55,10 @@ export default function useGameState(easyMode = false) {
   // State für Offline-Einnahmen
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
+  // State for Critical Click Chance
+  const [criticalClickChanceLevel, setCriticalClickChanceLevel] = useState(gameConfig.initialState.criticalClickChanceLevel);
+
+
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
@@ -78,6 +82,7 @@ export default function useGameState(easyMode = false) {
     activePlayTime,
     inactivePlayTime,
     offlineEarningsLevel, // Add to game state
+    criticalClickChanceLevel, // Add to game state
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -117,6 +122,7 @@ export default function useGameState(easyMode = false) {
     } else {
       setOfflineEarningsLevel(gameConfig.initialState.offlineEarningsLevel);
     }
+    setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
 
     // Calculate initial offline duration if lastSaved timestamp exists in saved state
@@ -154,6 +160,7 @@ export default function useGameState(easyMode = false) {
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
     offlineEarningsLevel, setOfflineEarningsLevel, // Expose new state and setter
+    criticalClickChanceLevel, setCriticalClickChanceLevel, // Expose new state and setter
     initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load

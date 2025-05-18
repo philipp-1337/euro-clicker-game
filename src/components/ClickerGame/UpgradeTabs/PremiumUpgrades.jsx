@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent, Landmark, Shield, HistoryIcon } from 'lucide-react';
+import { DollarSign, Star, Percent, Landmark, Shield, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -27,7 +27,11 @@ export default function PremiumUpgrades({
   offlineEarningsLevel,      // New: Current level of offline earnings
   currentOfflineEarningsFactor, // New: Calculated effective factor
   buyOfflineEarningsLevel,     // New: Function to buy next level
-  offlineEarningsLevelCost   // New: Cost for the next level
+  offlineEarningsLevelCost,   // New: Cost for the next level
+  criticalClickChanceLevel,  // New: Current level of critical click chance
+  currentCriticalClickChance, // New: Calculated critical click chance
+  buyCriticalClickChanceLevel, // New: Function to buy next critical click chance level
+  criticalClickChanceCost,   // New: Cost for the next critical click chance level
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -38,8 +42,28 @@ export default function PremiumUpgrades({
     gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor
   );
 
-  const offlineEarningsIncreasePerLevelPercentage = getPercentage(
+  const offlineEarningsEffectPerLevelPercentage = getPercentage(
     1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel // Convert 0.02 to 2%
+  );
+
+  const criticalClickChanceEffectPercentage = getPercentage(
+    1 + gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel 
+  );
+
+  // Cost increase percentages
+  const globalMultiplierCostIncreasePercentage = getPercentage(
+    gameConfig.premiumUpgrades.globalMultiplier.costExponent
+  );
+
+  const globalPriceDecreaseCostIncreasePercentage = getPercentage(
+    gameConfig.premiumUpgrades.globalPriceDecrease.costExponent
+  );
+
+  const criticalClickChanceCostIncreasePercentage = getPercentage(
+    gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier
+  );
+  const offlineEarningsCostIncreasePercentage = getPercentage(
+    gameConfig.premiumUpgrades.offlineEarnings.costExponent
   );
 
   return (
@@ -51,7 +75,8 @@ export default function PremiumUpgrades({
           <h3>Clicker Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          Increases the value of all clicks by {globalMultiplierPercentage}% per level.
+          Increases the value of all clicks by {globalMultiplierPercentage}% per level. 
+          Cost increases by {globalMultiplierCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -72,7 +97,8 @@ export default function PremiumUpgrades({
           <h3>Upgrade Price Decrease</h3>
         </div>
         <p className="premium-upgrade-description">
-          Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level.
+          Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level. 
+          Cost increases by {globalPriceDecreaseCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -87,6 +113,29 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      {/* Critical Click Chance Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <ZapIcon className="premium-icon" />
+          <h3>Critical Click Chance</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Each click on the floating Euro button has a chance to grant your current income per second instead of +1€. Each level increases this chance by {criticalClickChanceEffectPercentage}%.
+          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {criticalClickChanceLevel} (Currently: {formatNumber(currentCriticalClickChance * 100)}% chance)
+          </div>
+          <button
+            onClick={buyCriticalClickChanceLevel}
+            disabled={money < criticalClickChanceCost}
+            className={`premium-upgrade-button ${money < criticalClickChanceCost ? 'disabled' : ''}`}
+          >
+            {formatNumber(criticalClickChanceCost)} €
+          </button>
+        </div>
+      </div>
       {/* Unlock Offline Earnings */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
@@ -94,7 +143,8 @@ export default function PremiumUpgrades({
           <h3>Offline Earnings</h3>
         </div>
         <p className="premium-upgrade-description">
-          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsIncreasePerLevelPercentage}%.
+          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%.
+          Cost increases by {offlineEarningsCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">

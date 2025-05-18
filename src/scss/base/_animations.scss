@@ -34,3 +34,41 @@
   .clicker-buttons-fade {
     animation: fadeIn 0.4s ease;
   }
+
+// Keyframes für kritische Klick-Effekte
+@keyframes critical-button-pulse-effect {
+  from, to { // Effekt soll für die gesamte Animationsdauer gelten
+    transform: scale(1.1);
+    border: 5px solid #FFD700; // Goldene Farbe
+    box-shadow: 0 0 25px 10px rgba(255, 215, 0, 0.8), 0 4px 8px rgba(0, 0, 0, 0.2); // Stärkerer goldener Schein
+  }
+  // Optional: Wenn du einen "Puls" möchtest, könntest du hier einen 50%-Schritt einfügen,
+  // der leicht abweicht, z.B. transform: scale(1.05);
+}
+
+@keyframes floatAndWobble {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 20px) rotate(0deg); // Start lower, closer to button, visible
+  }
+  20% { // Initial upward movement and wobble
+    opacity: 1;
+    transform: translate(-50%, -30px) rotate(-8deg);
+  }
+  40% { // Continue upward and wobble other way
+    opacity: 1;
+    transform: translate(-50%, -60px) rotate(8deg);
+  }
+  60% { // Further up, less wobble
+    opacity: 1;
+    transform: translate(-50%, -90px) rotate(-5deg);
+  }
+  80% { // Start fading, almost at peak
+    opacity: 0.9;
+    transform: translate(-50%, -120px) rotate(5deg);
+  }
+  100% { // Fully faded and higher up
+    opacity: 0;
+    transform: translate(-50%, -150px) rotate(0deg);
+  }
+}

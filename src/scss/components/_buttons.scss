@@ -6,26 +6,38 @@
 @use "../abstracts/functions" as *;
 
 // Base button styles
-.floating-click-button {
-  position: fixed;
+.floating-click-button-container { // This is the new fixed/absolute positioned container
+  position: fixed; // Or absolute if parent is relative
   bottom: 20px;
   right: 20px;
-  width: 100px;
+  width: 100px; // Container size matches button for simplicity here
   height: 100px;
   border-radius: 50%;
+  z-index: 1000; // Container's z-index
+  display: flex; // To center the inner relative div if needed
+  align-items: center;
+  justify-content: center;
+  // Remove background, color, border, font, box-shadow from container
+  // These will be on the actual button
+  // transition for container's position if centerMode changes
+  transition: width 0.3s, height 0.3s, left 0.3s, top 0.3s, right 0.3s, bottom 0.3s, transform 0.3s;
+}
+
+.floating-click-button-actual { // This is the actual button style
+  width: 100%; // Takes full size of its immediate parent (the relative div)
+  height: 100%;
   background: linear-gradient(to bottom, #ff6b6b, #e67e22);
   color: map.get($colors, white);
   border: none;
   font-size: 16px;
   font-weight: bold;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: transform 0.1s, width 0.3s, height 0.3s, left 0.3s, top 0.3s,
-    right 0.3s, bottom 0.3s;
+  cursor: pointer; // border und box-shadow zur Transition hinzugefügt für den Krit-Effekt
+  transition: transform 0.1s; // Only transform for the button itself
+  border-radius: 50%; // Keep border-radius on the button
 
   &:active {
     transform: scale(0.95);
@@ -35,25 +47,47 @@
     background: linear-gradient(to bottom, #e67e22, #d35400);
   }
 
-  &.center-mode {
-    position: fixed;
+  &.critical-hit { // This applies to the button, not the container
+    animation: critical-button-pulse-effect 0.3s ease-out;
+  }
+}
+
+.floating-click-button-container.center-mode { // Styles for the container in center mode
     left: 50%;
     top: 50%;
     right: auto;
     bottom: auto;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); // This needs to be part of the transition
     width: 50vw;
     height: 50vw;
     max-width: 350px;
     max-height: 350px;
     min-width: 180px;
     min-height: 180px;
+    z-index: 2000; // Higher z-index for center mode
+
+  .floating-click-button-actual { // Button styles when in center mode (mostly for font size)
     font-size: 2.5rem;
-    border-radius: 50%;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-    z-index: 2000;
+    // The button will naturally fill the container due to width/height 100% of its parent (the relative div)
   }
 }
+
+.critical-hit-amount {
+  position: absolute;
+  bottom: 70%; // Startet etwas über dem Button (abhängig von Button-Größe anpassen)
+  left: 50%;
+  // transform: translateX(-50%); // Die initiale Transformation wird von der Animation gehandhabt
+  font-size: 1.6rem; // Größe des Textes
+  font-weight: bold;
+  color: #FFD700; // Goldene Farbe
+  text-shadow: 1px 1px 0px black, -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 0px 0px 3px black; // Bessere Kontur
+  pointer-events: none; // Damit der Text nicht mit Klicks interferiert
+  animation: floatAndWobble 1.5s ease-out forwards; // Name der Animation, Dauer, Timing-Funktion
+  white-space: nowrap; // Verhindert Zeilenumbrüche
+  z-index: 1001; // Über dem Button
+  opacity: 0; // Startet unsichtbar, Animation macht es sichtbar
+ }
 
 .clicker-buttons {
   display: flex;

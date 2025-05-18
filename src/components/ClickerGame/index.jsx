@@ -83,6 +83,10 @@ export default function ClickerGame({
     offlineEarningsLevelCost,  // New
     buyOfflineEarningsLevel,     // New
     gameState,
+    criticalClickChanceLevel, // New
+    currentCriticalClickChance, // New
+    criticalClickChanceCost, // New
+    buyCriticalClickChanceLevel, // New
     loadGameState,
     activePlayTime,
     inactivePlayTime,
@@ -107,6 +111,10 @@ export default function ClickerGame({
   // Track if music has started
   const [musicStarted, setMusicStarted] = useState(false);
 
+  // State für visuelle Effekte bei kritischen Klicks
+  const [showCriticalEffect, setShowCriticalEffect] = useState(false);
+  const [criticalHitAnimations, setCriticalHitAnimations] = useState([]);
+
   // Handler für FloatingClickButton
   const handleFloatingClick = () => {
     if (!uiProgress.gameStarted) setGameStarted();
@@ -116,8 +124,21 @@ export default function ClickerGame({
       setMusicPlaying(true);
       setMusicStarted(true);
     }
-    // Add quick money from floating click
-    addQuickMoney();
+    // Füge Geld hinzu und prüfe, ob der Klick kritisch war
+    const { isCritical, amount } = addQuickMoney(); // Destructure isCritical and amount
+    if (isCritical) {
+      console.log('CRITICAL HIT DETECTED! Amount:', amount, 'Applying visual effect.');
+      setShowCriticalEffect(true);
+      const newAnimation = { id: Date.now(), amount: amount };
+      setCriticalHitAnimations(prev => [...prev, newAnimation]);
+
+      setTimeout(() => {
+        setShowCriticalEffect(false);
+      }, 1000); // Dauer des Effekts in ms (auf 1 Sekunde erhöht)
+      setTimeout(() => {
+        setCriticalHitAnimations(prev => prev.filter(anim => anim.id !== newAnimation.id));
+      }, 1500); // Dauer der Text-Animation (muss zur CSS Animation passen)
+    }
   };
 
   // Handler für ClickerButtons
@@ -455,13 +476,22 @@ export default function ClickerGame({
             currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
             buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
             offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
+            criticalClickChanceLevel={criticalClickChanceLevel} // New
+            currentCriticalClickChance={currentCriticalClickChance} // New
+            criticalClickChanceCost={criticalClickChanceCost} // New
+            buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
             soundEffectsEnabled={soundEffectsEnabled} // Pass down
           />
         </div>
       )}
 
       {/* FloatingClickButton immer sichtbar */}
-      <FloatingClickButton onClick={handleFloatingClick} centerMode={floatingCenterMode} />
+      <FloatingClickButton
+        onClick={handleFloatingClick}
+        centerMode={floatingCenterMode}
+        isCritical={showCriticalEffect} // Prop für Button-Effekt
+        criticalHitAnimations={criticalHitAnimations} // Pass down animation data
+      />
     </div>
   );
 }

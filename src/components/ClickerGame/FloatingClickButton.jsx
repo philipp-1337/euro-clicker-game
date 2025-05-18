@@ -1,13 +1,30 @@
 import React from 'react';
+import { formatNumber } from '@utils/calculators'; // Import formatNumber
 
-export default function FloatingClickButton({ onClick, centerMode = false }) {
+export default function FloatingClickButton({
+  onClick,
+  centerMode = false,
+  isCritical = false,
+  criticalHitAnimations = [] // New prop
+}) {
+  // The outer div will handle the fixed/absolute positioning and centerMode class
+  // The inner div with position: relative is for the animated amounts relative to the button
   return (
-    <button
-      onClick={onClick}
-      className={`floating-click-button${centerMode ? ' center-mode' : ''}`}
-      aria-label="Quick Euro Button"
-    >
-      +1 €
-    </button>
+    <div className={`floating-click-button-container${centerMode ? ' center-mode' : ''}`}>
+      <div style={{ position: 'relative', display: 'inline-block', width: '100%', height: '100%' }}> {/* For positioning amounts */}
+        <button
+          onClick={onClick}
+          className={`floating-click-button-actual${isCritical ? ' critical-hit' : ''}`} // Renamed class for the actual button
+          aria-label="Quick Euro Button"
+        >
+          +1 €
+        </button>
+        {criticalHitAnimations.map(anim => (
+          <span key={anim.id} className="critical-hit-amount">
+            +{formatNumber(anim.amount)}€
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }

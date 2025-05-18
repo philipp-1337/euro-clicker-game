@@ -46,6 +46,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
     offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
+    criticalClickChanceLevel, setCriticalClickChanceLevel, // Get new state for critical clicks
     initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
   } = gameStateHook;
   
@@ -107,12 +108,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     ensureStartTime
   );
 
-  // In useClickerGame.js, füge diese Funktion hinzu
-  const addQuickMoney = useCallback(() => {
-    ensureStartTime?.();
-    setMoney(prevMoney => prevMoney + 1);
-  }, [setMoney, ensureStartTime]);
-  
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
   const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
@@ -220,8 +215,30 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     }
   }, [money, offlineEarningsLevelCost, setMoney, setOfflineEarningsLevel, ensureStartTime]);
 
-  
+  // Critical Click Chance Upgrade
+  const currentCriticalClickChance = useMemo(() =>
+    criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel,
+    [criticalClickChanceLevel]
+  );
+
+  const criticalClickChanceCost = useMemo(() =>
+    gameConfig.premiumUpgrades.criticalClickChance.baseCost *
+    (1 + criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+    costMultiplier,
+    [criticalClickChanceLevel, costMultiplier]
+  );
+
+  const buyCriticalClickChanceLevel = useCallback(() => {
+    if (money >= criticalClickChanceCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - criticalClickChanceCost);
+      setCriticalClickChanceLevel(prev => prev + 1);
+    }
+  }, [money, criticalClickChanceCost, setMoney, setCriticalClickChanceLevel, ensureStartTime]);
+
   const { saveGame } = useLocalStorage(gameState, loadGameState);
+
+
 
    // State for "Welcome Back" modal
    // This state will be updated either by initialOfflineDuration on load
@@ -250,6 +267,20 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     setCalculatedOfflineEarnings(0);
   }
   }, [lastInactiveDuration, offlineEarningsLevel, totalMoneyPerSecond, currentOfflineEarningsFactor]);
+
+  // Funktion für den Floating Click Button
+  const addQuickMoney = useCallback(() => {
+    ensureStartTime?.();
+    const isCritical = Math.random() < currentCriticalClickChance;
+    let moneyToAdd = 1; // Standard +1€
+    if (isCritical) {
+      moneyToAdd = totalMoneyPerSecond;
+      // Hier könnte man später einen speziellen Sound für kritische Treffer einbauen
+    }
+    setMoney(prevMoney => prevMoney + moneyToAdd); // Add money before returning
+    return { isCritical, amount: moneyToAdd }; // Return object with critical status and amount
+  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond]);
+
 
   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
 
@@ -394,6 +425,10 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     currentOfflineEarningsFactor, // Export new calculated factor
     offlineEarningsLevelCost, // Export new cost
     buyOfflineEarningsLevel, // Export new buy function
+    criticalClickChanceLevel, // Export new state for critical clicks
+    currentCriticalClickChance, // Export calculated chance
+    criticalClickChanceCost, // Export cost for next level
+    buyCriticalClickChanceLevel, // Export buy function for critical clicks
     lastInactiveDuration,
     clearLastInactiveDuration,
     calculatedOfflineEarnings,
