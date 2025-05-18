@@ -51,9 +51,6 @@ export const gameConfig = {
     upgradeValueMultiplier: 1.1, // +10% pro Level
     upgradeCooldownReduction: 0.9, // -10% pro Level
     
-    // Premium-Upgrade-Faktoren
-    globalMultiplierIncrease: 1.05, // +5% pro Level
-    
     // Startbedingungen
     initialState: {
       money: 0,
@@ -83,7 +80,6 @@ export const gameConfig = {
     upgrades: {
       valueMultiplierFactor: 1.1,    // 10% Steigerung pro Level
       cooldownReductionFactor: 0.9,  // 10% Reduktion pro Level
-      globalMultiplierFactor: 1.05,  // 5% Steigerung pro Level
       costIncreaseFactor: 1.5        // 50% Kostensteigerung pro Level
     },
 
@@ -92,6 +88,7 @@ export const gameConfig = {
       globalMultiplier: {
         baseCost: 1000,
         costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
+        factor: 1.05,  // 5% Steigerung pro Level
       },
       globalPriceDecrease: {
         baseCost: 2000,

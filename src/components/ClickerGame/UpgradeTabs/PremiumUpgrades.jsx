@@ -35,7 +35,7 @@ export default function PremiumUpgrades({
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
-    gameConfig.upgrades.globalMultiplierFactor
+    gameConfig.premiumUpgrades.globalMultiplier.factor
   );
 
   const globalCostReductionPercentage = getPercentage(

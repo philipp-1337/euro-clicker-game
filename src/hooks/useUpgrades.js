@@ -52,7 +52,7 @@ export default function useUpgrades(
       if (money >= globalMultiplierCost) {
         ensureStartTime?.();
         setMoney(prev => prev - globalMultiplierCost);
-        setGlobalMultiplier(prev => prev * gameConfig.upgrades.globalMultiplierFactor);
+        setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
         setGlobalMultiplierLevel(prev => prev + 1);
       }
     }
