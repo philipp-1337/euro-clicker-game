@@ -11,6 +11,7 @@ function ParentComponent() {
     });
   });
   const [totalIncomePerSecond, setTotalIncomePerSecond] = useState(0);
+  const [money, setMoney] = useState(1000); // Example initial money
 
   const buyInvestment = (index) => {
     // ...existing buyInvestment logic...
@@ -49,7 +50,7 @@ function ParentComponent() {
     <div>
       {/* ...other components... */}
       <Investments
-        money={/* ... */}
+        money={money} // Pass the money state
         investments={investments}
         buyInvestment={buyInvestment}
         totalIncomePerSecond={totalIncomePerSecond}
