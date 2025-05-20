@@ -106,8 +106,8 @@ export const gameConfig = {
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-      unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
-      unlockInterventionsCost: 50000, // Kosten für die Freischaltung des Interventions-Tabs
+      unlockStateCost: 2500000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
+      unlockInterventionsCost: 5000000, // Kosten für die Freischaltung des Interventions-Tabs
     },
 
     // Timing-Konstanten

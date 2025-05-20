@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Investments from './UpgradeTabs/Investments';
 import { gameConfig } from '@constants/gameConfig';
 
 function ParentComponent() {
-  const [investments, setInvestments] = useState(Array(gameConfig.investments.length).fill(0));
+  const [investments] = useState(Array(gameConfig.investments.length).fill(0));
   const [boostedInvestments, setBoostedInvestments] = useState(() => {
     return gameConfig.investments.map((investment, index) => {
       const storedValue = localStorage.getItem(`boosted-${index}`);
@@ -11,7 +11,7 @@ function ParentComponent() {
     });
   });
   const [totalIncomePerSecond, setTotalIncomePerSecond] = useState(0);
-  const [money, setMoney] = useState(1000); // Example initial money
+  const [money] = useState(1000); // Example initial money
 
   const buyInvestment = (index) => {
     // ...existing buyInvestment logic...
@@ -28,7 +28,7 @@ function ParentComponent() {
     recalculateTotalIncome();
   };
 
-  const recalculateTotalIncome = () => {
+  const recalculateTotalIncome = useCallback(() => {
     let newTotalIncome = 0;
     gameConfig.investments.forEach((investment, index) => {
       if (investments[index]) {
@@ -40,11 +40,11 @@ function ParentComponent() {
       }
     });
     setTotalIncomePerSecond(newTotalIncome);
-  };
+  }, [investments, boostedInvestments]);
 
   useEffect(() => {
     recalculateTotalIncome();
-  }, [investments, boostedInvestments]);
+  }, [investments, boostedInvestments, recalculateTotalIncome]);
 
   return (
     <div>
@@ -54,7 +54,7 @@ function ParentComponent() {
         investments={investments}
         buyInvestment={buyInvestment}
         totalIncomePerSecond={totalIncomePerSecond}
-        investmentCostMultiplier={/* ... */}
+        investmentCostMultiplier={1} // Set a valid default value
         onTaxiBoostedChange={handleBoostedChange}
       />
     </div>

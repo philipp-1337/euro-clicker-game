@@ -129,7 +129,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {criticalClickChanceLevel} (Currently: {formatNumber(currentCriticalClickChance * 100)}% chance)
+            Level: {criticalClickChanceLevel} (Currently: {formatNumber(currentCriticalClickChance * 100)}%)
           </div>
           <button
             onClick={buyCriticalClickChanceLevel}
