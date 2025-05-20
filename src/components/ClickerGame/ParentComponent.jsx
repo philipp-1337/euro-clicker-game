@@ -4,13 +4,11 @@ import { gameConfig } from '@constants/gameConfig';
 
 function ParentComponent() {
   const [investments, setInvestments] = useState(Array(gameConfig.investments.length).fill(0));
-  const [taxiBoosted, setTaxiBoosted] = useState(() => {
-    const storedValue = localStorage.getItem('taxiBoosted');
-    return storedValue ? JSON.parse(storedValue) : false;
-  });
-  const [energyDrinksBoosted, setEnergyDrinksBoosted] = useState(() => {
-    const storedValue = localStorage.getItem('energyDrinksBoosted');
-    return storedValue ? JSON.parse(storedValue) : false;
+  const [boostedInvestments, setBoostedInvestments] = useState(() => {
+    return gameConfig.investments.map((investment, index) => {
+      const storedValue = localStorage.getItem(`boosted-${index}`);
+      return storedValue ? JSON.parse(storedValue) : false;
+    });
   });
   const [totalIncomePerSecond, setTotalIncomePerSecond] = useState(0);
 
@@ -18,13 +16,14 @@ function ParentComponent() {
     // ...existing buyInvestment logic...
   };
 
-  const handleTaxiBoostedChange = (income, boosted) => {
-    setTaxiBoosted(boosted);
-    recalculateTotalIncome();
-  };
-
-  const handleEnergyDrinksBoostedChange = (income, boosted) => {
-    setEnergyDrinksBoosted(boosted);
+  const handleBoostedChange = (income, boosted) => {
+    setBoostedInvestments(prev => {
+      const newBoostedInvestments = [...prev];
+      const index = gameConfig.investments.findIndex(investment => investment.income * 2 === income || investment.income === income);
+      newBoostedInvestments[index] = boosted;
+      localStorage.setItem(`boosted-${index}`, JSON.stringify(boosted));
+      return newBoostedInvestments
+    });
     recalculateTotalIncome();
   };
 
@@ -33,10 +32,8 @@ function ParentComponent() {
     gameConfig.investments.forEach((investment, index) => {
       if (investments[index]) {
         let effectiveIncome = investment.income;
-        if (investment.name === "Taxi Company" && taxiBoosted) {
-          effectiveIncome = 20;
-        } else if (investment.name === "Energy Drinks" && energyDrinksBoosted) {
-          effectiveIncome = 40;
+        if (boostedInvestments[index]) {
+          effectiveIncome = investment.income * 2;
         }
         newTotalIncome += effectiveIncome;
       }
@@ -46,7 +43,7 @@ function ParentComponent() {
 
   useEffect(() => {
     recalculateTotalIncome();
-  }, [investments, taxiBoosted, energyDrinksBoosted]);
+  }, [investments, boostedInvestments]);
 
   return (
     <div>
@@ -57,7 +54,7 @@ function ParentComponent() {
         buyInvestment={buyInvestment}
         totalIncomePerSecond={totalIncomePerSecond}
         investmentCostMultiplier={/* ... */}
-        onTaxiBoostedChange={handleTaxiBoostedChange}
+        onTaxiBoostedChange={handleBoostedChange}
       />
     </div>
   );
