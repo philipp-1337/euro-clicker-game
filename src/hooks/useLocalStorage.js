@@ -18,20 +18,41 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     if (hasLoaded.current) return;
     hasLoaded.current = true;
 
+    // gameConfig.initialState wird von useGameState verwendet, wenn nichts geladen wird.
+    // Hier kümmern wir uns nur um das Laden *existierender* Daten.
     if (hasSavedGame(STORAGE_KEY)) {
-      const savedGameData = loadGameStateUtil(STORAGE_KEY); // Umbenannt, um Konflikt mit loadGameStateHook zu vermeiden
-      if (savedGameData) {
-        loadGameStateHook(savedGameData); // Pass the entire loaded object, including lastSaved
-      } else {
-        // Manipulation erkannt oder Daten sind null/korrupt
-        console.warn("[useLocalStorage] Failed to load saved game due to tampering or corruption. Resetting to initial state.");
-        localStorage.removeItem(STORAGE_KEY); // Beschädigte/manipulierte Daten entfernen
-        loadGameStateHook(gameConfig.initialState); // Initialzustand laden
-        // Optional: Benutzer über UI benachrichtigen
-        window.dispatchEvent(new CustomEvent('gamestateTampered'));
+      const loadResult = loadGameStateUtil(STORAGE_KEY, gameConfig.initialState);
+
+      switch (loadResult.type) {
+        case 'success':
+        case 'success_old_format': // Altes Format als Erfolg für das Laden behandeln
+          loadGameStateHook(loadResult.payload);
+          if (loadResult.type === 'success_old_format' && window.location.hostname !== 'localhost') {
+            console.log('[useLocalStorage] Altes Speicherformat geladen. Es wird beim nächsten Speichern mit einer Prüfsumme aktualisiert.');
+          }
+          break;
+        case 'error':
+          console.warn(`[useLocalStorage] Fehler beim Laden des Spiels: ${loadResult.reason}. Nachricht: ${loadResult.message}. Wird auf den Initialzustand zurückgesetzt.`);
+          localStorage.removeItem(STORAGE_KEY); // Korrupte/manipulierte Daten entfernen
+          loadGameStateHook(gameConfig.initialState); // Explizit Initialzustand laden
+          // Füge eine kleine Verzögerung hinzu, um sicherzustellen, dass der Event-Listener in App.js bereit ist
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('gamestateTampered', { detail: { reason: loadResult.reason, message: loadResult.message } }));
+          }, 50); // 50ms Verzögerung
+          break;
+        case 'no_data':
+          // Dieser Fall bedeutet, dass hasSavedGame(STORAGE_KEY) true war, aber localStorage.getItem(key) in loadGameStateUtil null zurückgab.
+          // Das ist unwahrscheinlich, aber möglich, wenn das Element zwischen den Prüfungen entfernt wurde.
+          // In diesem Fall wird useGameState den Initialzustand setzen.
+          console.warn('[useLocalStorage] hasSavedGame war true, aber loadGameStateUtil meldete no_data. Verlasse mich auf useGameState für den Initialzustand.');
+          break;
+        default:
+          // Sollte nicht passieren
+          console.error('[useLocalStorage] Unbekannter loadResult-Typ:', loadResult.type);
+          loadGameStateHook(gameConfig.initialState); // Fallback
       }
     } else {
-      // Kein gespeichertes Spiel vorhanden, `useGameState` kümmert sich um den Initialzustand.
+      // Kein gespeichertes Spiel vorhanden. Der useGameState Hook initialisiert mit gameConfig.initialState.
     }
   }, [loadGameStateHook]);
 

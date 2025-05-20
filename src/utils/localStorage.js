@@ -49,11 +49,16 @@ export const saveGameState = (key, dataFromHook) => {
    * @param {string} key - The key to load data from
    * @param {Object} defaultState - Default state to return if no saved state exists
    * @returns {Object} The loaded game state or default state
+   *                   Struktur bei Erfolg: { type: 'success' | 'success_old_format', payload: Object }
+   *                   Struktur bei Fehler: { type: 'error', reason: string, message: string, payload?: Object (defaultState) }
+   *                   Struktur wenn kein Key existiert: { type: 'no_data', payload: Object (defaultState) }
    */
   export const loadGameState = (key, defaultState = {}) => {
     try {
       const rawData = localStorage.getItem(key);
-      if (!rawData) return defaultState;
+      if (!rawData) {
+        return { type: 'no_data', payload: defaultState };
+      }
 
       let parsedData;
       try {
@@ -61,7 +66,7 @@ export const saveGameState = (key, dataFromHook) => {
       } catch (e) {
         console.error('Error parsing saved data from localStorage:', e);
         localStorage.removeItem(key); // Beschädigte Daten entfernen
-        return null; // Signalisiert einen Fehler/Korruption
+        return { type: 'error', reason: 'parse_error', message: 'Gespeicherte Daten sind korrupt und konnten nicht gelesen werden.' };
       }
 
       // Prüfen, ob es das neue Format mit Payload und Checksum ist
@@ -70,34 +75,34 @@ export const saveGameState = (key, dataFromHook) => {
       if (isNewFormat) {
         const { payload, chk } = parsedData;
 
-        // Auf localhost die Prüfung überspringen dann folgendes auskommentieren
-        if (window.location.hostname === 'localhost') {
-          console.log('[AntiCheat] Skipping checksum validation on localhost (temporarily disabled for testing).');
-          return payload;
-        }
+        // Auf localhost die Prüfung überspringen
+        // if (window.location.hostname === 'localhost') {
+        //   console.log('[AntiCheat] Skipping checksum validation on localhost.');
+        //   return { type: 'success', payload: payload };
+        // }
 
         const calculatedChecksum = simpleHash(JSON.stringify(payload) + ANTI_CHEAT_SECRET);
 
         if (calculatedChecksum !== chk) {
           console.warn('[AntiCheat] Save data checksum mismatch. Data may be tampered or corrupted for key:', key);
-          return null; // Signalisiert Manipulation/Korruption
+          return { type: 'error', reason: 'checksum_mismatch', message: 'Die Prüfsumme der Speicherdaten ist ungültig. Die Daten könnten manipuliert worden sein oder sind korrupt.' };
         }
-        return payload; // Daten sind valide
+        return { type: 'success', payload: payload }; // Daten sind valide
       } else {
         // Altes Format ohne Prüfsumme
         if (window.location.hostname === 'localhost') {
           console.log('[AntiCheat] Loading old format data on localhost.');
-          return parsedData; // parsedData ist hier der gameState direkt
+          return { type: 'success_old_format', payload: parsedData }; // parsedData ist hier der gameState direkt
         }
         console.warn('[AntiCheat] Old save format without checksum detected on non-localhost. Treating as potentially tampered for key:', key);
         // Für bestehende Nutzer auf Produktion: Daten einmalig laden. Der nächste Speicherversuch wird das neue Format verwenden.
         // Alternativ könnte man hier `null` zurückgeben, um einen Reset zu erzwingen.
         // Wir wählen den sanfteren Weg und laden die alten Daten einmalig.
-        return parsedData;
+        return { type: 'success_old_format', payload: parsedData };
       }
     } catch (error) {
       console.error('Error loading game state:', error);
-      return defaultState;
+      return { type: 'error', reason: 'unknown_load_error', message: 'Ein unbekannter Fehler ist beim Laden des Spielstands aufgetreten.', payload: defaultState };
     }
   };
   
