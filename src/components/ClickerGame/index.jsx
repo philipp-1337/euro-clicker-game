@@ -96,7 +96,12 @@ export default function ClickerGame({
     claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
-  const { achievements, unlockedAchievements, clearUnlockedAchievements } = useAchievements(money, floatingClicks, playTime);
+  const {
+    achievements,
+    unlockedAchievements,
+    clearUnlockedAchievements,
+    unlockSpecificAchievementById // Funktion hier holen
+  } = useAchievements(money, floatingClicks, playTime);
   const {
     showAchievement,
     setShowAchievement,
@@ -309,6 +314,19 @@ export default function ClickerGame({
     }
   }, [saveGame, registerSaveGameHandler]);
 
+  // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
+  // und Freischaltung des "Cheater"-Achievements
+  useEffect(() => {
+    const handleTampering = (event) => {
+      // Die Alert-Box wird weiterhin von App.js angezeigt.
+      // Hier schalten wir nur das Achievement frei.
+      unlockSpecificAchievementById('cheater');
+    };
+    window.addEventListener('gamestateTampered', handleTampering);
+    return () => {
+      window.removeEventListener('gamestateTampered', handleTampering);
+    };
+  }, [unlockSpecificAchievementById]);
   return (
     <div className="game-container">
       {/* Welcome Back Modal */}

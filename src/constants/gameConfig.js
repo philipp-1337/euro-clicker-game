@@ -160,7 +160,15 @@ export const gameConfig = {
         name: 'Dedicated Player',
         description: 'Play for 5 hour total',
         target: 18000, // 5 hour in seconds
-      }
+      },
+      cheater: {
+        id: 'cheater',
+        name: 'Cheater!',
+        description: 'Caught you red-handed! Your game has been reset.',
+        target: 1, // Irrelevant, da Event-basiert
+        hidden: true, // Wird nicht in der normalen Liste angezeigt, bis freigeschaltet
+        unlocked: false, // Initial nicht freigeschaltet
+      },
     }
   };
 

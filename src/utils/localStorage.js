@@ -76,10 +76,10 @@ export const saveGameState = (key, dataFromHook) => {
         const { payload, chk } = parsedData;
 
         // Auf localhost die Prüfung überspringen
-        // if (window.location.hostname === 'localhost') {
-        //   console.log('[AntiCheat] Skipping checksum validation on localhost.');
-        //   return { type: 'success', payload: payload };
-        // }
+        if (window.location.hostname === 'localhost') {
+          console.log('[AntiCheat] Skipping checksum validation on localhost.');
+          return { type: 'success', payload: payload };
+        }
 
         const calculatedChecksum = simpleHash(JSON.stringify(payload) + ANTI_CHEAT_SECRET);
 

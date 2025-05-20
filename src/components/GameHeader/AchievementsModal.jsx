@@ -30,7 +30,9 @@ export default function AchievementsModal({ showAchievements, setShowAchievement
           </button>
         </div>
         <div className="achievements-list">
-          {Object.values(achievements).map((achievement) => {
+          {Object.values(achievements)
+            .filter(achievement => !achievement.hidden || achievement.unlocked) // Versteckte nur anzeigen, wenn freigeschaltet
+            .map((achievement) => {
             const isLocked = !achievement.unlocked;
             return (
               <div key={achievement.id} className={`achievement-row${achievement.unattainable ? ' unattainable' : ''}`} style={achievement.unattainable ? {opacity: 0.5} : {}}>
