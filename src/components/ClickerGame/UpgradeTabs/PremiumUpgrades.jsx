@@ -125,7 +125,7 @@ export default function PremiumUpgrades({
         </div>
         <p className="premium-upgrade-description">
           Each click on the floating Euro button has a chance to grant your current income per second instead of +1€. Each level increases this chance by {criticalClickChanceEffectPercentage}%.
-          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100 (100% chance). Requires at least one manager.
+          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -137,7 +137,11 @@ export default function PremiumUpgrades({
             className={`premium-upgrade-button ${money < criticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager ? 'disabled' : ''}`}
             title={!hasAnyManager ? "Requires at least one manager to be purchased." : ""}
           >
-            {criticalClickChanceLevel >= 100 ? 'Max Level' : `${formatNumber(criticalClickChanceCost)} €`}
+            {criticalClickChanceLevel >= 100
+              ? 'Max Level'
+              : !hasAnyManager
+                ? 'Requires Manager'
+                : `${formatNumber(criticalClickChanceCost)} €`}
           </button>
         </div>
       </div>
