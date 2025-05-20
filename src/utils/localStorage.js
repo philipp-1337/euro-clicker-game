@@ -66,7 +66,7 @@ export const saveGameState = (key, dataFromHook) => {
       } catch (e) {
         console.error('Error parsing saved data from localStorage:', e);
         localStorage.removeItem(key); // Beschädigte Daten entfernen
-        return { type: 'error', reason: 'parse_error', message: 'Gespeicherte Daten sind korrupt und konnten nicht gelesen werden.' };
+        return { type: 'error', reason: 'parse_error', message: 'Saved data is corrupt and could not be read.' };
       }
 
       // Prüfen, ob es das neue Format mit Payload und Checksum ist
@@ -85,7 +85,7 @@ export const saveGameState = (key, dataFromHook) => {
 
         if (calculatedChecksum !== chk) {
           console.warn('[AntiCheat] Save data checksum mismatch. Data may be tampered or corrupted for key:', key);
-          return { type: 'error', reason: 'checksum_mismatch', message: 'Die Prüfsumme der Speicherdaten ist ungültig. Die Daten könnten manipuliert worden sein oder sind korrupt.' };
+          return { type: 'error', reason: 'checksum_mismatch', message: 'The checksum of the memory data is invalid. The data could have been manipulated or is corrupt.' };
         }
         return { type: 'success', payload: payload }; // Daten sind valide
       } else {
@@ -102,7 +102,7 @@ export const saveGameState = (key, dataFromHook) => {
       }
     } catch (error) {
       console.error('Error loading game state:', error);
-      return { type: 'error', reason: 'unknown_load_error', message: 'Ein unbekannter Fehler ist beim Laden des Spielstands aufgetreten.', payload: defaultState };
+      return { type: 'error', reason: 'unknown_load_error', message: 'An unknown error has occurred while loading the savegame.', payload: defaultState };
     }
   };
   

@@ -28,7 +28,7 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
         case 'success_old_format': // Altes Format als Erfolg für das Laden behandeln
           loadGameStateHook(loadResult.payload);
           if (loadResult.type === 'success_old_format' && window.location.hostname !== 'localhost') {
-            console.log('[useLocalStorage] Altes Speicherformat geladen. Es wird beim nächsten Speichern mit einer Prüfsumme aktualisiert.');
+            console.log('[useLocalStorage] Old storage format loaded. It is updated with a checksum the next time it is saved.');
           }
           break;
         case 'error':

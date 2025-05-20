@@ -33,15 +33,15 @@ function App() {
   // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
   useEffect(() => {
     const handleTampering = (event) => {
-      let message = "Ihre Speicherdaten waren korrupt oder wurden manipuliert. Das Spiel wurde zurückgesetzt."; // Standardnachricht
+      let message = "Your save data was corrupted or manipulated. The game has been reset."; // Standardnachricht
       if (event.detail && event.detail.message) {
         message = `${event.detail.message} Das Spiel wurde zurückgesetzt.`;
       } else if (event.detail && event.detail.reason) {
         // Fallback, falls nur der Grund angegeben ist
-        const reasonText = event.detail.reason === 'parse_error' ? 'Datenformatfehler' :
-                           event.detail.reason === 'checksum_mismatch' ? 'Prüfsummenfehler' :
-                           'Unbekannter Fehler';
-        message = `Aufgrund eines Problems mit Ihren Speicherdaten (${reasonText}) wurde das Spiel zurückgesetzt.`;
+        const reasonText = event.detail.reason === 'parse_error' ? 'Data format error' :
+                           event.detail.reason === 'checksum_mismatch' ? 'Checksum error' :
+                           'Unknown error';
+        message = `Due to a problem with your save data (${reasonText}), the game has been reset.`;
       }
       // Hier könntest du eine schönere Benachrichtigung einbauen (Toast, Modal etc.)
       alert(message);

@@ -103,8 +103,8 @@ export default function GameHeader(props) {
       <button
         className="menu-toggle-button"
         onClick={() => setIsSideMenuOpen(true)}
-        title="Menü"
-        aria-label="Menü"
+        title="Menu"
+        aria-label="Menu"
       >
         <MenuIcon size={22} />
       </button>

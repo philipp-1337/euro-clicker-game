@@ -135,7 +135,7 @@ export default function LeaderboardModal({ show, onClose }) {
                               size={18}
                               color={isMe ? '#d4a900' : '#f5b400'}
                               style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
-                              title="Platz 1"
+                              title="1st place"
                             />
                           )}
                         </div>

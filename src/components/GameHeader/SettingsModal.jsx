@@ -195,7 +195,7 @@ export default function SettingsModal({
             <button
               className="settings-label btn"
               onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
+              title={showLeaderboard ? "Hide Leaderboard-Button" : "Show Leaderboard button"}
               type="button"
             >
               {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
@@ -203,7 +203,7 @@ export default function SettingsModal({
             <button
               className={`settings-button${showLeaderboard ? " active" : ""}`}
               onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
+              title={showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
               type="button"
             >
               {showLeaderboard ? (
@@ -259,7 +259,7 @@ export default function SettingsModal({
             <button
               className="settings-label btn"
               onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
             >
               {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} 
               {/* <span className="settings-uuid">alpha</span> */}
@@ -267,7 +267,7 @@ export default function SettingsModal({
             <button
               className="settings-button"
               onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
               aria-label="Dark Mode Toggle"
             >
               {isDarkMode ? (
@@ -339,7 +339,7 @@ export default function SettingsModal({
                   );
                 }
               }}
-              title={cloudSaveMode ? "Deactivate Cloud-Save" : "Activate Cloud-Save"}
+              title={cloudSaveMode ? "Deactivate Cloud Save" : "Activate Cloud Save"}
             >
               {cloudSaveMode ? "Disable Cloud Save" : "Enable Cloud Save"}
             </button>
@@ -360,7 +360,7 @@ export default function SettingsModal({
                   );
                 }
               }}
-              title={cloudSaveMode ? "Deactivate Cloud-Save" : "Activate Cloud-Save"}
+              title={cloudSaveMode ? "Deactivate cloud save" : "Activate cloud save"}
             >
               {cloudSaveMode ? (
                 <CloudOffIcon size={18} />
@@ -375,7 +375,7 @@ export default function SettingsModal({
               <IdCardIcon size={20} className="settings-icon" />
                 <span
                   className="settings-uuid"
-                  title="Your Cloud Save UUID (copy & use on other device)"
+                  title="Your cloud save UUID (copy & use on other device)"
                   onClick={() => {
                     navigator.clipboard?.writeText(cloudUuid);
                     triggerSaveFeedback("UUID copied");
