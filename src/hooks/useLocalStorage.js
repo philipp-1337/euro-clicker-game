@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { saveGameState, loadGameState, hasSavedGame } from '@utils/localStorage';
+import { saveGameState, loadGameState as loadGameStateUtil, hasSavedGame } from '@utils/localStorage';
+import { gameConfig } from '@constants/gameConfig'; // Benötigt für den Reset zum Initialzustand
 
 const STORAGE_KEY = 'clickerSave';
 
@@ -18,17 +19,25 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     hasLoaded.current = true;
 
     if (hasSavedGame(STORAGE_KEY)) {
-      const savedGameData = loadGameState(STORAGE_KEY); // Utility function from @utils/localStorage
+      const savedGameData = loadGameStateUtil(STORAGE_KEY); // Umbenannt, um Konflikt mit loadGameStateHook zu vermeiden
       if (savedGameData) {
         loadGameStateHook(savedGameData); // Pass the entire loaded object, including lastSaved
+      } else {
+        // Manipulation erkannt oder Daten sind null/korrupt
+        console.warn("[useLocalStorage] Failed to load saved game due to tampering or corruption. Resetting to initial state.");
+        localStorage.removeItem(STORAGE_KEY); // Beschädigte/manipulierte Daten entfernen
+        loadGameStateHook(gameConfig.initialState); // Initialzustand laden
+        // Optional: Benutzer über UI benachrichtigen
+        window.dispatchEvent(new CustomEvent('gamestateTampered'));
       }
+    } else {
+      // Kein gespeichertes Spiel vorhanden, `useGameState` kümmert sich um den Initialzustand.
     }
   }, [loadGameStateHook]);
 
    // Alle 30 Sekunden speichern (aber verwende Ref, nicht Dependency)
    useEffect(() => {
     const saveInterval = setInterval(() => {
-      saveGame();
     }, 30000);
     return () => clearInterval(saveInterval);
   }, []);

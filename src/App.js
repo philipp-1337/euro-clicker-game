@@ -30,6 +30,18 @@ function App() {
     };
   }, []);
 
+  // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
+  useEffect(() => {
+    const handleTampering = () => {
+      // Hier könntest du eine schönere Benachrichtigung einbauen (Toast, Modal etc.)
+      alert("Ihre Speicherdaten waren korrupt oder wurden manipuliert. Das Spiel wurde zurückgesetzt.");
+    };
+    window.addEventListener('gamestateTampered', handleTampering);
+    return () => {
+      window.removeEventListener('gamestateTampered', handleTampering);
+    };
+  }, []);
+
   // Optional: Start music on first user interaction if autoplay is blocked
   useEffect(() => {
     if (musicPlaying && musicEnabled && audioRef.current) {
