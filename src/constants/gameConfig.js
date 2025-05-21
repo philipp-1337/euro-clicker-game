@@ -20,16 +20,16 @@ export const gameConfig = {
     ],
 
     investments: [
-      { name: 'Taxi Company', cost: 10000, income: 10 },
-      { name: 'Energy Drinks', cost: 20000, income: 20 },
-      { name: 'Balcony Power Plants', cost: 30000, income: 30 },
-      { name: 'Delicatessen', cost: 40000, income: 40 },
-      { name: 'Fashion Label', cost: 50000, income: 50 },
-      { name: 'E-Car Manufacturer', cost: 60000, income: 60 },
-      { name: 'E-Cigarettes', cost: 70000, income: 70 },
-      { name: 'Pharma', cost: 80000, income: 80 },
-      { name: 'National Airline', cost: 90000, income: 90 },
-      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 },
+      { name: 'Taxi Company', cost: 12750, income: 7 },
+      { name: 'Energy Drinks', cost: 26500, income: 16 },
+      { name: 'Balcony Power Plants', cost: 38200, income: 23.5 },
+      { name: 'Delicatessen', cost: 51500, income: 32 },
+      { name: 'Fashion Label', cost: 68000, income: 43 },
+      { name: 'E-Car Manufacturer', cost: 81250, income: 52 },
+      { name: 'E-Cigarettes', cost: 95500, income: 61 },
+      { name: 'Pharma', cost: 110750, income: 72 },
+      { name: 'National Airline', cost: 128000, income: 84 },
+      { name: 'Space Rocket Enterprises', cost: 145500, income: 97 },
     ],
 
     stateBuildings: [

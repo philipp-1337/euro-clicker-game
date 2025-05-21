@@ -115,6 +115,23 @@
   }
 }
 
+.investment-buttons-group {
+  display: flex; // Oder display: grid; grid-template-columns: auto auto;
+  gap: 8px; // Passe den Wert an, um den gewünschten Abstand zu erhalten
+  @media screen and (max-width: 600px) {
+    // flex-direction: column; // Bei kleineren Bildschirmen unterbrechen wir die Flexbox und machen eine Spalte
+    // gap: 10px; // Optional, um den Abstand zwischen den Buttons zu erhöhen
+    width: 100%; // Optional, um sicherzustellen, dass die Buttons den verfügbaren Platz nutzen
+  }
+  // Weitere Styles, falls nötig, z.B. alignment
+}
+
+// Optional: Wenn du sicherstellen willst, dass die Buttons immer nebeneinander bleiben,
+// auch wenn der Platz eng wird, könntest du flex-shrink verhindern:
+// .investment-buttons-group .premium-upgrade-button {
+//   flex-shrink: 0;
+// }
+
 .experimental-label {
   color: map.get($colors, red);
   font-weight: bold;
