@@ -59,6 +59,7 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
    // Alle 30 Sekunden speichern (aber verwende Ref, nicht Dependency)
    useEffect(() => {
     const saveInterval = setInterval(() => {
+      saveGame();
     }, 30000);
     return () => clearInterval(saveInterval);
   }, []);
