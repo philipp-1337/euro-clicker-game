@@ -49,6 +49,7 @@ export default function UpgradeTabs({
   currentCriticalClickChance, // New
   buyCriticalClickChanceLevel,     // New
   criticalClickChanceCost,   // New
+  onInvestmentBoosted, // New prop for handling investment boosts
   soundEffectsEnabled, // New prop
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
@@ -129,6 +130,7 @@ export default function UpgradeTabs({
           currentCriticalClickChance={currentCriticalClickChance} // New
           buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
           criticalClickChanceCost={criticalClickChanceCost} // New
+          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined} // Pass to Investments tab
           soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
         />
       )

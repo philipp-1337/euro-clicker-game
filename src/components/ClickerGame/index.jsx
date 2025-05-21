@@ -94,6 +94,7 @@ export default function ClickerGame({
     clearLastInactiveDuration, // Get new function from hook
     calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
     claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
+        handleInvestmentBoost,     // Get the handler for investment boosts
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const {
@@ -498,6 +499,7 @@ export default function ClickerGame({
             currentCriticalClickChance={currentCriticalClickChance} // New
             criticalClickChanceCost={criticalClickChanceCost} // New
             buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
+                onInvestmentBoosted={handleInvestmentBoost} // Pass the handler down
             soundEffectsEnabled={soundEffectsEnabled} // Pass down
           />
         </div>

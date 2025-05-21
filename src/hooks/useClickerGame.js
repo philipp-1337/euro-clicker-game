@@ -48,6 +48,8 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
     criticalClickChanceLevel, setCriticalClickChanceLevel, // Get new state for critical clicks
     initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
+    boostedInvestments, // Get boosted state
+    setBoostedInvestments, // Get setter for boosted state
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -115,8 +117,14 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
   // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
-  const { buyInvestment, totalIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
-    money, setMoney, investments, setInvestments, ensureStartTime, easyMode
+  const { buyInvestment, totalIncomePerSecond: investmentIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
+    money, 
+    setMoney, 
+    investments, 
+    setInvestments, 
+    ensureStartTime, 
+    easyMode,
+    boostedInvestments // Pass boostedInvestments state
   );
 
   // Manager-Einkommen pro Sekunde berechnen
@@ -142,7 +150,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   }, [stateBuildings]);
 
   // Gesamt-Einkommen pro Sekunde
-  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond - stateBuildingsCostPerSecond;
+  const totalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond - stateBuildingsCostPerSecond;
 
   // Zentrale Geldberechnung pro Sekunde
   useEffect(() => {
@@ -370,6 +378,16 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     };
   }, [setActivePlayTime, setInactivePlayTime, isGameStarted]);
 
+  // Callback to handle when an investment is boosted
+  const handleInvestmentBoost = useCallback((investmentIndex, isBoosted) => {
+    setBoostedInvestments(prevBoosted => {
+      const newBoosted = [...(prevBoosted || Array(gameConfig.investments.length).fill(false))];
+      newBoosted[investmentIndex] = isBoosted;
+      // Persistence to localStorage is handled by setBoostedInvestments in useGameState
+      return newBoosted;
+    });
+  }, [setBoostedInvestments]);
+
   return {
     // Hauptzustände
     money,
@@ -403,6 +421,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     buyInvestment,
     saveGame,
     addQuickMoney,
+    handleInvestmentBoost, // Export this handler
     
     // Upgrade-Info
     valueUpgradeLevels,
@@ -416,7 +435,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     globalPriceDecreaseLevel,
     globalPriceDecreaseCost,
     managerCosts,
-    totalIncomePerSecond,
+    totalIncomePerSecond: totalMoneyPerSecond,
     unlockInvestmentCost,
     unlockStateCost,
     interventionsUnlockCost,
@@ -429,6 +448,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     currentCriticalClickChance, // Export calculated chance
     criticalClickChanceCost, // Export cost for next level
     buyCriticalClickChanceLevel, // Export buy function for critical clicks
+    boostedInvestments, // Export for potential direct use or debugging
     lastInactiveDuration,
     clearLastInactiveDuration,
     calculatedOfflineEarnings,

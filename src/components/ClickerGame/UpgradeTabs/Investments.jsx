@@ -2,50 +2,47 @@ import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onTaxiBoostedChange, onEnergyDrinksBoostedChange }) {
+export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted }) {
   // Add state for boost tracking for all investments
-  const [boostStates, setBoostStates] = React.useState(() => {
+  const [boostClickStates, setBoostClickStates] = React.useState(() => {
     return gameConfig.investments.map((investment, index) => {
-      const storedValue = localStorage.getItem(`boosted-${index}`);
+      const storedBoosted = localStorage.getItem(`boosted-${index}`);
+      const storedClicks = localStorage.getItem(`boostClicks-${index}`);
       return {
-        clicks: 0,
-        boosted: storedValue ? JSON.parse(storedValue) : false,
+        clicks: storedClicks ? parseInt(storedClicks, 10) : 0,
+        boosted: storedBoosted ? JSON.parse(storedBoosted) : false,
       };
     });
   });
 
   const handleBoostClick = (index) => {
-    setBoostStates(prev => {
-      const newBoostStates = [...prev];
-      if (newBoostStates[index].boosted) return prev;
+    setBoostClickStates(prevClickStates => {
+      const newClickStates = [...prevClickStates];
+      // If already boosted according to local click state, do nothing further for clicks.
+      // The actual boosted status for income calculation comes from the parent.
+      if (newClickStates[index].boosted) return prevClickStates;
 
-      const newClicks = newBoostStates[index].clicks + 1;
+      const newClicks = newClickStates[index].clicks + 1;
       const newBoosted = newClicks >= 100;
 
-      newBoostStates[index] = {
+      newClickStates[index] = {
         clicks: newClicks,
         boosted: newBoosted,
       };
 
+      // Persist the boosted status to localStorage for this component's own tracking
       localStorage.setItem(`boosted-${index}`, JSON.stringify(newBoosted));
+      localStorage.setItem(`boostClicks-${index}`, newClicks.toString());
 
-      // Notify parent component
-      if (newBoosted && onTaxiBoostedChange) { // Reuse onTaxiBoostedChange, consider a more generic name
-        onTaxiBoostedChange(gameConfig.investments[index].income * 2, true); // Pass doubled income
+      // Notify parent component only when the investment becomes newly boosted
+      if (newBoosted && !prevClickStates[index].boosted) {
+        if (onInvestmentBoosted) {
+          onInvestmentBoosted(index, true); // Pass index and new boosted status
+        }
       }
-
-      return newBoostStates;
+      return newClickStates;
     });
   };
-
-  React.useEffect(() => {
-    // Notify parent component when any investment is boosted
-    gameConfig.investments.forEach((investment, index) => {
-      if (onTaxiBoostedChange) { // Reuse onTaxiBoostedChange, consider a more generic name
-        onTaxiBoostedChange(boostStates[index].boosted ? investment.income * 2 : investment.income, boostStates[index].boosted);
-      }
-    });
-  }, [boostStates, onTaxiBoostedChange]);
 
   return (
     <div className="upgrade-section premium-section">
@@ -59,7 +56,10 @@ export default function Investments({ money, investments, buyInvestment, totalIn
       {gameConfig.investments.map((investment, index) => {
         const cost = investment.cost * (investmentCostMultiplier ?? 1);
         const purchased = investments[index] ? true : false;
-        const effectiveIncome = boostStates[index].boosted ? investment.income * 2 : investment.income;
+        // Determine effective income based on the local boost click state for display purposes.
+        // The actual income calculation for totalIncomePerSecond happens in the parent hook.
+        const isLocallyBoosted = boostClickStates[index].boosted;
+        const displayedIncome = isLocallyBoosted ? investment.income * 2 : investment.income;
 
         return (
           <div key={index} className="premium-upgrade-card">
@@ -67,7 +67,10 @@ export default function Investments({ money, investments, buyInvestment, totalIn
               <h3>{investment.name}</h3>
             </div>
             <p className="premium-upgrade-description">
-              Invest {formatNumber(cost)} € to earn {formatNumber(effectiveIncome)} €/s.
+              Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
+            </p>
+            <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
+              Click the "Boost" button 100 times to permanently double the income from this investment!
             </p>
             <div className="premium-upgrade-info">
               <div className="premium-upgrade-level">
@@ -76,9 +79,9 @@ export default function Investments({ money, investments, buyInvestment, totalIn
               {/* Add boost button for each investment */}
               <button
                 onClick={() => handleBoostClick(index)}
-                className={`premium-upgrade-button ${boostStates[index].boosted ? 'disabled' : ''}`}
+                className={`premium-upgrade-button ${boostClickStates[index].boosted ? 'disabled' : ''}`}
               >
-                {boostStates[index].boosted ? "Earnings Boosted" : `Boost ${investment.name} (${boostStates[index].clicks}/100)`}
+                {boostClickStates[index].boosted ? "Earnings Boosted" : `Boost (${boostClickStates[index].clicks}/100)`}
               </button>
               <button
                 onClick={() => buyInvestment(index)}
