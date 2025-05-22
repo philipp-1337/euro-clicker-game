@@ -39,7 +39,7 @@ export default function useGameHeaderLogic(props) {
       <span
         className={`env-label ${environment}`}
         onClick={canToggleEasyMode ? toggleEasyMode : undefined}
-        title={canToggleEasyMode ? "Toggle Easy Mode" : "Easy Mode nur in localhost und alpha verfügbar"}
+        title={canToggleEasyMode ? "Toggle Easy Mode" : "Easy Mode only available in localhost and alpha"}
         style={!canToggleEasyMode ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
       >
         {displayText}

@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -10,7 +10,7 @@ import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
 import useStateInfrastructure from './useStateInfrastructure';
 
-export default function useClickerGame(easyMode = false) {
+export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
 
   // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
   const { playTime, ensureStartTime, isGameStarted } = usePlaytime(); // isGameStarted hier holen
@@ -43,8 +43,13 @@ export default function useClickerGame(easyMode = false) {
     stateBuildings, setStateBuildings,
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
-    activePlayTime, setActivePlayTime, // activePlayTime bleibt
-    offlineTime, setOfflineTime,     // setOfflineTime wird jetzt benötigt
+    activePlayTime, setActivePlayTime,
+    inactivePlayTime, setInactivePlayTime,
+    offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
+    criticalClickChanceLevel, setCriticalClickChanceLevel, // Get new state for critical clicks
+    initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
+    boostedInvestments, // Get boosted state
+    setBoostedInvestments, // Get setter for boosted state
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -105,21 +110,21 @@ export default function useClickerGame(easyMode = false) {
     ensureStartTime
   );
 
-  // In useClickerGame.js, füge diese Funktion hinzu
-  const addQuickMoney = useCallback(() => {
-    ensureStartTime?.();
-    setMoney(prevMoney => prevMoney + 1);
-  }, [setMoney, ensureStartTime]);
-  
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime);
+  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
   // Managerkosten dynamisch berechnen
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
   // Investments-Logik: Passe useInvestments an, damit es setInvestments verwendet
-  const { buyInvestment, totalIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
-    money, setMoney, investments, setInvestments, ensureStartTime, easyMode
+  const { buyInvestment, totalIncomePerSecond: investmentIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
+    money, 
+    setMoney, 
+    investments, 
+    setInvestments, 
+    ensureStartTime, 
+    easyMode,
+    boostedInvestments // Pass boostedInvestments state
   );
 
   // Manager-Einkommen pro Sekunde berechnen
@@ -145,7 +150,7 @@ export default function useClickerGame(easyMode = false) {
   }, [stateBuildings]);
 
   // Gesamt-Einkommen pro Sekunde
-  const totalMoneyPerSecond = managerIncomePerSecond + totalIncomePerSecond - stateBuildingsCostPerSecond;
+  const totalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond - stateBuildingsCostPerSecond;
 
   // Zentrale Geldberechnung pro Sekunde
   useEffect(() => {
@@ -157,7 +162,7 @@ export default function useClickerGame(easyMode = false) {
 
   // Cooldown-Management und Click-Handler
   const { handleClick } = useCooldowns(
-    cooldowns, setCooldowns, managers, buttons, money, setMoney
+    cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled
   );
 
 
@@ -196,50 +201,161 @@ export default function useClickerGame(easyMode = false) {
   }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
 
   const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
-  
+
+  // Offline Earnings Upgrade
+  const currentOfflineEarningsFactor = useMemo(() =>
+    offlineEarningsLevel * gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel,
+    [offlineEarningsLevel]
+  );
+
+  const offlineEarningsLevelCost = useMemo(() =>
+    gameConfig.premiumUpgrades.offlineEarnings.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, offlineEarningsLevel) *
+    costMultiplier,
+    [offlineEarningsLevel, costMultiplier]
+  );
+
+  const buyOfflineEarningsLevel = useCallback(() => {
+    if (money >= offlineEarningsLevelCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - offlineEarningsLevelCost);
+      setOfflineEarningsLevel(prev => prev + 1);
+    }
+  }, [money, offlineEarningsLevelCost, setMoney, setOfflineEarningsLevel, ensureStartTime]);
+
+  // Critical Click Chance Upgrade
+  const currentCriticalClickChance = useMemo(() =>
+    criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel,
+    [criticalClickChanceLevel]
+  );
+
+  const criticalClickChanceCost = useMemo(() =>
+    gameConfig.premiumUpgrades.criticalClickChance.baseCost *
+    (1 + criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+    costMultiplier,
+    [criticalClickChanceLevel, costMultiplier]
+  );
+
+  const buyCriticalClickChanceLevel = useCallback(() => {
+    if (money >= criticalClickChanceCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - criticalClickChanceCost);
+      setCriticalClickChanceLevel(prev => prev + 1);
+    }
+  }, [money, criticalClickChanceCost, setMoney, setCriticalClickChanceLevel, ensureStartTime]);
+
   const { saveGame } = useLocalStorage(gameState, loadGameState);
+
+
+
+   // State for "Welcome Back" modal
+   // This state will be updated either by initialOfflineDuration on load
+   // or by the visibilitychange handler during a session.
+   const [lastInactiveDuration, setLastInactiveDuration] = useState(0); // Initialize to 0
+
+   // State for calculated offline earnings
+   const [calculatedOfflineEarnings, setCalculatedOfflineEarnings] = useState(0);
+
+   // Effect to set lastInactiveDuration based on initialOfflineDuration after load
+   useEffect(() => {
+     console.log('[useClickerGame] Effect for initialOfflineDuration. Value:', initialOfflineDuration);
+     if (initialOfflineDuration > 0) {
+       setLastInactiveDuration(initialOfflineDuration);
+     }
+   }, [initialOfflineDuration]); // Watch initialOfflineDuration
+
+  // Effect to calculate offline earnings when lastInactiveDuration changes
+  // This uses 'offlineEarningsFactor'
+  useEffect(() => {
+  if (offlineEarningsLevel > 0 && lastInactiveDuration > 0 && totalMoneyPerSecond > 0) {
+    const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * currentOfflineEarningsFactor);
+    setCalculatedOfflineEarnings(earnings);
+    console.log(`[useClickerGame] Calculated offline earnings: ${earnings} for duration ${lastInactiveDuration}s`);
+  } else {
+    setCalculatedOfflineEarnings(0);
+  }
+  }, [lastInactiveDuration, offlineEarningsLevel, totalMoneyPerSecond, currentOfflineEarningsFactor]);
+
+  // Funktion für den Floating Click Button
+  const addQuickMoney = useCallback(() => {
+    ensureStartTime?.();
+    const isCritical = Math.random() < currentCriticalClickChance;
+    let moneyToAdd = 1; // Standard +1€
+    if (isCritical) {
+      moneyToAdd = totalMoneyPerSecond;
+      // Hier könnte man später einen speziellen Sound für kritische Treffer einbauen
+    }
+    setMoney(prevMoney => prevMoney + moneyToAdd); // Add money before returning
+    return { isCritical, amount: moneyToAdd }; // Return object with critical status and amount
+  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond]);
+
+
+  const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
+
+  const claimOfflineEarnings = useCallback(() => {
+    if (calculatedOfflineEarnings > 0) {
+      setMoney(prev => prev + calculatedOfflineEarnings);
+      console.log(`[useClickerGame] Claimed offline earnings: ${calculatedOfflineEarnings}`);
+      setCalculatedOfflineEarnings(0); // Reset after claiming
+    }
+  }, [calculatedOfflineEarnings, setMoney]);
+
+  const clearLastInactiveDuration = useCallback(() => {
+     setLastInactiveDuration(0);
+     setCalculatedOfflineEarnings(0); // Auch berechnete Einnahmen zurücksetzen
+   }, []);
 
   // Effekt zum Zählen der aktiven und inaktiven Spielzeit
   useEffect(() => {
     let activeIntervalId;
-    let inactiveIntervalId;
+    // inactiveIntervalId wird nicht mehr benötigt
 
-    const clearAllTimers = () => {
+    const clearActiveTimer = () => { // Umbenannt, da nur noch der aktive Timer so verwaltet wird
       clearInterval(activeIntervalId);
-      clearInterval(inactiveIntervalId);
       activeIntervalId = null;
-      inactiveIntervalId = null;
     };
 
     const startActiveTimer = () => {
-      clearAllTimers();
+      clearActiveTimer(); // Stellt sicher, dass nicht mehrere aktive Timer laufen
       activeIntervalId = setInterval(() => {
         setActivePlayTime(prev => prev + 1);
       }, 1000);
     };
 
-    const startInactiveTimer = () => {
-      clearAllTimers();
-      inactiveIntervalId = setInterval(() => {
-        setOfflineTime(prev => prev + 1);
-      }, 1000);
-    };
+    // startInactiveTimer wird nicht mehr benötigt
 
     const handleVisibilityChange = () => {
       if (!isGameStarted) { // Wenn das Spiel nicht gestartet ist, nichts tun
-        clearAllTimers();
+        clearActiveTimer();
+        inactiveStartTimeRef.current = null; // Ensure reset if game not started
         return;
       }
       if (document.visibilityState === 'visible') {
         startActiveTimer();
+        if (inactiveStartTimeRef.current) {
+          const inactiveMs = Date.now() - inactiveStartTimeRef.current;
+          // Addiere die gerade beendete Inaktivitätsdauer zur Gesamt-Inaktivitätszeit
+          const currentInactiveSeconds = Math.floor(inactiveMs / 1000);
+          if (currentInactiveSeconds > 0) {
+            setInactivePlayTime(prev => prev + currentInactiveSeconds);
+          }
+          
+          inactiveStartTimeRef.current = null; // Reset after calculating
+          const inactiveSeconds = Math.floor(inactiveMs / 1000);
+          // Show modal if inactive for more than 5 seconds
+          if (inactiveSeconds > 5) { 
+            setLastInactiveDuration(inactiveSeconds);
+          }
+        }
       } else {
-        startInactiveTimer();
+        clearActiveTimer(); // Stoppe den aktiven Timer, wenn der Tab in den Hintergrund geht
+        inactiveStartTimeRef.current = Date.now(); // Record time when tab becomes hidden
       }
     };
 
     if (!isGameStarted) {
       // Stelle sicher, dass Timer aus sind und kein Listener hängt, wenn das Spiel nicht gestartet ist
-      clearAllTimers();
+      clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       return; // Frühzeitiger Ausstieg, wenn das Spiel nicht gestartet ist
     }
@@ -247,16 +363,30 @@ export default function useClickerGame(easyMode = false) {
     // Initiale Einrichtung der Timer und des Listeners, wenn das Spiel gestartet ist
     if (document.visibilityState === 'visible') {
       startActiveTimer();
+      // If the game loads and is immediately visible, nullify inactiveStartTimeRef.
+      // This prevents handleVisibilityChange from calculating a duration from a potentially
+      // lingering ref if the tab was hidden just before a full reload.
+      // initialOfflineDuration already covers the time before this load.
+      inactiveStartTimeRef.current = null;
     } else {
-      startInactiveTimer();
+      inactiveStartTimeRef.current = Date.now(); // Wenn das Spiel geladen wird und der Tab bereits unsichtbar ist
     }
     document.addEventListener('visibilitychange', handleVisibilityChange);
-
     return () => {
-      clearAllTimers();
+      clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [setActivePlayTime, setOfflineTime, isGameStarted]); // Abhängigkeiten: Setter und isGameStarted
+  }, [setActivePlayTime, setInactivePlayTime, isGameStarted]);
+
+  // Callback to handle when an investment is boosted
+  const handleInvestmentBoost = useCallback((investmentIndex, isBoosted) => {
+    setBoostedInvestments(prevBoosted => {
+      const newBoosted = [...(prevBoosted || Array(gameConfig.investments.length).fill(false))];
+      newBoosted[investmentIndex] = isBoosted;
+      // Persistence to localStorage is handled by setBoostedInvestments in useGameState
+      return newBoosted;
+    });
+  }, [setBoostedInvestments]);
 
   return {
     // Hauptzustände
@@ -266,6 +396,7 @@ export default function useClickerGame(easyMode = false) {
     managers,
     investments,
     isInvestmentUnlocked,
+    // isOfflineEarningsUnlocked, // No longer directly used, derived from offlineEarningsLevel
     isStateUnlocked,
     isInterventionsUnlocked,
     totalMoneyPerSecond,
@@ -273,9 +404,9 @@ export default function useClickerGame(easyMode = false) {
     dissatisfaction,
     stateBuildings,
     activePlayTime,
-    offlineTime,
+    inactivePlayTime,
     
-    // Funktionen
+    // Funktionen 
     handleClick: wrappedHandleClick,
     playTime,
     buyManager,
@@ -290,6 +421,7 @@ export default function useClickerGame(easyMode = false) {
     buyInvestment,
     saveGame,
     addQuickMoney,
+    handleInvestmentBoost, // Export this handler
     
     // Upgrade-Info
     valueUpgradeLevels,
@@ -303,10 +435,23 @@ export default function useClickerGame(easyMode = false) {
     globalPriceDecreaseLevel,
     globalPriceDecreaseCost,
     managerCosts,
-    totalIncomePerSecond,
+    totalIncomePerSecond: totalMoneyPerSecond,
     unlockInvestmentCost,
     unlockStateCost,
     interventionsUnlockCost,
-    investmentCostMultiplier
+    investmentCostMultiplier,
+    offlineEarningsLevel, // Export new state
+    currentOfflineEarningsFactor, // Export new calculated factor
+    offlineEarningsLevelCost, // Export new cost
+    buyOfflineEarningsLevel, // Export new buy function
+    criticalClickChanceLevel, // Export new state for critical clicks
+    currentCriticalClickChance, // Export calculated chance
+    criticalClickChanceCost, // Export cost for next level
+    buyCriticalClickChanceLevel, // Export buy function for critical clicks
+    boostedInvestments, // Export for potential direct use or debugging
+    lastInactiveDuration,
+    clearLastInactiveDuration,
+    calculatedOfflineEarnings,
+    claimOfflineEarnings,
   };
 }

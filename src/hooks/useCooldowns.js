@@ -1,7 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
+import useSoundEffects from './useSoundEffects'; // Import the new hook
 
-export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney) {
+export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled) {
+  const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
+
   const handleClick = useCallback((index, isManager = false) => {
     if (cooldowns[index] <= 0) {
       // Nur bei manuellen Klicks Geld addieren!
@@ -13,8 +16,9 @@ export default function useCooldowns(cooldowns, setCooldowns, managers, buttons,
         newCooldowns[index] = buttons[index].cooldownTime;
         return newCooldowns;
       });
+      playSound('click'); // Play the click sound
     }
-  }, [cooldowns, buttons, setMoney, setCooldowns]);
+  }, [cooldowns, buttons, setMoney, setCooldowns, playSound]);
 
   // Cooldown-Timer
   useEffect(() => {

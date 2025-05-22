@@ -20,16 +20,16 @@ export const gameConfig = {
     ],
 
     investments: [
-      { name: 'Taxi Company', cost: 10000, income: 10 },
-      { name: 'Energy Drinks', cost: 20000, income: 20 },
-      { name: 'Balcony Power Plants', cost: 30000, income: 30 },
-      { name: 'Delicatessen', cost: 40000, income: 40 },
-      { name: 'Fashion Label', cost: 50000, income: 50 },
-      { name: 'E-Car Manufacturer', cost: 60000, income: 60 },
-      { name: 'E-Cigarettes', cost: 70000, income: 70 },
-      { name: 'Pharma', cost: 80000, income: 80 },
-      { name: 'National Airline', cost: 90000, income: 90 },
-      { name: 'Space Rocket Enterprises', cost: 100000, income: 100 },
+      { name: 'Taxi Company', cost: 12750, income: 7 },
+      { name: 'Energy Drinks', cost: 26500, income: 16 },
+      { name: 'Balcony Power Plants', cost: 38200, income: 23.5 },
+      { name: 'Delicatessen', cost: 51500, income: 32 },
+      { name: 'Fashion Label', cost: 68000, income: 43 },
+      { name: 'E-Car Manufacturer', cost: 81250, income: 52 },
+      { name: 'E-Cigarettes', cost: 95500, income: 61 },
+      { name: 'Pharma', cost: 110750, income: 72 },
+      { name: 'National Airline', cost: 128000, income: 84 },
+      { name: 'Space Rocket Enterprises', cost: 145500, income: 97 },
     ],
 
     stateBuildings: [
@@ -51,9 +51,6 @@ export const gameConfig = {
     upgradeValueMultiplier: 1.1, // +10% pro Level
     upgradeCooldownReduction: 0.9, // -10% pro Level
     
-    // Premium-Upgrade-Faktoren
-    globalMultiplierIncrease: 1.05, // +5% pro Level
-    
     // Startbedingungen
     initialState: {
       money: 0,
@@ -73,15 +70,16 @@ export const gameConfig = {
       satisfaction: 0,
       dissatisfaction: 0,
       stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
+      offlineEarningsLevel: 0, // Level for offline earnings
+      criticalClickChanceLevel: 0, // Level for critical click chance upgrade
     },
     activePlayTime: 0, // Initial aktive Spielzeit
-    offlineTime: 0,    // Initial kumulierte Offline-Zeit
+    inactivePlayTime: 0,    // Initial kumulierte inaktive Spiel-Zeit
 
     // Upgrade-Multiplikatoren
     upgrades: {
       valueMultiplierFactor: 1.1,    // 10% Steigerung pro Level
       cooldownReductionFactor: 0.9,  // 10% Reduktion pro Level
-      globalMultiplierFactor: 1.05,  // 5% Steigerung pro Level
       costIncreaseFactor: 1.5        // 50% Kostensteigerung pro Level
     },
 
@@ -89,16 +87,27 @@ export const gameConfig = {
     premiumUpgrades: {
       globalMultiplier: {
         baseCost: 1000,
-        costExponent: 1.75
+        costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
+        factor: 1.05,  // 5% Steigerung pro Level
       },
       globalPriceDecrease: {
-        baseCost: 2500,
-        costExponent: 1.75, // z.B. exponentiell steigend, anpassbar
+        baseCost: 2000,
+        costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
       },
+      criticalClickChance: { // New upgrade configuration
+        baseCost: 3000,
+        costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
+        effectPerLevel: 0.01 // 1% chance increase per level
+      },
+      offlineEarnings: { // Changed from unlockOfflineEarnings
+        baseCost: 4000,
+        costExponent: 1.7, // Cost scaling per level
+        effectPerLevel: 0.05 // e.g., 5% earnings per level
+      },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-      unlockStateCost: 25000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
-      unlockInterventionsCost: 50000, // Kosten für die Freischaltung des Interventions-Tabs
+      unlockStateCost: 2500000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
+      unlockInterventionsCost: 5000000, // Kosten für die Freischaltung des Interventions-Tabs
     },
 
     // Timing-Konstanten
@@ -151,9 +160,20 @@ export const gameConfig = {
         name: 'Dedicated Player',
         description: 'Play for 5 hour total',
         target: 18000, // 5 hour in seconds
-      }
+      },
+      cheater: {
+        id: 'cheater',
+        name: 'Cheater!',
+        description: 'Caught you red-handed! Your game has been reset.',
+        target: 1, // Irrelevant, da Event-basiert
+        hidden: true, // Wird nicht in der normalen Liste angezeigt, bis freigeschaltet
+        unlocked: false, // Initial nicht freigeschaltet
+      },
     }
   };
 
 // Checkpoints für Leaderboard/Meilensteine
-export const CHECKPOINTS = [100000];
+export const CHECKPOINTS = [
+  { value: 100000, id: '100k', label: '100,000 €', firestoreCollection: 'leaderboard_100k' }, // Beispiel für separate Collections
+  { value: 1000000000, id: '1B', label: '1 Billion €', firestoreCollection: 'leaderboard_1B' }  // oder wir filtern eine Collection
+];

@@ -1,12 +1,16 @@
 import { formatNumber } from '@utils/calculators';  // Import von formatNumber
 
 export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
+  const handleButtonClick = (index) => {
+    handleClick(index); // Trigger the click logic
+  };
+
   return (
     <div className="clicker-buttons">
       {buttons.map((button, index) => (
         <div key={index} className="button-container">
           <button
-            onClick={() => handleClick(index)}
+            onClick={() => handleButtonClick(index)}
             disabled={cooldowns[index] > 0}
             className={`clicker-button ${button.colorClass} ${cooldowns[index] > 0 ? 'disabled' : ''}`}
           >

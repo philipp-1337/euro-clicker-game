@@ -6,10 +6,11 @@ import {
   CloudUpload as CloudUploadIcon,
   Save as SaveIcon,
   MousePointerClick as MousePointerClickIcon,
-  HourglassIcon,
-  Trophy as TrophyIcon,
+  ClockIcon,
   Crown as CrownIcon,
   Menu as MenuIcon,
+  BarChart2 as BarChart2Icon,
+  AwardIcon,
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -54,6 +55,10 @@ export default function GameHeader(props) {
     setShowClickStats,
     showLeaderboard,
     setShowLeaderboard,
+    showAchievementsHeaderButton,
+    setShowAchievementsHeaderButton,
+    showStatisticsHeaderButton,
+    setShowStatisticsHeaderButton,
   } = useUiProgress();
 
   // Cloud Save Confirm Modal State
@@ -93,66 +98,85 @@ export default function GameHeader(props) {
           </span>
         )}
       </div>
-      {/* Spielzeit, Clicker-Statistik, Manuelles Speichern und Settings */}
-      <div className="header-actions">
-        <button
-          className="menu-toggle-button"
-          onClick={() => setIsSideMenuOpen(true)}
-          title="Menü"
-          aria-label="Menü"
-        >
-          <MenuIcon size={22} />
-        </button>
-        <button
-          className="settings-button"
-          onClick={() => setShowSettings(true)}
-          title="Settings"
-          aria-label="Settings"
-        >
-          <SettingsIcon size={20} />
-        </button>
-        <button
-          className="settings-button"
-          onClick={handleSave}
-          title="Save"
-          aria-label="Save"
-        >
-          {cloudSaveMode
-            ? <CloudUploadIcon size={20} />
-            : <SaveIcon size={20} />
-          }
-        </button>
-        {props.hasAnyAchievement && (
-        <button
-          className="settings-button"
-          onClick={() => setShowAchievements(true)}
-          title="Achievements"
-          aria-label="Achievements"
-        >
-          <TrophyIcon size={20} />
-        </button>
-        )}
-        {/* Crown Icon für Leaderboard-Mode */}
-        {uiProgress.showLeaderboard && (
+      {/* Der menu-toggle-button ist position:fixed und beeinflusst den Flow hier nicht direkt,
+          aber wir brauchen Platz dafür im .header-actions Bereich. */}
+      <button
+        className="menu-toggle-button"
+        onClick={() => setIsSideMenuOpen(true)}
+        title="Menu"
+        aria-label="Menu"
+      >
+        <MenuIcon size={22} />
+      </button>
+      <div className="header-actions"> {/* Äußerer, scrollbarer Container */}
+        <div className="header-actions-content"> {/* Innerer Container für die Icons */}
+          {/* Settings Button */}
           <button
-            className="settings-button"
-            onClick={() => setShowLeaderboardModal(true)}
-            title="Show Leaderboard"
+            className="settings-button header-icon"
+            onClick={() => setShowSettings(true)}
+            title="Settings"
+            aria-label="Settings"
           >
-            <CrownIcon size={22} />
+            <SettingsIcon size={20} />
           </button>
-        )}
-        {showClickStats && (
-          <span className="header-clickstats">
-            <MousePointerClickIcon size={20} />
-            {String(floatingClicks ?? 0).padStart(5, '0')}
-          </span>
-        )}
-        {showPlaytime && (
-          <span className="header-playtime">
-            <HourglassIcon size={20} />
-            {formatPlaytime(playTime, false)}</span>
-        )}
+          {/* Cloud / Save Button */}
+          <button
+            className="settings-button header-icon"
+            onClick={handleSave}
+            title="Save"
+            aria-label="Save"
+          >
+            {cloudSaveMode
+              ? <CloudUploadIcon size={20} />
+              : <SaveIcon size={20} />
+            }
+          </button>
+          {/* Statistics Button */}
+          {uiProgress.showStatisticsHeaderButton && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setShowStatisticsModal(true)}
+              title="Statistics"
+              aria-label="Statistics"
+            >
+              <BarChart2Icon size={20} />
+            </button>
+          )}
+          {/* Achievements Button */}
+          {uiProgress.showAchievementsHeaderButton && props.hasAnyAchievement && (
+          <button
+            className="settings-button header-icon"
+            onClick={() => setShowAchievements(true)}
+            title="Achievements"
+            aria-label="Achievements"
+          >
+            <AwardIcon size={20} />
+          </button>
+          )}
+          {/* Crown Icon für Leaderboard-Mode */}
+          {uiProgress.showLeaderboard && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setShowLeaderboardModal(true)}
+              title="Show Leaderboard"
+            >
+              <CrownIcon size={22} />
+            </button>
+          )}
+          {/* Click-Counter */}
+          {showClickStats && (
+            <span className="header-clickstats">
+              <MousePointerClickIcon size={20} />
+              {String(floatingClicks ?? 0).padStart(5, '0')}
+            </span>
+          )}
+          {/* Playtime */}
+          {showPlaytime && (
+            <span className="header-playtime">
+              <ClockIcon size={20} />
+              {formatPlaytime(playTime, false)}</span>
+          )}
+        </div>
       </div>
       {/* Settings Modal */}
       <SettingsModal
@@ -179,6 +203,15 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
+        hasAnyAchievement={props.hasAnyAchievement} // Prop hier weitergeben
+        showAchievementsHeaderButton={showAchievementsHeaderButton}
+        setShowAchievementsHeaderButton={setShowAchievementsHeaderButton}
+        showStatisticsHeaderButton={showStatisticsHeaderButton}
+        setShowStatisticsHeaderButton={setShowStatisticsHeaderButton}
+        musicEnabled={props.musicEnabled} // Pass down
+        setMusicEnabled={props.setMusicEnabled} // Pass down
+        soundEffectsEnabled={props.soundEffectsEnabled} // Pass down
+        setSoundEffectsEnabled={props.setSoundEffectsEnabled} // Pass down
       />
       <AchievementsModal
         showAchievements={showAchievements}
@@ -190,7 +223,7 @@ export default function GameHeader(props) {
       />
       <MoneyBanner money={formatNumber(money)} />
       {/* Leaderboard Modal */}
-      {showLeaderboardModal && uiProgress.showLeaderboard && (
+      {showLeaderboardModal && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
       {/* Statistics Modal */}
@@ -199,14 +232,13 @@ export default function GameHeader(props) {
         onClose={() => setShowStatisticsModal(false)}
         playTime={props.playTime}
         activePlayTime={props.activePlayTime}
-        inactivePlayTime={props.offlineTime}
+        inactivePlayTime={props.inactivePlayTime}
         totalClicks={floatingClicks} // Klicks hier übergeben
       />
       <SideMenu 
         isOpen={isSideMenuOpen}
         setIsOpen={setIsSideMenuOpen}
         onOpenSettings={() => setShowSettings(true)} 
-        showLeaderboard={showLeaderboard}
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
         onOpenStatistics={() => setShowStatisticsModal(true)}

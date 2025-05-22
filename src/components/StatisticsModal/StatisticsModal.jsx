@@ -1,5 +1,5 @@
 import React from 'react';
-import { X as CloseIcon, Hourglass as HourglassIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon, Power as PowerIcon } from 'lucide-react';
+import { X as CloseIcon, ClockIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 import { formatPlaytime } from '../../utils/calculators';
 
@@ -8,13 +8,13 @@ export default function StatisticsModal({
   onClose,
   playTime,
   activePlayTime,
-  inactivePlayTime,
   totalClicks
 }) {
   const modalRef = useModal(show, onClose);
 
-  // Berechne die Zeit, die die App/der Browser geschlossen war
-  const timeAppClosed = Math.max(0, playTime - (activePlayTime + inactivePlayTime));
+  // Berechne die gesamte Abwesenheitszeit
+  const absenceTime = Math.max(0, playTime - activePlayTime);
+  
   if (!show) return null;
 
   return (
@@ -35,24 +35,19 @@ export default function StatisticsModal({
           <h4 className="settings-section-title">Playtime</h4>
           <ul className="statistics-list">
             <li>
-              <HourglassIcon size={20} className="stats-icon" />
-              <span className="stats-label">Total Playtime:</span>
-              <span className="stats-value">{formatPlaytime(playTime, true)}</span>
-            </li>
-            <li>
               <ActivityIcon size={20} className="stats-icon" />
               <span className="stats-label">Active Playtime:</span>
-              <span className="stats-value">{formatPlaytime(activePlayTime, true)}</span>
+              <span className="stats-value">{formatPlaytime(activePlayTime, false)}</span>
             </li>
             <li>
               <ClockFadingIcon size={20} className="stats-icon" />
-              <span className="stats-label">Inactive Playtime:</span>
-              <span className="stats-value">{formatPlaytime(inactivePlayTime, true)}</span>
+              <span className="stats-label">Absence Time:</span>
+              <span className="stats-value">{formatPlaytime(absenceTime, false)}</span>
             </li>
             <li>
-              <PowerIcon size={20} className="stats-icon" />
-              <span className="stats-label">Time with App Closed:</span>
-              <span className="stats-value">{formatPlaytime(timeAppClosed, true)}</span>
+              <ClockIcon size={20} className="stats-icon" />
+              <span className="stats-label">Total Playtime:</span>
+              <span className="stats-value">{formatPlaytime(playTime, false)}</span>
             </li>
           </ul>
           <ul className="statistics-list">
@@ -60,7 +55,7 @@ export default function StatisticsModal({
             <li>
               <MousePointerClickIcon size={20} className="stats-icon" />
               <span className="stats-label">Total Clicks:</span>
-              <span className="stats-value">{totalClicks?.toLocaleString('de-DE') ?? 0}</span>
+              <span className="stats-value">{totalClicks}</span>
             </li>
           </ul>
         </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
 export default function useGameState(easyMode = false) {
@@ -42,12 +42,30 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.isStateUnlocked ?? false
   );
   const [activePlayTime, setActivePlayTime] = useState(gameConfig.initialState.activePlayTime ?? 0);
-  const [offlineTime, setOfflineTime] = useState(gameConfig.initialState.offlineTime ?? 0);
+  const [inactivePlayTime, setInactivePlayTime] = useState(gameConfig.initialState.inactivePlayTime ?? 0);
+
+  // State to store the calculated offline duration on initial load
+  const [initialOfflineDuration, setInitialOfflineDuration] = useState(0);
 
   // Interventions-Tab-Status
   const [isInterventionsUnlocked, setIsInterventionsUnlocked] = useState(
     gameConfig.initialState.isInterventionsUnlocked ?? false
   );
+
+  // State für Offline-Einnahmen
+  const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
+
+  // State for Critical Click Chance
+  const [criticalClickChanceLevel, setCriticalClickChanceLevel] = useState(gameConfig.initialState.criticalClickChanceLevel);
+
+  // State for boosted investments
+  const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
+    return gameConfig.investments.map((_, index) => {
+      const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
+      return storedValue ? JSON.parse(storedValue) : false;
+    });
+  });
+
 
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
@@ -70,7 +88,11 @@ export default function useGameState(easyMode = false) {
     isStateUnlocked,
     isInterventionsUnlocked,
     activePlayTime,
-    offlineTime,
+    inactivePlayTime,
+    offlineEarningsLevel, // Add to game state
+    criticalClickChanceLevel, // Add to game state
+    boostedInvestments: boostedInvestmentsData, // Add to game state
+    lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
@@ -99,9 +121,54 @@ export default function useGameState(easyMode = false) {
     setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
     setIsStateUnlocked(savedState.isStateUnlocked ?? false);
     setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
-    setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0); // Beibehaltung der aktiven Zeit
-    setOfflineTime(savedState.offlineTime ?? gameConfig.initialState.offlineTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+    setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0);
+
+    // Load offlineEarningsLevel, with migration for old isOfflineEarningsUnlocked
+    if (savedState.offlineEarningsLevel !== undefined) {
+      setOfflineEarningsLevel(savedState.offlineEarningsLevel);
+    } else if (savedState.isOfflineEarningsUnlocked === true) {
+      setOfflineEarningsLevel(1); // Migrate old save: if it was unlocked, set to level 1
+    } else {
+      setOfflineEarningsLevel(gameConfig.initialState.offlineEarningsLevel);
+    }
+    setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
+    setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+
+    // Load boostedInvestments state
+    const loadedBoosted = gameConfig.investments.map((_, index) => {
+      if (savedState.boostedInvestments && typeof savedState.boostedInvestments[index] === 'boolean') {
+        // Wenn im Savegame vorhanden, diesen Wert nehmen und auch im localStorage aktualisieren
+        localStorage.setItem(`boosted-${index}`, JSON.stringify(savedState.boostedInvestments[index]));
+        return savedState.boostedInvestments[index];
+      }
+      // Fallback auf individuellen localStorage (für Kompatibilität oder direkte Manipulation)
+      const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
+      return storedValue ? JSON.parse(storedValue) : false;
+    });
+    setBoostedInvestmentsData(loadedBoosted);
+    // Calculate initial offline duration if lastSaved timestamp exists in saved state
+    if (savedState.lastSaved) {
+      console.log('[useGameState] loadGameState: savedState.lastSaved exists.', { lastSavedTimestamp: savedState.lastSaved, lastSavedDate: new Date(savedState.lastSaved).toISOString() });
+      const currentTime = Date.now();
+      console.log('[useGameState] loadGameState: Current time for calculation:', new Date(currentTime).toISOString());
+      const offlineMs = currentTime - savedState.lastSaved;
+      const offlineSeconds = Math.floor(offlineMs / 1000);
+      console.log(`[useGameState] loadGameState: Calculated initialOfflineDuration: ${offlineSeconds}s (offlineMs: ${offlineMs})`);
+      setInitialOfflineDuration(offlineSeconds);
+    }
   };
+
+  // Setter for boostedInvestments that also persists to localStorage
+  const setBoostedInvestments = useCallback((updater) => {
+    setBoostedInvestmentsData(prevBoosted => {
+      const newBoostedArray = typeof updater === 'function' ? updater(prevBoosted) : updater;
+      // Persist each boosted state individually to localStorage
+      newBoostedArray.forEach((isBoosted, index) => {
+        localStorage.setItem(`boosted-${index}`, JSON.stringify(isBoosted));
+      });
+      return newBoostedArray;
+    });
+  }, []);
 
   return {
     // States
@@ -124,7 +191,12 @@ export default function useGameState(easyMode = false) {
     isStateUnlocked, setIsStateUnlocked,
     isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
-    offlineTime, setOfflineTime,
+    inactivePlayTime, setInactivePlayTime,
+    offlineEarningsLevel, setOfflineEarningsLevel, // Expose new state and setter
+    criticalClickChanceLevel, setCriticalClickChanceLevel, // Expose new state and setter
+    boostedInvestments: boostedInvestmentsData, // Expose the data
+    setBoostedInvestments, // Expose the custom setter
+    initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load
     gameState,

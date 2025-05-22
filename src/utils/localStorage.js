@@ -1,15 +1,42 @@
+const ANTI_CHEAT_SECRET = "€UROCL1CK€R_S€CR€T_CH€CK_V1.0.3"; // Ein geheimer Schlüssel
+
+/**
+ * Erzeugt einen einfachen Hash aus einem String.
+ * @param {string} str - Der Eingabe-String.
+ * @returns {string} Der generierte Hash als Hex-String.
+ */
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0; // In 32bit Integer umwandeln
+  }
+  return hash.toString(16);
+}
+
 /**
  * Saves game state to localStorage
  * @param {string} key - The key to save the data under
- * @param {Object} data - The data to save
+ * @param {Object} dataFromHook - The data to save from the game state hook
  */
-export const saveGameState = (key, data) => {
+export const saveGameState = (key, dataFromHook) => {
     try {
-      const serializedData = JSON.stringify({
-        ...data,
-        lastSaved: new Date().getTime()
-      });
-      localStorage.setItem(key, serializedData);
+      // Stelle sicher, dass lastSaved für diese Speicheroperation aktuell ist
+      const dataToStore = {
+        ...dataFromHook,
+        lastSaved: new Date().getTime(),
+      };
+
+      const stringifiedForChecksum = JSON.stringify(dataToStore);
+      const checksum = simpleHash(stringifiedForChecksum + ANTI_CHEAT_SECRET);
+
+      const finalStorageObject = {
+        payload: dataToStore,
+        chk: checksum,
+      };
+
+      localStorage.setItem(key, JSON.stringify(finalStorageObject));
       return true;
     } catch (error) {
       console.error('Error saving game state:', error);
@@ -22,16 +49,60 @@ export const saveGameState = (key, data) => {
    * @param {string} key - The key to load data from
    * @param {Object} defaultState - Default state to return if no saved state exists
    * @returns {Object} The loaded game state or default state
+   *                   Struktur bei Erfolg: { type: 'success' | 'success_old_format', payload: Object }
+   *                   Struktur bei Fehler: { type: 'error', reason: string, message: string, payload?: Object (defaultState) }
+   *                   Struktur wenn kein Key existiert: { type: 'no_data', payload: Object (defaultState) }
    */
   export const loadGameState = (key, defaultState = {}) => {
     try {
-      const serializedData = localStorage.getItem(key);
-      if (!serializedData) return defaultState;
-      
-      return JSON.parse(serializedData);
+      const rawData = localStorage.getItem(key);
+      if (!rawData) {
+        return { type: 'no_data', payload: defaultState };
+      }
+
+      let parsedData;
+      try {
+        parsedData = JSON.parse(rawData);
+      } catch (e) {
+        console.error('Error parsing saved data from localStorage:', e);
+        localStorage.removeItem(key); // Beschädigte Daten entfernen
+        return { type: 'error', reason: 'parse_error', message: 'Saved data is corrupt and could not be read.' };
+      }
+
+      // Prüfen, ob es das neue Format mit Payload und Checksum ist
+      const isNewFormat = parsedData && typeof parsedData.payload !== 'undefined' && typeof parsedData.chk !== 'undefined';
+
+      if (isNewFormat) {
+        const { payload, chk } = parsedData;
+
+        // Auf localhost die Prüfung überspringen
+        if (window.location.hostname === 'localhost') {
+          console.log('[AntiCheat] Skipping checksum validation on localhost.');
+          return { type: 'success', payload: payload };
+        }
+
+        const calculatedChecksum = simpleHash(JSON.stringify(payload) + ANTI_CHEAT_SECRET);
+
+        if (calculatedChecksum !== chk) {
+          console.warn('[AntiCheat] Save data checksum mismatch. Data may be tampered or corrupted for key:', key);
+          return { type: 'error', reason: 'checksum_mismatch', message: 'The checksum of the memory data is invalid. The data could have been manipulated or is corrupt.' };
+        }
+        return { type: 'success', payload: payload }; // Daten sind valide
+      } else {
+        // Altes Format ohne Prüfsumme
+        if (window.location.hostname === 'localhost') {
+          console.log('[AntiCheat] Loading old format data on localhost.');
+          return { type: 'success_old_format', payload: parsedData }; // parsedData ist hier der gameState direkt
+        }
+        console.warn('[AntiCheat] Old save format without checksum detected on non-localhost. Treating as potentially tampered for key:', key);
+        // Für bestehende Nutzer auf Produktion: Daten einmalig laden. Der nächste Speicherversuch wird das neue Format verwenden.
+        // Alternativ könnte man hier `null` zurückgeben, um einen Reset zu erzwingen.
+        // Wir wählen den sanfteren Weg und laden die alten Daten einmalig.
+        return { type: 'success_old_format', payload: parsedData };
+      }
     } catch (error) {
       console.error('Error loading game state:', error);
-      return defaultState;
+      return { type: 'error', reason: 'unknown_load_error', message: 'An unknown error has occurred while loading the savegame.', payload: defaultState };
     }
   };
   
@@ -40,7 +111,7 @@ export const saveGameState = (key, data) => {
    * @param {Object} savedState - The saved game state
    * @returns {number} Time elapsed in seconds
    */
-  export const getOfflineTime = (savedState) => {
+  export const getInactivePlayTime = (savedState) => {
     if (!savedState || !savedState.lastSaved) return 0;
     
     const now = new Date().getTime();

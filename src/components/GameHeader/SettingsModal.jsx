@@ -20,6 +20,11 @@ import {
   MoonIcon,
   SunIcon,
   MousePointerClickIcon,
+  Music2 as MusicIcon,
+  Volume2 as SoundEffectsIcon,
+  VolumeX as MuteIcon,
+  BarChart2 as BarChart2Icon,
+  AwardIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '../../hooks/useModal';
@@ -57,6 +62,15 @@ export default function SettingsModal({
   importError,
   handleImportCloud,
   handleSave,
+  hasAnyAchievement, // Neue Prop
+  showAchievementsHeaderButton,
+  setShowAchievementsHeaderButton,
+  musicEnabled, // New
+  setMusicEnabled, // New
+  soundEffectsEnabled, // New
+  setSoundEffectsEnabled, // New
+  showStatisticsHeaderButton,
+  setShowStatisticsHeaderButton,
 }) {
   const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
@@ -133,22 +147,70 @@ export default function SettingsModal({
         <div className="settings-modal-content">
           {/* Display options */}
           <h4 className="settings-section-title">Display options</h4>
-          {/* Spielzeit Toggle */}
+          {/* Statistics Button Toggle */}
           <div className="settings-row">
-            <ClockIcon size={20} className="settings-icon" />
+            <BarChart2Icon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              type="button"
             >
-              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
+              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
             </button>
             <button
-              className="settings-button"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
+              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              type="button"
             >
-              {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+            </button>
+          </div>
+          {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
+          {hasAnyAchievement && (
+            <div className="settings-row">
+              <AwardIcon size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
+                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+                type="button"
+              >
+                {showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+              </button>
+              <button
+                className={`settings-button${showAchievementsHeaderButton ? " active" : ""}`}
+                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
+                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
+                type="button"
+              >
+                {showAchievementsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+              </button>
+            </div>
+          )}
+          {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
+          <div className="settings-row">
+            <CrownIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setShowLeaderboard((v) => !v)}
+              title={showLeaderboard ? "Hide Leaderboard-Button" : "Show Leaderboard button"}
+              type="button"
+            >
+              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
+            </button>
+            <button
+              className={`settings-button${showLeaderboard ? " active" : ""}`}
+              onClick={() => setShowLeaderboard((v) => !v)}
+              title={showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
+              type="button"
+            >
+              {showLeaderboard ? (
+                <EyeIcon size={18} />
+              ) : (
+                <EyeOffIcon size={18} />
+              )}
             </button>
           </div>
           {/* Clicker Counter Toggle */}
@@ -173,28 +235,22 @@ export default function SettingsModal({
               )}
             </button>
           </div>
-          {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
+          {/* Spielzeit Toggle */}
           <div className="settings-row">
-            <CrownIcon size={20} className="settings-icon" />
+            <ClockIcon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
-              type="button"
+              onClick={() => setShowPlaytime((v) => !v)}
+              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
             >
-              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
+              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
             </button>
             <button
-              className={`settings-button${showLeaderboard ? " active" : ""}`}
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Leaderboard-Button ausblenden" : "Leaderboard-Button einblenden"}
-              type="button"
+              className="settings-button"
+              onClick={() => setShowPlaytime((v) => !v)}
+              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
             >
-              {showLeaderboard ? (
-                <EyeIcon size={18} />
-              ) : (
-                <EyeOffIcon size={18} />
-              )}
+              {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Dark Mode Toggle */}
@@ -203,7 +259,7 @@ export default function SettingsModal({
             <button
               className="settings-label btn"
               onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
             >
               {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} 
               {/* <span className="settings-uuid">alpha</span> */}
@@ -211,7 +267,7 @@ export default function SettingsModal({
             <button
               className="settings-button"
               onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Dark Mode deaktivieren" : "Dark Mode aktivieren"}
+              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
               aria-label="Dark Mode Toggle"
             >
               {isDarkMode ? (
@@ -219,6 +275,46 @@ export default function SettingsModal({
               ) : (
                 <MoonIcon size={18} />
               )}
+            </button>
+          </div>
+          {/* Audio Settings */}
+          <h4 className="settings-section-title">Audio Settings</h4>
+          {/* Background Music Toggle */}
+          <div className="settings-row">
+            <MusicIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setMusicEnabled(v => !v)}
+              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+            >
+              {musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setMusicEnabled(v => !v)}
+              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
+              aria-label="Background Music Toggle"
+            >
+              {musicEnabled ? <MusicIcon size={18} /> : <MuteIcon size={18} />}
+            </button>
+          </div>
+          {/* Sound Effects Toggle */}
+          <div className="settings-row">
+            <SoundEffectsIcon size={20} className="settings-icon" />
+            <button
+              className="settings-label btn"
+              onClick={() => setSoundEffectsEnabled(v => !v)}
+              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+            >
+              {soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+            </button>
+            <button
+              className="settings-button"
+              onClick={() => setSoundEffectsEnabled(v => !v)}
+              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
+              aria-label="Sound Effects Toggle"
+            >
+              {soundEffectsEnabled ? <SoundEffectsIcon size={18} /> : <MuteIcon size={18} />}
             </button>
           </div>
           {/* Save options */}
@@ -243,7 +339,7 @@ export default function SettingsModal({
                   );
                 }
               }}
-              title={cloudSaveMode ? "Deactivate Cloud-Save" : "Activate Cloud-Save"}
+              title={cloudSaveMode ? "Deactivate Cloud Save" : "Activate Cloud Save"}
             >
               {cloudSaveMode ? "Disable Cloud Save" : "Enable Cloud Save"}
             </button>
@@ -264,7 +360,7 @@ export default function SettingsModal({
                   );
                 }
               }}
-              title={cloudSaveMode ? "Deactivate Cloud-Save" : "Activate Cloud-Save"}
+              title={cloudSaveMode ? "Deactivate cloud save" : "Activate cloud save"}
             >
               {cloudSaveMode ? (
                 <CloudOffIcon size={18} />
@@ -279,7 +375,7 @@ export default function SettingsModal({
               <IdCardIcon size={20} className="settings-icon" />
                 <span
                   className="settings-uuid"
-                  title="Your Cloud Save UUID (copy & use on other device)"
+                  title="Your cloud save UUID (copy & use on other device)"
                   onClick={() => {
                     navigator.clipboard?.writeText(cloudUuid);
                     triggerSaveFeedback("UUID copied");

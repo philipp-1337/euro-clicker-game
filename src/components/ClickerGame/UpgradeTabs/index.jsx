@@ -41,6 +41,16 @@ export default function UpgradeTabs({
   isInterventionsUnlocked,
   unlockInterventions,
   interventionsUnlockCost,
+  offlineEarningsLevel,      // New
+  currentOfflineEarningsFactor, // New
+  buyOfflineEarningsLevel,     // New
+  offlineEarningsLevelCost,   // New
+  criticalClickChanceLevel,      // New
+  currentCriticalClickChance, // New
+  buyCriticalClickChanceLevel,     // New
+  criticalClickChanceCost,   // New
+  onInvestmentBoosted, // New prop for handling investment boosts
+  soundEffectsEnabled, // New prop
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -112,6 +122,16 @@ export default function UpgradeTabs({
           isInterventionsUnlocked={isInterventionsUnlocked}
           unlockInterventions={unlockInterventions}
           interventionsUnlockCost={interventionsUnlockCost}
+          offlineEarningsLevel={offlineEarningsLevel}                 // New
+          currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
+          buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
+          offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
+          criticalClickChanceLevel={criticalClickChanceLevel} // New
+          currentCriticalClickChance={currentCriticalClickChance} // New
+          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
+          criticalClickChanceCost={criticalClickChanceCost} // New
+          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined} // Pass to Investments tab
+          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
         />
       )
     ))}

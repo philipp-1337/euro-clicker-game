@@ -2,7 +2,7 @@
 
 // Funktion, die aufgerufen wird, wenn ein Update bereitsteht
 function onUpdateReady(registration) {
-  console.log('Neuer Service Worker ist bereit zur Aktivierung.');
+  console.log('New Service Worker is ready for activation.');
   // Sende ein Event, auf das die App hören kann
   window.dispatchEvent(new CustomEvent('swUpdateReady', { detail: registration }));
 }
@@ -35,7 +35,7 @@ export function register() {
                   onUpdateReady(registration);
                 } else {
                   // Beim ersten Mal ist alles vorab gecached.
-                  console.log('Inhalt ist für Offline-Nutzung gecached.');
+                  console.log('Content is cached for offline use.');
                 }
               }
             };

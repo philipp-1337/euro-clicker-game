@@ -9,6 +9,12 @@ function App() {
   const [showUpdateBanner, setShowUpdateBanner] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState(null);
   const saveGameRef = useRef(null); // Ref für die saveGame Funktion
+  const audioRef = useRef(null);
+  const [musicPlaying, setMusicPlaying] = useState(false);
+  // Audio settings states
+  const [musicEnabled, setMusicEnabled] = useState((localStorage.getItem('musicEnabled') ?? 'true') === 'true');
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState((localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true');
+
 
   useEffect(() => {
     const handleUpdateReady = (event) => {
@@ -23,6 +29,45 @@ function App() {
       window.removeEventListener('swUpdateReady', handleUpdateReady);
     };
   }, []);
+
+  // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
+  useEffect(() => {
+    const handleTampering = (event) => {
+      let message = "Your save data was corrupted or manipulated. The game has been reset."; // Standardnachricht
+      if (event.detail && event.detail.message) {
+        message = `${event.detail.message} Das Spiel wurde zurückgesetzt.`;
+      } else if (event.detail && event.detail.reason) {
+        // Fallback, falls nur der Grund angegeben ist
+        const reasonText = event.detail.reason === 'parse_error' ? 'Data format error' :
+                           event.detail.reason === 'checksum_mismatch' ? 'Checksum error' :
+                           'Unknown error';
+        message = `Due to a problem with your save data (${reasonText}), the game has been reset.`;
+      }
+      // Hier könntest du eine schönere Benachrichtigung einbauen (Toast, Modal etc.)
+      alert(message);
+    };
+    window.addEventListener('gamestateTampered', handleTampering);
+    return () => {
+      window.removeEventListener('gamestateTampered', handleTampering);
+    };
+  }, []);
+
+  // Optional: Start music on first user interaction if autoplay is blocked
+  useEffect(() => {
+    if (musicPlaying && musicEnabled && audioRef.current) {
+      audioRef.current.play().catch(error => console.warn("Music play failed:", error));
+    } else if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  }, [musicPlaying, musicEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('musicEnabled', musicEnabled.toString());
+  }, [musicEnabled]);
+
+  useEffect(() => {
+    localStorage.setItem('soundEffectsEnabled', soundEffectsEnabled.toString());
+  }, [soundEffectsEnabled]);
 
   // Handler für Easy-Mode-Toggle
   const handleEasyModeToggle = (isEasyMode) => {
@@ -59,11 +104,24 @@ function App() {
 
   return (
     <div className="App">
+      {/* Background music */}
+      <audio
+        ref={audioRef}
+        src="/sounds/background-music.mp3"
+        loop
+        style={{ display: 'none' }}
+      />
       {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}
         onEasyModeToggle={handleEasyModeToggle}
         registerSaveGameHandler={registerSaveGameHandler}
+        musicPlaying={musicPlaying}
+        setMusicPlaying={setMusicPlaying}
+        musicEnabled={musicEnabled}
+        setMusicEnabled={setMusicEnabled}
+        soundEffectsEnabled={soundEffectsEnabled}
+        setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
     </div>
   );
