@@ -37,7 +37,7 @@ export default function StatisticsModal({
             <li>
               <ActivityIcon size={20} className="stats-icon" />
               <span className="stats-label">Active Playtime:</span>
-              <span className="stats-value">{formatPlaytime(activePlayTime, false)}</span>
+              <span className="stats-value">{formatPlaytime(activePlayTime, true)}</span>
             </li>
             <li>
               <ClockFadingIcon size={20} className="stats-icon" />
@@ -48,6 +48,14 @@ export default function StatisticsModal({
               <ClockIcon size={20} className="stats-icon" />
               <span className="stats-label">Total Playtime:</span>
               <span className="stats-value">{formatPlaytime(playTime, false)}</span>
+            </li>
+          </ul>
+          <ul className="statistics-list">
+            <h4 className="settings-section-title">Clicks</h4>
+            <li>
+              <PowerIcon size={20} className="stats-icon" />
+              <span className="stats-label">Time with App Closed:</span>
+              <span className="stats-value">{formatPlaytime(timeAppClosed, true)}</span>
             </li>
           </ul>
           <ul className="statistics-list">
