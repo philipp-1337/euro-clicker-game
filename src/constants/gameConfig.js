@@ -74,6 +74,7 @@ export const gameConfig = {
       criticalClickChanceLevel: 0, // Level for critical click chance upgrade
     },
     activePlayTime: 0, // Initial aktive Spielzeit
+    prestigeShares: 0, // Initial prestige shares
     inactivePlayTime: 0,    // Initial kumulierte inaktive Spiel-Zeit
 
     // Upgrade-Multiplikatoren
@@ -108,6 +109,14 @@ export const gameConfig = {
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
       unlockStateCost: 2500000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
       unlockInterventionsCost: 5000000, // Kosten für die Freischaltung des Interventions-Tabs
+    },
+    // Prestige-Konfiguration
+    prestige: {
+      moneyPerBasePoint: 1000000000, // 1 Milliarde Euro
+      sharesPerBasePoint: 1,       // für 1 Anteil
+      bonusPerShare: 0.01,           // 1% Bonus pro Anteil auf Einkommen/Sekunde
+      minMoneyForModalButton: 1000000000, // 1 Milliarde für Button-Sichtbarkeit
+      minSharesToPrestige: 1.0,      // Mindestanteile für Prestige-Aktion
     },
 
     // Timing-Konstanten

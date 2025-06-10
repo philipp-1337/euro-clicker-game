@@ -82,6 +82,17 @@ npm start
 
 4. **Strategy**: Decide wisely when to invest in managers or upgrades to maximize your money growth!
 
+### Prestige System
+
+Reach new heights with the Prestige system!
+
+- **Unlock Condition:** Becomes available once you reach 1 Billion €.
+- **Mechanics:** When you choose to Prestige, your current game progress (money, upgrades, investments, managers) will be reset.
+- **Rewards:** In return for resetting, you gain "Prestige Shares." Each share grants a permanent percentage bonus to your income per second.
+- **Earning Shares:** You earn 1 Prestige Share for every 1 Billion € you have at the time of prestiging.
+- **Activation:** You can trigger Prestige from a modal accessible via a button in the game header. This button appears once you've reached 1 Billion €, and you can activate Prestige once you have earned at least 1 full share in your current run.
+- **Goal:** Prestiging allows you to accelerate your progress in subsequent playthroughs, reaching higher levels of wealth and unlocking content faster.
+
 ## Customization
 
 You can easily customize the game by changing the values and prices in the code:

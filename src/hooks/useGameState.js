@@ -66,6 +66,9 @@ export default function useGameState(easyMode = false) {
     });
   });
 
+  // State for Prestige Shares
+  const [prestigeShares, setPrestigeShares] = useState(gameConfig.initialState.prestigeShares);
+
 
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
@@ -92,6 +95,7 @@ export default function useGameState(easyMode = false) {
     offlineEarningsLevel, // Add to game state
     criticalClickChanceLevel, // Add to game state
     boostedInvestments: boostedInvestmentsData, // Add to game state
+    prestigeShares, // Add prestige shares to game state
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -99,7 +103,11 @@ export default function useGameState(easyMode = false) {
   const loadGameState = (savedState) => {
     if (!savedState) return;
     
-    setMoney(savedState.money ?? gameConfig.initialState.money);
+    // Ensure money is a valid number, default to initial state if not
+    const loadedMoney = savedState.money;
+    setMoney(typeof loadedMoney === 'number' && !isNaN(loadedMoney)
+      ? loadedMoney
+      : gameConfig.initialState.money);
     setCooldowns(savedState.cooldowns ?? [...gameConfig.initialState.cooldowns]);
     setManagers(savedState.managers ?? [...gameConfig.initialState.managers]);
     setValueMultipliers(savedState.valueMultipliers ?? [...gameConfig.initialState.valueMultipliers]);
@@ -131,6 +139,9 @@ export default function useGameState(easyMode = false) {
     } else {
       setOfflineEarningsLevel(gameConfig.initialState.offlineEarningsLevel);
     }
+    const loadedPrestigeShares = savedState.prestigeShares;
+    setPrestigeShares(typeof loadedPrestigeShares === 'number' && !isNaN(loadedPrestigeShares)
+      ? loadedPrestigeShares : gameConfig.initialState.prestigeShares);
     setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
 
@@ -196,6 +207,7 @@ export default function useGameState(easyMode = false) {
     criticalClickChanceLevel, setCriticalClickChanceLevel, // Expose new state and setter
     boostedInvestments: boostedInvestmentsData, // Expose the data
     setBoostedInvestments, // Expose the custom setter
+    prestigeShares, setPrestigeShares, // Expose prestige shares
     initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load

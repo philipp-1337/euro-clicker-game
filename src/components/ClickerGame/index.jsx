@@ -7,6 +7,7 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
+import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
@@ -94,7 +95,13 @@ export default function ClickerGame({
     clearLastInactiveDuration, // Get new function from hook
     calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
     claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
-        handleInvestmentBoost,     // Get the handler for investment boosts
+    handleInvestmentBoost,     // Get the handler for investment boosts
+    // Prestige related
+    prestigeShares,
+    currentRunShares,
+    prestigeGame,
+    prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
+    canPrestige,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const {
@@ -375,6 +382,13 @@ export default function ClickerGame({
           setMusicEnabled={setMusicEnabled} // Pass down
           soundEffectsEnabled={soundEffectsEnabled} // Pass down
           setSoundEffectsEnabled={setSoundEffectsEnabled} // Pass down
+          // Prestige
+          prestigeShares={prestigeShares}
+          currentRunShares={currentRunShares}
+          prestigeGame={prestigeGame}
+          prestigeBonusMultiplier={prestigeBonusMultiplier} // Und hier übergeben wird
+          canPrestige={canPrestige}
+          gameConfig={gameConfig} // Pass gameConfig for prestige button visibility condition
         />
       )}
 

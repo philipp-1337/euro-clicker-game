@@ -1,6 +1,6 @@
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
@@ -11,11 +11,13 @@ import {
   Menu as MenuIcon,
   BarChart2 as BarChart2Icon,
   AwardIcon,
+  Zap as PrestigeHeaderIcon, // Icon für Prestige
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
+import PrestigeModal from '@components/PrestigeModal/PrestigeModal'; // Import PrestigeModal
 import StatisticsModal from '../StatisticsModal/StatisticsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
 import SideMenu from '../SideMenu/SideMenu';
@@ -41,6 +43,12 @@ export default function GameHeader(props) {
     money,
     playTime,
     totalMoneyPerSecond,
+    // Prestige related props from ClickerGame
+    currentRunShares,
+    prestigeShares, // Accumulated from previous prestiges
+    prestigeGame,
+    prestigeBonusMultiplier, // Wird jetzt vom Hook geliefert
+    canPrestige,
   } = useGameHeaderLogic({ ...props });
 
   // Settings Modal State
@@ -59,6 +67,8 @@ export default function GameHeader(props) {
     setShowAchievementsHeaderButton,
     showStatisticsHeaderButton,
     setShowStatisticsHeaderButton,
+    prestigeButtonEverVisible, // Get the new state
+    setPrestigeButtonEverVisible, // Get the new setter
   } = useUiProgress();
 
   // Cloud Save Confirm Modal State
@@ -73,6 +83,19 @@ export default function GameHeader(props) {
   // State für das Statistics Modal
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
 
+  // State für Prestige Modal
+  const [showPrestigeModal, setShowPrestigeModal] = useState(false);
+  
+  // Logic to show Prestige button: either money threshold is met OR it has been visible before
+  const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
+  const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
+
+  // Effect to set prestigeButtonEverVisible to true once the money threshold is met for the first time
+  useEffect(() => {
+    if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
+      setPrestigeButtonEverVisible(true);
+    }
+  }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -94,7 +117,7 @@ export default function GameHeader(props) {
         {formatNumber(money)} €
         {totalMoneyPerSecond > 0 && (
           <span className="per-second">
-            +{formatNumber(totalMoneyPerSecond)} €/s
+            +{formatNumber(totalMoneyPerSecond)} €/s {prestigeBonusMultiplier > 1 ? `(x${prestigeBonusMultiplier.toFixed(2)})` : ''}
           </span>
         )}
       </div>
@@ -163,6 +186,16 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
+          {/* Prestige Button */}
+          {showPrestigeButtonInHeader && (
+            <button
+              className="settings-button header-icon prestige-header-button" // Add a class for styling
+              onClick={() => setShowPrestigeModal(true)}
+              title="Prestige"
+            >
+              <PrestigeHeaderIcon size={20} />
+            </button>
+          )}
           {/* Click-Counter */}
           {showClickStats && (
             <span className="header-clickstats">
@@ -221,12 +254,27 @@ export default function GameHeader(props) {
         totalClicks={props.floatingClicks}
         gameTime={props.playTime}
       />
+      {/* Prestige Modal */}
+      {showPrestigeModal && (
+        <PrestigeModal
+          show={showPrestigeModal}
+          onClose={() => setShowPrestigeModal(false)}
+          currentRunShares={currentRunShares}
+          accumulatedPrestigeShares={prestigeShares}
+          onPrestige={() => {
+            prestigeGame();
+            setShowPrestigeModal(false); // Close modal after prestiging
+          }}
+          canPrestige={canPrestige}
+        />
+      )}
       <MoneyBanner money={formatNumber(money)} />
       {/* Leaderboard Modal */}
       {showLeaderboardModal && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
       {/* Statistics Modal */}
+
       <StatisticsModal
         show={showStatisticsModal}
         onClose={() => setShowStatisticsModal(false)}
@@ -242,6 +290,8 @@ export default function GameHeader(props) {
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
         onOpenStatistics={() => setShowStatisticsModal(true)}
+        showPrestigeOption={showPrestigeButtonInHeader} // Pass visibility to SideMenu
+        onOpenPrestige={() => setShowPrestigeModal(true)} // Handler to open PrestigeModal
       />
     </>
   );

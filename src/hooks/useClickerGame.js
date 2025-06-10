@@ -50,6 +50,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
     boostedInvestments, // Get boosted state
     setBoostedInvestments, // Get setter for boosted state
+    prestigeShares, setPrestigeShares, // Prestige shares
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -149,14 +150,49 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     }, 0);
   }, [stateBuildings]);
 
+  // Calculate current run shares and prestige bonus
+  const currentRunShares = useMemo(() => {
+    if (typeof money !== 'number' || isNaN(money) || money <= 0) return 0; // money muss eine positive Zahl sein
+    // Mindestgeld für 0.01 Anteile, um sehr kleine Brüche zu vermeiden
+    const minMoneyForAnyShares = (0.01 / gameConfig.prestige.sharesPerBasePoint) * gameConfig.prestige.moneyPerBasePoint;
+    if (money < minMoneyForAnyShares) return 0;
+
+    const shares = (money / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
+    return (typeof shares === 'number' && !isNaN(shares) && shares > 0) ? shares : 0; // Ensure the result is a number
+  }, [money]);
+
+  const prestigeBonusMultiplier = useMemo(() => {
+    const effectiveTotalShares =
+      ((typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0);
+    const bonus = 1 + (effectiveTotalShares * gameConfig.prestige.bonusPerShare);
+    // console.log('[useClickerGame] Calculating prestigeBonusMultiplier. prestigeShares:', prestigeShares, 'Bonus:', bonus);
+    return (typeof bonus === 'number' && !isNaN(bonus) && bonus > 0) ? bonus : 1; // Sicherstellen, dass der Bonus mindestens 1 ist
+  }, [prestigeShares]);
+
   // Gesamt-Einkommen pro Sekunde
-  const totalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond - stateBuildingsCostPerSecond;
+  const baseTotalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond - stateBuildingsCostPerSecond;
+  const totalMoneyPerSecond = (typeof baseTotalMoneyPerSecond === 'number' && !isNaN(baseTotalMoneyPerSecond)) ? baseTotalMoneyPerSecond * prestigeBonusMultiplier : 0;
 
   // Zentrale Geldberechnung pro Sekunde
   useEffect(() => {
     const interval = setInterval(() => {
-      setMoney(prev => prev + totalMoneyPerSecond);
+      setMoney(prev => prev + (totalMoneyPerSecond / (1000 / gameConfig.timing.updateInterval))); // Distribute income over updateInterval
     }, 1000);
+    return () => clearInterval(interval);
+  }, [totalMoneyPerSecond, setMoney]); // ACHTUNG: Dieser Block wird durch den nächsten ersetzt
+
+  // Korrigierte Zentrale Geldberechnung pro Sekunde
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const incomeThisTick = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond))
+        ? totalMoneyPerSecond / (1000 / gameConfig.timing.updateInterval)
+        : 0;
+      setMoney(prev => {
+        const currentPrev = (typeof prev === 'number' && !isNaN(prev)) ? prev : 0;
+        const nextVal = currentPrev + incomeThisTick;
+        return (typeof nextVal === 'number' && !isNaN(nextVal)) ? nextVal : currentPrev; // Verhindert, dass money NaN wird
+      });
+    }, gameConfig.timing.updateInterval); // Nutze das konfigurierte Update-Intervall
     return () => clearInterval(interval);
   }, [totalMoneyPerSecond, setMoney]);
 
@@ -281,11 +317,18 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     ensureStartTime?.();
     const isCritical = Math.random() < currentCriticalClickChance;
     let moneyToAdd = 1; // Standard +1€
+
     if (isCritical) {
-      moneyToAdd = totalMoneyPerSecond;
-      // Hier könnte man später einen speziellen Sound für kritische Treffer einbauen
+      const criticalAmount = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond)) ? totalMoneyPerSecond : 0;
+      // Kritische Treffer sollten immer positiv sein und mindestens 1€ geben, auch wenn das Einkommen negativ oder 0 ist.
+      moneyToAdd = Math.max(1, criticalAmount);
     }
-    setMoney(prevMoney => prevMoney + moneyToAdd); // Add money before returning
+
+    const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0) ? moneyToAdd : 1;
+    setMoney(prevMoney => {
+      const currentPrevMoney = (typeof prevMoney === 'number' && !isNaN(prevMoney)) ? prevMoney : 0;
+      return currentPrevMoney + finalMoneyToAdd;
+    });
     return { isCritical, amount: moneyToAdd }; // Return object with critical status and amount
   }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond]);
 
@@ -388,6 +431,57 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     });
   }, [setBoostedInvestments]);
 
+  // Prestige Game Logic
+  const canPrestige = currentRunShares >= gameConfig.prestige.minSharesToPrestige;
+
+  const prestigeGame = useCallback(() => {
+    if (!canPrestige) return;
+
+    const currentMoneyForPrestige = (typeof money === 'number' && !isNaN(money) && money > 0) ? money : 0;
+    let sharesEarnedThisRun = 0;
+    if (currentMoneyForPrestige > 0) {
+        sharesEarnedThisRun = (currentMoneyForPrestige / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
+    }
+    sharesEarnedThisRun = (typeof sharesEarnedThisRun === 'number' && !isNaN(sharesEarnedThisRun) && sharesEarnedThisRun > 0) ? sharesEarnedThisRun : 0;
+    const newTotalPrestigeShares = ((typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0) + sharesEarnedThisRun;
+    // Prepare the state for reset
+    const freshInitialState = JSON.parse(JSON.stringify(gameConfig.initialState));
+
+    const stateToReset = {
+      ...freshInitialState,
+      // Preserve specific fields
+      prestigeShares: (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0,
+      activePlayTime: gameState.activePlayTime,
+      inactivePlayTime: gameState.inactivePlayTime,
+      lastSaved: Date.now(), // Set lastSaved to now to avoid immediate large offline earning display
+      // easyMode is a prop and will be preserved by App state
+      // UI settings are in localStorage via useUiProgress
+      // Dark mode from localStorage
+      darkMode: localStorage.getItem('darkMode') === 'true',
+      // Audio settings from localStorage
+      musicEnabled: (localStorage.getItem('musicEnabled') ?? 'true') === 'true',
+      soundEffectsEnabled: (localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true',
+      
+      // Ensure specific progression arrays/objects are truly reset
+      investments: gameConfig.initialState.investments.map(() => 0),
+      stateBuildings: gameConfig.initialState.stateBuildings.map(() => 0),
+      boostedInvestments: gameConfig.investments.map(() => false),
+      // Reset managers, upgrade levels etc., by taking them from freshInitialState
+    };
+
+    // Update the persistent prestige shares state, ensuring it's a valid number
+    const finalNewTotalPrestigeShares = (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0;
+    setPrestigeShares(finalNewTotalPrestigeShares);
+    loadGameState(stateToReset); // Apply the reset state
+
+    // Clear individual localStorage items for boosted investments and clicks
+    gameConfig.investments.forEach((_, index) => {
+      localStorage.removeItem(`boosted-${index}`);
+      localStorage.removeItem(`boostClicks-${index}`);
+    });
+    saveGame(); // Save immediately after prestige
+  }, [money, prestigeShares, setPrestigeShares, loadGameState, gameState, saveGame, canPrestige]);
+
   return {
     // Hauptzustände
     money,
@@ -405,6 +499,11 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     stateBuildings,
     activePlayTime,
     inactivePlayTime,
+    prestigeShares,
+    currentRunShares,
+    prestigeBonusMultiplier,
+    canPrestige,
+    
     
     // Funktionen 
     handleClick: wrappedHandleClick,
@@ -420,6 +519,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     unlockInterventions,
     buyInvestment,
     saveGame,
+    prestigeGame,
     addQuickMoney,
     handleInvestmentBoost, // Export this handler
     

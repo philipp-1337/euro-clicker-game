@@ -6,7 +6,8 @@ import {
   BarChart2 as StatsIcon,
   Award as AchievementsIcon,  
   Info as InfoIcon,
-  CrownIcon
+  CrownIcon,
+  Zap as PrestigeSideMenuIcon, // Icon für Prestige
 } from 'lucide-react';
 import AboutModal from '../AboutModal/AboutModal';
 import { useModal } from '../../hooks/useModal';
@@ -17,7 +18,9 @@ export default function SideMenu({
   onOpenSettings,
   onToggleLeaderboard,
   onOpenAchievements,
-  onOpenStatistics // Neue Prop
+  onOpenStatistics,
+  showPrestigeOption, // Neue Prop für Sichtbarkeit
+  onOpenPrestige      // Neue Prop zum Öffnen des Prestige-Modals
 }) {
   const [showAbout, setShowAbout] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
@@ -88,6 +91,15 @@ export default function SideMenu({
             <span>Achievements</span>
           </div>
 
+          {showPrestigeOption && ( // Nur anzeigen, wenn Bedingung erfüllt
+            <div
+              className="sidemenu-item"
+              onClick={() => handleMenuItemClick(onOpenPrestige)}
+            >
+              <PrestigeSideMenuIcon size={20} className="sidemenu-icon" />
+              <span>Prestige</span>
+            </div>
+          )}
           <div 
             className="sidemenu-item" 
             onClick={() => handleMenuItemClick(() => setShowAbout(true))}
