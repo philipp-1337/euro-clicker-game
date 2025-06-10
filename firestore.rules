@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cloud Save
+    match /saves/{uuid} {
+      allow read, write, delete: if true;
+    }
+    // Leaderboard
+    match /leaderboard/{entry} {
+      allow read: if true; // Jeder darf das Leaderboard lesen
+      allow write: if
+          // Optional: verlange, dass der Nutzer angemeldet ist, falls du Firebase Auth nutzt
+          // request.auth != null &&
+          request.resource.data.name is string &&
+          request.resource.data.name.size() > 0 &&
+          request.resource.data.name.size() <= 180 &&
+          request.resource.data.playtime is number &&
+          request.resource.data.playtime >= 0 &&
+          request.resource.data.clicks is number &&
+          request.resource.data.clicks >= 0 && // Clicks können 0 sein
+          request.resource.data.goal is string && // Das Ziel muss ein String sein
+          (request.resource.data.goal == '100k' ||
+           request.resource.data.goal == '1B' ||
+           request.resource.data.goal == '10T' ||
+           request.resource.data.goal == '100Q' ||
+           request.resource.data.goal == '1Qi') && // Erlaubte Ziele
+          request.resource.data.activePlaytime is number &&
+          request.resource.data.activePlaytime >= 0 &&
+          request.resource.data.activePlaytime <= request.resource.data.playtime && // Aktive Spielzeit darf nicht größer als Gesamtspielzeit sein
+          request.resource.data.timestamp is number; // Client-Timestamp, sollte eine Zahl sein
+    }
+  }
+}
