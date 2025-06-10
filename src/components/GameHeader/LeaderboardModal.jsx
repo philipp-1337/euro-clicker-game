@@ -124,9 +124,11 @@ export default function LeaderboardModal({ show, onClose }) {
                 {entries.map((entry, idx) => {
                   const isMe = typeof window !== 'undefined' && entry.name === localStorage.getItem('leaderboardName');
                   const isFirst = idx === 0;
+                  // Flag-Visualisierung für Test/Alpha-Einträge
+                  const isFlagged = entry.flagged;
                   return (
-                    <tr key={entry.id} className={isMe ? 'me' : ''}>
-                      <td title={entry.name}> 
+                    <tr key={entry.id} className={isMe ? 'me' : ''} style={isFlagged ? { opacity: 0.5, background: '#ffeaea' } : {}}>
+                      <td title={entry.name}>
                         <div className="leaderboard-name-cell">
                           {entry.name}
                           {isFirst && (
@@ -136,6 +138,23 @@ export default function LeaderboardModal({ show, onClose }) {
                               style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
                               title="1st place"
                             />
+                          )}
+                          {isFlagged && (
+                            <span
+                              title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
+                              style={{
+                                marginLeft: 6,
+                                color: '#e74c3c',
+                                fontWeight: 600,
+                                fontSize: 12,
+                                background: '#fff0f0',
+                                borderRadius: 4,
+                                padding: '2px 6px',
+                                verticalAlign: 'middle',
+                              }}
+                            >
+                              TEST
+                            </span>
                           )}
                         </div>
                       </td>

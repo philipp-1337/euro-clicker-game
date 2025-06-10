@@ -255,6 +255,16 @@ export default function ClickerGame({
     // leaderboardSubmitted bleibt true, wenn es so war, bis ein neuer Checkpoint anvisiert wird.
   };
 
+  // --- Environment detection for leaderboard flagging ---
+  const [environment, setEnvironment] = useState('production');
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    if (hostname.includes('beta')) setEnvironment('beta');
+    else if (hostname.includes('alpha')) setEnvironment('alpha');
+    else if (hostname === 'localhost' || hostname === '127.0.0.1') setEnvironment('localhost');
+    else setEnvironment('production');
+  }, []);
+
   // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
   const handleLeaderboardSubmit = async () => {
     if (!leaderboardName.trim() || !currentCheckpoint) return;
@@ -262,6 +272,8 @@ export default function ClickerGame({
     // Firestore Submission wie in useLeaderboardSubmit.js
     const { addDoc, collection } = await import('firebase/firestore');
     const { db } = await import('../../firebase');
+    // Flag für Test/Alpha-Umgebung
+    const isTestOrAlpha = environment === 'localhost' || environment === 'alpha';
     await addDoc(collection(db, 'leaderboard'), {
       name: leaderboardName.trim(),
       playtime: playTime,
@@ -269,6 +281,8 @@ export default function ClickerGame({
       clicks: floatingClicks,
       activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
+      flagged: isTestOrAlpha ? true : false, // <--- Flag für Test/Alpha
+      flaggedReason: isTestOrAlpha ? environment : undefined // optional: Grund
     });
     setLeaderboardSubmitted(true);
     // Save game state (cloud or local)
