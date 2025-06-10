@@ -23,10 +23,10 @@ export default function PrestigeModal({
 
 
   return (
-    <div className="modal-backdrop" style={{ zIndex: 10006 }}> {/* Ensure high z-index */}
-      <div ref={modalRef} className="modal-content" style={{ maxWidth: 450, textAlign: 'center' }}>
+    <div className="modal-backdrop" style={{ zIndex: 10006 }}>
+      <div ref={modalRef} className="modal-content prestige-modal" style={{ maxWidth: 450 }}>
         <div className="settings-modal-header" style={{ justifyContent: 'center', position: 'relative' }}>
-          <h3 style={{ flexGrow: 1 }}>Prestige</h3>
+          <h3 className="modal-title">Prestige</h3>
           <button
             className="settings-button"
             onClick={onClose}
@@ -37,62 +37,47 @@ export default function PrestigeModal({
             <CloseIcon size={20} />
           </button>
         </div>
-        <div className="settings-modal-content" style={{ padding: '20px' }}>
-          <PrestigeIcon size={48} style={{ margin: '10px auto 20px', color: 'var(--color-prestige)' }} />
-          
-          <p style={{ marginBottom: '15px' }}>
-            Reach new heights by prestiging! You'll reset your current game progress (money, upgrades, investments, etc.) 
-            but gain permanent Prestige Shares.
+        <div className="settings-modal-content">
+          <div className="prestige-icon-wrapper">
+            <PrestigeIcon size={48} className="prestige-icon" />
+          </div>
+          <p>
+            Reach new heights by prestiging! You'll reset your current game progress (money, upgrades, investments, etc.)
+            but gain permanent <span className="prestige-text">Prestige Shares</span>.
           </p>
-          <p style={{ marginBottom: '10px' }}>
+          <p>
             Each Prestige Share grants a permanent <strong>{bonusPerSharePercentage.toFixed(1)}% bonus</strong> to your income per second.
           </p>
-          <p style={{ marginBottom: '5px' }}>
+          <p>
             You earn <strong>{gameConfig.prestige.sharesPerBasePoint} share</strong> for every <strong>{formatNumber(gameConfig.prestige.moneyPerBasePoint)} €</strong>.
           </p>
-           {/* This line is now redundant as 1 share costs 1 Billion */}
-           {/* <p style={{ marginBottom: '20px', fontSize: '0.9em', color: 'var(--color-text-secondary)' }}>
-            (This means 1 full share costs {formatNumber(nextShareCost)} €)
-          </p> */}
-
-          <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '15px', marginBottom: '15px' }}>
+          <div className="prestige-summary">
             <p>Current Accumulated Shares: <strong>{accumulatedPrestigeShares.toFixed(2)}</strong></p>
-            <p style={{ fontSize: '0.9em', color: 'var(--color-text-secondary)'}}>
+            <p className="text-secondary">
               (Your current active income bonus: +{activeBonusFromAccumulatedShares.toFixed(2)}%)
             </p>
             <p>Shares from this run: <strong>{currentRunShares.toFixed(2)}</strong></p>
-            <p style={{ fontWeight: 'bold', marginTop: '5px' }}>
-              Total Shares after Prestige: <span style={{color: 'var(--color-prestige-dark)'}}>{totalSharesAfterPrestige.toFixed(2)}</span>
+            <p className="prestige-text">
+              Total Shares after Prestige: <span>{totalSharesAfterPrestige.toFixed(2)}</span>
             </p>
-            <p style={{ fontWeight: 'bold', color: 'var(--color-success)', marginTop: '5px' }}>
+            <p className="success-text">
               Income Bonus after Prestige: +{potentialBonusAfterPrestige.toFixed(2)}%
             </p>
           </div>
-
-          <button 
-            className="modal-btn prestige-btn" 
-            onClick={onPrestige} 
+          <div className='modal-actions'>
+          <button
+            className="modal-btn prestige-btn"
+            onClick={onPrestige}
             disabled={!canPrestige}
             title={canPrestige ? `Prestige now for ${currentRunShares.toFixed(2)} more shares!` : `You need at least ${gameConfig.prestige.minSharesToPrestige.toFixed(1)} share from this run to prestige (currently ${currentRunShares.toFixed(2)}).`}
-            style={{ 
-              width: '100%', 
-              padding: '12px', 
-              fontSize: '1.1em',
-              backgroundColor: canPrestige ? 'var(--color-prestige)' : 'var(--color-button-disabled-bg)',
-              color: canPrestige ? 'white' : 'var(--color-button-disabled-text)',
-              cursor: canPrestige ? 'pointer' : 'not-allowed',
-              border: 'none',
-              borderRadius: 'var(--border-radius-medium)',
-              transition: 'background-color 0.2s ease'
-            }}
           >
             {canPrestige ? `Prestige (+${currentRunShares.toFixed(2)} Shares)` : `Need ${gameConfig.prestige.minSharesToPrestige.toFixed(1)} Share from this run`}
-            {/* Adjust text if currentRunShares is less than minSharesToPrestige */}
             {!canPrestige && currentRunShares > 0 && ` (currently ${currentRunShares.toFixed(2)})`}
           </button>
+          </div>
           {!canPrestige && (
-            <p style={{fontSize: '0.85em', marginTop: '8px', color: 'var(--color-text-secondary)'}}>
-                (You need {formatNumber(gameConfig.prestige.moneyPerBasePoint * (gameConfig.prestige.minSharesToPrestige - currentRunShares))} more € to earn the next full share and prestige)
+            <p className="text-secondary" style={{ fontSize: '0.85em', marginTop: 8 }}>
+              (You need {formatNumber(gameConfig.prestige.moneyPerBasePoint * (gameConfig.prestige.minSharesToPrestige - currentRunShares))} more € to earn the next full share and prestige)
             </p>
           )}
         </div>
