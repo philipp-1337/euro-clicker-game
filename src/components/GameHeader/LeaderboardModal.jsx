@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
-import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
+import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
 import { formatPlaytime } from '../../utils/calculators';
 import { useModal } from '../../hooks/useModal';
 import { CHECKPOINTS } from "@constants/gameConfig"; // Import CHECKPOINTS
@@ -131,7 +131,8 @@ export default function LeaderboardModal({ show, onClose }) {
                       <td title={entry.name}>
                         <div className="leaderboard-name-cell">
                           {entry.name}
-                          {isFirst && (
+                          {/* Nur Medaille anzeigen, wenn NICHT geflaggt */}
+                          {!isFlagged && isFirst && (
                             <MedalIcon
                               size={18}
                               color={isMe ? '#d4a900' : '#f5b400'}
@@ -140,21 +141,13 @@ export default function LeaderboardModal({ show, onClose }) {
                             />
                           )}
                           {isFlagged && (
-                            <span
-                              title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
-                              style={{
-                                marginLeft: 6,
-                                color: '#e74c3c',
-                                fontWeight: 600,
-                                fontSize: 12,
-                                background: '#fff0f0',
-                                borderRadius: 4,
-                                padding: '2px 6px',
-                                verticalAlign: 'middle',
-                              }}
-                            >
-                              TEST
-                            </span>
+                            <OctagonAlertIcon 
+                            size={18} 
+                            color={'red'}
+                            style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
+                            title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
+
+                            />
                           )}
                         </div>
                       </td>
