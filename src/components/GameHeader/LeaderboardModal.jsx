@@ -70,9 +70,8 @@ export default function LeaderboardModal({ show, onClose }) {
 
   if (!show) return null;
 
-  const goalDescription = activeTab === '100k'
-    ? `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '100k')?.label || '100,000 €'}!`
-    : `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '1B')?.label || '1 Billion €'}!`;
+  const currentCheckpoint = CHECKPOINTS.find(cp => cp.id === activeTab);
+  const goalDescription = currentCheckpoint ? `Goal: The fastest time to reach ${currentCheckpoint.label}!` : 'Select a goal.';
 
   return (
     <div className="modal-backdrop">
