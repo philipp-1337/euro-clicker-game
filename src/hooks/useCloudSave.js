@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db } from '../firebase';
+import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 // Hilfsfunktion für UUID
@@ -60,6 +61,12 @@ export default function useCloudSave() {
       const musicEnabledSetting = localStorage.getItem('musicEnabled');
       const soundEffectsEnabledSetting = localStorage.getItem('soundEffectsEnabled');
 
+      // Defensive check for gameState and prestigeCount before saving
+      const prestigeCountToSave = (gameState && typeof gameState.prestigeCount === 'number' && !isNaN(gameState.prestigeCount))
+        ? gameState.prestigeCount
+        : (gameConfig.initialState.prestigeCount ?? 0); // Fallback to initial state if undefined/invalid
+
+
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
         updatedAt: Date.now(),
@@ -71,7 +78,7 @@ export default function useCloudSave() {
         leaderboardCheckpointsReached,
         musicEnabledSetting,
         soundEffectsEnabledSetting,
-        prestigeCount: gameState.prestigeCount, // Prestige-Counter speichern
+        prestigeCount: prestigeCountToSave, // Use the checked value
       });
       setCloudStatus('saved');
       return uuid;

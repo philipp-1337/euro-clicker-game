@@ -108,7 +108,7 @@ export default function GameHeader(props) {
     <>
       {isSaving && (
         <div className="save-feedback-banner">
-          {saveMessage}
+          {saveMessage || 'Saving...'}
         </div>
       )}
       <div className="game-header-container">
