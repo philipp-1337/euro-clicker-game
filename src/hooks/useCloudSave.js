@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { db } from '../firebase';
+import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 
 // Hilfsfunktion für UUID
@@ -49,10 +50,8 @@ export default function useCloudSave() {
       } catch {}
       // --- ENDE PATCH ---
       let clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
-      let startTime = localStorage.getItem(START_TIME_KEY) || null;
-      let achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
-      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
-      const leaderboardMode = localStorage.getItem('leaderboardMode');
+      const startTime = localStorage.getItem(START_TIME_KEY) || null;
+      const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
       const leaderboardName = localStorage.getItem('leaderboardName');
       // --- ENDE LEADERBOARD PATCH ---
       // --- LEADERBOARD CHECKPOINTS PATCH ---
@@ -62,6 +61,12 @@ export default function useCloudSave() {
       const musicEnabledSetting = localStorage.getItem('musicEnabled');
       const soundEffectsEnabledSetting = localStorage.getItem('soundEffectsEnabled');
 
+      // Defensive check for gameState and prestigeCount before saving
+      const prestigeCountToSave = (gameState && typeof gameState.prestigeCount === 'number' && !isNaN(gameState.prestigeCount))
+        ? gameState.prestigeCount
+        : (gameConfig.initialState.prestigeCount ?? 0); // Fallback to initial state if undefined/invalid
+
+
       await setDoc(doc(db, 'saves', uuid), {
         ...gameState,
         updatedAt: Date.now(),
@@ -69,11 +74,11 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
-        leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
         musicEnabledSetting,
         soundEffectsEnabledSetting,
+        prestigeCount: prestigeCountToSave, // Use the checked value
       });
       setCloudStatus('saved');
       return uuid;
@@ -99,10 +104,6 @@ export default function useCloudSave() {
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
       if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
-      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
-      if (data.leaderboardMode !== undefined && data.leaderboardMode !== null) {
-        localStorage.setItem('leaderboardMode', data.leaderboardMode);
-      }
       if (data.leaderboardName !== undefined && data.leaderboardName !== null) {
         localStorage.setItem('leaderboardName', data.leaderboardName);
       }
@@ -129,6 +130,15 @@ export default function useCloudSave() {
         }
       } catch {}
 
+      // Prestige-Counter zurückschreiben
+      if (data.prestigeCount !== undefined && data.prestigeCount !== null) {
+        try {
+          const save = JSON.parse(localStorage.getItem(CLICKER_SAVE_KEY) || '{}');
+          save.prestigeCount = data.prestigeCount;
+          localStorage.setItem(CLICKER_SAVE_KEY, JSON.stringify(save));
+        } catch {}
+      }
+
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand
       const {
         updatedAt,
@@ -136,13 +146,14 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
-        leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
         musicEnabledSetting,
         soundEffectsEnabledSetting,
+        prestigeCount,
         ...gameStateForApp
       } = data;
+      if (prestigeCount !== undefined) gameStateForApp.prestigeCount = prestigeCount;
       return gameStateForApp;
     } catch (e) {
       setCloudStatus('error');

@@ -51,6 +51,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     boostedInvestments, // Get boosted state
     setBoostedInvestments, // Get setter for boosted state
     prestigeShares, setPrestigeShares, // Prestige shares
+    prestigeCount, setPrestigeCount, // Prestige count
   } = gameStateHook;
   
   // Berechnungen für abgeleitete Zustände 
@@ -543,7 +544,22 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     // Update the persistent prestige shares state, ensuring it's a valid number
     const finalNewTotalPrestigeShares = (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0;
     setPrestigeShares(finalNewTotalPrestigeShares);
-    loadGameState(stateToReset); // Apply the reset state
+    // Prestige-Counter erhöhen und im neuen Spielstand übernehmen
+    setPrestigeCount(prev => {
+      const newCount = (typeof prev === 'number' && !isNaN(prev) ? prev + 1 : 1);
+      const stateToResetWithPrestigeCount = {
+        ...stateToReset,
+        prestigeCount: newCount
+      };
+      loadGameState(stateToResetWithPrestigeCount); // Apply the reset state mit neuem Counter
+      // Clear individual localStorage items for boosted investments and clicks
+      gameConfig.investments.forEach((_, index) => {
+        localStorage.removeItem(`boosted-${index}`);
+        localStorage.removeItem(`boostClicks-${index}`);
+      });
+      saveGame(); // Save immediately after prestige
+      return newCount;
+    });
 
     // Clear individual localStorage items for boosted investments and clicks
     gameConfig.investments.forEach((_, index) => {
@@ -551,7 +567,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       localStorage.removeItem(`boostClicks-${index}`);
     });
     saveGame(); // Save immediately after prestige
-  }, [money, prestigeShares, setPrestigeShares, loadGameState, gameState, saveGame, canPrestige]);
+  }, [money, prestigeShares, setPrestigeShares, setPrestigeCount, loadGameState, gameState, saveGame, canPrestige]);
 
   return {
     // Hauptzustände
@@ -571,6 +587,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     activePlayTime,
     inactivePlayTime,
     prestigeShares,
+    prestigeCount,
     currentRunShares,
     prestigeBonusMultiplier,
     canPrestige,

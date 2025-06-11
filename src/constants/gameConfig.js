@@ -72,10 +72,10 @@ export const gameConfig = {
       stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
       offlineEarningsLevel: 0, // Level for offline earnings
       criticalClickChanceLevel: 0, // Level for critical click chance upgrade
+      prestigeCount: 0, // Initial prestige count
     },
     activePlayTime: 0, // Initial aktive Spielzeit
     prestigeShares: 0, // Initial prestige shares
-    inactivePlayTime: 0,    // Initial kumulierte inaktive Spiel-Zeit
 
     // Upgrade-Multiplikatoren
     upgrades: {

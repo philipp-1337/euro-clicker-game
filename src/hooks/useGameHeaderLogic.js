@@ -123,10 +123,21 @@ export default function useGameHeaderLogic(props) {
     try {
       cloudSaveInProgress.current = true;
       if (onSaveGame) onSaveGame();
+      console.log('[useGameHeaderLogic] Attempting cloud export with gameState:', gameState); // Add this log
       await exportToCloud(gameState);
       if (!silent) triggerSaveFeedback('Cloud saved');
-    } catch {
-      if (!silent) triggerSaveFeedback('Cloud save failed');
+    } catch (error) {
+      // Erweiterte Fehlerprotokollierung
+      console.error("Cloud save failed. Raw error object:", error);
+      let errorMessage = 'Cloud save failed: Unknown error';
+      if (error instanceof Error && error.message) {
+        errorMessage = `Cloud save failed: ${error.message}`;
+      } else if (typeof error === 'string' && error) {
+        errorMessage = `Cloud save failed: ${error}`;
+      } else if (error && typeof error.toString === 'function') {
+        errorMessage = `Cloud save failed: ${error.toString()}`;
+      }
+      if (!silent) triggerSaveFeedback(errorMessage);
     } finally {
       setTimeout(() => { cloudSaveInProgress.current = false; }, 500);
     }
