@@ -71,6 +71,7 @@ export default function useCloudSave() {
         leaderboardCheckpointsReached,
         musicEnabledSetting,
         soundEffectsEnabledSetting,
+        prestigeCount: gameState.prestigeCount, // Prestige-Counter speichern
       });
       setCloudStatus('saved');
       return uuid;
@@ -122,6 +123,15 @@ export default function useCloudSave() {
         }
       } catch {}
 
+      // Prestige-Counter zurückschreiben
+      if (data.prestigeCount !== undefined && data.prestigeCount !== null) {
+        try {
+          const save = JSON.parse(localStorage.getItem(CLICKER_SAVE_KEY) || '{}');
+          save.prestigeCount = data.prestigeCount;
+          localStorage.setItem(CLICKER_SAVE_KEY, JSON.stringify(save));
+        } catch {}
+      }
+
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand
       const {
         updatedAt,
@@ -133,8 +143,10 @@ export default function useCloudSave() {
         leaderboardCheckpointsReached,
         musicEnabledSetting,
         soundEffectsEnabledSetting,
+        prestigeCount,
         ...gameStateForApp
       } = data;
+      if (prestigeCount !== undefined) gameStateForApp.prestigeCount = prestigeCount;
       return gameStateForApp;
     } catch (e) {
       setCloudStatus('error');

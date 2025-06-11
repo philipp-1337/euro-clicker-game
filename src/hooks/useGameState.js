@@ -68,6 +68,8 @@ export default function useGameState(easyMode = false) {
 
   // State for Prestige Shares
   const [prestigeShares, setPrestigeShares] = useState(gameConfig.initialState.prestigeShares);
+  // State for Prestige Count (wie oft Prestige ausgelöst wurde)
+  const [prestigeCount, setPrestigeCount] = useState(gameConfig.initialState.prestigeCount ?? 0);
 
 
   // Kompakter Spielzustand für Speichern/Laden
@@ -96,6 +98,7 @@ export default function useGameState(easyMode = false) {
     criticalClickChanceLevel, // Add to game state
     boostedInvestments: boostedInvestmentsData, // Add to game state
     prestigeShares, // Add prestige shares to game state
+    prestigeCount, // Add prestige count to game state
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -142,6 +145,9 @@ export default function useGameState(easyMode = false) {
     const loadedPrestigeShares = savedState.prestigeShares;
     setPrestigeShares(typeof loadedPrestigeShares === 'number' && !isNaN(loadedPrestigeShares)
       ? loadedPrestigeShares : gameConfig.initialState.prestigeShares);
+    // Prestige Count laden
+    setPrestigeCount(typeof savedState.prestigeCount === 'number' && !isNaN(savedState.prestigeCount)
+      ? savedState.prestigeCount : (gameConfig.initialState.prestigeCount ?? 0));
     setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
 
@@ -208,6 +214,7 @@ export default function useGameState(easyMode = false) {
     boostedInvestments: boostedInvestmentsData, // Expose the data
     setBoostedInvestments, // Expose the custom setter
     prestigeShares, setPrestigeShares, // Expose prestige shares
+    prestigeCount, setPrestigeCount, // Expose prestige count
     initialOfflineDuration, // Expose the initial offline duration
    
     // Save/Load

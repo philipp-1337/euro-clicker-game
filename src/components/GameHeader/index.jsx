@@ -295,7 +295,9 @@ export default function GameHeader(props) {
         playTime={props.playTime}
         activePlayTime={props.activePlayTime}
         inactivePlayTime={props.inactivePlayTime}
-        totalClicks={floatingClicks} // Klicks hier übergeben
+        totalClicks={floatingClicks}
+        prestigeCount={props.prestigeCount}
+        prestigeShares={props.prestigeShares}
       />
       <SideMenu 
         isOpen={isSideMenuOpen}

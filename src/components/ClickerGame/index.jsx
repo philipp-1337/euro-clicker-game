@@ -110,6 +110,7 @@ export default function ClickerGame({
     handleInvestmentBoost,     // Get the handler for investment boosts
     // Prestige related
     prestigeShares,
+    prestigeCount,
     currentRunShares,
     prestigeGame,
     prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
@@ -410,6 +411,7 @@ export default function ClickerGame({
           setSoundEffectsEnabled={setSoundEffectsEnabled} // Pass down
           // Prestige
           prestigeShares={prestigeShares}
+          prestigeCount={prestigeCount}
           currentRunShares={currentRunShares}
           prestigeGame={prestigeGame}
           prestigeBonusMultiplier={prestigeBonusMultiplier} // Und hier übergeben wird
