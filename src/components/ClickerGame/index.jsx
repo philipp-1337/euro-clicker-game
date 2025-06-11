@@ -23,6 +23,8 @@ export default function ClickerGame({
   setMusicEnabled, // New
   soundEffectsEnabled, // New
   setSoundEffectsEnabled // New
+  // buyQuantity, // This will be managed here now
+  // toggleBuyQuantity // This will be managed here now
 }) {
   const [activeTab, setActiveTab] = useState('basic');
   // UI-Progress-Logik in eigenen Hook ausgelagert
@@ -33,6 +35,12 @@ export default function ClickerGame({
     floatingClicks,
     incrementFloatingClicks,
   } = useUiProgress();
+
+  // State for buy quantity (x1 / x10)
+  const [buyQuantity, setBuyQuantity] = useState(1);
+  const toggleBuyQuantity = () => {
+    setBuyQuantity(prev => (prev === 1 ? 10 : 1));
+  };
 
   const {
     money,
@@ -402,6 +410,8 @@ export default function ClickerGame({
           prestigeGame={prestigeGame}
           prestigeBonusMultiplier={prestigeBonusMultiplier} // Und hier übergeben wird
           canPrestige={canPrestige}
+          buyQuantity={buyQuantity} // Pass buyQuantity to GameHeader
+          toggleBuyQuantity={toggleBuyQuantity} // Pass toggleBuyQuantity to GameHeader
           gameConfig={gameConfig} // Pass gameConfig for prestige button visibility condition
         />
       )}
@@ -491,6 +501,7 @@ export default function ClickerGame({
             buyValueUpgrade={buyValueUpgrade}
             buyCooldownUpgrade={buyCooldownUpgrade}
             globalMultiplier={globalMultiplier}
+            buyQuantity={buyQuantity} // Pass buyQuantity to UpgradeTabs
             globalMultiplierLevel={globalMultiplierLevel}
             easyMode={easyMode} // Pass easyMode down
             globalMultiplierCost={globalMultiplierCost}

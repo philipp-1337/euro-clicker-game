@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Import useState
+import React from 'react';
 import {
   formatNumber, 
   calculateValueUpgradePercentage, 
@@ -28,10 +28,10 @@ export default function BasicUpgrades({
     valueUpgradeLevels, // Added
     easyMode, // Added
     globalPriceDecrease, // Added
-    cooldownUpgradeLevels // Added for consistency if cooldown costs were to be calculated here
+    cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
+    buyQuantity // New prop
 }) {
   const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
-  const [buyQuantity, setBuyQuantity] = useState(1); // State for buy quantity
 
   // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
@@ -81,23 +81,12 @@ export default function BasicUpgrades({
     buyCooldownUpgrade(index, buyQuantity); // Pass the quantity
   };
 
-  const toggleBuyQuantity = () => {
-    setBuyQuantity(prev => (prev === 1 ? 10 : 1));
-  };
-
   if (!managerCosts || managerCosts.length === 0) {
     return null; // Oder ein Lade-Indikator, falls du möchtest
   }
     return (
       <div className="upgrade-section">
         <h2 className="section-title">Basic Upgrades</h2>
-
-        {/* Buy Quantity Toggle */}
-        <div style={{ marginBottom: '15px', marginTop: '5px', textAlign: 'center' }}>
-          <button onClick={toggleBuyQuantity} className="toggle-buy-quantity-button">
-            Kaufe: x{buyQuantity}
-          </button>
-        </div>
 
         <h3 className="section-title">Increase Value</h3>
         <div className="upgrade-buttons">

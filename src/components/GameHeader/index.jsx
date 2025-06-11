@@ -12,6 +12,7 @@ import {
   BarChart2 as BarChart2Icon,
   AwardIcon,
   Zap as PrestigeHeaderIcon, // Icon für Prestige
+  Layers as LayersIcon, // Icon for buy quantity toggle
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -48,9 +49,12 @@ export default function GameHeader(props) {
     prestigeShares, // Accumulated from previous prestiges
     prestigeGame,
     prestigeBonusMultiplier, // Wird jetzt vom Hook geliefert
-    canPrestige,
+    canPrestige
+    // buyQuantity und toggleBuyQuantity werden direkt aus props bezogen
   } = useGameHeaderLogic({ ...props });
 
+  // Greife direkt auf buyQuantity und toggleBuyQuantity aus den GameHeader-Props zu
+  const { buyQuantity, toggleBuyQuantity } = props;
   // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
 
@@ -186,6 +190,16 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
+          {/* Buy Quantity Toggle Button */}
+          <button
+            className="settings-button header-icon buy-quantity-toggle-button"
+            onClick={toggleBuyQuantity}
+            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
+          >
+            <LayersIcon size={20} />
+            <span className="buy-quantity-label">x{buyQuantity}</span>
+          </button>
           {/* Prestige Button */}
           {showPrestigeButtonInHeader && (
             <button
