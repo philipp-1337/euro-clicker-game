@@ -73,14 +73,36 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   );
 
   // Kauflogik für das neue Upgrade
-  const buyGlobalPriceDecrease = useCallback(() => {
-    if (money >= globalPriceDecreaseCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - globalPriceDecreaseCost);
-      setGlobalPriceDecreaseLevel(prev => prev + 1);
-      setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
+  const buyGlobalPriceDecrease = useCallback((quantity = 1) => {
+    ensureStartTime?.();
+    let totalCalculatedCost = 0;
+    let tempLevel = globalPriceDecreaseLevel;
+    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+    for (let i = 0; i < quantity; i++) {
+      const costForThisStep = gameConfig.premiumUpgrades.globalPriceDecrease.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.globalPriceDecrease.costExponent, tempLevel + i) *
+        currentCostMultiplier;
+      totalCalculatedCost += costForThisStep;
     }
-  }, [money, globalPriceDecreaseCost, setMoney, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease, ensureStartTime]);
+
+    if (money >= totalCalculatedCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - totalCalculatedCost);
+      for (let i = 0; i < quantity; i++) {
+        setGlobalPriceDecreaseLevel(prev => prev + 1);
+        setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
+      }
+    }
+  }, [
+    money,
+    globalPriceDecreaseLevel,
+    setMoney,
+    setGlobalPriceDecreaseLevel,
+    setGlobalPriceDecrease,
+    ensureStartTime,
+    easyMode
+  ]);
 
   // Kauflogik für Staatsgebäude
   const { buyStateBuilding } = useStateInfrastructure(
@@ -104,11 +126,13 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    valueUpgradeCosts,
-    cooldownUpgradeCosts,
-    globalMultiplierCost,
+    // valueUpgradeCosts, // No longer passed directly if useUpgrades recalculates or if BasicUpgrades handles display cost
+    // cooldownUpgradeCosts,
+    // globalMultiplierCost,
     gameConfig,
-    ensureStartTime
+    ensureStartTime,
+    easyMode, // Pass easyMode
+    globalPriceDecrease // Pass globalPriceDecrease
   );
 
   // Manager-Funktionen
@@ -251,34 +275,81 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     [offlineEarningsLevel, costMultiplier]
   );
 
-  const buyOfflineEarningsLevel = useCallback(() => {
-    if (money >= offlineEarningsLevelCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - offlineEarningsLevelCost);
-      setOfflineEarningsLevel(prev => prev + 1);
+  const buyOfflineEarningsLevel = useCallback((quantity = 1) => {
+    ensureStartTime?.();
+    let totalCalculatedCost = 0;
+    let tempLevel = offlineEarningsLevel;
+    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+    for (let i = 0; i < quantity; i++) {
+      const costForThisStep = gameConfig.premiumUpgrades.offlineEarnings.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, tempLevel + i) *
+        currentCostMultiplier;
+      totalCalculatedCost += costForThisStep;
     }
-  }, [money, offlineEarningsLevelCost, setMoney, setOfflineEarningsLevel, ensureStartTime]);
+
+    if (money >= totalCalculatedCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - totalCalculatedCost);
+      for (let i = 0; i < quantity; i++) {
+        setOfflineEarningsLevel(prev => prev + 1);
+      }
+    }
+  }, [
+    money,
+    offlineEarningsLevel,
+    setMoney,
+    setOfflineEarningsLevel,
+    ensureStartTime,
+    easyMode
+  ]);
 
   // Critical Click Chance Upgrade
   const currentCriticalClickChance = useMemo(() =>
     criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel,
     [criticalClickChanceLevel]
   );
-
+  
   const criticalClickChanceCost = useMemo(() =>
     gameConfig.premiumUpgrades.criticalClickChance.baseCost *
     (1 + criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
     costMultiplier,
     [criticalClickChanceLevel, costMultiplier]
   );
+  
+  const buyCriticalClickChanceLevel = useCallback((quantity = 1) => {
+    ensureStartTime?.();
+    const maxLevel = 100;
+    const actualQuantity = Math.min(quantity, maxLevel - criticalClickChanceLevel);
 
-  const buyCriticalClickChanceLevel = useCallback(() => {
-    if (money >= criticalClickChanceCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - criticalClickChanceCost);
-      setCriticalClickChanceLevel(prev => prev + 1);
+    if (actualQuantity <= 0) return;
+
+    let totalCalculatedCost = 0;
+    let tempLevel = criticalClickChanceLevel;
+    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+    for (let i = 0; i < actualQuantity; i++) {
+      const costForThisStep = gameConfig.premiumUpgrades.criticalClickChance.baseCost *
+        (1 + (tempLevel + i) * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+        currentCostMultiplier;
+      totalCalculatedCost += costForThisStep;
     }
-  }, [money, criticalClickChanceCost, setMoney, setCriticalClickChanceLevel, ensureStartTime]);
+
+    if (money >= totalCalculatedCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - totalCalculatedCost);
+      for (let i = 0; i < actualQuantity; i++) {
+        setCriticalClickChanceLevel(prev => prev + 1);
+      }
+    }
+  }, [
+    money,
+    criticalClickChanceLevel,
+    setMoney,
+    setCriticalClickChanceLevel,
+    ensureStartTime,
+    easyMode
+  ]);
 
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 

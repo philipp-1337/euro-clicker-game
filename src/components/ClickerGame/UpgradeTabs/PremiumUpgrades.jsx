@@ -33,6 +33,8 @@ export default function PremiumUpgrades({
   buyCriticalClickChanceLevel, // New: Function to buy next critical click chance level
   criticalClickChanceCost,   // New: Cost for the next critical click chance level
   managers, // Add managers prop
+  buyQuantity, // New prop for bulk buying
+  easyMode, // New prop for cost calculation
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -69,6 +71,70 @@ export default function PremiumUpgrades({
 
   // Check if any manager is bought
   const hasAnyManager = managers ? managers.some(manager => manager === true) : false;
+  const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+  // Helper to calculate total cost for 'n' Global Multiplier upgrades
+  const calculateTotalGlobalMultiplierCost = (quantity) => {
+    let totalCost = 0;
+    let currentLevel = globalMultiplierLevel;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += gameConfig.premiumUpgrades.globalMultiplier.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.globalMultiplier.costExponent, currentLevel + i) *
+        costMultiplier; // easyMode is handled by costMultiplier here
+    }
+    return totalCost;
+  };
+
+  // Helper to calculate total cost for 'n' Global Price Decrease upgrades
+  const calculateTotalGlobalPriceDecreaseCost = (quantity) => {
+    let totalCost = 0;
+    let currentLevel = globalPriceDecreaseLevel;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += gameConfig.premiumUpgrades.globalPriceDecrease.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.globalPriceDecrease.costExponent, currentLevel + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  // Helper to calculate total cost for 'n' Critical Click Chance upgrades
+  const calculateTotalCriticalClickChanceCost = (quantity) => {
+    const maxLevel = 100;
+    const actualQuantityToBuy = Math.min(quantity, maxLevel - criticalClickChanceLevel);
+    if (actualQuantityToBuy <= 0) return Infinity; // Cannot buy more
+
+    let totalCost = 0;
+    let currentLevel = criticalClickChanceLevel;
+    for (let i = 0; i < actualQuantityToBuy; i++) {
+      totalCost += gameConfig.premiumUpgrades.criticalClickChance.baseCost *
+        (1 + (currentLevel + i) * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+    // Determine actual buyable quantity for Critical Click Chance
+    const actualBuyableCriticalClick = Math.min(buyQuantity, 100 - criticalClickChanceLevel);
+
+
+  // Helper to calculate total cost for 'n' Offline Earnings upgrades
+  const calculateTotalOfflineEarningsCost = (quantity) => {
+    let totalCost = 0;
+    let currentLevel = offlineEarningsLevel;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += gameConfig.premiumUpgrades.offlineEarnings.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.offlineEarnings.costExponent, currentLevel + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  // Costs for current buyQuantity
+  const totalGlobalMultiplierCost = calculateTotalGlobalMultiplierCost(buyQuantity);
+  const totalGlobalPriceDecreaseCost = calculateTotalGlobalPriceDecreaseCost(buyQuantity);
+  const totalCriticalClickChanceCost = calculateTotalCriticalClickChanceCost(buyQuantity);
+  const totalOfflineEarningsCost = calculateTotalOfflineEarningsCost(buyQuantity);
+
 
   return (
     <div className="upgrade-section premium-section">
@@ -78,20 +144,20 @@ export default function PremiumUpgrades({
           <Star className="premium-icon" />
           <h3>Clicker Value Multiplier</h3>
         </div>
-        <p className="premium-upgrade-description">
+        <p className="premium-upgrade-description" title={`Cost increases by ${globalMultiplierCostIncreasePercentage}% per level.`}>
           Increases the value of all clicks by {globalMultiplierPercentage}% per level. 
-          Cost increases by {globalMultiplierCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
             Level: {globalMultiplierLevel} (Currently: x{formatNumber(globalMultiplier)})
           </div>
           <button
-            onClick={buyGlobalMultiplier}
-            disabled={money < globalMultiplierCost}
-            className={`premium-upgrade-button ${money < globalMultiplierCost ? 'disabled' : ''}`}
+            onClick={() => buyGlobalMultiplier(buyQuantity)}
+            disabled={money < totalGlobalMultiplierCost}
+            className={`premium-upgrade-button ${money < totalGlobalMultiplierCost ? 'disabled' : ''}`}
+            title={`Buy ${buyQuantity} level(s)`}
           >
-            {formatNumber(globalMultiplierCost)} €
+            {formatNumber(totalGlobalMultiplierCost)} €
           </button>
         </div>
       </div>
@@ -100,20 +166,20 @@ export default function PremiumUpgrades({
           <Percent className="premium-icon" />
           <h3>Upgrade Price Decrease</h3>
         </div>
-        <p className="premium-upgrade-description">
+        <p className="premium-upgrade-description" title={`Cost increases by ${globalPriceDecreaseCostIncreasePercentage}% per level.`}>
           Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level. 
-          Cost increases by {globalPriceDecreaseCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
             Level: {globalPriceDecreaseLevel} (Currently: x{(globalPriceDecrease ?? 1).toFixed(2)})
           </div>
           <button
-            onClick={buyGlobalPriceDecrease}
-            disabled={money < globalPriceDecreaseCost || isNaN(globalPriceDecreaseCost)}
-            className={`premium-upgrade-button ${money < globalPriceDecreaseCost ? 'disabled' : ''}`}
+            onClick={() => buyGlobalPriceDecrease(buyQuantity)}
+            disabled={money < totalGlobalPriceDecreaseCost || isNaN(totalGlobalPriceDecreaseCost)}
+            className={`premium-upgrade-button ${money < totalGlobalPriceDecreaseCost ? 'disabled' : ''}`}
+            title={`Buy ${buyQuantity} level(s)`}
           >
-            {isNaN(globalPriceDecreaseCost) ? 'Error' : `${formatNumber(globalPriceDecreaseCost)} €`}
+            {isNaN(totalGlobalPriceDecreaseCost) ? 'Error' : `${formatNumber(totalGlobalPriceDecreaseCost)} €`}
           </button>
         </div>
       </div>
@@ -123,25 +189,24 @@ export default function PremiumUpgrades({
           <ZapIcon className="premium-icon" />
           <h3>Critical Click Chance</h3>
         </div>
-        <p className="premium-upgrade-description">
+        <p className="premium-upgrade-description" title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}>
           Each click on the floating Euro button has a chance to grant your current income per second instead of +1€. Each level increases this chance by {criticalClickChanceEffectPercentage}%.
-          Cost increases by {criticalClickChanceCostIncreasePercentage}% of the base cost per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
             Level: {criticalClickChanceLevel} (Currently: {formatNumber(currentCriticalClickChance * 100)}%)
           </div>
           <button
-            onClick={buyCriticalClickChanceLevel}
-            disabled={money < criticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager}
-            className={`premium-upgrade-button ${money < criticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager ? 'disabled' : ''}`}
-            title={!hasAnyManager ? "Requires at least one manager to be purchased." : ""}
+            onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
+            disabled={money < totalCriticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager || actualBuyableCriticalClick <= 0}
+            className={`premium-upgrade-button ${money < totalCriticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager || actualBuyableCriticalClick <= 0 ? 'disabled' : ''}`}
+            title={!hasAnyManager ? "Requires at least one manager." : (criticalClickChanceLevel >= 100 ? "Max Level Reached" : `Buy ${actualBuyableCriticalClick > 0 ? actualBuyableCriticalClick : buyQuantity} level(s)`)}
           >
             {criticalClickChanceLevel >= 100
               ? 'Max Level'
               : !hasAnyManager
                 ? 'Requires Manager'
-                : `${formatNumber(criticalClickChanceCost)} €`}
+                : (actualBuyableCriticalClick <= 0 ? 'Max Level with this buy' : `${formatNumber(totalCriticalClickChanceCost)} €`)}
           </button>
         </div>
       </div>
@@ -151,20 +216,20 @@ export default function PremiumUpgrades({
           <HistoryIcon className="premium-icon" />
           <h3>Offline Earnings</h3>
         </div>
-        <p className="premium-upgrade-description">
+        <p className="premium-upgrade-description" title={`Cost increases by ${offlineEarningsCostIncreasePercentage}% per level.`}>
           Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%.
-          Cost increases by {offlineEarningsCostIncreasePercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
             Level: {offlineEarningsLevel} (Currently: {formatNumber(currentOfflineEarningsFactor * 100)}%)
           </div>
           <button
-            onClick={buyOfflineEarningsLevel}
-            disabled={money < offlineEarningsLevelCost}
-            className={`premium-upgrade-button ${money < offlineEarningsLevelCost ? 'disabled' : ''}`}
+            onClick={() => buyOfflineEarningsLevel(buyQuantity)}
+            disabled={money < totalOfflineEarningsCost}
+            className={`premium-upgrade-button ${money < totalOfflineEarningsCost ? 'disabled' : ''}`}
+            title={`Buy ${buyQuantity} level(s)`}
           >
-            {formatNumber(offlineEarningsLevelCost)} €
+            {formatNumber(totalOfflineEarningsCost)} €
           </button>
         </div>
       </div>

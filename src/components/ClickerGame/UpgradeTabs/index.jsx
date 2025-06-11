@@ -51,6 +51,8 @@ export default function UpgradeTabs({
   criticalClickChanceCost,   // New
   onInvestmentBoosted, // New prop for handling investment boosts
   soundEffectsEnabled, // New prop
+  easyMode, // Added from ClickerGame
+  buyQuantity, // Added from ClickerGame
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -87,6 +89,11 @@ export default function UpgradeTabs({
           key={tab.id}
           money={money}
           buttons={buttons}
+          // Props specifically needed by BasicUpgrades for multi-buy cost calculation
+          valueUpgradeLevels={tab.id === 'basic' ? valueUpgradeLevels : undefined}
+          cooldownUpgradeLevels={tab.id === 'basic' ? cooldownUpgradeLevels : undefined}
+          easyMode={easyMode} // Pass easyMode to all tabs that might need it
+          buyQuantity={buyQuantity} // Pass buyQuantity to all tabs
           valueUpgradeCosts={valueUpgradeCosts}
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}
