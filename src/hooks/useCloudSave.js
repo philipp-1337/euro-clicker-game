@@ -49,10 +49,8 @@ export default function useCloudSave() {
       } catch {}
       // --- ENDE PATCH ---
       let clickerUiProgress = localStorage.getItem(UI_PROGRESS_KEY) || null;
-      let startTime = localStorage.getItem(START_TIME_KEY) || null;
-      let achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
-      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
-      const leaderboardMode = localStorage.getItem('leaderboardMode');
+      const startTime = localStorage.getItem(START_TIME_KEY) || null;
+      const achievementNotificationsSeen = localStorage.getItem('achievementNotificationsSeen') || null;
       const leaderboardName = localStorage.getItem('leaderboardName');
       // --- ENDE LEADERBOARD PATCH ---
       // --- LEADERBOARD CHECKPOINTS PATCH ---
@@ -69,7 +67,6 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
-        leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
         musicEnabledSetting,
@@ -99,10 +96,6 @@ export default function useCloudSave() {
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
       if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
-      // --- LEADERBOARD PATCH: leaderboardMode & leaderboardName ---
-      if (data.leaderboardMode !== undefined && data.leaderboardMode !== null) {
-        localStorage.setItem('leaderboardMode', data.leaderboardMode);
-      }
       if (data.leaderboardName !== undefined && data.leaderboardName !== null) {
         localStorage.setItem('leaderboardName', data.leaderboardName);
       }
@@ -136,7 +129,6 @@ export default function useCloudSave() {
         clickerUiProgress,
         startTime,
         achievementNotificationsSeen,
-        leaderboardMode,
         leaderboardName,
         leaderboardCheckpointsReached,
         musicEnabledSetting,
