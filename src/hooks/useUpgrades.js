@@ -91,19 +91,29 @@ export default function useUpgrades(
       }
     }
   
-    function buyGlobalMultiplier() {
-      const cost = calculateCostWithDifficulty(
-        gameConfig.premiumUpgrades.globalMultiplier.baseCost,
-        globalMultiplierLevel,
-        gameConfig.premiumUpgrades.globalMultiplier.costExponent,
-        easyMode,
-        gameConfig.getCostMultiplier
-      ); // globalPriceDecrease does not apply to premium upgrades by default
-      if (money >= cost) {
+    function buyGlobalMultiplier(quantity = 1) {
+      ensureStartTime?.();
+      let totalCalculatedCost = 0;
+      let tempLevel = globalMultiplierLevel;
+
+      for (let i = 0; i < quantity; i++) {
+        const costForThisStep = calculateCostWithDifficulty(
+          gameConfig.premiumUpgrades.globalMultiplier.baseCost,
+          tempLevel + i,
+          gameConfig.premiumUpgrades.globalMultiplier.costExponent,
+          easyMode,
+          gameConfig.getCostMultiplier // Pass the function itself
+        ); // globalPriceDecrease does not apply to premium upgrades by default
+        totalCalculatedCost += costForThisStep;
+      }
+
+      if (money >= totalCalculatedCost) {
         ensureStartTime?.();
-        setMoney(prev => prev - cost); // Korrektur: cost statt globalMultiplierCost verwenden
-        setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
-        setGlobalMultiplierLevel(prev => prev + 1);
+        setMoney(prev => prev - totalCalculatedCost);
+        for (let i = 0; i < quantity; i++) {
+          setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
+          setGlobalMultiplierLevel(prev => prev + 1);
+        }
       }
     }
   

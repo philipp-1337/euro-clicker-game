@@ -92,8 +92,8 @@ export default function UpgradeTabs({
           // Props specifically needed by BasicUpgrades for multi-buy cost calculation
           valueUpgradeLevels={tab.id === 'basic' ? valueUpgradeLevels : undefined}
           cooldownUpgradeLevels={tab.id === 'basic' ? cooldownUpgradeLevels : undefined}
-          easyMode={tab.id === 'basic' ? easyMode : undefined}
-          buyQuantity={tab.id === 'basic' ? buyQuantity : undefined} // Pass buyQuantity to BasicUpgrades
+          easyMode={easyMode} // Pass easyMode to all tabs that might need it
+          buyQuantity={buyQuantity} // Pass buyQuantity to all tabs
           valueUpgradeCosts={valueUpgradeCosts}
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}

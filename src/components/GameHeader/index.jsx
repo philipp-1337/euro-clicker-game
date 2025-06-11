@@ -190,12 +190,12 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
-          {/* Buy Quantity Toggle Button */}
+          {/* Upgrade Quantity Toggle Button */}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
             onClick={toggleBuyQuantity}
-            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
-            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
+            title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
           >
             <LayersIcon size={20} />
             <span className="buy-quantity-label">x{buyQuantity}</span>
