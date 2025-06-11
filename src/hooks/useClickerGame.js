@@ -104,11 +104,13 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
     globalMultiplier, setGlobalMultiplier,
     globalMultiplierLevel, setGlobalMultiplierLevel,
-    valueUpgradeCosts,
-    cooldownUpgradeCosts,
-    globalMultiplierCost,
+    // valueUpgradeCosts, // No longer passed directly if useUpgrades recalculates or if BasicUpgrades handles display cost
+    // cooldownUpgradeCosts,
+    // globalMultiplierCost,
     gameConfig,
-    ensureStartTime
+    ensureStartTime,
+    easyMode, // Pass easyMode
+    globalPriceDecrease // Pass globalPriceDecrease
   );
 
   // Manager-Funktionen

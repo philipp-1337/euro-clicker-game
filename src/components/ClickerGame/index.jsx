@@ -492,6 +492,7 @@ export default function ClickerGame({
             buyCooldownUpgrade={buyCooldownUpgrade}
             globalMultiplier={globalMultiplier}
             globalMultiplierLevel={globalMultiplierLevel}
+            easyMode={easyMode} // Pass easyMode down
             globalMultiplierCost={globalMultiplierCost}
             buyGlobalMultiplier={buyGlobalMultiplier}
             managers={managers}
