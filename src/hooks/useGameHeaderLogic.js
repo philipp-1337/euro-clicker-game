@@ -123,7 +123,6 @@ export default function useGameHeaderLogic(props) {
     try {
       cloudSaveInProgress.current = true;
       if (onSaveGame) onSaveGame();
-      console.log('[useGameHeaderLogic] Attempting cloud export with gameState:', gameState); // Add this log
       await exportToCloud(gameState);
       if (!silent) triggerSaveFeedback('Cloud saved');
     } catch (error) {
