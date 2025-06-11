@@ -31,6 +31,7 @@ export function useUiProgress() {
       showLeaderboard: true,   // <--- Default: Leaderboard-Button sichtbar
       showAchievementsHeaderButton: true, // Default: Achievements button in header is visible
       showStatisticsHeaderButton: false,  // Default: Statistics button in header is hidden
+      prestigeButtonEverVisible: false, // New: Tracks if the prestige button has ever been visible
     };
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -156,6 +157,19 @@ export function useUiProgress() {
     });
   }, []);
 
+  // Setter for prestigeButtonEverVisible
+  const setPrestigeButtonEverVisible = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.prestigeButtonEverVisible === 'boolean' ? prev.prestigeButtonEverVisible : false;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, prestigeButtonEverVisible: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   // Setter für showClickStats
   const setShowClickStats = useCallback((valueOrUpdater) => {
     setUiProgress(prev => {
@@ -212,6 +226,8 @@ export function useUiProgress() {
     showAchievementsHeaderButton: typeof uiProgress.showAchievementsHeaderButton === 'boolean' ? uiProgress.showAchievementsHeaderButton : true,
     setShowAchievementsHeaderButton,
     showStatisticsHeaderButton: typeof uiProgress.showStatisticsHeaderButton === 'boolean' ? uiProgress.showStatisticsHeaderButton : false,
+    prestigeButtonEverVisible: typeof uiProgress.prestigeButtonEverVisible === 'boolean' ? uiProgress.prestigeButtonEverVisible : false,
+    setPrestigeButtonEverVisible, // Export the setter
     setShowStatisticsHeaderButton,
   };
 }

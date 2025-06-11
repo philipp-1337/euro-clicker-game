@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
-import { X as CloseIcon, Medal as MedalIcon } from "lucide-react";
+import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
 import { formatPlaytime } from '../../utils/calculators';
 import { useModal } from '../../hooks/useModal';
 import { CHECKPOINTS } from "@constants/gameConfig"; // Import CHECKPOINTS
@@ -70,9 +70,8 @@ export default function LeaderboardModal({ show, onClose }) {
 
   if (!show) return null;
 
-  const goalDescription = activeTab === '100k'
-    ? `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '100k')?.label || '100,000 €'}!`
-    : `Goal: The fastest time to reach ${CHECKPOINTS.find(cp => cp.id === '1B')?.label || '1 Billion €'}!`;
+  const currentCheckpoint = CHECKPOINTS.find(cp => cp.id === activeTab);
+  const goalDescription = currentCheckpoint ? `Goal: The fastest time to reach ${currentCheckpoint.label}!` : 'Select a goal.';
 
   return (
     <div className="modal-backdrop">
@@ -125,17 +124,29 @@ export default function LeaderboardModal({ show, onClose }) {
                 {entries.map((entry, idx) => {
                   const isMe = typeof window !== 'undefined' && entry.name === localStorage.getItem('leaderboardName');
                   const isFirst = idx === 0;
+                  // Flag-Visualisierung für Test/Alpha-Einträge
+                  const isFlagged = entry.flagged;
                   return (
-                    <tr key={entry.id} className={isMe ? 'me' : ''}>
-                      <td title={entry.name}> 
+                    <tr key={entry.id} className={isMe ? 'me' : ''} style={isFlagged ? { opacity: 0.5, background: '#ffeaea' } : {}}>
+                      <td title={entry.name}>
                         <div className="leaderboard-name-cell">
                           {entry.name}
-                          {isFirst && (
+                          {/* Nur Medaille anzeigen, wenn NICHT geflaggt */}
+                          {!isFlagged && isFirst && (
                             <MedalIcon
                               size={18}
                               color={isMe ? '#d4a900' : '#f5b400'}
                               style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
                               title="1st place"
+                            />
+                          )}
+                          {isFlagged && (
+                            <OctagonAlertIcon 
+                            size={18} 
+                            color={'red'}
+                            style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
+                            title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
+
                             />
                           )}
                         </div>

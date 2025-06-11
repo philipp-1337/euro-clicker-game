@@ -7,6 +7,7 @@ import UpgradeTabs from './UpgradeTabs';
 import useClickerGame from '@hooks/useClickerGame';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
+import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
@@ -94,7 +95,13 @@ export default function ClickerGame({
     clearLastInactiveDuration, // Get new function from hook
     calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
     claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
-        handleInvestmentBoost,     // Get the handler for investment boosts
+    handleInvestmentBoost,     // Get the handler for investment boosts
+    // Prestige related
+    prestigeShares,
+    currentRunShares,
+    prestigeGame,
+    prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
+    canPrestige,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const {
@@ -248,6 +255,16 @@ export default function ClickerGame({
     // leaderboardSubmitted bleibt true, wenn es so war, bis ein neuer Checkpoint anvisiert wird.
   };
 
+  // --- Environment detection for leaderboard flagging ---
+  const [environment, setEnvironment] = useState('production');
+  useEffect(() => {
+    const hostname = window.location.hostname;
+    if (hostname.includes('beta')) setEnvironment('beta');
+    else if (hostname.includes('alpha')) setEnvironment('alpha');
+    else if (hostname === 'localhost' || hostname === '127.0.0.1') setEnvironment('localhost');
+    else setEnvironment('production');
+  }, []);
+
   // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
   const handleLeaderboardSubmit = async () => {
     if (!leaderboardName.trim() || !currentCheckpoint) return;
@@ -255,6 +272,8 @@ export default function ClickerGame({
     // Firestore Submission wie in useLeaderboardSubmit.js
     const { addDoc, collection } = await import('firebase/firestore');
     const { db } = await import('../../firebase');
+    // Flag für Test/Alpha-Umgebung
+    const isTestOrAlpha = environment === 'localhost' || environment === 'alpha';
     await addDoc(collection(db, 'leaderboard'), {
       name: leaderboardName.trim(),
       playtime: playTime,
@@ -262,6 +281,8 @@ export default function ClickerGame({
       clicks: floatingClicks,
       activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
+      flagged: isTestOrAlpha ? true : false, // <--- Flag für Test/Alpha
+      flaggedReason: isTestOrAlpha ? environment : undefined // optional: Grund
     });
     setLeaderboardSubmitted(true);
     // Save game state (cloud or local)
@@ -375,6 +396,13 @@ export default function ClickerGame({
           setMusicEnabled={setMusicEnabled} // Pass down
           soundEffectsEnabled={soundEffectsEnabled} // Pass down
           setSoundEffectsEnabled={setSoundEffectsEnabled} // Pass down
+          // Prestige
+          prestigeShares={prestigeShares}
+          currentRunShares={currentRunShares}
+          prestigeGame={prestigeGame}
+          prestigeBonusMultiplier={prestigeBonusMultiplier} // Und hier übergeben wird
+          canPrestige={canPrestige}
+          gameConfig={gameConfig} // Pass gameConfig for prestige button visibility condition
         />
       )}
 

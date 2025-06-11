@@ -13,6 +13,12 @@ export default function useGameHeaderLogic(props) {
     floatingClicks,
     gameState,
     onImportCloudSave,
+    // Prestige related props from ClickerGame (props passed to GameHeader)
+    currentRunShares,
+    prestigeShares,
+    prestigeGame,
+    canPrestige,
+    prestigeBonusMultiplier
   } = props;
 
   const [environment, setEnvironment] = useState('production');
@@ -201,5 +207,11 @@ export default function useGameHeaderLogic(props) {
     gameState,
     showCloudSaveDisableConfirm,
     setShowCloudSaveDisableConfirm,
+    // Return prestige related values
+    currentRunShares,
+    prestigeShares,
+    prestigeGame,
+    canPrestige,
+    prestigeBonusMultiplier,
   };
 }

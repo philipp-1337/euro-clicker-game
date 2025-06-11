@@ -36,6 +36,11 @@ export default function BasicUpgrades({
     buyValueUpgrade(index);
   };
 
+  const handleCooldownUpgradeClick = (index) => {
+    playSound('valueUpgrade'); // Play sound effect when cooldown upgrade is bought
+    buyCooldownUpgrade(index);
+  };
+
   if (!managerCosts || managerCosts.length === 0) {
     return null; // Oder ein Lade-Indikator, falls du möchtest
   }
@@ -67,7 +72,7 @@ export default function BasicUpgrades({
           {buttons.map((button, index) => (
             <button
               key={`cooldown-${index}`}
-              onClick={() => buyCooldownUpgrade(index)}
+              onClick={() => handleCooldownUpgradeClick(index)}
               disabled={money < cooldownUpgradeCosts[index]}
               className={`upgrade-button ${button.colorClass} ${money < cooldownUpgradeCosts[index] ? 'disabled' : ''}`}
             >

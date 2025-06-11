@@ -245,3 +245,73 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   z-index: 999;
 }
+
+.modal-btn.prestige-btn {
+  background: linear-gradient(to bottom, map.get($colors, prestige), map.get($colors, prestige-dark));
+  color: map.get($colors, white);
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1em;
+  font-weight: 700;
+  width: auto;
+  min-width: 180px;
+  max-width: 100%;
+  display: inline-block;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 12px;
+  margin-top: 10px;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(230, 194, 0, 0.08);
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(to bottom, map.get($colors, prestige-dark), map.get($colors, prestige));
+    color: map.get($colors, white);
+    transform: translateY(-1px) scale(1.04);
+  }
+  &:active:not(.disabled) {
+    background: map.get($colors, prestige-dark);
+    color: map.get($colors, white);
+    transform: translateY(1px) scale(0.98);
+  }
+  &.disabled {
+    background: map.get($backgrounds, light);
+    color: map.get($colors, gray);
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+// Prestige Modal Styles
+.prestige-modal {
+  .prestige-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 20px 0;
+  }
+  .prestige-icon {
+    color: map.get($colors, prestige);
+  }
+  .prestige-summary {
+    border-top: 1px solid map.get($colors, light-gray);
+    padding-top: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+    font-size: 1rem;
+    p {
+      margin: 6px 0;
+    }
+    .prestige-text {
+      color: map.get($colors, prestige-dark);
+      font-weight: bold;
+    }
+    .success-text {
+      color: map.get($colors, success);
+      font-weight: bold;
+    }
+    .text-secondary {
+      color: map.get($colors, secondary);
+      font-size: 0.95em;
+    }
+  }
+}

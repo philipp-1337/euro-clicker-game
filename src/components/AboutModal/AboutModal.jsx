@@ -44,6 +44,10 @@ export default function AboutModal({ show, onClose }) {
           <p>
             Even when you're away, your empire keeps growing—upgrade your offline earnings to maximize gains during inactivity. Unlock achievements by reaching milestones such as total clicks, fast money, and long playtime, and track your progress in the Achievements section. Dive into detailed statistics about your playtime, click counts, and more in the Statistics modal.
           </p>
+          <h5>Prestige System</h5>
+          <p>
+            Once you've amassed a significant fortune (starting from 1 Billion €), you can choose to "Prestige." This will reset your current game progress (money, upgrades, investments, etc., except for permanent UI unlocks and play statistics) but grants you Prestige Shares. Each share provides a permanent percentage bonus to your income per second, allowing you to progress faster in subsequent playthroughs. The more money you have when you prestige, the more shares you earn. You can trigger Prestige via a button in the game header once you've earned at least one full share in your current run.
+          </p>
           <h5>Competition & Experience</h5>
           <p>
             Compete on the global leaderboard for high scores and milestones, and submit your best results to see how you stack up against other players. Securely save and load your progress via the cloud, powered by Firebase. Enjoy toggleable sound effects and background music, full dark mode support, and a responsive interface for seamless play on any device.
