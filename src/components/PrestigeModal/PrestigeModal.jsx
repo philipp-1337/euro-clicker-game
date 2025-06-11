@@ -24,23 +24,19 @@ export default function PrestigeModal({
 
   return (
     <div className="modal-backdrop" style={{ zIndex: 10006 }}>
-      <div ref={modalRef} className="modal-content prestige-modal" style={{ maxWidth: 450 }}>
-        <div className="settings-modal-header" style={{ justifyContent: 'center', position: 'relative' }}>
-          <h3 className="modal-title">Prestige</h3>
+      <div ref={modalRef} className="modal-content prestige-modal">
+        <div className="settings-modal-header">
+          <h3>Prestige</h3>
           <button
             className="settings-button"
             onClick={onClose}
             title="Close"
             aria-label="Close"
-            style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)' }}
           >
             <CloseIcon size={20} />
           </button>
         </div>
         <div className="settings-modal-content">
-          <div className="prestige-icon-wrapper">
-            <PrestigeIcon size={48} className="prestige-icon" />
-          </div>
           <p>
             Reach new heights by prestiging! You'll reset your current game progress (money, upgrades, investments, etc.)
             but gain permanent <span className="prestige-text">Prestige Shares</span>.
