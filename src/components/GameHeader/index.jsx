@@ -190,16 +190,6 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
-          {/* Upgrade Quantity Toggle Button */}
-          <button
-            className="settings-button header-icon buy-quantity-toggle-button"
-            onClick={toggleBuyQuantity}
-            title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
-            aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
-          >
-            <LayersIcon size={20} />
-            <span className="buy-quantity-label">x{buyQuantity}</span>
-          </button>
           {/* Prestige Button */}
           {showPrestigeButtonInHeader && (
             <button
@@ -210,6 +200,16 @@ export default function GameHeader(props) {
               <PrestigeHeaderIcon size={20} />
             </button>
           )}
+          {/* Upgrade Quantity Toggle Button */}
+          <button
+            className="settings-button header-icon buy-quantity-toggle-button"
+            onClick={toggleBuyQuantity}
+            title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
+          >
+            <LayersIcon size={20} />
+            <span className="buy-quantity-label">x{buyQuantity}</span>
+          </button>
           {/* Click-Counter */}
           {showClickStats && (
             <span className="header-clickstats">
