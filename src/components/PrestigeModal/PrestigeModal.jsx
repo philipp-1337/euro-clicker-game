@@ -1,5 +1,5 @@
 import React from 'react';
-import { X as CloseIcon, Zap as PrestigeIcon } from 'lucide-react';
+import { X as CloseIcon } from 'lucide-react';
 import { useModal } from '@hooks/useModal';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
