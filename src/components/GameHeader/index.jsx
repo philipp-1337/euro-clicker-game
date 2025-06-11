@@ -12,7 +12,8 @@ import {
   BarChart2 as BarChart2Icon,
   AwardIcon,
   Zap as PrestigeHeaderIcon, // Icon für Prestige
-  Layers as LayersIcon, // Icon for buy quantity toggle
+  Layers as LayersIcon,
+  Layers2Icon, // Icon for buy quantity toggle
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -207,7 +208,11 @@ export default function GameHeader(props) {
             title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
             aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
           >
-            <LayersIcon size={20} />
+            {buyQuantity === 1 ? (
+              <Layers2Icon size={20} />
+            ) : (
+              <LayersIcon size={20} />
+            )}
             <span className="buy-quantity-label">x{buyQuantity}</span>
           </button>
           {/* Click-Counter */}
