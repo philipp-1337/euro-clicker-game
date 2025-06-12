@@ -34,6 +34,8 @@ export default function ClickerGame({
     setButtonClicked,
     floatingClicks,
     incrementFloatingClicks,
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible,
   } = useUiProgress();
 
   // State for buy quantity (x1 / x10)
@@ -318,6 +320,14 @@ export default function ClickerGame({
     addCheckpointToStorage(currentCheckpoint.id); // Bei erfolgreichem Submit auch im Storage vermerken
     setShowLeaderboardCongrats(false); // Modal direkt schließen
   };
+
+  // Prestige-Button: Sichtbarkeit zentral prüfen und setzen
+  useEffect(() => {
+    if (!prestigeButtonEverVisible && (money >= gameConfig.prestige.minMoneyForModalButton || prestigeCount > 0)) {
+      setPrestigeButtonEverVisible(true);
+    }
+    // Niemals wieder auf false setzen!
+  }, [money, prestigeCount, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
   useEffect(() => {
