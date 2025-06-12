@@ -114,6 +114,7 @@ export default function LeaderboardModal({ show, onClose }) {
             <table className="leaderboard-table">
               <thead>
                 <tr>
+                  <th>#</th>
                   <th>Name</th>
                   <th>Total</th>
                   <th>Active</th>
@@ -128,6 +129,7 @@ export default function LeaderboardModal({ show, onClose }) {
                   const isFlagged = entry.flagged;
                   return (
                     <tr key={entry.id} className={isMe ? 'me' : ''} style={isFlagged ? { opacity: 0.5, background: '#ffeaea' } : {}}>
+                      <td style={{ textAlign: 'center', fontWeight: isFirst ? 'bold' : undefined }}>{idx + 1}</td>
                       <td title={entry.name}>
                         <div className="leaderboard-name-cell">
                           {entry.name}
