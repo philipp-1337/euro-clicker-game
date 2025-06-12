@@ -38,7 +38,7 @@ export default function AboutModal({ show, onClose }) {
           </p>
           <h5>Investments & Strategy</h5>
           <p>
-            Once you've advanced, unlock the Investments tab to invest in companies for long-term, passive income. Expand further by investing in state buildings and infrastructure, which influence costs and income and add new layers of strategy. Unlock and deploy interventions for powerful, game-changing effects that can shift your approach.
+            Once you've advanced, unlock the Investments tab to invest in companies for long-term, passive income.
           </p>
           <h5>Progression & Achievements</h5>
           <p>

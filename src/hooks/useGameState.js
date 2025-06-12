@@ -6,13 +6,6 @@ export default function useGameState(easyMode = false) {
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
   const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
-  const [satisfaction, setSatisfaction] = useState(
-    Number.isFinite(gameConfig.initialState.satisfaction) ? gameConfig.initialState.satisfaction : 0
-  );
-  const [dissatisfaction, setDissatisfaction] = useState(
-    Number.isFinite(gameConfig.initialState.dissatisfaction) ? gameConfig.initialState.dissatisfaction : 0
-  );
-  const [stateBuildings, setStateBuildings] = useState([...gameConfig.initialState.stateBuildings]);
   
   // Upgrade-Zustände
   const [valueMultipliers, setValueMultipliers] = useState([...gameConfig.initialState.valueMultipliers]);
@@ -26,7 +19,6 @@ export default function useGameState(easyMode = false) {
   const [globalPriceDecrease, setGlobalPriceDecrease] = useState(gameConfig.initialState.globalPriceDecrease);
   const [globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel] = useState(gameConfig.initialState.globalPriceDecreaseLevel);
 
-
   // Investment-Tab-Status
   const [isInvestmentUnlocked, setIsInvestmentUnlocked] = useState(
     gameConfig.initialState.isInvestmentUnlocked ?? false
@@ -37,20 +29,11 @@ export default function useGameState(easyMode = false) {
     gameConfig.initialState.investments ?? gameConfig.investments.map(() => 0)
   );
 
-  // StateInfrastructure-Tab-Status
-  const [isStateUnlocked, setIsStateUnlocked] = useState(
-    gameConfig.initialState.isStateUnlocked ?? false
-  );
   const [activePlayTime, setActivePlayTime] = useState(gameConfig.initialState.activePlayTime ?? 0);
   const [inactivePlayTime, setInactivePlayTime] = useState(gameConfig.initialState.inactivePlayTime ?? 0);
 
   // State to store the calculated offline duration on initial load
   const [initialOfflineDuration, setInitialOfflineDuration] = useState(0);
-
-  // Interventions-Tab-Status
-  const [isInterventionsUnlocked, setIsInterventionsUnlocked] = useState(
-    gameConfig.initialState.isInterventionsUnlocked ?? false
-  );
 
   // State für Offline-Einnahmen
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
@@ -87,11 +70,6 @@ export default function useGameState(easyMode = false) {
     globalPriceDecreaseLevel,
     isInvestmentUnlocked,
     investments,
-    satisfaction,
-    dissatisfaction,
-    stateBuildings,
-    isStateUnlocked,
-    isInterventionsUnlocked,
     activePlayTime,
     inactivePlayTime,
     offlineEarningsLevel, // Add to game state
@@ -123,15 +101,6 @@ export default function useGameState(easyMode = false) {
     setGlobalPriceDecreaseLevel(savedState.globalPriceDecreaseLevel ?? gameConfig.initialState.globalPriceDecreaseLevel);
     setIsInvestmentUnlocked(savedState.isInvestmentUnlocked ?? false);
     setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
-    setSatisfaction(
-      Number.isFinite(savedState.satisfaction) ? savedState.satisfaction : 0
-    );
-    setDissatisfaction(
-      Number.isFinite(savedState.dissatisfaction) ? savedState.dissatisfaction : 0
-    );
-    setStateBuildings(savedState.stateBuildings ?? [...gameConfig.initialState.stateBuildings]);
-    setIsStateUnlocked(savedState.isStateUnlocked ?? false);
-    setIsInterventionsUnlocked(savedState.isInterventionsUnlocked ?? false);
     setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0);
 
     // Load offlineEarningsLevel, with migration for old isOfflineEarningsUnlocked
@@ -188,7 +157,6 @@ export default function useGameState(easyMode = false) {
   }, []);
 
   return {
-    // States
     money, setMoney,
     cooldowns, setCooldowns,
     managers, setManagers,
@@ -202,20 +170,15 @@ export default function useGameState(easyMode = false) {
     globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
-    satisfaction, setSatisfaction,
-    dissatisfaction, setDissatisfaction,
-    stateBuildings, setStateBuildings,
-    isStateUnlocked, setIsStateUnlocked,
-    isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
-    offlineEarningsLevel, setOfflineEarningsLevel, // Expose new state and setter
-    criticalClickChanceLevel, setCriticalClickChanceLevel, // Expose new state and setter
-    boostedInvestments: boostedInvestmentsData, // Expose the data
-    setBoostedInvestments, // Expose the custom setter
-    prestigeShares, setPrestigeShares, // Expose prestige shares
-    prestigeCount, setPrestigeCount, // Expose prestige count
-    initialOfflineDuration, // Expose the initial offline duration
+    offlineEarningsLevel, setOfflineEarningsLevel,
+    criticalClickChanceLevel, setCriticalClickChanceLevel,
+    boostedInvestments: boostedInvestmentsData,
+    setBoostedInvestments,
+    prestigeShares, setPrestigeShares,
+    prestigeCount, setPrestigeCount,
+    initialOfflineDuration,
    
     // Save/Load
     gameState,
