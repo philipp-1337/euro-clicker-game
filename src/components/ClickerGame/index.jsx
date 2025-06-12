@@ -41,8 +41,8 @@ export default function ClickerGame({
   const toggleBuyQuantity = () => {
     setBuyQuantity(prev => {
       if (prev === 1) return 10;
-      if (prev === 10) return 100;
-      return 1; // Cycle back to 1 from 100
+      if (prev === 10) return 25;
+      return 1; // Cycle back to 1 from 25
     });
   };
 
