@@ -81,18 +81,8 @@ export default function ClickerGame({
     unlockInvestments,
     totalIncomePerSecond,
     totalMoneyPerSecond,
-    satisfaction,
-    dissatisfaction,
-    stateBuildings,
-    buyStateBuilding,
     unlockInvestmentCost,
-    isStateUnlocked,
-    unlockState,
-    unlockStateCost,
     investmentCostMultiplier,
-    isInterventionsUnlocked,
-    unlockInterventions,
-    interventionsUnlockCost,
     offlineEarningsLevel,      // New
     currentOfflineEarningsFactor, // New
     offlineEarningsLevelCost,  // New
@@ -494,8 +484,6 @@ export default function ClickerGame({
             isInvestmentUnlocked={isInvestmentUnlocked}
             unlockInvestments={unlockInvestments}
             totalIncomePerSecond={totalMoneyPerSecond}
-            satisfaction={satisfaction}
-            dissatisfaction={dissatisfaction}
           />
         </div>
       )}
@@ -534,18 +522,8 @@ export default function ClickerGame({
             globalPriceDecreaseLevel={globalPriceDecreaseLevel}
             globalPriceDecreaseCost={globalPriceDecreaseCost}
             buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-            satisfaction={satisfaction}
-            dissatisfaction={dissatisfaction}
-            stateBuildings={stateBuildings}
-            buyStateBuilding={buyStateBuilding}
             totalMoneyPerSecond={totalMoneyPerSecond}
             unlockInvestmentCost={unlockInvestmentCost}
-            isStateUnlocked={isStateUnlocked}
-            unlockState={unlockState}
-            unlockStateCost={unlockStateCost}
-            isInterventionsUnlocked={isInterventionsUnlocked}
-            unlockInterventions={unlockInterventions}
-            interventionsUnlockCost={interventionsUnlockCost}
             investmentCostMultiplier={investmentCostMultiplier}
             offlineEarningsLevel={offlineEarningsLevel}               // New
             currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New

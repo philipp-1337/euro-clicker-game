@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent, Landmark, Shield, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
+import { DollarSign, Star, Percent, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -18,12 +18,6 @@ export default function PremiumUpgrades({
   isInvestmentUnlocked,
   unlockInvestments,
   unlockInvestmentCost,
-  isStateUnlocked,
-  unlockState,
-  unlockStateCost,
-  unlockInterventions,
-  isInterventionsUnlocked,
-  interventionsUnlockCost,
   offlineEarningsLevel,      // New: Current level of offline earnings
   currentOfflineEarningsFactor, // New: Calculated effective factor
   buyOfflineEarningsLevel,     // New: Function to buy next level
@@ -257,59 +251,6 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      {isInvestmentUnlocked && ( // Ensure Investments is unlocked before showing State & Infrastructure
-        <div className="premium-upgrade-card experimental">
-          <div className="premium-upgrade-header">
-            <Landmark className="premium-icon" />
-            <h3>State & Infrastructure</h3>
-          </div>
-          <p className="premium-upgrade-description">
-            Unlock the State & Infrastructure tab to build state.
-          </p>
-          <div className="premium-upgrade-info">
-            <div className="premium-upgrade-level">
-              Status: {isStateUnlocked ? 'Unlocked' : 'Locked'}
-            </div>
-            <button
-              onClick={unlockState}
-              disabled={money < unlockStateCost || isStateUnlocked}
-              className={`premium-upgrade-button ${money < unlockStateCost || isStateUnlocked ? 'disabled' : ''}`}
-            >
-              {isStateUnlocked ? 'Unlocked' : `${formatNumber(unlockStateCost)} €`}
-            </button>
-          </div>
-          <div className="experimental-label">
-            Experimental Feature
-          </div>
-        </div>
-      )}
-      {/* Interventions option, only visible after State is unlocked */}
-      {isStateUnlocked && (
-        <div className="premium-upgrade-card experimental">
-          <div className="premium-upgrade-header">
-            <Shield className="premium-icon" />
-            <h3>Interventions</h3>
-          </div>
-          <p className="premium-upgrade-description">
-            Unlock the Interventions tab to access special state interventions.
-          </p>
-          <div className="premium-upgrade-info">
-            <div className="premium-upgrade-level">
-              Status: {isInterventionsUnlocked ? 'Unlocked' : 'Locked'}
-            </div>
-            <button
-              onClick={unlockInterventions}
-              disabled={money < interventionsUnlockCost || isInterventionsUnlocked}
-              className={`premium-upgrade-button ${money < interventionsUnlockCost || isInterventionsUnlocked ? 'disabled' : ''}`}
-            >
-              {isInterventionsUnlocked ? 'Unlocked' : `${formatNumber(interventionsUnlockCost)} €`}
-            </button>
-          </div>
-          <div className="experimental-label">
-            Experimental Feature
-          </div>
-        </div>
-      )}
     </div>
   );
 }

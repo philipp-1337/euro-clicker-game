@@ -8,7 +8,6 @@ import useCooldowns from './useCooldowns';
 import usePlaytime from './usePlaytime';
 import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
-import useStateInfrastructure from './useStateInfrastructure';
 
 export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
 
@@ -38,11 +37,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     gameState, loadGameState,
     isInvestmentUnlocked, setIsInvestmentUnlocked,
     investments, setInvestments,
-    satisfaction, setSatisfaction,
-    dissatisfaction, setDissatisfaction,
-    stateBuildings, setStateBuildings,
-    isStateUnlocked, setIsStateUnlocked,
-    isInterventionsUnlocked, setIsInterventionsUnlocked,
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
     offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
@@ -104,15 +98,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     ensureStartTime,
     easyMode
   ]);
-
-  // Kauflogik für Staatsgebäude
-  const { buyStateBuilding } = useStateInfrastructure(
-    money, setMoney,
-    satisfaction, setSatisfaction,
-    dissatisfaction, setDissatisfaction,
-    stateBuildings, setStateBuildings,
-    ensureStartTime
-  );
   
   // Upgrade-Funktionen
   const {
@@ -165,16 +150,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     }, 0);
   }, [managers, buttons]);
 
-  // Laufende Kosten für Staatsgebäude pro Sekunde berechnen
-  const stateBuildingsCostPerSecond = useMemo(() => {
-    return stateBuildings.reduce((sum, active, idx) => {
-      if (active) {
-        return sum + gameConfig.stateBuildings[idx].costPerSecond;
-      }
-      return sum;
-    }, 0);
-  }, [stateBuildings]);
-
   // Calculate current run shares and prestige bonus
   const currentRunShares = useMemo(() => {
     if (typeof money !== 'number' || isNaN(money) || money <= 0) return 0; // money muss eine positive Zahl sein
@@ -195,7 +170,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   }, [prestigeShares]);
 
   // Gesamt-Einkommen pro Sekunde
-  const baseTotalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond - stateBuildingsCostPerSecond;
+  const baseTotalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond;
   const totalMoneyPerSecond = (typeof baseTotalMoneyPerSecond === 'number' && !isNaN(baseTotalMoneyPerSecond)) ? baseTotalMoneyPerSecond * prestigeBonusMultiplier : 0;
 
   // Zentrale Geldberechnung pro Sekunde
@@ -238,30 +213,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   }, [money, setMoney, setIsInvestmentUnlocked, costMultiplier, ensureStartTime]);
 
   const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier;
-
-  // Unlock StateInfrastructure Tab
-  const unlockState = useCallback(() => {
-    const unlockCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
-    if (money >= unlockCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - unlockCost);
-      setIsStateUnlocked(true);
-    }
-  }, [money, setMoney, setIsStateUnlocked, costMultiplier, ensureStartTime]);
-
-  const unlockStateCost = gameConfig.premiumUpgrades.unlockStateCost * costMultiplier;
-
-  // Unlock Interventions Tab
-  const unlockInterventions = useCallback(() => {
-    const unlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
-    if (money >= unlockCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - unlockCost);
-      setIsInterventionsUnlocked(true);
-    }
-  }, [money, setMoney, setIsInterventionsUnlocked, costMultiplier, ensureStartTime]);
-
-  const interventionsUnlockCost = gameConfig.premiumUpgrades.unlockInterventionsCost * costMultiplier;
 
   // Offline Earnings Upgrade
   const currentOfflineEarningsFactor = useMemo(() =>
@@ -536,7 +487,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       
       // Ensure specific progression arrays/objects are truly reset
       investments: gameConfig.initialState.investments.map(() => 0),
-      stateBuildings: gameConfig.initialState.stateBuildings.map(() => 0),
       boostedInvestments: gameConfig.investments.map(() => false),
       // Reset managers, upgrade levels etc., by taking them from freshInitialState
     };
@@ -577,13 +527,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     managers,
     investments,
     isInvestmentUnlocked,
-    // isOfflineEarningsUnlocked, // No longer directly used, derived from offlineEarningsLevel
-    isStateUnlocked,
-    isInterventionsUnlocked,
     totalMoneyPerSecond,
-    satisfaction,
-    dissatisfaction,
-    stateBuildings,
     activePlayTime,
     inactivePlayTime,
     prestigeShares,
@@ -591,7 +535,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     currentRunShares,
     prestigeBonusMultiplier,
     canPrestige,
-    
     
     // Funktionen 
     handleClick: wrappedHandleClick,
@@ -601,10 +544,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     buyCooldownUpgrade,
     buyGlobalMultiplier,
     buyGlobalPriceDecrease,
-    buyStateBuilding,
     unlockInvestments,
-    unlockState,
-    unlockInterventions,
     buyInvestment,
     saveGame,
     prestigeGame,
@@ -625,8 +565,6 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     managerCosts,
     totalIncomePerSecond: totalMoneyPerSecond,
     unlockInvestmentCost,
-    unlockStateCost,
-    interventionsUnlockCost,
     investmentCostMultiplier,
     offlineEarningsLevel, // Export new state
     currentOfflineEarningsFactor, // Export new calculated factor

@@ -1,9 +1,6 @@
 import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
 import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
-import StateInfrastructure from '@components/ClickerGame/UpgradeTabs/StateInfrastructure';
-import Interventions from '@components/ClickerGame/UpgradeTabs/Interventions';
-
 
 export const gameConfig = {
     // Basis-Kosten für Upgrades
@@ -32,21 +29,6 @@ export const gameConfig = {
       { name: 'Space Rocket Enterprises', cost: 145500, income: 97 },
     ],
 
-    stateBuildings: [
-      { name: 'School', costPerSecond: 10, satisfactionValue: 1, dissatisfactionValue: 0 },
-      { name: 'Free Public Transport', costPerSecond: 20, satisfactionValue: 5, dissatisfactionValue: 0 },
-      { name: 'Health Insurance', costPerSecond: 30, satisfactionValue: 10, dissatisfactionValue: 0 },
-      { name: 'Tax Cut for Workers', costPerSecond: 40, satisfactionValue: 20, dissatisfactionValue: 0 },
-      { name: 'Tax Cuts', costPerSecond: 60, satisfactionValue: 30, dissatisfactionValue: 0 },
-      { name: 'Parks & Recreation', costPerSecond: 100, satisfactionValue: 50, dissatisfactionValue: 0 },
-      { name: 'Arms Race', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 },
-      { name: 'Media Manipulation', costPerSecond: -10, satisfactionValue: 0, dissatisfactionValue: 10 }, 
-      { name: 'Surveillance Expansion', costPerSecond: -15, satisfactionValue: 0, dissatisfactionValue: 15 }, 
-      { name: 'Private Prisons', costPerSecond: -20, satisfactionValue: 0, dissatisfactionValue: 20 }, 
-      { name: 'Gig Economy Deregulation', costPerSecond: -25, satisfactionValue: 0, dissatisfactionValue: 30 }, 
-      { name: 'Tax Haven Subsidies', costPerSecond: -30, satisfactionValue: 0, dissatisfactionValue: 25 }
-    ],
-
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level
     upgradeCooldownReduction: 0.9, // -10% pro Level
@@ -66,10 +48,6 @@ export const gameConfig = {
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
-      isStateUnlocked: false,
-      satisfaction: 0,
-      dissatisfaction: 0,
-      stateBuildings: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match stateBuildings array
       offlineEarningsLevel: 0, // Level for offline earnings
       criticalClickChanceLevel: 0, // Level for critical click chance upgrade
       prestigeCount: 0, // Initial prestige count
@@ -107,8 +85,6 @@ export const gameConfig = {
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-      unlockStateCost: 2500000, // Kosten für die Freischaltung des State & Infrastructure-Tabs
-      unlockInterventionsCost: 5000000, // Kosten für die Freischaltung des Interventions-Tabs
     },
     // Prestige-Konfiguration
     prestige: {
@@ -130,8 +106,6 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
-        { id: 'state', label: 'State & Infrastructure', component: StateInfrastructure },
-        { id: 'interventions', label: 'Interventions', component: Interventions },
       ],
     },
     // Schwierigkeitseinstellungen

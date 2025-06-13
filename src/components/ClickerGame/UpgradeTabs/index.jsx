@@ -28,19 +28,9 @@ export default function UpgradeTabs({
   isInvestmentUnlocked,
   unlockInvestments,
   totalIncomePerSecond,
-  satisfaction,
-  dissatisfaction,
-  stateBuildings,
-  buyStateBuilding,
   totalMoneyPerSecond,
   unlockInvestmentCost,
-  isStateUnlocked,
-  unlockState,
-  unlockStateCost,
   investmentCostMultiplier,
-  isInterventionsUnlocked,
-  unlockInterventions,
-  interventionsUnlockCost,
   offlineEarningsLevel,      // New
   currentOfflineEarningsFactor, // New
   buyOfflineEarningsLevel,     // New
@@ -68,9 +58,7 @@ export default function UpgradeTabs({
       <div className="upgrade-tabs">
       <div className="upgrade-tabs-inner">
         {gameConfig.ui.tabs.map((tab) => (
-          ((tab.id !== 'investments' || isInvestmentUnlocked) &&
-           (tab.id !== 'state' || isStateUnlocked) &&
-           (tab.id !== 'interventions' || isInterventionsUnlocked)) && (
+          ((tab.id !== 'investments' || isInvestmentUnlocked)) && (
             <button
               key={tab.id}
               className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
@@ -116,19 +104,9 @@ export default function UpgradeTabs({
           globalPriceDecreaseLevel={globalPriceDecreaseLevel}
           globalPriceDecreaseCost={globalPriceDecreaseCost}
           buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-          satisfaction={satisfaction}
-          dissatisfaction={dissatisfaction}
-          stateBuildings={stateBuildings}
-          buyStateBuilding={buyStateBuilding}
           totalMoneyPerSecond={totalMoneyPerSecond}
           unlockInvestmentCost={unlockInvestmentCost}
-          isStateUnlocked={isStateUnlocked}
-          unlockState={unlockState}
-          unlockStateCost={unlockStateCost}
           investmentCostMultiplier={investmentCostMultiplier}
-          isInterventionsUnlocked={isInterventionsUnlocked}
-          unlockInterventions={unlockInterventions}
-          interventionsUnlockCost={interventionsUnlockCost}
           offlineEarningsLevel={offlineEarningsLevel}                 // New
           currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
           buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
