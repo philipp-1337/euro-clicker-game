@@ -27,7 +27,10 @@ service cloud.firestore {
           request.resource.data.activePlaytime is number &&
           request.resource.data.activePlaytime >= 0 &&
           request.resource.data.activePlaytime <= request.resource.data.playtime && // Aktive Spielzeit darf nicht größer als Gesamtspielzeit sein
-          request.resource.data.timestamp is number; // Client-Timestamp, sollte eine Zahl sein
+          request.resource.data.timestamp is number && // Client-Timestamp, sollte eine Zahl sein
+          // Optional: Validierung für flagged und flaggedReason hinzufügen
+          request.resource.data.flagged is bool &&
+          (!request.resource.data.flagged || (request.resource.data.flaggedReason is string && request.resource.data.flaggedReason.size() > 0));
     }
   }
 }

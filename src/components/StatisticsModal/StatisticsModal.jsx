@@ -78,21 +78,6 @@ export default function StatisticsModal({
               </li>
             </ul>
           )}
-          <ul className="statistics-list">
-            <h4 className="settings-section-title">Prestige</h4>
-            <li>
-              <span className="stats-label">Prestige Count:</span>
-              <span className="stats-value">{prestigeCount}</span>
-            </li>
-            <li>
-              <span className="stats-label">Prestige Shares:</span>
-              <span className="stats-value">{Number(prestigeShares).toFixed(2)}</span>
-            </li>
-            <li>
-              <span className="stats-label">Prestige Multiplier:</span>
-              <span className="stats-value">{prestigeCount !== undefined && prestigeShares !== undefined && prestigeShares > 0 ? (1 + prestigeShares * 0.01).toFixed(2) : '1.00'}x</span>
-            </li>
-          </ul>
         </div>
       </div>
     </div>

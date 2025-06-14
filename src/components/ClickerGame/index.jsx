@@ -34,6 +34,8 @@ export default function ClickerGame({
     setButtonClicked,
     floatingClicks,
     incrementFloatingClicks,
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible,
   } = useUiProgress();
 
   // State for buy quantity (x1 / x10)
@@ -41,8 +43,8 @@ export default function ClickerGame({
   const toggleBuyQuantity = () => {
     setBuyQuantity(prev => {
       if (prev === 1) return 10;
-      if (prev === 10) return 100;
-      return 1; // Cycle back to 1 from 100
+      if (prev === 10) return 25;
+      return 1; // Cycle back to 1 from 25
     });
   };
 
@@ -79,18 +81,8 @@ export default function ClickerGame({
     unlockInvestments,
     totalIncomePerSecond,
     totalMoneyPerSecond,
-    satisfaction,
-    dissatisfaction,
-    stateBuildings,
-    buyStateBuilding,
     unlockInvestmentCost,
-    isStateUnlocked,
-    unlockState,
-    unlockStateCost,
     investmentCostMultiplier,
-    isInterventionsUnlocked,
-    unlockInterventions,
-    interventionsUnlockCost,
     offlineEarningsLevel,      // New
     currentOfflineEarningsFactor, // New
     offlineEarningsLevelCost,  // New
@@ -287,16 +279,22 @@ export default function ClickerGame({
     const { db } = await import('../../firebase');
     // Flag für Test/Alpha-Umgebung
     const isTestOrAlpha = environment === 'localhost' || environment === 'alpha';
-    await addDoc(collection(db, 'leaderboard'), {
+
+    const dataToSubmit = {
       name: leaderboardName.trim(),
       playtime: playTime,
       goal: currentCheckpoint.id, // Die ID des erreichten Ziels hinzufügen
       clicks: floatingClicks,
       activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
-      flagged: isTestOrAlpha ? true : false, // <--- Flag für Test/Alpha
-      flaggedReason: isTestOrAlpha ? environment : undefined // optional: Grund
-    });
+      flagged: isTestOrAlpha,
+    };
+
+    if (isTestOrAlpha) {
+      dataToSubmit.flaggedReason = environment;
+    }
+
+    await addDoc(collection(db, 'leaderboard'), dataToSubmit);
     setLeaderboardSubmitted(true);
     // Save game state (cloud or local)
     if (cloudSaveMode) {
@@ -318,6 +316,14 @@ export default function ClickerGame({
     addCheckpointToStorage(currentCheckpoint.id); // Bei erfolgreichem Submit auch im Storage vermerken
     setShowLeaderboardCongrats(false); // Modal direkt schließen
   };
+
+  // Prestige-Button: Sichtbarkeit zentral prüfen und setzen
+  useEffect(() => {
+    if (!prestigeButtonEverVisible && (money >= gameConfig.prestige.minMoneyForModalButton || prestigeCount > 0)) {
+      setPrestigeButtonEverVisible(true);
+    }
+    // Niemals wieder auf false setzen!
+  }, [money, prestigeCount, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
   useEffect(() => {
@@ -484,8 +490,6 @@ export default function ClickerGame({
             isInvestmentUnlocked={isInvestmentUnlocked}
             unlockInvestments={unlockInvestments}
             totalIncomePerSecond={totalMoneyPerSecond}
-            satisfaction={satisfaction}
-            dissatisfaction={dissatisfaction}
           />
         </div>
       )}
@@ -524,18 +528,8 @@ export default function ClickerGame({
             globalPriceDecreaseLevel={globalPriceDecreaseLevel}
             globalPriceDecreaseCost={globalPriceDecreaseCost}
             buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-            satisfaction={satisfaction}
-            dissatisfaction={dissatisfaction}
-            stateBuildings={stateBuildings}
-            buyStateBuilding={buyStateBuilding}
             totalMoneyPerSecond={totalMoneyPerSecond}
             unlockInvestmentCost={unlockInvestmentCost}
-            isStateUnlocked={isStateUnlocked}
-            unlockState={unlockState}
-            unlockStateCost={unlockStateCost}
-            isInterventionsUnlocked={isInterventionsUnlocked}
-            unlockInterventions={unlockInterventions}
-            interventionsUnlockCost={interventionsUnlockCost}
             investmentCostMultiplier={investmentCostMultiplier}
             offlineEarningsLevel={offlineEarningsLevel}               // New
             currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New

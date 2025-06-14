@@ -1,6 +1,6 @@
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
@@ -73,7 +73,6 @@ export default function GameHeader(props) {
     showStatisticsHeaderButton,
     setShowStatisticsHeaderButton,
     prestigeButtonEverVisible, // Get the new state
-    setPrestigeButtonEverVisible, // Get the new setter
   } = useUiProgress();
 
   // Cloud Save Confirm Modal State
@@ -94,13 +93,6 @@ export default function GameHeader(props) {
   // Logic to show Prestige button: either money threshold is met OR it has been visible before
   const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
-
-  // Effect to set prestigeButtonEverVisible to true once the money threshold is met for the first time
-  useEffect(() => {
-    if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
-      setPrestigeButtonEverVisible(true);
-    }
-  }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
