@@ -48,7 +48,8 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
 export const formatNumber = (num) => {
   if (num < 1000) return num.toFixed(2);
   const abbrev = [
-    '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'
+    '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc',
+    'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Ocd', 'Nod', 'Vg', 'Uvg', 'Dvg', 'Tvg', 'Qavg', 'Qivg', 'Sxvg', 'Spvg', 'Ocvg', 'Novg', 'Tg'
   ];
   let i = 0;
   let n = Math.abs(num);
