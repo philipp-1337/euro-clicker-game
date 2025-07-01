@@ -183,7 +183,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalPriceDecreaseLevel} (Currently: x{(globalPriceDecrease ?? 1).toFixed(2)})
+            Level: {formatNumber(globalPriceDecreaseLevel)} (Currently: x{(globalPriceDecrease ?? 1).toFixed(2)})
           </div>
           <button
             onClick={() => buyGlobalPriceDecrease(buyQuantity)}
@@ -206,7 +206,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {floatingClickValueLevel ?? 0} (Current value: {formatNumber(floatingClickValueMultiplier) ?? 1} €)
+            Level: {formatNumber(floatingClickValueLevel) ?? 0} (Current value: {formatNumber(floatingClickValueMultiplier) ?? 1} €)
           </div>
           <button
             onClick={() => buyFloatingClickValue(buyQuantity)}
@@ -229,7 +229,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {criticalClickChanceLevel} (Currently: {formatNumber(currentCriticalClickChance * 100)}%)
+            Level: {formatNumber(criticalClickChanceLevel)} (Currently: {formatNumber(currentCriticalClickChance * 100)}%)
           </div>
           <button
             onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
@@ -256,7 +256,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {offlineEarningsLevel} (Currently: {formatNumber(currentOfflineEarningsFactor * 100)}%)
+            Level: {formatNumber(offlineEarningsLevel)} (Currently: {formatNumber(currentOfflineEarningsFactor * 100)}%)
           </div>
           <button
             onClick={() => buyOfflineEarningsLevel(buyQuantity)}
