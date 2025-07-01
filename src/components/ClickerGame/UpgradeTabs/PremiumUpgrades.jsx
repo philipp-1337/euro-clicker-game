@@ -143,7 +143,7 @@ export default function PremiumUpgrades({
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
-            Level: {globalMultiplierLevel} (Currently: x{formatNumber(globalMultiplier)})
+            Level: {formatNumber(globalMultiplierLevel)} (Currently: x{formatNumber(globalMultiplier)})
           </div>
           <button
             onClick={() => buyGlobalMultiplier(buyQuantity)}
