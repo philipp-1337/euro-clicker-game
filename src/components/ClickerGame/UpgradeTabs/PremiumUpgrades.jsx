@@ -195,6 +195,29 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      {/* Floating Click Value Premium Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Star className="premium-icon" />
+          <h3>Floating Click Wert</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {floatingClickValueLevel ?? 0} (Current value: {formatNumber(floatingClickValueMultiplier) ?? 1} €)
+          </div>
+          <button
+            onClick={() => buyFloatingClickValue(buyQuantity)}
+            disabled={money < totalFloatingClickValueCost}
+            className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
+            title={`Kaufe ${buyQuantity} Level(s)`}
+          >
+            {formatNumber(totalFloatingClickValueCost)} €
+          </button>
+        </div>
+      </div>
       {/* Critical Click Chance Upgrade */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
@@ -242,29 +265,6 @@ export default function PremiumUpgrades({
             title={`Buy ${buyQuantity} level(s)`}
           >
             {formatNumber(totalOfflineEarningsCost)} €
-          </button>
-        </div>
-      </div>
-      {/* Floating Click Value Premium Upgrade */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Floating Click Wert</h3>
-        </div>
-        <p className="premium-upgrade-description">
-          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor} (current: x{floatingClickValueMultiplier ?? 1}).
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Level: {floatingClickValueLevel ?? 0}
-          </div>
-          <button
-            onClick={() => buyFloatingClickValue(buyQuantity)}
-            disabled={money < totalFloatingClickValueCost}
-            className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
-            title={`Kaufe ${buyQuantity} Level(s)`}
-          >
-            {formatNumber(totalFloatingClickValueCost)} €
           </button>
         </div>
       </div>

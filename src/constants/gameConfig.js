@@ -74,20 +74,20 @@ export const gameConfig = {
         costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
       },
+      floatingClickValue: { // NEU: Premium-Upgrade für Floating Click Wert
+        baseCost: 5000,
+        costExponent: 1.6, // exponentiell steigend
+        factor: 1.2, // Wert-Verdopplung pro Level
+      },
       criticalClickChance: { // New upgrade configuration
         baseCost: 3000,
-        costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
-        effectPerLevel: 0.01 // 1% chance increase per level
+        costLevelMultiplier: 1.7, // Cost increases by 0.75 * baseCost for each level
+        effectPerLevel: 0.005 // 0.5% chance increase per level
       },
       offlineEarnings: { // Changed from unlockOfflineEarnings
         baseCost: 4000,
-        costExponent: 1.7, // Cost scaling per level
+        costExponent: 1.8, // Cost scaling per level
         effectPerLevel: 0.05 // e.g., 5% earnings per level
-      },
-      floatingClickValue: { // NEU: Premium-Upgrade für Floating Click Wert
-        baseCost: 5000,
-        costExponent: 1.8, // exponentiell steigend
-        factor: 1.2, // Wert-Verdopplung pro Level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
     },

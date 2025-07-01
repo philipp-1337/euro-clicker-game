@@ -18,7 +18,7 @@ export default function FloatingClickButton({
           className={`floating-click-button-actual${isCritical ? ' critical-hit' : ''}`} // Renamed class for the actual button
           aria-label="Quick Euro Button"
         >
-          +{formatNumber(floatingClickValue)} €
+          +{formatNumber(floatingClickValue, {decimals: 0})} €
         </button>
         {criticalHitAnimations.map(anim => (
           <span key={anim.id} className="critical-hit-amount">
