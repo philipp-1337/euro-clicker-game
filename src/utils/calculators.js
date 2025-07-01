@@ -48,6 +48,7 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
  */
 export const formatNumber = (num, options = {}) => {
   const decimals = typeof options.decimals === 'number' ? options.decimals : 2;
+  if (!isFinite(num) || isNaN(num)) return '∞';
   if (num < 1000) return num.toFixed(decimals);
   const abbrev = [
     '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc',
@@ -68,7 +69,13 @@ export const formatNumber = (num, options = {}) => {
     n /= 1000;
     i++;
   }
-  return (num / Math.pow(1000, i)).toFixed(decimals) + abbrev[i];
+  // Wenn wir am Ende des Arrays sind, nicht weiter teilen
+  if (i === abbrev.length - 1 && n >= 1000) {
+    return '∞';
+  }
+  const value = (num / Math.pow(1000, i));
+  if (!isFinite(value) || isNaN(value)) return '∞';
+  return value.toFixed(decimals) + abbrev[i];
 };
   
   /**
