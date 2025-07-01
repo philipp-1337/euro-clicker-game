@@ -107,6 +107,10 @@ export default function ClickerGame({
     prestigeGame,
     prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
     canPrestige,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    buyFloatingClickValue,
+    currentFloatingClickValue,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const {
@@ -511,9 +515,9 @@ export default function ClickerGame({
             buyValueUpgrade={buyValueUpgrade}
             buyCooldownUpgrade={buyCooldownUpgrade}
             globalMultiplier={globalMultiplier}
-            buyQuantity={buyQuantity} // Pass buyQuantity to UpgradeTabs
+            buyQuantity={buyQuantity}
             globalMultiplierLevel={globalMultiplierLevel}
-            easyMode={easyMode} // Pass easyMode down
+            easyMode={easyMode}
             globalMultiplierCost={globalMultiplierCost}
             buyGlobalMultiplier={buyGlobalMultiplier}
             managers={managers}
@@ -531,16 +535,20 @@ export default function ClickerGame({
             totalMoneyPerSecond={totalMoneyPerSecond}
             unlockInvestmentCost={unlockInvestmentCost}
             investmentCostMultiplier={investmentCostMultiplier}
-            offlineEarningsLevel={offlineEarningsLevel}               // New
-            currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
-            buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
-            offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
-            criticalClickChanceLevel={criticalClickChanceLevel} // New
-            currentCriticalClickChance={currentCriticalClickChance} // New
-            criticalClickChanceCost={criticalClickChanceCost} // New
-            buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
-                onInvestmentBoosted={handleInvestmentBoost} // Pass the handler down
-            soundEffectsEnabled={soundEffectsEnabled} // Pass down
+            offlineEarningsLevel={offlineEarningsLevel}
+            currentOfflineEarningsFactor={currentOfflineEarningsFactor}
+            buyOfflineEarningsLevel={buyOfflineEarningsLevel}
+            offlineEarningsLevelCost={offlineEarningsLevelCost}
+            criticalClickChanceLevel={criticalClickChanceLevel}
+            currentCriticalClickChance={currentCriticalClickChance}
+            criticalClickChanceCost={criticalClickChanceCost}
+            buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
+            floatingClickValueLevel={floatingClickValueLevel}
+            floatingClickValueMultiplier={floatingClickValueMultiplier}
+            buyFloatingClickValue={buyFloatingClickValue}
+            currentFloatingClickValue={currentFloatingClickValue}
+            onInvestmentBoosted={handleInvestmentBoost}
+            soundEffectsEnabled={soundEffectsEnabled}
           />
         </div>
       )}
@@ -549,8 +557,9 @@ export default function ClickerGame({
       <FloatingClickButton
         onClick={handleFloatingClick}
         centerMode={floatingCenterMode}
-        isCritical={showCriticalEffect} // Prop für Button-Effekt
-        criticalHitAnimations={criticalHitAnimations} // Pass down animation data
+        isCritical={showCriticalEffect}
+        criticalHitAnimations={criticalHitAnimations}
+        floatingClickValue={currentFloatingClickValue}
       />
     </div>
   );

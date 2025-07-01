@@ -84,6 +84,11 @@ export const gameConfig = {
         costExponent: 1.7, // Cost scaling per level
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
+      floatingClickValue: { // NEU: Premium-Upgrade für Floating Click Wert
+        baseCost: 5000,
+        costExponent: 1.8, // exponentiell steigend
+        factor: 1.2, // Wert-Verdopplung pro Level
+      },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
     },
     // Prestige-Konfiguration

@@ -18,17 +18,21 @@ export default function PremiumUpgrades({
   isInvestmentUnlocked,
   unlockInvestments,
   unlockInvestmentCost,
-  offlineEarningsLevel,      // New: Current level of offline earnings
-  currentOfflineEarningsFactor, // New: Calculated effective factor
-  buyOfflineEarningsLevel,     // New: Function to buy next level
-  offlineEarningsLevelCost,   // New: Cost for the next level
-  criticalClickChanceLevel,  // New: Current level of critical click chance
-  currentCriticalClickChance, // New: Calculated critical click chance
-  buyCriticalClickChanceLevel, // New: Function to buy next critical click chance level
-  criticalClickChanceCost,   // New: Cost for the next critical click chance level
-  managers, // Add managers prop
-  buyQuantity, // New prop for bulk buying
-  easyMode, // New prop for cost calculation
+  offlineEarningsLevel,
+  currentOfflineEarningsFactor,
+  buyOfflineEarningsLevel,
+  offlineEarningsLevelCost,
+  criticalClickChanceLevel,
+  currentCriticalClickChance,
+  buyCriticalClickChanceLevel,
+  criticalClickChanceCost,
+  managers,
+  buyQuantity,
+  easyMode,
+  floatingClickValueLevel,
+  floatingClickValueMultiplier,
+  buyFloatingClickValue,
+  currentFloatingClickValue,
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
@@ -122,6 +126,20 @@ export default function PremiumUpgrades({
     }
     return totalCost;
   };
+
+  // Floating Click Value Premium Upgrade
+  // Helper to calculate total cost for 'n' Floating Click Value upgrades
+  const calculateTotalFloatingClickValueCost = (quantity) => {
+    let totalCost = 0;
+    let currentLevel = floatingClickValueLevel ?? 0;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += gameConfig.premiumUpgrades.floatingClickValue.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, currentLevel + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+  const totalFloatingClickValueCost = calculateTotalFloatingClickValueCost(buyQuantity);
 
   // Costs for current buyQuantity
   const totalGlobalMultiplierCost = calculateTotalGlobalMultiplierCost(buyQuantity);
@@ -224,6 +242,29 @@ export default function PremiumUpgrades({
             title={`Buy ${buyQuantity} level(s)`}
           >
             {formatNumber(totalOfflineEarningsCost)} €
+          </button>
+        </div>
+      </div>
+      {/* Floating Click Value Premium Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Star className="premium-icon" />
+          <h3>Floating Click Wert</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor} (current: x{floatingClickValueMultiplier ?? 1}).
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {floatingClickValueLevel ?? 0}
+          </div>
+          <button
+            onClick={() => buyFloatingClickValue(buyQuantity)}
+            disabled={money < totalFloatingClickValueCost}
+            className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
+            title={`Kaufe ${buyQuantity} Level(s)`}
+          >
+            {formatNumber(totalFloatingClickValueCost)} €
           </button>
         </div>
       </div>
