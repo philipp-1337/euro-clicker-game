@@ -80,10 +80,10 @@ export default function PrestigeModal({
               }
             >
               {canPrestige
-                ? `Prestige (+${currentRunShares.toFixed(2)} Shares)`
-                : `Need ${minSharesRequired.toFixed(1)} Share from this run${
+                ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
+                : `Need ${minSharesRequired.toFixed(1)} Share from this run$${
                     currentRunShares > 0
-                      ? ` (currently ${currentRunShares.toFixed(2)})`
+                      ? ` (currently ${formatNumber(currentRunShares)})`
                       : ''
                   }`}
             </button>
