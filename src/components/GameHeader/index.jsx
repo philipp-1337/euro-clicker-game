@@ -1,6 +1,6 @@
+import React, { useState } from 'react';
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
-import { useState } from 'react';
 import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
@@ -74,6 +74,13 @@ export default function GameHeader(props) {
     setShowStatisticsHeaderButton,
     prestigeButtonEverVisible, // Get the new state
   } = useUiProgress();
+
+  // Click Counter immer beim Spielstart anzeigen
+  // (nur falls noch nicht aktiviert)
+  React.useEffect(() => {
+    if (!showClickStats) setShowClickStats(true);
+    // eslint-disable-next-line
+  }, []);
 
   // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);

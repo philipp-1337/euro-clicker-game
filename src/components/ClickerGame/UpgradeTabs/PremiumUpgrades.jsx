@@ -151,6 +151,29 @@ export default function PremiumUpgrades({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
+      {/* Floating Click Value Premium Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Star className="premium-icon" />
+          <h3>Floating Click Value</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {formatNumber(floatingClickValueLevel) ?? 0} (Current value: {formatNumber(floatingClickValueMultiplier) ?? 1} €)
+          </div>
+          <button
+            onClick={() => buyFloatingClickValue(buyQuantity)}
+            disabled={money < totalFloatingClickValueCost}
+            className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
+            title={`Kaufe ${buyQuantity} Level(s)`}
+          >
+            {formatNumber(totalFloatingClickValueCost)} €
+          </button>
+        </div>
+      </div>
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Star className="premium-icon" />
@@ -192,29 +215,6 @@ export default function PremiumUpgrades({
             title={`Buy ${buyQuantity} level(s)`}
           >
             {isNaN(totalGlobalPriceDecreaseCost) ? 'Error' : `${formatNumber(totalGlobalPriceDecreaseCost)} €`}
-          </button>
-        </div>
-      </div>
-      {/* Floating Click Value Premium Upgrade */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Floating Click Wert</h3>
-        </div>
-        <p className="premium-upgrade-description">
-          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Level: {formatNumber(floatingClickValueLevel) ?? 0} (Current value: {formatNumber(floatingClickValueMultiplier) ?? 1} €)
-          </div>
-          <button
-            onClick={() => buyFloatingClickValue(buyQuantity)}
-            disabled={money < totalFloatingClickValueCost}
-            className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
-            title={`Kaufe ${buyQuantity} Level(s)`}
-          >
-            {formatNumber(totalFloatingClickValueCost)} €
           </button>
         </div>
       </div>
