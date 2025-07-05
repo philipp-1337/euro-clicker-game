@@ -43,6 +43,10 @@ export default function UpgradeTabs({
   soundEffectsEnabled, // New prop
   easyMode, // Added from ClickerGame
   buyQuantity, // Added from ClickerGame
+  floatingClickValueLevel,
+  floatingClickValueMultiplier,
+  buyFloatingClickValue,
+  currentFloatingClickValue,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -117,6 +121,10 @@ export default function UpgradeTabs({
           criticalClickChanceCost={criticalClickChanceCost} // New
           onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined} // Pass to Investments tab
           soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
+          floatingClickValueLevel={floatingClickValueLevel}
+          floatingClickValueMultiplier={floatingClickValueMultiplier}
+          buyFloatingClickValue={buyFloatingClickValue}
+          currentFloatingClickValue={currentFloatingClickValue}
         />
       )
     ))}

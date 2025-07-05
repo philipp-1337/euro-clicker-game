@@ -303,6 +303,30 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     easyMode
   ]);
 
+  // Floating Click Value Premium Upgrade State aus gameStateHook holen
+  const { floatingClickValueLevel, setFloatingClickValueLevel, floatingClickValueMultiplier, setFloatingClickValueMultiplier } = gameStateHook;
+
+  // Kauflogik für das neue Floating Click Value Premium Upgrade
+  const buyFloatingClickValue = useCallback((quantity = 1) => {
+    ensureStartTime?.();
+    let totalCalculatedCost = 0;
+    let tempLevel = floatingClickValueLevel;
+    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+    for (let i = 0; i < quantity; i++) {
+      const costForThisStep = gameConfig.premiumUpgrades.floatingClickValue.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, tempLevel + i) *
+        currentCostMultiplier;
+      totalCalculatedCost += costForThisStep;
+    }
+    if (money >= totalCalculatedCost) {
+      setMoney(prev => prev - totalCalculatedCost);
+      for (let i = 0; i < quantity; i++) {
+        setFloatingClickValueLevel(prev => prev + 1);
+        setFloatingClickValueMultiplier(prev => prev * gameConfig.premiumUpgrades.floatingClickValue.factor);
+      }
+    }
+  }, [money, floatingClickValueLevel, setMoney, setFloatingClickValueLevel, setFloatingClickValueMultiplier, ensureStartTime, easyMode]);
+
   const { saveGame } = useLocalStorage(gameState, loadGameState);
 
 
@@ -335,26 +359,29 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   }
   }, [lastInactiveDuration, offlineEarningsLevel, totalMoneyPerSecond, currentOfflineEarningsFactor]);
 
+  // Floating Click Button Wert-Berechnung
+  const currentFloatingClickValue = useMemo(() => {
+    return floatingClickValueMultiplier;
+  }, [floatingClickValueMultiplier]);
+
   // Funktion für den Floating Click Button
   const addQuickMoney = useCallback(() => {
     ensureStartTime?.();
     const isCritical = Math.random() < currentCriticalClickChance;
-    let moneyToAdd = 1; // Standard +1€
+    let moneyToAdd = currentFloatingClickValue; // Standardwert jetzt Upgrade-abhängig
 
     if (isCritical) {
       const criticalAmount = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond)) ? totalMoneyPerSecond : 0;
-      // Kritische Treffer sollten immer positiv sein und mindestens 1€ geben, auch wenn das Einkommen negativ oder 0 ist.
-      moneyToAdd = Math.max(1, criticalAmount);
+      moneyToAdd = Math.max(currentFloatingClickValue, criticalAmount); // Mindestens Upgrade-Wert
     }
 
-    const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0) ? moneyToAdd : 1;
+    const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0) ? moneyToAdd : currentFloatingClickValue;
     setMoney(prevMoney => {
       const currentPrevMoney = (typeof prevMoney === 'number' && !isNaN(prevMoney)) ? prevMoney : 0;
       return currentPrevMoney + finalMoneyToAdd;
     });
     return { isCritical, amount: moneyToAdd }; // Return object with critical status and amount
-  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond]);
-
+  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond, currentFloatingClickValue]);
 
   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
 
@@ -579,5 +606,9 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     clearLastInactiveDuration,
     calculatedOfflineEarnings,
     claimOfflineEarnings,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    buyFloatingClickValue,
+    currentFloatingClickValue,
   };
 }

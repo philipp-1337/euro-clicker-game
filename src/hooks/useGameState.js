@@ -41,6 +41,10 @@ export default function useGameState(easyMode = false) {
   // State for Critical Click Chance
   const [criticalClickChanceLevel, setCriticalClickChanceLevel] = useState(gameConfig.initialState.criticalClickChanceLevel);
 
+  // State für Floating Click Value Premium Upgrade
+  const [floatingClickValueLevel, setFloatingClickValueLevel] = useState(gameConfig.initialState.floatingClickValueLevel ?? 0);
+  const [floatingClickValueMultiplier, setFloatingClickValueMultiplier] = useState(gameConfig.initialState.floatingClickValueMultiplier ?? 1);
+
   // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
     return gameConfig.investments.map((_, index) => {
@@ -74,6 +78,8 @@ export default function useGameState(easyMode = false) {
     inactivePlayTime,
     offlineEarningsLevel, // Add to game state
     criticalClickChanceLevel, // Add to game state
+    floatingClickValueLevel, // Add to game state
+    floatingClickValueMultiplier, // Add to game state
     boostedInvestments: boostedInvestmentsData, // Add to game state
     prestigeShares, // Add prestige shares to game state
     prestigeCount, // Add prestige count to game state
@@ -119,6 +125,8 @@ export default function useGameState(easyMode = false) {
       ? savedState.prestigeCount : (gameConfig.initialState.prestigeCount ?? 0));
     setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+    setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
+    setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
 
     // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
@@ -174,6 +182,8 @@ export default function useGameState(easyMode = false) {
     inactivePlayTime, setInactivePlayTime,
     offlineEarningsLevel, setOfflineEarningsLevel,
     criticalClickChanceLevel, setCriticalClickChanceLevel,
+    floatingClickValueLevel, setFloatingClickValueLevel,
+    floatingClickValueMultiplier, setFloatingClickValueMultiplier,
     boostedInvestments: boostedInvestmentsData,
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,

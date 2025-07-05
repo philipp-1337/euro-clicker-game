@@ -5,7 +5,8 @@ export default function FloatingClickButton({
   onClick,
   centerMode = false,
   isCritical = false,
-  criticalHitAnimations = [] // New prop
+  criticalHitAnimations = [],
+  floatingClickValue = 1 // Neuer Prop für Wert
 }) {
   // The outer div will handle the fixed/absolute positioning and centerMode class
   // The inner div with position: relative is for the animated amounts relative to the button
@@ -17,7 +18,7 @@ export default function FloatingClickButton({
           className={`floating-click-button-actual${isCritical ? ' critical-hit' : ''}`} // Renamed class for the actual button
           aria-label="Quick Euro Button"
         >
-          +1 €
+          +{formatNumber(floatingClickValue, {decimals: 0})} €
         </button>
         {criticalHitAnimations.map(anim => (
           <span key={anim.id} className="critical-hit-amount">

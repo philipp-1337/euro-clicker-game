@@ -64,6 +64,11 @@ export const gameConfig = {
 
     // Premium-Upgrades Kostenberechnung
     premiumUpgrades: {
+      floatingClickValue: { // NEU: Premium-Upgrade für Floating Click Wert
+        baseCost: 500,
+        costExponent: 1.3, // exponentiell steigend
+        factor: 1.25, // Wert-Verdopplung pro Level
+      },
       globalMultiplier: {
         baseCost: 1000,
         costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
@@ -75,12 +80,12 @@ export const gameConfig = {
         decreaseFactor: 0.95 // -5% pro Level (0.95^level)
       },
       criticalClickChance: { // New upgrade configuration
-        baseCost: 3000,
+        baseCost: 4000,
         costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
-        effectPerLevel: 0.01 // 1% chance increase per level
+        effectPerLevel: 0.005 // 0.5% chance increase per level
       },
       offlineEarnings: { // Changed from unlockOfflineEarnings
-        baseCost: 4000,
+        baseCost: 5000,
         costExponent: 1.7, // Cost scaling per level
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },

@@ -41,14 +41,27 @@ export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15
   
 /**
  * Formats a number for display (e.g., 1000 -> 1.00K)
- * Always returns two decimal places
+ * Always returns two decimal places unless options.decimals = 0
  * @param {number} num - The number to format
+ * @param {object} options - Optional: {decimals: number}
  * @returns {string} The formatted number as a string
  */
-export const formatNumber = (num) => {
-  if (num < 1000) return num.toFixed(2);
+export const formatNumber = (num, options = {}) => {
+  const decimals = typeof options.decimals === 'number' ? options.decimals : 2;
+  if (!isFinite(num) || isNaN(num)) return '∞';
+  if (num < 1000) return num.toFixed(decimals);
   const abbrev = [
-    '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'
+    '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc',
+    'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Ocd', 'Nod', 'Vg',
+    'Uvg', 'Dvg', 'Tvg', 'Qavg', 'Qivg', 'Sxvg', 'Spvg', 'Ocvg', 'Novg', 'Tg',
+    'Utg', 'Dtg', 'Ttg', 'Qatg', 'Qitg', 'Sxtg', 'Sptg', 'Octg', 'Notg', 'Qag',
+    'Uqag', 'Dqag', 'Tqag', 'Qaqag', 'Qiqag', 'Sxqag', 'Spqag', 'Ocqag', 'Noqag', 'Qig',
+    'Uqig', 'Dqig', 'Tqig', 'Qaqig', 'Qiqig', 'Sxqig', 'Spqig', 'Ocqig', 'Noqig', 'Sxg',
+    'Usxg', 'Dsxg', 'Tsxg', 'Qasxg', 'Qisxg', 'Sxsxg', 'Spsxg', 'Ocsxg', 'Nosxg', 'Spg',
+    'Uspg', 'Dspg', 'Tspg', 'Qasp', 'Qisp', 'Sxspg', 'Spspg', 'Ocspg', 'Nospg', 'Ocg',
+    'Uocg', 'Docg', 'Tocg', 'Qaocg', 'Qiocg', 'Sxocg', 'Spocg', 'Ococg', 'Noocg', 'Nog',
+    'Unog', 'Dnog', 'Tnog', 'Qanog', 'Qinog', 'Sxnog', 'Spnog', 'Ocnog', 'Nonog', 'C',
+    'Uc', 'Dc', 'Tc', 'Qac', 'Qic', 'Sxc', 'Spc', 'Occ', 'Noc'
   ];
   let i = 0;
   let n = Math.abs(num);
@@ -56,7 +69,13 @@ export const formatNumber = (num) => {
     n /= 1000;
     i++;
   }
-  return (num / Math.pow(1000, i)).toFixed(2) + abbrev[i];
+  // Wenn wir am Ende des Arrays sind, nicht weiter teilen
+  if (i === abbrev.length - 1 && n >= 1000) {
+    return '∞';
+  }
+  const value = (num / Math.pow(1000, i));
+  if (!isFinite(value) || isNaN(value)) return '∞';
+  return value.toFixed(decimals) + abbrev[i];
 };
   
   /**

@@ -54,17 +54,17 @@ export default function PrestigeModal({
 
           <div className="prestige-summary">
             <p>
-              Current Shares: <strong>{accumulatedPrestigeShares.toFixed(2)}</strong>{' '}
+              Current Shares: <strong>{formatNumber(accumulatedPrestigeShares)}</strong>{' '}
               <span className="text-secondary">
-                (+{activeBonusFromAccumulatedShares.toFixed(2)}% income)
+                (+{formatNumber(activeBonusFromAccumulatedShares)}% income)
               </span>
             </p>
-            <p>Shares from this run: <strong>{currentRunShares.toFixed(2)}</strong></p>
+            <p>Shares from this run: <strong>{formatNumber(currentRunShares)}</strong></p>
             <p className="prestige-text">
-              After Prestige: <strong>{totalSharesAfterPrestige.toFixed(2)} Shares</strong>
+              After Prestige: <strong>{formatNumber(totalSharesAfterPrestige)} Shares</strong>
             </p>
             <p className="success-text">
-              New Income Bonus: +{potentialBonusAfterPrestige.toFixed(2)}%
+              New Income Bonus: +{formatNumber(potentialBonusAfterPrestige)}%
             </p>
           </div>
 
@@ -80,10 +80,10 @@ export default function PrestigeModal({
               }
             >
               {canPrestige
-                ? `Prestige (+${currentRunShares.toFixed(2)} Shares)`
-                : `Need ${minSharesRequired.toFixed(1)} Share from this run${
+                ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
+                : `Need ${minSharesRequired.toFixed(1)} Share from this run$${
                     currentRunShares > 0
-                      ? ` (currently ${currentRunShares.toFixed(2)})`
+                      ? ` (currently ${formatNumber(currentRunShares)})`
                       : ''
                   }`}
             </button>
