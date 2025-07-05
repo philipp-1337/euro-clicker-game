@@ -33,6 +33,7 @@ export default function PremiumUpgrades({
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
+
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   const globalMultiplierPercentage = getPercentage(
