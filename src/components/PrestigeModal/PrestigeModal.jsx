@@ -101,12 +101,12 @@ export default function PrestigeModal({
 
         <ConfirmModal
           show={showConfirm}
-          title="Prestige bestätigen"
-          message={"Bist du sicher? Dein gesamter Spielfortschritt wird zurückgesetzt, aber du erhältst Prestige Shares.\n\nDas kann nicht rückgängig gemacht werden."}
+          title="Confirm Prestige"
+          message={"Are you sure? All your game progress will be reset, but you will receive Prestige Shares. This cannot be undone."}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
-          confirmText="Prestige durchführen"
-          cancelText="Abbrechen"
+          confirmText="Prestige Now"
+          cancelText="Cancel"
           danger
         />
 

@@ -194,7 +194,7 @@ export default function LeaderboardModal({ show, onClose }) {
                             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', padding: '6px 0' }}>
                               <span><b>Active:</b> {typeof entry.activePlaytime === 'number' ? formatPlaytime(entry.activePlaytime, true, true) : 'N/A'}</span>
                               <span><b>Clicks:</b> {entry.clicks}</span>
-                              <span><b>Datum:</b> {dateString}</span>
+                              <span><b>Date:</b> {dateString}</span>
                               <span><b>Version:</b> {entry.version || 'N/A'}</span>
                             </div>
                           </td>
