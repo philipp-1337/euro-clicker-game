@@ -12,6 +12,7 @@ import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
+import { APP_VERSION } from '../../version';
 
 export default function ClickerGame({
   easyMode = false,
@@ -293,6 +294,7 @@ export default function ClickerGame({
       timestamp: Date.now(),
       checkpointDate: new Date().toISOString(), // NEU: Datum als ISO-String
       flagged: isTestOrAlpha,
+      version: APP_VERSION,
     };
 
     if (isTestOrAlpha) {

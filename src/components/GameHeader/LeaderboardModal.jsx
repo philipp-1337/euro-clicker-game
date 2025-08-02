@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import VersionDisplay from '../VersionDisplay/VersionDisplay';
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
@@ -82,7 +83,7 @@ export default function LeaderboardModal({ show, onClose }) {
 
   return (
     <div className="modal-backdrop">
-      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480 }}>
+      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480, position: 'relative' }}>
         <div className="settings-modal-header">
           <h3>Leaderboard</h3>
           <button
@@ -194,6 +195,7 @@ export default function LeaderboardModal({ show, onClose }) {
                               <span><b>Active:</b> {typeof entry.activePlaytime === 'number' ? formatPlaytime(entry.activePlaytime, true, true) : 'N/A'}</span>
                               <span><b>Clicks:</b> {entry.clicks}</span>
                               <span><b>Datum:</b> {dateString}</span>
+                              <span><b>Version:</b> {entry.version || 'N/A'}</span>
                             </div>
                           </td>
                         </tr>
@@ -204,6 +206,10 @@ export default function LeaderboardModal({ show, onClose }) {
               </tbody>
             </table>
           )}
+        </div>
+        {/* Version unten im Modal anzeigen */}
+        <div style={{ position: 'absolute', left: 12, bottom: 8 }}>
+          <VersionDisplay />
         </div>
       </div>
     </div>

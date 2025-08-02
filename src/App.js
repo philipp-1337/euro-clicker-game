@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'; // Importiere useRef
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
+import VersionDisplay from './components/VersionDisplay/VersionDisplay';
 import './scss/components/_money-banner.scss';
+import './scss/components/_displays.scss';
 
 function App() {
   // Initialisiere easyMode basierend auf localStorage
@@ -123,6 +125,7 @@ function App() {
         soundEffectsEnabled={soundEffectsEnabled}
         setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
+      <VersionDisplay />
     </div>
   );
 }
