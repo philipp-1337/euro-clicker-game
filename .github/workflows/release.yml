@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - '**'
-  workflow_dispatch: # Optional: manuell auslösbar    
+  workflow_dispatch: # Optional: manuell auslösbar
 
 jobs:
   release:
@@ -23,31 +23,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-
-      - name: Configure git user
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Create release with standard-version
-        run: |
-          npx standard-version || echo "No release necessary."
-
-      - name: Debug git status
-        run: |
-          git status
-          git remote -v
-          git log -3 --oneline
-          git branch -vv
+        run: npm run release
 
       - name: Push changes and tags
         run: |
-          set -x
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git push --follow-tags origin ${{ github.ref }}
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
