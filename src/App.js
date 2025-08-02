@@ -35,7 +35,7 @@ function App() {
     const handleTampering = (event) => {
       let message = "Your save data was corrupted or manipulated. The game has been reset."; // Standardnachricht
       if (event.detail && event.detail.message) {
-        message = `${event.detail.message} Das Spiel wurde zurückgesetzt.`;
+        message = `${event.detail.message} Your game has been reset.`;
       } else if (event.detail && event.detail.reason) {
         // Fallback, falls nur der Grund angegeben ist
         const reasonText = event.detail.reason === 'parse_error' ? 'Data format error' :
