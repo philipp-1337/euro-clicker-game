@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { APP_VERSION } from '../../version';
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
 import {
@@ -27,6 +26,7 @@ import SideMenu from '../SideMenu/SideMenu';
 
 export default function GameHeader(props) {
   const {
+    renderEnvironmentLabel,
     formatPlaytime,
     isSaving,
     saveMessage,
@@ -104,40 +104,6 @@ export default function GameHeader(props) {
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
-  // Hilfsfunktion für Env-Label inkl. Version
-  const renderEnvAndVersionLabel = () => {
-    let envLabel = null;
-    let envClass = '';
-    if (props.environment === 'beta') {
-      envLabel = 'beta';
-      envClass = 'env-label beta';
-    } else if (props.environment === 'alpha') {
-      envLabel = 'alpha';
-      envClass = 'env-label alpha';
-    } else if (props.environment === 'localhost') {
-      envLabel = 'localhost';
-      envClass = 'env-label localhost';
-    }
-    // production: kein Label
-    const handleEnvLabelClick = (e) => {
-      if (typeof props.onEasyModeToggle === 'function') {
-        e.preventDefault();
-        props.onEasyModeToggle(!props.easyMode);
-      }
-    };
-    return (
-      <span
-        className={envClass}
-        style={{ cursor: envLabel ? 'pointer' : undefined }}
-        onClick={envLabel ? handleEnvLabelClick : undefined}
-        title={envLabel ? 'Easy Mode aktivieren' : undefined}
-      >
-        {(envLabel ? envLabel + ' ' : '') + 'v' + APP_VERSION}
-        {props.easyMode ? ' (easy mode)' : ''}
-      </span>
-    );
-  };
-
   return (
     <>
       {isSaving && (
@@ -148,7 +114,7 @@ export default function GameHeader(props) {
       <div className="game-header-container">
         <h1 className="game-title">
           Euro Clicker Game
-          {renderEnvAndVersionLabel()}
+          {renderEnvironmentLabel()}
         </h1>
       </div>
       <div id="money-display" className="money-display">
