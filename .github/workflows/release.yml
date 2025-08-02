@@ -33,8 +33,16 @@ jobs:
         run: |
           npx standard-version || echo "No release necessary."
 
+      - name: Debug git status
+        run: |
+          git status
+          git remote -v
+          git log -3 --oneline
+          git branch -vv
+
       - name: Push changes and tags
         run: |
+          set -x
           git push --follow-tags origin ${{ github.ref }}
 
       - name: Create GitHub Release
