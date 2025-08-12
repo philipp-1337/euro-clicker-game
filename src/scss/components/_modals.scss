@@ -100,7 +100,9 @@
   margin-top: 18px;
   flex-grow: 1; // Erlaubt dem Inhaltsbereich, den verfügbaren Platz auszufüllen
   overflow-y: auto; // Vertikales Scrollen aktivieren, wenn nötig
-  padding-right: 10px; // Platz für die Scrollleiste, um Überlappung zu vermeiden
+  @media (max-height: 700px) {
+    padding-right: 10px; // Platz für die Scrollleiste, um Überlappung zu vermeiden
+  }
 }
 
 .settings-row {
