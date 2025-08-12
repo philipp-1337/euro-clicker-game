@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import VersionDisplay from '../VersionDisplay/VersionDisplay';
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
@@ -7,6 +8,13 @@ import { useModal } from '../../hooks/useModal';
 import { CHECKPOINTS } from "@constants/gameConfig"; // Import CHECKPOINTS
 
 export default function LeaderboardModal({ show, onClose }) {
+  const [expandedRows, setExpandedRows] = useState([]); // Für aufklappbare Details
+  // Handler für Expand/Collapse
+  const handleRowToggle = (rowId) => {
+    setExpandedRows((prev) =>
+      prev.includes(rowId) ? prev.filter((id) => id !== rowId) : [...prev, rowId]
+    );
+  };
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const modalRef = useModal(show, onClose);
@@ -75,7 +83,7 @@ export default function LeaderboardModal({ show, onClose }) {
 
   return (
     <div className="modal-backdrop">
-      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480 }}>
+      <div ref={modalRef} className="modal-content" style={{ maxWidth: 480, position: 'relative' }}>
         <div className="settings-modal-header">
           <h3>Leaderboard</h3>
           <button
@@ -117,55 +125,91 @@ export default function LeaderboardModal({ show, onClose }) {
                   <th>#</th>
                   <th>Name</th>
                   <th>Total</th>
-                  <th>Active</th>
-                  <th>Clicks</th>
+                  <th style={{ width: 40 }}></th>
                 </tr>
               </thead>
               <tbody>
                 {entries.map((entry, idx) => {
                   const isMe = typeof window !== 'undefined' && entry.name === localStorage.getItem('leaderboardName');
                   const isFirst = idx === 0;
-                  // Flag-Visualisierung für Test/Alpha-Einträge
                   const isFlagged = entry.flagged;
+                  // Datum formatieren (ISO-String zu lokalem Datum)
+                  let dateString = '';
+                  if (entry.checkpointDate) {
+                    try {
+                      const d = new Date(entry.checkpointDate);
+                      dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    } catch (e) {
+                      dateString = entry.checkpointDate;
+                    }
+                  } else if (entry.timestamp) {
+                    try {
+                      const d = new Date(entry.timestamp);
+                      dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    } catch (e) {
+                      dateString = entry.timestamp;
+                    }
+                  }
+                  const expanded = expandedRows.includes(entry.id);
                   return (
-                    <tr key={entry.id} className={isMe ? 'me' : ''} style={isFlagged ? { opacity: 0.5, background: '#ffeaea' } : {}}>
-                      <td style={{ textAlign: 'center', fontWeight: isFirst ? 'bold' : undefined }}>{idx + 1}</td>
-                      <td title={entry.name}>
-                        <div className="leaderboard-name-cell">
-                          {entry.name}
-                          {/* Nur Medaille anzeigen, wenn NICHT geflaggt */}
-                          {!isFlagged && isFirst && (
-                            <MedalIcon
-                              size={18}
-                              color={isMe ? '#d4a900' : '#f5b400'}
-                              style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
-                              title="1st place"
-                            />
-                          )}
-                          {isFlagged && (
-                            <OctagonAlertIcon 
-                            size={18} 
-                            color={'red'}
-                            style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
-                            title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
-
-                            />
-                          )}
-                        </div>
-                      </td>
-                      <td>{formatPlaytime(entry.playtime, true, true)}</td>
-                      <td>
-                        {typeof entry.activePlaytime === 'number'
-                          ? formatPlaytime(entry.activePlaytime, true, true)
-                          : 'N/A'}
-                      </td>
-                      <td>{entry.clicks}</td>
-                    </tr>
+                    <React.Fragment key={entry.id}>
+                      <tr className={isMe ? 'me' : ''} style={isFlagged ? { opacity: 0.5, background: '#ffeaea' } : {}}>
+                        <td style={{ textAlign: 'center', fontWeight: isFirst ? 'bold' : undefined }}>{idx + 1}</td>
+                        <td title={entry.name}>
+                          <div className="leaderboard-name-cell">
+                            {entry.name}
+                            {!isFlagged && isFirst && (
+                              <MedalIcon
+                                size={18}
+                                color={isMe ? '#d4a900' : '#f5b400'}
+                                style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
+                                title="1st place"
+                              />
+                            )}
+                            {isFlagged && (
+                              <OctagonAlertIcon 
+                                size={18} 
+                                color={'red'}
+                                style={{ marginLeft: 4, verticalAlign: 'middle', flexShrink: 0 }}
+                                title={`Test/Alpha-Eintrag (${entry.flaggedReason || 'test'})`}
+                              />
+                            )}
+                          </div>
+                        </td>
+                        <td>{formatPlaytime(entry.playtime, true, true)}</td>
+                        <td style={{ textAlign: 'center' }}>
+                          <button
+                            className="expand-btn"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                            onClick={() => handleRowToggle(entry.id)}
+                            aria-label={expanded ? 'Details ausblenden' : 'Details anzeigen'}
+                          >
+                            {expanded ? '▲' : '▼'}
+                          </button>
+                        </td>
+                      </tr>
+                      {expanded && (
+                        <tr className="leaderboard-details-row">
+                          <td colSpan={4} style={{ background: '#f8f8f8', fontSize: 14 }}>
+                            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', padding: '6px 0' }}>
+                              <span><b>Active:</b> {typeof entry.activePlaytime === 'number' ? formatPlaytime(entry.activePlaytime, true, true) : 'N/A'}</span>
+                              <span><b>Clicks:</b> {entry.clicks}</span>
+                              <span><b>Date:</b> {dateString}</span>
+                              <span><b>Version:</b> {entry.version || 'N/A'}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   );
                 })}
               </tbody>
             </table>
           )}
+        </div>
+        {/* Version unten im Modal anzeigen */}
+        <div style={{ position: 'absolute', left: 12, bottom: 8 }}>
+          <VersionDisplay />
         </div>
       </div>
     </div>

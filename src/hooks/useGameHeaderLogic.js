@@ -30,7 +30,7 @@ export default function useGameHeaderLogic(props) {
     else setEnvironment('production');
   }, []);
 
-  // Hilfsfunktion: Easy Mode darf nur in localhost und alpha aktiviert werden
+  // Easy Mode darf nur in localhost und alpha aktiviert werden (NICHT in beta!)
   const canToggleEasyMode = environment === 'localhost' || environment === 'alpha';
 
   const toggleEasyMode = useCallback(() => {

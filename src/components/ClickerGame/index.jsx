@@ -12,6 +12,7 @@ import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
+import { APP_VERSION } from '../../version';
 
 export default function ClickerGame({
   easyMode = false,
@@ -291,7 +292,9 @@ export default function ClickerGame({
       clicks: floatingClicks,
       activePlaytime: activePlayTime, // Add activePlayTime here
       timestamp: Date.now(),
+      checkpointDate: new Date().toISOString(), // NEU: Datum als ISO-String
       flagged: isTestOrAlpha,
+      version: APP_VERSION,
     };
 
     if (isTestOrAlpha) {
@@ -415,20 +418,20 @@ export default function ClickerGame({
           hasAnyAchievement={hasAnyAchievement}
           activePlayTime={activePlayTime}
           inactivePlayTime={inactivePlayTime}
-          musicEnabled={musicEnabled} // Pass down
-          setMusicEnabled={setMusicEnabled} // Pass down
-          soundEffectsEnabled={soundEffectsEnabled} // Pass down
-          setSoundEffectsEnabled={setSoundEffectsEnabled} // Pass down
-          // Prestige
+          musicEnabled={musicEnabled}
+          setMusicEnabled={setMusicEnabled}
+          soundEffectsEnabled={soundEffectsEnabled}
+          setSoundEffectsEnabled={setSoundEffectsEnabled}
           prestigeShares={prestigeShares}
           prestigeCount={prestigeCount}
           currentRunShares={currentRunShares}
           prestigeGame={prestigeGame}
-          prestigeBonusMultiplier={prestigeBonusMultiplier} // Und hier übergeben wird
+          prestigeBonusMultiplier={prestigeBonusMultiplier}
           canPrestige={canPrestige}
-          buyQuantity={buyQuantity} // Pass buyQuantity to GameHeader
-          toggleBuyQuantity={toggleBuyQuantity} // Pass toggleBuyQuantity to GameHeader
-          gameConfig={gameConfig} // Pass gameConfig for prestige button visibility condition
+          buyQuantity={buyQuantity}
+          toggleBuyQuantity={toggleBuyQuantity}
+          gameConfig={gameConfig}
+          environment={environment}
         />
       )}
 

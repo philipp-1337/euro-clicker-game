@@ -86,3 +86,17 @@
   width: 18px;
   height: 18px;
 }
+
+.version-display {
+  position: fixed;
+  left: 12px;
+  bottom: 8px;
+  font-size: 0.95rem;
+  color: #888;
+  background: rgba(255,255,255,0.7);
+  padding: 2px 10px;
+  border-radius: 8px 8px 8px 0;
+  z-index: 1000;
+  pointer-events: none;
+  user-select: none;
+}

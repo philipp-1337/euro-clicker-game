@@ -31,7 +31,7 @@ export default function WelcomeBackModal({ show, onClose, duration, offlineEarni
               You earned {formatNumber(offlineEarnings)} € while you were away!
             </p>
           )}
-          <button className="modal-btn" onClick={onClose} style={{ marginTop: '10px', width: '100%' }}>
+          <button className="modal-btn" onClick={onClose} style={{ marginTop: '10px', width: '90%' }}>
             Continue playing
           </button>
         </div>

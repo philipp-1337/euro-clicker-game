@@ -28,6 +28,10 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
+      - name: Bump version with standard-version
+        run: |
+          npx standard-version --skip.tag --skip.commit
+
       - name: Build Project
         run: npm run build
 

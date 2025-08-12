@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'; // Importiere useRef
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
+import VersionDisplay from './components/VersionDisplay/VersionDisplay';
 import './scss/components/_money-banner.scss';
+import './scss/components/_displays.scss';
 
 function App() {
   // Initialisiere easyMode basierend auf localStorage
@@ -35,7 +37,7 @@ function App() {
     const handleTampering = (event) => {
       let message = "Your save data was corrupted or manipulated. The game has been reset."; // Standardnachricht
       if (event.detail && event.detail.message) {
-        message = `${event.detail.message} Das Spiel wurde zurückgesetzt.`;
+        message = `${event.detail.message} Your game has been reset.`;
       } else if (event.detail && event.detail.reason) {
         // Fallback, falls nur der Grund angegeben ist
         const reasonText = event.detail.reason === 'parse_error' ? 'Data format error' :
@@ -123,6 +125,7 @@ function App() {
         soundEffectsEnabled={soundEffectsEnabled}
         setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
+      <VersionDisplay />
     </div>
   );
 }

@@ -121,7 +121,15 @@ export default function GameHeader(props) {
         {formatNumber(money)} €
         {totalMoneyPerSecond > 0 && (
           <span className="per-second">
-            +{formatNumber(totalMoneyPerSecond)} €/s {prestigeBonusMultiplier > 1 ? `(x${formatNumber(prestigeBonusMultiplier)})` : ''}
+            +{formatNumber(totalMoneyPerSecond)} €/s
+            {prestigeBonusMultiplier > 1 && (
+              <>
+                {' '}
+                <span className="prestige-bonus-display">
+                  ({formatNumber((prestigeBonusMultiplier - 1) * 100)}%)
+                </span>
+              </>
+            )}
           </span>
         )}
       </div>

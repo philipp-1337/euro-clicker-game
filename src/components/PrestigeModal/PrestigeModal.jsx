@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ConfirmModal from './ConfirmModal';
 import { X as CloseIcon } from 'lucide-react';
 import { useModal } from '@hooks/useModal';
 import { formatNumber } from '@utils/calculators';
@@ -12,7 +13,9 @@ export default function PrestigeModal({
   onPrestige,
   canPrestige,
 }) {
+
   const modalRef = useModal(show, onClose);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   if (!show) return null;
 
@@ -23,6 +26,13 @@ export default function PrestigeModal({
   const minSharesRequired = gameConfig.prestige.minSharesToPrestige;
   const moneyNeededForNextShare =
     gameConfig.prestige.moneyPerBasePoint * (minSharesRequired - currentRunShares);
+
+  const handlePrestigeClick = () => setShowConfirm(true);
+  const handleConfirm = () => {
+    setShowConfirm(false);
+    onPrestige();
+  };
+  const handleCancel = () => setShowConfirm(false);
 
   return (
     <div className="modal-backdrop" style={{ zIndex: 10006 }}>
@@ -71,7 +81,7 @@ export default function PrestigeModal({
           <div className="modal-actions">
             <button
               className="modal-btn prestige-btn"
-              onClick={onPrestige}
+              onClick={handlePrestigeClick}
               disabled={!canPrestige}
               title={
                 canPrestige
@@ -81,13 +91,24 @@ export default function PrestigeModal({
             >
               {canPrestige
                 ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
-                : `Need ${minSharesRequired.toFixed(1)} Share from this run$${
+                : `Need ${minSharesRequired.toFixed(1)} Share from this run${
                     currentRunShares > 0
                       ? ` (currently ${formatNumber(currentRunShares)})`
                       : ''
                   }`}
             </button>
           </div>
+
+        <ConfirmModal
+          show={showConfirm}
+          title="Confirm Prestige"
+          message={"Are you sure? All your game progress will be reset, but you will receive Prestige Shares. This cannot be undone."}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+          confirmText="Prestige Now"
+          cancelText="Cancel"
+          danger
+        />
 
           {!canPrestige && (
             <p className="text-secondary" style={{ fontSize: '0.85em', marginTop: 8 }}>
