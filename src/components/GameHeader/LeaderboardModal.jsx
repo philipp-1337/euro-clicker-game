@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import VersionDisplay from '../VersionDisplay/VersionDisplay';
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
