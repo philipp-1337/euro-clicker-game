@@ -32,4 +32,4 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           RETENTION_DAYS: ${{ github.event.inputs.days || '7' }}
-        run: node deleteOldSaves.js
+        run: node scripts/cleanup.js
