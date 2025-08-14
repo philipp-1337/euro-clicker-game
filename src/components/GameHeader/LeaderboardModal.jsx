@@ -207,10 +207,6 @@ export default function LeaderboardModal({ show, onClose }) {
             </table>
           )}
         </div>
-        {/* Version unten im Modal anzeigen */}
-        <div style={{ position: 'absolute', left: 12, bottom: 8 }}>
-          <VersionDisplay />
-        </div>
       </div>
     </div>
   );
