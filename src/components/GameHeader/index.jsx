@@ -45,6 +45,7 @@ export default function GameHeader(props) {
     money,
     playTime,
     totalMoneyPerSecond,
+    manualMoneyPerSecond,
     // Prestige related props from ClickerGame
     currentRunShares,
     prestigeShares, // Accumulated from previous prestiges
@@ -104,6 +105,8 @@ export default function GameHeader(props) {
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
+  const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
+
   return (
     <>
       {isSaving && (
@@ -119,9 +122,9 @@ export default function GameHeader(props) {
       </div>
       <div id="money-display" className="money-display">
         {formatNumber(money)} €
-        {totalMoneyPerSecond > 0 && (
+        {displayTotalMoneyPerSecond > 0 && (
           <span className="per-second">
-            +{formatNumber(totalMoneyPerSecond)} €/s
+            +{formatNumber(displayTotalMoneyPerSecond)} €/s
             {prestigeBonusMultiplier > 1 && (
               <>
                 {' '}

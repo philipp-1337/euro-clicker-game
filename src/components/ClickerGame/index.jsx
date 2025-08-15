@@ -82,6 +82,7 @@ export default function ClickerGame({
     unlockInvestments,
     totalIncomePerSecond,
     totalMoneyPerSecond,
+    manualMoneyPerSecond,
     unlockInvestmentCost,
     investmentCostMultiplier,
     offlineEarningsLevel,      // New
@@ -411,6 +412,7 @@ export default function ClickerGame({
           playTime={playTime}
           onSaveGame={saveGame}
           totalMoneyPerSecond={totalMoneyPerSecond}
+          manualMoneyPerSecond={manualMoneyPerSecond}
           floatingClicks={floatingClicks}
           gameState={gameState}
           onImportCloudSave={loadGameState}

@@ -58,6 +58,9 @@ export default function useGameState(easyMode = false) {
   // State for Prestige Count (wie oft Prestige ausgelöst wurde)
   const [prestigeCount, setPrestigeCount] = useState(gameConfig.initialState.prestigeCount ?? 0);
 
+  // State for click history (for calculating clicks per second)
+  const [clickHistory, setClickHistory] = useState([]);
+
 
   // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
@@ -83,6 +86,7 @@ export default function useGameState(easyMode = false) {
     boostedInvestments: boostedInvestmentsData, // Add to game state
     prestigeShares, // Add prestige shares to game state
     prestigeCount, // Add prestige count to game state
+    clickHistory, // Add click history to game state
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -127,6 +131,7 @@ export default function useGameState(easyMode = false) {
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
     setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
+    setClickHistory(savedState.clickHistory ?? []);
 
     // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
@@ -188,6 +193,7 @@ export default function useGameState(easyMode = false) {
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,
     prestigeCount, setPrestigeCount,
+    clickHistory, setClickHistory,
     initialOfflineDuration,
    
     // Save/Load

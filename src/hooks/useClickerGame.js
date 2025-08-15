@@ -46,7 +46,10 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     setBoostedInvestments, // Get setter for boosted state
     prestigeShares, setPrestigeShares, // Prestige shares
     prestigeCount, setPrestigeCount, // Prestige count
+    setClickHistory, // Click history
   } = gameStateHook;
+  
+  const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
   
   // Berechnungen für abgeleitete Zustände 
   const {
@@ -367,6 +370,10 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   // Funktion für den Floating Click Button
   const addQuickMoney = useCallback(() => {
     ensureStartTime?.();
+
+    const now = Date.now();
+    setClickHistory(prev => [...prev, now]);
+
     const isCritical = Math.random() < currentCriticalClickChance;
     let moneyToAdd = currentFloatingClickValue; // Standardwert jetzt Upgrade-abhängig
 
@@ -381,7 +388,32 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       return currentPrevMoney + finalMoneyToAdd;
     });
     return { isCritical, amount: moneyToAdd }; // Return object with critical status and amount
-  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond, currentFloatingClickValue]);
+  }, [setMoney, ensureStartTime, currentCriticalClickChance, totalMoneyPerSecond, currentFloatingClickValue, setClickHistory]);
+
+  useEffect(() => {
+    // Generic window size in ms for click history (e.g. 5000 ms = 5 seconds)
+    const windowSizeMs = 5000;
+    // How often to update the stats (ms)
+    const updateIntervalMs = 100;
+    const interval = setInterval(() => {
+      const now = Date.now();
+      setClickHistory(prevClickHistory => {
+        // Copy the array to avoid mutating original state
+        const newHistory = [...prevClickHistory];
+        // Remove old clicks using a while loop and shift()
+        while (newHistory.length > 0 && now - newHistory[0] > windowSizeMs) {
+          newHistory.shift();
+        }
+        // Calculate clicks per second dynamically for the given window size
+        const clicksPerSecond = newHistory.length / (windowSizeMs / 1000);
+        const moneyPerSecond = clicksPerSecond * currentFloatingClickValue;
+        setManualMoneyPerSecond(moneyPerSecond);
+        return newHistory;
+      });
+    }, updateIntervalMs);
+
+    return () => clearInterval(interval);
+  }, [currentFloatingClickValue, setClickHistory]);
 
   const inactiveStartTimeRef = useRef(null); // To track when inactivity period started
 
@@ -555,6 +587,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     investments,
     isInvestmentUnlocked,
     totalMoneyPerSecond,
+    manualMoneyPerSecond, // Export manual money per second
     activePlayTime,
     inactivePlayTime,
     prestigeShares,

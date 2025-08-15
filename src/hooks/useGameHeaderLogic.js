@@ -10,6 +10,7 @@ export default function useGameHeaderLogic(props) {
     playTime,
     onSaveGame,
     totalMoneyPerSecond,
+    manualMoneyPerSecond, // Add this prop
     floatingClicks,
     gameState,
     onImportCloudSave,
@@ -214,6 +215,7 @@ export default function useGameHeaderLogic(props) {
     easyMode,
     playTime,
     totalMoneyPerSecond,
+    manualMoneyPerSecond,
     onSaveGame,
     gameState,
     showCloudSaveDisableConfirm,
