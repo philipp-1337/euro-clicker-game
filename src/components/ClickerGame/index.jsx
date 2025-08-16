@@ -296,6 +296,7 @@ export default function ClickerGame({
       checkpointDate: new Date().toISOString(), // NEU: Datum als ISO-String
       flagged: isTestOrAlpha,
       version: APP_VERSION,
+      prestigeCount: prestigeCount,
     };
 
     if (isTestOrAlpha) {

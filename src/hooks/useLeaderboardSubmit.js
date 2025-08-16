@@ -16,7 +16,8 @@ export default function useLeaderboardSubmit({
   money,
   leaderboardName,
   floatingClicks,
-  playTime
+  playTime,
+  prestigeCount
 }) {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
@@ -43,6 +44,7 @@ export default function useLeaderboardSubmit({
             name: leaderboardName,
             playtime: playTime,
             clicks: floatingClicks,
+            prestigeCount: prestigeCount,
             timestamp: Date.now(),
           }).finally(() => {
             setLeaderboardSubmitted(true);
@@ -52,7 +54,7 @@ export default function useLeaderboardSubmit({
         });
       });
     }
-  }, [leaderboardMode, money, leaderboardName, floatingClicks, playTime, alreadySubmitted, localKey]);
+  }, [leaderboardMode, money, leaderboardName, floatingClicks, playTime, alreadySubmitted, localKey, prestigeCount]);
 
   return {
     showLeaderboard,
