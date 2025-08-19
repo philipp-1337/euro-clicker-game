@@ -4,7 +4,7 @@ import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
 
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false }) {
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1 }) {
 Crafting.propTypes = {
   money: PropTypes.number.isRequired,
   rawMaterials: PropTypes.object.isRequired,
@@ -12,13 +12,20 @@ Crafting.propTypes = {
   buyMaterial: PropTypes.func.isRequired,
   craftingItems: PropTypes.array.isRequired,
   resourcePurchaseCounts: PropTypes.object.isRequired,
-  easyMode: PropTypes.bool
+  easyMode: PropTypes.bool,
+  buyQuantity: PropTypes.number
 };
   // Use the same cost calculation as in useCrafting.js, including easyMode
-  const calculateCost = (material) => {
-    const purchaseCount = resourcePurchaseCounts[material.id] || 0;
+  // Calculate the total cost for buying buyQuantity units (progressive cost)
+  const calculateTotalCost = (material) => {
+    let total = 0;
     const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
-    return Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+    let purchaseCount = resourcePurchaseCounts[material.id] || 0;
+    for (let i = 0; i < buyQuantity; i++) {
+      total += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+      purchaseCount++;
+    }
+    return total;
   };
 
   return (
@@ -33,16 +40,16 @@ Crafting.propTypes = {
         </div>
         <div className="raw-materials-list">
           {gameConfig.rawMaterials.map((mat) => {
-            const currentCost = calculateCost(mat);
+            const totalCost = calculateTotalCost(mat);
             return (
               <div key={mat.id} className="raw-material-item">
                 <span>{mat.name}: <strong>{rawMaterials[mat.id] || 0}</strong></span>
                 <button
-                  className={`premium-upgrade-button ${money < currentCost ? 'disabled' : ''}`}
-                  disabled={money < currentCost}
-                  onClick={() => buyMaterial(mat.id)}
+                  className={`premium-upgrade-button ${money < totalCost ? 'disabled' : ''}`}
+                  disabled={money < totalCost}
+                  onClick={() => buyMaterial(mat.id, buyQuantity)}
                 >
-                  Buy 1 for {formatNumber(currentCost)} €
+                  Buy {buyQuantity} for {formatNumber(totalCost)} €
                 </button>
               </div>
             );

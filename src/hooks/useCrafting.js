@@ -5,23 +5,28 @@ import { gameConfig } from '@constants/gameConfig';
 export default function useCrafting(money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials, resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode) {
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
-  const buyMaterial = (materialId) => {
+  // Ermöglicht den Kauf von mehreren Einheiten auf einmal
+  const buyMaterial = (materialId, quantity = 1) => {
     const material = gameConfig.rawMaterials.find(m => m.id === materialId);
     if (!material) return;
 
+    let purchaseCount = resourcePurchaseCounts[materialId] || 0;
+    let totalCost = 0;
     const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-    const purchaseCount = resourcePurchaseCounts[materialId] || 0;
-    const cost = Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
-
-    if (money >= cost) {
-      setMoney(prev => prev - cost);
+    // Berechne Gesamtkosten für die gewünschte Menge
+    for (let i = 0; i < quantity; i++) {
+      totalCost += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+      purchaseCount++;
+    }
+    if (money >= totalCost) {
+      setMoney(prev => prev - totalCost);
       setRawMaterials(prev => ({
         ...prev,
-        [materialId]: (prev[materialId] || 0) + 1
+        [materialId]: (prev[materialId] || 0) + quantity
       }));
       setResourcePurchaseCounts(prev => ({
         ...prev,
-        [materialId]: (prev[materialId] || 0) + 1
+        [materialId]: (prev[materialId] || 0) + quantity
       }));
       ensureStartTime?.();
     }
