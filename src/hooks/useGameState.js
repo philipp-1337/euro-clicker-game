@@ -46,7 +46,11 @@ export default function useGameState(easyMode = false) {
   const [floatingClickValueMultiplier, setFloatingClickValueMultiplier] = useState(gameConfig.initialState.floatingClickValueMultiplier ?? 1);
 
   // State for crafting items
-  const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.crafting.map(() => 0));
+  const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
+
+  // State for raw materials and purchase counts
+  const [rawMaterials, setRawMaterials] = useState(gameConfig.initialState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
+  const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(gameConfig.initialState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
 
   // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
@@ -87,6 +91,8 @@ export default function useGameState(easyMode = false) {
     floatingClickValueLevel, // Add to game state
     floatingClickValueMultiplier, // Add to game state
     craftingItems, // Add crafting items to game state
+    rawMaterials,
+    resourcePurchaseCounts,
     boostedInvestments: boostedInvestmentsData, // Add to game state
     prestigeShares, // Add prestige shares to game state
     prestigeCount, // Add prestige count to game state
@@ -136,7 +142,9 @@ export default function useGameState(easyMode = false) {
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
     setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
     setClickHistory(savedState.clickHistory ?? []);
-    setCraftingItems(savedState.craftingItems ?? gameConfig.crafting.map(() => 0));
+    setCraftingItems(savedState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
+    setRawMaterials(savedState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
+    setResourcePurchaseCounts(savedState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
 
     // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
@@ -200,8 +208,10 @@ export default function useGameState(easyMode = false) {
     prestigeCount, setPrestigeCount,
     clickHistory, setClickHistory,
     initialOfflineDuration,
-    craftingItems, setCraftingItems, // New: Crafting items
-   
+    craftingItems, setCraftingItems,
+    rawMaterials, setRawMaterials,
+    resourcePurchaseCounts, setResourcePurchaseCounts,
+
     // Save/Load
     gameState,
     loadGameState

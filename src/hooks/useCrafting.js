@@ -2,15 +2,16 @@ import { gameConfig } from '@constants/gameConfig';
 
 // rawMaterials: Objekt mit Rohstoff-IDs als Keys und Mengen als Values
 // setRawMaterials: Setter für rawMaterials
-export default function useCrafting(money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials, resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime) {
+export default function useCrafting(money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials, resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode) {
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
   const buyMaterial = (materialId) => {
     const material = gameConfig.rawMaterials.find(m => m.id === materialId);
     if (!material) return;
 
+    const costMultiplier = gameConfig.getCostMultiplier(easyMode);
     const purchaseCount = resourcePurchaseCounts[materialId] || 0;
-    const cost = Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount));
+    const cost = Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
 
     if (money >= cost) {
       setMoney(prev => prev - cost);

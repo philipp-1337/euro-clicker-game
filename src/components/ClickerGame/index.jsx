@@ -13,7 +13,6 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 import { APP_VERSION } from '../../version';
-import useCrafting from '@hooks/useCrafting';
 
 export default function ClickerGame({
   easyMode = false,
@@ -29,9 +28,6 @@ export default function ClickerGame({
   // toggleBuyQuantity // This will be managed here now
 }) {
   const [activeTab, setActiveTab] = useState('basic');
-  // Rohstoffe-State
-  const [rawMaterials, setRawMaterials] = useState(() => ({ ...gameConfig.initialState.rawMaterials }));
-  const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(() => ({ ...gameConfig.initialState.resourcePurchaseCounts }));
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
     uiProgress,
@@ -113,26 +109,20 @@ export default function ClickerGame({
     prestigeGame,
     prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
     canPrestige,
-  floatingClickValueLevel,
-  floatingClickValueMultiplier,
-  buyFloatingClickValue,
-  currentFloatingClickValue,
-  craftingItems, // New
-  setCraftingItems, // Für useCrafting
-  setMoney,
-  } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
-
-  // Crafting-Logik: neue Hook-Signatur
-  const { buyCraftingItem, buyMaterial } = useCrafting(
-    money,
-    setMoney,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    buyFloatingClickValue,
+    currentFloatingClickValue,
     craftingItems,
     setCraftingItems,
+    setMoney,
+    buyCraftingItem,
+    buyMaterial,
     rawMaterials,
-    setRawMaterials,
     resourcePurchaseCounts,
-    setResourcePurchaseCounts
-  );
+    setRawMaterials,
+    setResourcePurchaseCounts,
+  } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   const {
     achievements,
@@ -580,6 +570,7 @@ export default function ClickerGame({
       setRawMaterials={setRawMaterials}
       buyMaterial={buyMaterial}
       resourcePurchaseCounts={resourcePurchaseCounts}
+      setResourcePurchaseCounts={setResourcePurchaseCounts}
           />
         </div>
       )}

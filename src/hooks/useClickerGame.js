@@ -49,6 +49,8 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     prestigeCount, setPrestigeCount, // Prestige count
     setClickHistory, // Click history
     craftingItems, setCraftingItems, // New: Crafting items
+    rawMaterials, setRawMaterials,
+    resourcePurchaseCounts, setResourcePurchaseCounts,
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
@@ -143,7 +145,18 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     boostedInvestments // Pass boostedInvestments state
   );
 
-  const { buyCraftingItem } = useCrafting(money, setMoney, craftingItems, setCraftingItems, ensureStartTime);
+  const { buyCraftingItem, buyMaterial } = useCrafting(
+    money,
+    setMoney,
+    craftingItems,
+    setCraftingItems,
+    rawMaterials,
+    setRawMaterials,
+    resourcePurchaseCounts,
+    setResourcePurchaseCounts,
+    ensureStartTime,
+    easyMode
+  );
 
   // Manager-Einkommen pro Sekunde berechnen
   const managerIncomePerSecond = useMemo(() => {
@@ -648,8 +661,13 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     buyFloatingClickValue,
     currentFloatingClickValue,
     craftingItems, // New
-  buyCraftingItem, // New
-  setMoney,
-  setCraftingItems,
+    buyCraftingItem, // New
+    buyMaterial,
+    rawMaterials,
+    resourcePurchaseCounts,
+    setMoney,
+    setCraftingItems,
+    setRawMaterials,
+    setResourcePurchaseCounts,
   };
 }

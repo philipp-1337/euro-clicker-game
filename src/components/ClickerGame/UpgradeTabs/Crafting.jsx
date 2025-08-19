@@ -1,13 +1,24 @@
-
-import React from 'react';
-import { formatNumber } from '@utils/calculators';
+import PropTypes from 'prop-types';
 import { gameConfig } from '@constants/gameConfig';
-import { Factory, Warehouse } from 'lucide-react'; // Using Factory for production, Warehouse for resources
+import { formatNumber } from '@utils/calculators';
+import { Factory, Warehouse } from 'lucide-react';
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts }) {
+
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false }) {
+Crafting.propTypes = {
+  money: PropTypes.number.isRequired,
+  rawMaterials: PropTypes.object.isRequired,
+  buyCraftingItem: PropTypes.func.isRequired,
+  buyMaterial: PropTypes.func.isRequired,
+  craftingItems: PropTypes.array.isRequired,
+  resourcePurchaseCounts: PropTypes.object.isRequired,
+  easyMode: PropTypes.bool
+};
+  // Use the same cost calculation as in useCrafting.js, including easyMode
   const calculateCost = (material) => {
     const purchaseCount = resourcePurchaseCounts[material.id] || 0;
-    return Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount));
+    const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
+    return Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
   };
 
   return (
