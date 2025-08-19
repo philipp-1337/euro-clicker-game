@@ -31,32 +31,34 @@ export const gameConfig = {
     ],
 
     rawMaterials: [
-      { id: 'wood', name: 'Wood', baseCost: 10 },
-      { id: 'stone', name: 'Stone', baseCost: 20 },
-      { id: 'iron', name: 'Iron', baseCost: 50 },
+      { id: 'metal', name: 'Precious Metals', baseCost: 1000 },
+      { id: 'parts', name: 'Forging Instruments', baseCost: 5000 },
+      { id: 'tech', name: 'Investment Molds', baseCost: 25000 },
     ],
 
     craftingRecipes: [
-      { 
-        id: 'basic_tool',
-        name: 'Basic Tool',
+      {
+        id: 'collectors_coin',
+        name: 'Issue Collectible Coin',
         materials: [
-          { id: 'wood', quantity: 5 },
-          { id: 'stone', quantity: 2 }
+          { id: 'metal', quantity: 5 },
+          { id: 'parts', quantity: 2 }
         ],
-        output: { money: 1000 }
+        output: { money: 100000 }
       },
-      { 
-        id: 'advanced_tool',
-        name: 'Advanced Tool',
+      {
+        id: 'gold_bar',
+        name: 'Forge Gold Reserve',
         materials: [
-          { id: 'wood', quantity: 10 },
-          { id: 'stone', quantity: 5 },
-          { id: 'iron', quantity: 1 }
+          { id: 'metal', quantity: 10 },
+          { id: 'parts', quantity: 5 },
+          { id: 'tech', quantity: 1 }
         ],
-        output: { money: 5000 }
+        output: { money: 500000 }
       },
     ],
+
+    resourceCostIncreaseFactor: 1.07, // 7% increase per purchase
 
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level
@@ -78,7 +80,8 @@ export const gameConfig = {
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
       craftingItems: [0, 0, 0], // New: Crafting items
-      rawMaterials: { wood: 0, stone: 0, iron: 0 }, // New: Raw materials
+      rawMaterials: { metal: 0, parts: 0, tech: 0 }, // New: Raw materials
+      resourcePurchaseCounts: { metal: 0, parts: 0, tech: 0 },
       offlineEarningsLevel: 0, // Level for offline earnings
       criticalClickChanceLevel: 0, // Level for critical click chance upgrade
       prestigeCount: 0, // Initial prestige count
@@ -142,7 +145,7 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
-        { id: 'crafting', label: 'Crafting', component: Crafting },
+        { id: 'crafting', label: 'Production', component: Crafting },
       ],
     },
     // Schwierigkeitseinstellungen

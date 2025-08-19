@@ -52,6 +52,7 @@ export default function UpgradeTabs({
   rawMaterials,
   setRawMaterials,
   buyMaterial,
+  resourcePurchaseCounts,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -134,6 +135,7 @@ export default function UpgradeTabs({
           buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined} // Pass to Crafting tab
           rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
           setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
+          resourcePurchaseCounts={tab.id === 'crafting' ? resourcePurchaseCounts : undefined}
           {...(tab.id === 'crafting' ? { buyMaterial } : {})}
         />
       )

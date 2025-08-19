@@ -2,55 +2,63 @@
 import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
-import { Hammer, ShoppingCart } from 'lucide-react'; // Using Hammer for crafting recipes, ShoppingCart for materials
+import { Factory, Warehouse } from 'lucide-react'; // Using Factory for production, Warehouse for resources
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems }) {
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts }) {
+  const calculateCost = (material) => {
+    const purchaseCount = resourcePurchaseCounts[material.id] || 0;
+    return Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount));
+  };
+
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">Crafting</h2>
+      <h2 className="section-title">Wealth Production</h2>
 
-      {/* Rohstoff-Anzeige und Kauf */}
+      {/* Resource display and purchase */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
-          <ShoppingCart className="premium-icon" />
-          <h3>Raw Materials</h3>
+          <Warehouse className="premium-icon" />
+          <h3>Assets</h3>
         </div>
         <div className="raw-materials-list">
-          {gameConfig.rawMaterials.map((mat) => (
-            <div key={mat.id} className="raw-material-item">
-              <span>{mat.name}: <strong>{rawMaterials[mat.id] || 0}</strong></span>
-              <button
-                className="premium-upgrade-button"
-                disabled={money < mat.baseCost}
-                onClick={() => buyMaterial(mat.id, mat.baseCost)}
-              >
-                Buy 1 for {formatNumber(mat.baseCost)} €
-              </button>
-            </div>
-          ))}
+          {gameConfig.rawMaterials.map((mat) => {
+            const currentCost = calculateCost(mat);
+            return (
+              <div key={mat.id} className="raw-material-item">
+                <span>{mat.name}: <strong>{rawMaterials[mat.id] || 0}</strong></span>
+                <button
+                  className={`premium-upgrade-button ${money < currentCost ? 'disabled' : ''}`}
+                  disabled={money < currentCost}
+                  onClick={() => buyMaterial(mat.id)}
+                >
+                  Buy 1 for {formatNumber(currentCost)} €
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Crafting Rezepte */}
+      {/* Production Orders */}
       {gameConfig.craftingRecipes.map((recipe, index) => {
         const canCraft = recipe.materials.every(material => 
           (rawMaterials[material.id] || 0) >= material.quantity
         );
         const materialsList = recipe.materials.map(material => 
-          `${material.quantity} x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
+          `${material.quantity}x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
         ).join(', ');
 
         return (
           <div key={index} className="premium-upgrade-card">
             <div className="premium-upgrade-header">
-              <Hammer className="premium-icon" />
+              <Factory className="premium-icon" />
               <h3>{recipe.name}</h3>
             </div>
             <p className="premium-upgrade-description">
-              <strong>Materials:</strong> {materialsList}
+              <strong>Requires:</strong> {materialsList}
             </p>
             <p className="premium-upgrade-description">
-              <strong>Output:</strong> {formatNumber(recipe.output.money)} €
+              <strong>Return:</strong> {formatNumber(recipe.output.money)} €
             </p>
             <div className="premium-upgrade-info">
               <div className="premium-upgrade-level">
@@ -61,7 +69,7 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
                 disabled={!canCraft}
                 className={`premium-upgrade-button ${!canCraft ? 'disabled' : ''}`}
               >
-                Craft
+                Invest
               </button>
             </div>
           </div>
@@ -70,3 +78,4 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
     </div>
   );
 }
+

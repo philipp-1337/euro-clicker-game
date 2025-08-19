@@ -31,6 +31,7 @@ export default function ClickerGame({
   const [activeTab, setActiveTab] = useState('basic');
   // Rohstoffe-State
   const [rawMaterials, setRawMaterials] = useState(() => ({ ...gameConfig.initialState.rawMaterials }));
+  const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(() => ({ ...gameConfig.initialState.resourcePurchaseCounts }));
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
     uiProgress,
@@ -128,7 +129,9 @@ export default function ClickerGame({
     craftingItems,
     setCraftingItems,
     rawMaterials,
-    setRawMaterials
+    setRawMaterials,
+    resourcePurchaseCounts,
+    setResourcePurchaseCounts
   );
 
   const {
@@ -576,6 +579,7 @@ export default function ClickerGame({
       rawMaterials={rawMaterials}
       setRawMaterials={setRawMaterials}
       buyMaterial={buyMaterial}
+      resourcePurchaseCounts={resourcePurchaseCounts}
           />
         </div>
       )}
