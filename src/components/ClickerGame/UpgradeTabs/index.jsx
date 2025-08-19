@@ -47,6 +47,11 @@ export default function UpgradeTabs({
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
+  craftingItems, // New prop for crafting items
+  buyCraftingItem, // New prop for buying crafting items
+  rawMaterials,
+  setRawMaterials,
+  buyMaterial,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -125,6 +130,11 @@ export default function UpgradeTabs({
           floatingClickValueMultiplier={floatingClickValueMultiplier}
           buyFloatingClickValue={buyFloatingClickValue}
           currentFloatingClickValue={currentFloatingClickValue}
+          craftingItems={tab.id === 'crafting' ? craftingItems : undefined} // Pass to Crafting tab
+          buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined} // Pass to Crafting tab
+          rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
+          setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
+          {...(tab.id === 'crafting' ? { buyMaterial } : {})}
         />
       )
     ))}

@@ -13,6 +13,7 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 import { APP_VERSION } from '../../version';
+import useCrafting from '@hooks/useCrafting';
 
 export default function ClickerGame({
   easyMode = false,
@@ -28,6 +29,8 @@ export default function ClickerGame({
   // toggleBuyQuantity // This will be managed here now
 }) {
   const [activeTab, setActiveTab] = useState('basic');
+  // Rohstoffe-State
+  const [rawMaterials, setRawMaterials] = useState(() => ({ ...gameConfig.initialState.rawMaterials }));
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
     uiProgress,
@@ -109,11 +112,24 @@ export default function ClickerGame({
     prestigeGame,
     prestigeBonusMultiplier, // Stellen Sie sicher, dass dies hier ist
     canPrestige,
-    floatingClickValueLevel,
-    floatingClickValueMultiplier,
-    buyFloatingClickValue,
-    currentFloatingClickValue,
+  floatingClickValueLevel,
+  floatingClickValueMultiplier,
+  buyFloatingClickValue,
+  currentFloatingClickValue,
+  craftingItems, // New
+  setCraftingItems, // Für useCrafting
+  setMoney,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
+
+  // Crafting-Logik: neue Hook-Signatur
+  const { buyCraftingItem, buyMaterial } = useCrafting(
+    money,
+    setMoney,
+    craftingItems,
+    setCraftingItems,
+    rawMaterials,
+    setRawMaterials
+  );
 
   const {
     achievements,
@@ -555,6 +571,11 @@ export default function ClickerGame({
             currentFloatingClickValue={currentFloatingClickValue}
             onInvestmentBoosted={handleInvestmentBoost}
             soundEffectsEnabled={soundEffectsEnabled}
+            craftingItems={craftingItems}
+            buyCraftingItem={buyCraftingItem}
+      rawMaterials={rawMaterials}
+      setRawMaterials={setRawMaterials}
+      buyMaterial={buyMaterial}
           />
         </div>
       )}

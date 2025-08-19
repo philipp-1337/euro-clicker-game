@@ -45,6 +45,9 @@ export default function useGameState(easyMode = false) {
   const [floatingClickValueLevel, setFloatingClickValueLevel] = useState(gameConfig.initialState.floatingClickValueLevel ?? 0);
   const [floatingClickValueMultiplier, setFloatingClickValueMultiplier] = useState(gameConfig.initialState.floatingClickValueMultiplier ?? 1);
 
+  // State for crafting items
+  const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.crafting.map(() => 0));
+
   // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
     return gameConfig.investments.map((_, index) => {
@@ -83,6 +86,7 @@ export default function useGameState(easyMode = false) {
     criticalClickChanceLevel, // Add to game state
     floatingClickValueLevel, // Add to game state
     floatingClickValueMultiplier, // Add to game state
+    craftingItems, // Add crafting items to game state
     boostedInvestments: boostedInvestmentsData, // Add to game state
     prestigeShares, // Add prestige shares to game state
     prestigeCount, // Add prestige count to game state
@@ -132,6 +136,7 @@ export default function useGameState(easyMode = false) {
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
     setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
     setClickHistory(savedState.clickHistory ?? []);
+    setCraftingItems(savedState.craftingItems ?? gameConfig.crafting.map(() => 0));
 
     // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
@@ -195,6 +200,7 @@ export default function useGameState(easyMode = false) {
     prestigeCount, setPrestigeCount,
     clickHistory, setClickHistory,
     initialOfflineDuration,
+    craftingItems, setCraftingItems, // New: Crafting items
    
     // Save/Load
     gameState,

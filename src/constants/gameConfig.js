@@ -1,6 +1,7 @@
 import BasicUpgrades from '@components/ClickerGame/UpgradeTabs/BasicUpgrades';
 import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades';
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
+import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 
 export const gameConfig = {
     // Basis-Kosten für Upgrades
@@ -29,6 +30,34 @@ export const gameConfig = {
       { name: 'Space Rocket Enterprises', cost: 145500, income: 97 },
     ],
 
+    rawMaterials: [
+      { id: 'wood', name: 'Wood', baseCost: 10 },
+      { id: 'stone', name: 'Stone', baseCost: 20 },
+      { id: 'iron', name: 'Iron', baseCost: 50 },
+    ],
+
+    craftingRecipes: [
+      { 
+        id: 'basic_tool',
+        name: 'Basic Tool',
+        materials: [
+          { id: 'wood', quantity: 5 },
+          { id: 'stone', quantity: 2 }
+        ],
+        output: { money: 1000 }
+      },
+      { 
+        id: 'advanced_tool',
+        name: 'Advanced Tool',
+        materials: [
+          { id: 'wood', quantity: 10 },
+          { id: 'stone', quantity: 5 },
+          { id: 'iron', quantity: 1 }
+        ],
+        output: { money: 5000 }
+      },
+    ],
+
     // Upgrade-Multiplikatoren
     upgradeValueMultiplier: 1.1, // +10% pro Level
     upgradeCooldownReduction: 0.9, // -10% pro Level
@@ -48,6 +77,8 @@ export const gameConfig = {
       globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
       isInvestmentUnlocked: false,
       investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
+      craftingItems: [0, 0, 0], // New: Crafting items
+      rawMaterials: { wood: 0, stone: 0, iron: 0 }, // New: Raw materials
       offlineEarningsLevel: 0, // Level for offline earnings
       criticalClickChanceLevel: 0, // Level for critical click chance upgrade
       prestigeCount: 0, // Initial prestige count
@@ -111,6 +142,7 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
+        { id: 'crafting', label: 'Crafting', component: Crafting },
       ],
     },
     // Schwierigkeitseinstellungen
