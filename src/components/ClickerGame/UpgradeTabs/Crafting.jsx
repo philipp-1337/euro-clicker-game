@@ -4,7 +4,7 @@ import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
 
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1 }) {
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false }) {
 Crafting.propTypes = {
   money: PropTypes.number.isRequired,
   rawMaterials: PropTypes.object.isRequired,
@@ -15,8 +15,7 @@ Crafting.propTypes = {
   easyMode: PropTypes.bool,
   buyQuantity: PropTypes.number
 };
-  // Use the same cost calculation as in useCrafting.js, including easyMode
-  // Calculate the total cost for buying buyQuantity units (progressive cost)
+  // Use the same cost calculation wie in useCrafting.js, inklusive easyMode
   const calculateTotalCost = (material) => {
     let total = 0;
     const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
@@ -27,6 +26,23 @@ Crafting.propTypes = {
     }
     return total;
   };
+
+  if (!isCraftingUnlocked) {
+    return (
+      <div className="upgrade-section premium-section">
+        <h2 className="section-title">Wealth Production</h2>
+        <div className="premium-upgrade-card">
+          <div className="premium-upgrade-header">
+            <Warehouse className="premium-icon" />
+            <h3>Locked</h3>
+          </div>
+          <p className="premium-upgrade-description">
+            This feature is locked. Unlock it in the Premium Upgrades tab after at least 1 Prestige.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="upgrade-section premium-section">

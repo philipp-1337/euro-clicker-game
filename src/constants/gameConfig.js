@@ -124,6 +124,8 @@ export const gameConfig = {
         effectPerLevel: 0.05 // e.g., 5% earnings per level
       },
       unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+      craftingUnlockCost: 100000000,
+
     },
     // Prestige-Konfiguration
     prestige: {

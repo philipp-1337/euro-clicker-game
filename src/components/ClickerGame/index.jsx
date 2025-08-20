@@ -122,6 +122,29 @@ export default function ClickerGame({
     setResourcePurchaseCounts,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
+  // Crafting Unlock State
+  const [isCraftingUnlocked, setIsCraftingUnlocked] = useState(() => {
+    // Persist in localStorage
+    const stored = localStorage.getItem('isCraftingUnlocked');
+    return stored === 'true';
+  });
+
+  // Crafting Unlock Handler
+  const unlockCrafting = () => {
+    const unlockCost = gameConfig.premiumUpgrades.craftingUnlockCost;
+    if (!isCraftingUnlocked && prestigeShares >= 1 && money >= unlockCost) {
+      setIsCraftingUnlocked(true);
+      localStorage.setItem('isCraftingUnlocked', 'true');
+      // Optional: Ziehe Geld ab
+      if (typeof saveGame === 'function') {
+        saveGame({
+          ...gameState,
+          money: money - unlockCost
+        });
+      }
+    }
+  };
+
   const {
     achievements,
     unlockedAchievements,
@@ -564,11 +587,15 @@ export default function ClickerGame({
             soundEffectsEnabled={soundEffectsEnabled}
             craftingItems={craftingItems}
             buyCraftingItem={buyCraftingItem}
-      rawMaterials={rawMaterials}
-      setRawMaterials={setRawMaterials}
-      buyMaterial={buyMaterial}
-      resourcePurchaseCounts={resourcePurchaseCounts}
-      setResourcePurchaseCounts={setResourcePurchaseCounts}
+            rawMaterials={rawMaterials}
+            setRawMaterials={setRawMaterials}
+            buyMaterial={buyMaterial}
+            resourcePurchaseCounts={resourcePurchaseCounts}
+            setResourcePurchaseCounts={setResourcePurchaseCounts}
+            // Crafting unlock props
+            isCraftingUnlocked={isCraftingUnlocked}
+            unlockCrafting={unlockCrafting}
+            accumulatedPrestigeShares={prestigeShares}
           />
         </div>
       )}

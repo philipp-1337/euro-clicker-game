@@ -53,6 +53,10 @@ export default function UpgradeTabs({
   setRawMaterials,
   buyMaterial,
   resourcePurchaseCounts,
+  // Crafting unlock props
+  isCraftingUnlocked,
+  unlockCrafting,
+  accumulatedPrestigeShares,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -131,6 +135,10 @@ export default function UpgradeTabs({
           floatingClickValueMultiplier={floatingClickValueMultiplier}
           buyFloatingClickValue={buyFloatingClickValue}
           currentFloatingClickValue={currentFloatingClickValue}
+          // Crafting unlock props
+          isCraftingUnlocked={tab.id === 'crafting' || tab.id === 'premium' ? isCraftingUnlocked : undefined}
+          unlockCrafting={tab.id === 'premium' ? unlockCrafting : undefined}
+          accumulatedPrestigeShares={tab.id === 'premium' ? accumulatedPrestigeShares : undefined}
           craftingItems={tab.id === 'crafting' ? craftingItems : undefined} // Pass to Crafting tab
           buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined} // Pass to Crafting tab
           rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
