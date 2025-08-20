@@ -9,13 +9,13 @@ export const gameConfig = {
     baseCooldownUpgradeCosts: [10, 20, 30, 40, 50],
     
     // Basis-Button-Konfiguration
-    baseButtons: [
-      { baseValue: 10, baseCooldownTime: 10, colorClass: 'blue', managerCost: 200 },
-      { baseValue: 20, baseCooldownTime: 20, colorClass: 'green', managerCost: 1000 },
-      { baseValue: 30, baseCooldownTime: 30, colorClass: 'yellow', managerCost: 2000 },
-      { baseValue: 40, baseCooldownTime: 40, colorClass: 'red', managerCost: 5000 },
-      { baseValue: 50, baseCooldownTime: 50, colorClass: 'purple', managerCost: 10000 },
-    ],
+      baseButtons: [
+        { baseValue: 10, baseCooldownTime: 10, colorClass: 'blue', managerCost: 200, label: 'Savings', icon: 'PiggyBank' },
+        { baseValue: 20, baseCooldownTime: 20, colorClass: 'green', managerCost: 1000, label: 'Revenue', icon: 'Euro' },
+        { baseValue: 30, baseCooldownTime: 30, colorClass: 'yellow', managerCost: 2000, label: 'Bonus', icon: 'Gift' },
+        { baseValue: 40, baseCooldownTime: 40, colorClass: 'red', managerCost: 5000, label: 'Trade', icon: 'Handshake' },
+        { baseValue: 50, baseCooldownTime: 50, colorClass: 'purple', managerCost: 10000, label: 'Windfall', icon: 'Sparkles' },
+      ],
 
     investments: [
       { name: 'Taxi Company', cost: 12750, income: 7 },
