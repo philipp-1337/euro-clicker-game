@@ -147,7 +147,7 @@ export const gameConfig = {
         { id: 'basic', label: 'Basic Upgrades', component: BasicUpgrades },
         { id: 'premium', label: 'Premium Upgrades', component: PremiumUpgrades },
         { id: 'investments', label: 'Investments', component: Investments },
-        { id: 'crafting', label: 'Production', component: Crafting },
+        { id: 'crafting', label: 'Wealth Production', component: Crafting },
       ],
     },
     // Schwierigkeitseinstellungen
