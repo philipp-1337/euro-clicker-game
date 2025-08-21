@@ -37,7 +37,7 @@
   @include flex-center;
   gap: clamp(5px, 2vw, 16px);
   min-width: max-content;
-  margin: 0 auto 8px auto;
+  margin: 8px auto 8px auto;
   width: 100%;
 }
 

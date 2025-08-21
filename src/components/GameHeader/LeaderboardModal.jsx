@@ -96,7 +96,7 @@ export default function LeaderboardModal({ show, onClose }) {
           </button>
         </div>
         <div className="upgrade-tabs" style={{ borderBottom: 'none', marginTop: '10px', marginBottom: '5px' }}>
-          <div className="upgrade-tabs-inner">
+          <div className="upgrade-tabs-inner" style={{ marginRight: '-60px' }}>
             {CHECKPOINTS.map(checkpoint => (
               <button
                 key={checkpoint.id}
