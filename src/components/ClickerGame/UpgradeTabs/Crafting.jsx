@@ -161,8 +161,16 @@ Crafting.propTypes = {
         const recipeCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
         const isProcessing = processing[index];
 
+        // Progressbar-Berechnung
+        let progressPercent = 0;
+        if (isOnCooldown && cooldownEnd) {
+          const total = recipeCooldown * 1000;
+          const elapsed = total - (cooldownEnd - now);
+          progressPercent = Math.max(0, Math.min(100, (elapsed / total) * 100));
+        }
+
         return (
-          <div key={index} className="premium-upgrade-card">
+          <div key={index} className="premium-upgrade-card" style={{position:'relative', overflow:'hidden'}}>
             <div className="premium-upgrade-header">
               <Factory className="premium-icon" />
               <h3>{recipe.name}</h3>
@@ -197,6 +205,25 @@ Crafting.propTypes = {
                 {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${recipeCooldown !== DEFAULT_COOLDOWN_SECONDS ? ` (${recipeCooldown}s)` : ''}`}
               </button>
             </div>
+            {/* Progressbar am unteren Rand der Card */}
+            {isOnCooldown && (
+              <div style={{
+                position: 'absolute',
+                left: 0,
+                bottom: 0,
+                width: '100%',
+                height: '6px',
+                background: '#eee',
+                zIndex: 1
+              }}>
+                <div style={{
+                  width: `${progressPercent}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #4caf50 0%, #81c784 100%)',
+                  transition: 'width 0.25s linear'
+                }} />
+              </div>
+            )}
           </div>
         );
       })}
