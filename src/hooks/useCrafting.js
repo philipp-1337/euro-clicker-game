@@ -10,25 +10,34 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
     const material = gameConfig.rawMaterials.find(m => m.id === materialId);
     if (!material) return;
 
-    let purchaseCount = resourcePurchaseCounts[materialId] || 0;
-    let totalCost = 0;
-    const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-    // Berechne Gesamtkosten für die gewünschte Menge
-    for (let i = 0; i < quantity; i++) {
-      totalCost += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
-      purchaseCount++;
-    }
-    if (money >= totalCost) {
-      setMoney(prev => prev - totalCost);
+    // Kaufen von Rohstoffen (quantity > 0)
+    if (quantity > 0) {
+      let purchaseCount = resourcePurchaseCounts[materialId] || 0;
+      let totalCost = 0;
+      const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+      for (let i = 0; i < quantity; i++) {
+        totalCost += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+        purchaseCount++;
+      }
+      if (money >= totalCost) {
+        setMoney(prev => prev - totalCost);
+        setRawMaterials(prev => ({
+          ...prev,
+          [materialId]: (prev[materialId] || 0) + quantity
+        }));
+        setResourcePurchaseCounts(prev => ({
+          ...prev,
+          [materialId]: (prev[materialId] || 0) + quantity
+        }));
+        ensureStartTime?.();
+      }
+    } else if (quantity < 0) {
+      // Abziehen von Rohstoffen beim Crafting, aber resourcePurchaseCounts NICHT ändern
       setRawMaterials(prev => ({
         ...prev,
-        [materialId]: (prev[materialId] || 0) + quantity
+        [materialId]: Math.max(0, (prev[materialId] || 0) + quantity)
       }));
-      setResourcePurchaseCounts(prev => ({
-        ...prev,
-        [materialId]: (prev[materialId] || 0) + quantity
-      }));
-      ensureStartTime?.();
+      // resourcePurchaseCounts bleibt unverändert
     }
   };
 
