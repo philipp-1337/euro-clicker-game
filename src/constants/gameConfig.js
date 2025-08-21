@@ -53,13 +53,8 @@ export const gameConfig = {
     },
   ],
 
-  unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-
-  unlockCraftingCost: 100000000,
-  unlockCraftingPrestige: 1,
-  resourceCostIncreaseFactor: 1.07, // 7% increase per purchase
-
-
+  
+  
   investments: [
     { name: "Taxi Company", cost: 12750, income: 7 },
     { name: "Energy Drinks", cost: 26500, income: 16 },
@@ -72,11 +67,17 @@ export const gameConfig = {
     { name: "National Airline", cost: 128000, income: 84 },
     { name: "Space Rocket Enterprises", cost: 145500, income: 97 },
   ],
+  
+  unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
 
+  unlockCraftingCost: 100000000,
+  unlockCraftingPrestige: 1,
+  // Entfernt: resourceCostIncreaseFactor global
+  // Neu: rawMaterials mit individuellem costIncreaseFactor
   rawMaterials: [
-    { id: "metal", name: "Precious Metals", baseCost: 1000 },
-    { id: "parts", name: "Forging Instruments", baseCost: 5000 },
-    { id: "tech", name: "Investment Molds", baseCost: 25000 },
+    { id: "metal", name: "Precious Metals", baseCost: 1000, costIncreaseFactor: 1.07 },
+    { id: "parts", name: "Forging Instruments", baseCost: 5000, costIncreaseFactor: 1.10 },
+    { id: "tech", name: "Investment Molds", baseCost: 25000, costIncreaseFactor: 1.15 },
   ],
 
   craftingRecipes: [

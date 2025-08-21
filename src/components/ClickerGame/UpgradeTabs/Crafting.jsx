@@ -73,12 +73,14 @@ Crafting.propTypes = {
   buyQuantity: PropTypes.number
 };
   // Use the same cost calculation wie in useCrafting.js, inklusive easyMode
+  // Angepasst: Nutze individuellen costIncreaseFactor pro Material
   const calculateTotalCost = (material) => {
     let total = 0;
     const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
     let purchaseCount = resourcePurchaseCounts[material.id] || 0;
+    const costIncreaseFactor = material.costIncreaseFactor || 1.07;
     for (let i = 0; i < buyQuantity; i++) {
-      total += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+      total += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
       purchaseCount++;
     }
     return total;

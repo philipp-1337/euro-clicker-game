@@ -15,8 +15,9 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
       let purchaseCount = resourcePurchaseCounts[materialId] || 0;
       let totalCost = 0;
       const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+      const costIncreaseFactor = material.costIncreaseFactor || 1.07;
       for (let i = 0; i < quantity; i++) {
-        totalCost += Math.ceil(material.baseCost * Math.pow(gameConfig.resourceCostIncreaseFactor, purchaseCount) * costMultiplier);
+        totalCost += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
         purchaseCount++;
       }
       if (money >= totalCost) {
