@@ -30,7 +30,6 @@ Crafting.propTypes = {
   const availablePrestige = gameConfig.prestige.minMoneyForModalButton;
 
   if (!isCraftingUnlocked) {
-    // You may need to pass unlockCrafting, craftingUnlockCost, accumulatedPrestigeShares as props from parent
     return (
       <div className="upgrade-section premium-section">
         <h2 className="section-title">Wealth Production</h2>
@@ -120,7 +119,7 @@ Crafting.propTypes = {
                 disabled={!canCraft}
                 className={`premium-upgrade-button ${!canCraft ? 'disabled' : ''}`}
               >
-                Invest
+                Process
               </button>
             </div>
           </div>

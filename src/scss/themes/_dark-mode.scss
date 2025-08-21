@@ -156,4 +156,15 @@ body.dark {
     background-color: map.get($backgrounds, dark)
   }
 
+    // Raw materials list & item dark mode
+    .raw-materials-list {
+      background: none;
+    }
+    .raw-material-item {
+      // background-color: map.get($backgrounds, light) !important;
+      color: map.get($colors, text-dark) !important;
+      // border: 1px solid rgba(255,255,255,0.08) !important;
+      // box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
+
 }

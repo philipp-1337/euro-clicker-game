@@ -24,33 +24,34 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   // Basis-Spielzustand
   const gameStateHook = useGameState(easyMode);
   const {
-    money, setMoney,
-    cooldowns, setCooldowns,
-    managers, setManagers,
-    valueMultipliers, setValueMultipliers,
-    cooldownReductions, setCooldownReductions,
-    valueUpgradeLevels, setValueUpgradeLevels,
-    cooldownUpgradeLevels, setCooldownUpgradeLevels,
-    globalMultiplier, setGlobalMultiplier,
-    globalMultiplierLevel, setGlobalMultiplierLevel,
-    globalPriceDecrease, setGlobalPriceDecrease,
-    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
-    gameState, loadGameState,
-    isInvestmentUnlocked, setIsInvestmentUnlocked,
-    investments, setInvestments,
-    activePlayTime, setActivePlayTime,
-    inactivePlayTime, setInactivePlayTime,
-    offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
-    criticalClickChanceLevel, setCriticalClickChanceLevel, // Get new state for critical clicks
-    initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
-    boostedInvestments, // Get boosted state
-    setBoostedInvestments, // Get setter for boosted state
-    prestigeShares, setPrestigeShares, // Prestige shares
-    prestigeCount, setPrestigeCount, // Prestige count
-    setClickHistory, // Click history
-    craftingItems, setCraftingItems, // New: Crafting items
-    rawMaterials, setRawMaterials,
-    resourcePurchaseCounts, setResourcePurchaseCounts,
+  money, setMoney,
+  cooldowns, setCooldowns,
+  managers, setManagers,
+  valueMultipliers, setValueMultipliers,
+  cooldownReductions, setCooldownReductions,
+  valueUpgradeLevels, setValueUpgradeLevels,
+  cooldownUpgradeLevels, setCooldownUpgradeLevels,
+  globalMultiplier, setGlobalMultiplier,
+  globalMultiplierLevel, setGlobalMultiplierLevel,
+  globalPriceDecrease, setGlobalPriceDecrease,
+  globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
+  gameState, loadGameState,
+  isInvestmentUnlocked, setIsInvestmentUnlocked,
+  investments, setInvestments,
+  activePlayTime, setActivePlayTime,
+  inactivePlayTime, setInactivePlayTime,
+  offlineEarningsLevel, setOfflineEarningsLevel, // Get new state
+  criticalClickChanceLevel, setCriticalClickChanceLevel, // Get new state for critical clicks
+  initialOfflineDuration, // Get the initial offline duration from useGameState (calculated on load)
+  boostedInvestments, // Get boosted state
+  setBoostedInvestments, // Get setter for boosted state
+  prestigeShares, setPrestigeShares, // Prestige shares
+  prestigeCount, setPrestigeCount, // Prestige count
+  setClickHistory, // Click history
+  craftingItems, setCraftingItems, // New: Crafting items
+  rawMaterials, setRawMaterials,
+  resourcePurchaseCounts, setResourcePurchaseCounts,
+  isCraftingUnlocked, setIsCraftingUnlocked,
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
@@ -669,5 +670,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     setCraftingItems,
     setRawMaterials,
     setResourcePurchaseCounts,
+    isCraftingUnlocked,
+    setIsCraftingUnlocked,
   };
 }

@@ -1,5 +1,5 @@
-import { useUiProgress } from '@hooks/useUiProgress';
 import { useState, useEffect } from 'react';
+import { useUiProgress } from '@hooks/useUiProgress';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
@@ -27,7 +27,7 @@ export default function ClickerGame({
   // buyQuantity, // This will be managed here now
   // toggleBuyQuantity // This will be managed here now
 }) {
-  const [activeTab, setActiveTab] = useState('basic');
+  const [activeTab, setActiveTab] = useState("basic");
   // UI-Progress-Logik in eigenen Hook ausgelagert
   const {
     uiProgress,
@@ -42,7 +42,7 @@ export default function ClickerGame({
   // State for buy quantity (x1 / x10)
   const [buyQuantity, setBuyQuantity] = useState(1);
   const toggleBuyQuantity = () => {
-    setBuyQuantity(prev => {
+    setBuyQuantity((prev) => {
       if (prev === 1) return 10;
       if (prev === 10) return 25;
       return 1; // Cycle back to 1 from 25
@@ -51,6 +51,7 @@ export default function ClickerGame({
 
   const {
     money,
+    setMoney,
     buttons,
     cooldowns,
     managers,
@@ -85,10 +86,10 @@ export default function ClickerGame({
     manualMoneyPerSecond,
     unlockInvestmentCost,
     investmentCostMultiplier,
-    offlineEarningsLevel,      // New
+    offlineEarningsLevel, // New
     currentOfflineEarningsFactor, // New
-    offlineEarningsLevelCost,  // New
-    buyOfflineEarningsLevel,     // New
+    offlineEarningsLevelCost, // New
+    buyOfflineEarningsLevel, // New
     gameState,
     criticalClickChanceLevel, // New
     currentCriticalClickChance, // New
@@ -97,11 +98,11 @@ export default function ClickerGame({
     loadGameState,
     activePlayTime,
     inactivePlayTime,
-    lastInactiveDuration,      // Get new state from hook
+    lastInactiveDuration, // Get new state from hook
     clearLastInactiveDuration, // Get new function from hook
     calculatedOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
-    claimOfflineEarnings,      // Holen aus dem ersten Hook-Aufruf
-    handleInvestmentBoost,     // Get the handler for investment boosts
+    claimOfflineEarnings, // Holen aus dem ersten Hook-Aufruf
+    handleInvestmentBoost, // Get the handler for investment boosts
     // Prestige related
     prestigeShares,
     prestigeCount,
@@ -113,35 +114,28 @@ export default function ClickerGame({
     floatingClickValueMultiplier,
     buyFloatingClickValue,
     currentFloatingClickValue,
-  craftingItems,
+    craftingItems,
     buyCraftingItem,
     buyMaterial,
     rawMaterials,
     resourcePurchaseCounts,
     setRawMaterials,
     setResourcePurchaseCounts,
+    isCraftingUnlocked,
+    setIsCraftingUnlocked,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
-
-  // Crafting Unlock State
-  const [isCraftingUnlocked, setIsCraftingUnlocked] = useState(() => {
-    // Persist in localStorage
-    const stored = localStorage.getItem('isCraftingUnlocked');
-    return stored === 'true';
-  });
 
   // Crafting Unlock Handler
   const unlockCrafting = () => {
     const unlockCost = gameConfig.premiumUpgrades.craftingUnlockCost;
     if (!isCraftingUnlocked && prestigeShares >= 1 && money >= unlockCost) {
-      setIsCraftingUnlocked(true);
-      localStorage.setItem('isCraftingUnlocked', 'true');
-      // Optional: Ziehe Geld ab
-      if (typeof saveGame === 'function') {
-        saveGame({
-          ...gameState,
-          money: money - unlockCost
-        });
+      if (typeof setMoney === "function") {
+        setMoney((prev) => prev - unlockCost);
       }
+      if (typeof setIsCraftingUnlocked === "function") {
+        setIsCraftingUnlocked(true);
+      }
+      // SaveGame wird jetzt im useEffect nachgezogen
     }
   };
 
@@ -149,14 +143,18 @@ export default function ClickerGame({
     achievements,
     unlockedAchievements,
     clearUnlockedAchievements,
-    unlockSpecificAchievementById // Funktion hier holen
+    unlockSpecificAchievementById, // Funktion hier holen
   } = useAchievements(money, floatingClicks, playTime);
   const {
     showAchievement,
     setShowAchievement,
     setNotificationQueue,
     hasAnyAchievement,
-  } = useAchievementNotifications(achievements, unlockedAchievements, clearUnlockedAchievements);
+  } = useAchievementNotifications(
+    achievements,
+    unlockedAchievements,
+    clearUnlockedAchievements
+  );
 
   // --- Cloud Save Hook ---
   const { exportToCloud, cloudUuid } = useCloudSave();
@@ -174,23 +172,33 @@ export default function ClickerGame({
     if (!uiProgress.gameStarted) setGameStarted();
     incrementFloatingClicks();
     // Start background music on first manual click (on floating button)
-    if (musicEnabled && !musicStarted && typeof setMusicPlaying === 'function') {
+    if (
+      musicEnabled &&
+      !musicStarted &&
+      typeof setMusicPlaying === "function"
+    ) {
       setMusicPlaying(true);
       setMusicStarted(true);
     }
     // Füge Geld hinzu und prüfe, ob der Klick kritisch war
     const { isCritical, amount } = addQuickMoney(); // Destructure isCritical and amount
     if (isCritical) {
-      console.log('CRITICAL HIT DETECTED! Amount:', amount, 'Applying visual effect.');
+      console.log(
+        "CRITICAL HIT DETECTED! Amount:",
+        amount,
+        "Applying visual effect."
+      );
       setShowCriticalEffect(true);
       const newAnimation = { id: Date.now(), amount: amount };
-      setCriticalHitAnimations(prev => [...prev, newAnimation]);
+      setCriticalHitAnimations((prev) => [...prev, newAnimation]);
 
       setTimeout(() => {
         setShowCriticalEffect(false);
       }, 1000); // Dauer des Effekts in ms (auf 1 Sekunde erhöht)
       setTimeout(() => {
-        setCriticalHitAnimations(prev => prev.filter(anim => anim.id !== newAnimation.id));
+        setCriticalHitAnimations((prev) =>
+          prev.filter((anim) => anim.id !== newAnimation.id)
+        );
       }, 1500); // Dauer der Text-Animation (muss zur CSS Animation passen)
     }
   };
@@ -217,7 +225,7 @@ export default function ClickerGame({
   );
 
   // Leaderboard-Checkpoint-Tracking im Local Storage
-  const LEADERBOARD_CHECKPOINTS_KEY = 'leaderboardCheckpointsReached';
+  const LEADERBOARD_CHECKPOINTS_KEY = "leaderboardCheckpointsReached";
 
   function getReachedCheckpointsFromStorage() {
     try {
@@ -232,7 +240,10 @@ export default function ClickerGame({
     const reached = getReachedCheckpointsFromStorage();
     if (!reached.includes(checkpoint)) {
       reached.push(checkpoint);
-      localStorage.setItem(LEADERBOARD_CHECKPOINTS_KEY, JSON.stringify(reached));
+      localStorage.setItem(
+        LEADERBOARD_CHECKPOINTS_KEY,
+        JSON.stringify(reached)
+      );
     }
   }
 
@@ -248,18 +259,24 @@ export default function ClickerGame({
 
     // Finde den höchsten Checkpoint, der erreicht wurde UND noch nicht im Local Storage ist.
     // Iteriere rückwärts, um den höchsten zuerst zu finden.
-    const newTargetCheckpoint = CHECKPOINTS.slice().reverse().find(cp =>
-      money >= cp.value && !reachedCheckpointsInStorage.includes(cp.id)
-    );
+    const newTargetCheckpoint = CHECKPOINTS.slice()
+      .reverse()
+      .find(
+        (cp) =>
+          money >= cp.value && !reachedCheckpointsInStorage.includes(cp.id)
+      );
 
     if (newTargetCheckpoint) {
       // Zeige das Modal, wenn wir einen neuen Ziel-Checkpoint gefunden haben,
       // der sich von dem aktuell im Modal angezeigten unterscheidet,
       // oder wenn aktuell kein Modal für einen Checkpoint angezeigt wird.
-      if (!currentCheckpoint || currentCheckpoint.id !== newTargetCheckpoint.id) {
+      if (
+        !currentCheckpoint ||
+        currentCheckpoint.id !== newTargetCheckpoint.id
+      ) {
         setCurrentCheckpoint(newTargetCheckpoint);
         // Optional: Name aus Local Storage vorbefüllen, falls vorhanden
-        setLeaderboardName(localStorage.getItem('leaderboardName') || "");
+        setLeaderboardName(localStorage.getItem("leaderboardName") || "");
         setShowLeaderboardCongrats(true);
         setLeaderboardSubmitted(false); // Wichtig: Zurücksetzen für den neuen Checkpoint
       }
@@ -273,7 +290,8 @@ export default function ClickerGame({
   const handleLeaderboardCongratsClose = async () => {
     // Diese Funktion wird jetzt hauptsächlich für den "Maybe later"-Button verwendet.
     // Wenn "Submit" geklickt wurde, kümmert sich handleLeaderboardSubmit um Speicherung und Schließen.
-    if (currentCheckpoint && !leaderboardSubmitted) { // Nur hinzufügen, wenn "Maybe later" geklickt wurde
+    if (currentCheckpoint && !leaderboardSubmitted) {
+      // Nur hinzufügen, wenn "Maybe later" geklickt wurde
       addCheckpointToStorage(currentCheckpoint.id);
     }
     // Save game state (cloud or local)
@@ -287,9 +305,9 @@ export default function ClickerGame({
         }
       } catch (e) {
         // Optionally show error to user
-        console.error('Cloud save failed:', e);
+        console.error("Cloud save failed:", e);
       }
-    } else if (typeof saveGame === 'function') {
+    } else if (typeof saveGame === "function") {
       saveGame();
     }
     setShowLeaderboardCongrats(false);
@@ -297,13 +315,14 @@ export default function ClickerGame({
   };
 
   // --- Environment detection for leaderboard flagging ---
-  const [environment, setEnvironment] = useState('production');
+  const [environment, setEnvironment] = useState("production");
   useEffect(() => {
     const hostname = window.location.hostname;
-    if (hostname.includes('beta')) setEnvironment('beta');
-    else if (hostname.includes('alpha')) setEnvironment('alpha');
-    else if (hostname === 'localhost' || hostname === '127.0.0.1') setEnvironment('localhost');
-    else setEnvironment('production');
+    if (hostname.includes("beta")) setEnvironment("beta");
+    else if (hostname.includes("alpha")) setEnvironment("alpha");
+    else if (hostname === "localhost" || hostname === "127.0.0.1")
+      setEnvironment("localhost");
+    else setEnvironment("production");
   }, []);
 
   // Leaderboard Submission (analog zu useLeaderboardSubmit, aber immer aktiv)
@@ -311,10 +330,11 @@ export default function ClickerGame({
     if (!leaderboardName.trim() || !currentCheckpoint) return;
 
     // Firestore Submission wie in useLeaderboardSubmit.js
-    const { addDoc, collection } = await import('firebase/firestore');
-    const { db } = await import('../../firebase');
+    const { addDoc, collection } = await import("firebase/firestore");
+    const { db } = await import("../../firebase");
     // Flag für Test/Alpha-Umgebung
-    const isTestOrAlpha = environment === 'localhost' || environment === 'alpha';
+    const isTestOrAlpha =
+      environment === "localhost" || environment === "alpha";
 
     const dataToSubmit = {
       name: leaderboardName.trim(),
@@ -333,7 +353,7 @@ export default function ClickerGame({
       dataToSubmit.flaggedReason = environment;
     }
 
-    await addDoc(collection(db, 'leaderboard'), dataToSubmit);
+    await addDoc(collection(db, "leaderboard"), dataToSubmit);
     setLeaderboardSubmitted(true);
     // Save game state (cloud or local)
     if (cloudSaveMode) {
@@ -347,9 +367,9 @@ export default function ClickerGame({
         }
       } catch (e) {
         // Optionally show error to user
-        console.error('Cloud save failed:', e);
+        console.error("Cloud save failed:", e);
       }
-    } else if (typeof saveGame === 'function') {
+    } else if (typeof saveGame === "function") {
       saveGame();
     }
     addCheckpointToStorage(currentCheckpoint.id); // Bei erfolgreichem Submit auch im Storage vermerken
@@ -358,11 +378,19 @@ export default function ClickerGame({
 
   // Prestige-Button: Sichtbarkeit zentral prüfen und setzen
   useEffect(() => {
-    if (!prestigeButtonEverVisible && (money >= gameConfig.prestige.minMoneyForModalButton || prestigeCount > 0)) {
+    if (
+      !prestigeButtonEverVisible &&
+      (money >= gameConfig.prestige.minMoneyForModalButton || prestigeCount > 0)
+    ) {
       setPrestigeButtonEverVisible(true);
     }
     // Niemals wieder auf false setzen!
-  }, [money, prestigeCount, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
+  }, [
+    money,
+    prestigeCount,
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible,
+  ]);
 
   // Synchronisiere nach jedem Render, falls Bedingungen erfüllt sind
   useEffect(() => {
@@ -372,7 +400,12 @@ export default function ClickerGame({
   }, [uiProgress.gameStarted, money, clickerButtonsUnlocked]);
 
   useEffect(() => {
-    if (uiProgress.gameStarted && money >= 10 && allButtonsClicked && !upgradeTabsUnlocked) {
+    if (
+      uiProgress.gameStarted &&
+      money >= 10 &&
+      allButtonsClicked &&
+      !upgradeTabsUnlocked
+    ) {
       setUpgradeTabsUnlocked(true);
     }
   }, [uiProgress.gameStarted, money, allButtonsClicked, upgradeTabsUnlocked]);
@@ -380,7 +413,12 @@ export default function ClickerGame({
   // State and effect for WelcomeBackModal
   const [showWelcomeBackModal, setShowWelcomeBackModal] = useState(false);
   useEffect(() => {
-    console.log('[ClickerGame] WelcomeBackModal effect. lastInactiveDuration:', lastInactiveDuration, 'uiProgress.gameStarted:', uiProgress.gameStarted);
+    console.log(
+      "[ClickerGame] WelcomeBackModal effect. lastInactiveDuration:",
+      lastInactiveDuration,
+      "uiProgress.gameStarted:",
+      uiProgress.gameStarted
+    );
     // Show modal if inactive duration (from reload or tab hide) is more than 5 seconds
     if (lastInactiveDuration > 5 && uiProgress.gameStarted) {
       setShowWelcomeBackModal(true);
@@ -389,7 +427,10 @@ export default function ClickerGame({
 
   // Registriere die saveGame Funktion beim übergeordneten App-Component
   useEffect(() => {
-    if (registerSaveGameHandler && typeof registerSaveGameHandler === 'function') {
+    if (
+      registerSaveGameHandler &&
+      typeof registerSaveGameHandler === "function"
+    ) {
       registerSaveGameHandler(saveGame);
     }
   }, [saveGame, registerSaveGameHandler]);
@@ -400,11 +441,11 @@ export default function ClickerGame({
     const handleTampering = (event) => {
       // Die Alert-Box wird weiterhin von App.js angezeigt.
       // Hier schalten wir nur das Achievement frei.
-      unlockSpecificAchievementById('cheater');
+      unlockSpecificAchievementById("cheater");
     };
-    window.addEventListener('gamestateTampered', handleTampering);
+    window.addEventListener("gamestateTampered", handleTampering);
     return () => {
-      window.removeEventListener('gamestateTampered', handleTampering);
+      window.removeEventListener("gamestateTampered", handleTampering);
     };
   }, [unlockSpecificAchievementById]);
   return (
@@ -430,7 +471,7 @@ export default function ClickerGame({
           achievement={showAchievement}
           onClose={() => {
             setShowAchievement(null);
-            setNotificationQueue(prev => prev.slice(1));
+            setNotificationQueue((prev) => prev.slice(1));
           }}
         />
       )}
@@ -476,16 +517,18 @@ export default function ClickerGame({
               <h3>Congratulations!</h3>
             </div>
             <p>
-              You have reached a milestone ({currentCheckpoint ? currentCheckpoint.label : 'a goal'})!<br />
-               Do you want to enter your name for the leaderboard?
-             </p>
-             <input
+              You have reached a milestone (
+              {currentCheckpoint ? currentCheckpoint.label : "a goal"})!
+              <br />
+              Do you want to enter your name for the leaderboard?
+            </p>
+            <input
               className="modal-input"
               type="text"
               maxLength={18}
               placeholder="Your name for the leaderboard"
               value={leaderboardName}
-              onChange={e => setLeaderboardName(e.target.value)}
+              onChange={(e) => setLeaderboardName(e.target.value)}
               style={{ marginBottom: 18, width: "100%" }}
             />
             <div className="modal-actions">
@@ -537,7 +580,7 @@ export default function ClickerGame({
       {/* UpgradeTabs erst, wenn alle Buttons mindestens einmal geklickt wurden, aber nach Freischaltung immer sichtbar */}
       {uiProgress.gameStarted && upgradeTabsUnlocked && (
         <div className="upgrade-tabs-fade">
-          <UpgradeTabs 
+          <UpgradeTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             money={money}

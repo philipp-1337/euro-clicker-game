@@ -45,6 +45,8 @@ export default function useGameState(easyMode = false) {
   const [floatingClickValueLevel, setFloatingClickValueLevel] = useState(gameConfig.initialState.floatingClickValueLevel ?? 0);
   const [floatingClickValueMultiplier, setFloatingClickValueMultiplier] = useState(gameConfig.initialState.floatingClickValueMultiplier ?? 1);
 
+  // State für Crafting Tab freigeschaltet
+  const [isCraftingUnlocked, setIsCraftingUnlocked] = useState(gameConfig.initialState.isCraftingUnlocked ?? false);
   // State for crafting items
   const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
 
@@ -90,6 +92,7 @@ export default function useGameState(easyMode = false) {
     criticalClickChanceLevel, // Add to game state
     floatingClickValueLevel, // Add to game state
     floatingClickValueMultiplier, // Add to game state
+    isCraftingUnlocked, // Crafting Tab freigeschaltet
     craftingItems, // Add crafting items to game state
     rawMaterials,
     resourcePurchaseCounts,
@@ -103,7 +106,6 @@ export default function useGameState(easyMode = false) {
   // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
   const loadGameState = (savedState) => {
     if (!savedState) return;
-    
     // Ensure money is a valid number, default to initial state if not
     const loadedMoney = savedState.money;
     setMoney(typeof loadedMoney === 'number' && !isNaN(loadedMoney)
@@ -142,9 +144,17 @@ export default function useGameState(easyMode = false) {
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
     setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
     setClickHistory(savedState.clickHistory ?? []);
+    setIsCraftingUnlocked(savedState.isCraftingUnlocked ?? false);
     setCraftingItems(savedState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
     setRawMaterials(savedState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
     setResourcePurchaseCounts(savedState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
+
+    // Schreibe Crafting-Unlock-Status auch in LocalStorage für Cross-Device
+    try {
+      const save = JSON.parse(localStorage.getItem('clickerSave') || '{}');
+      save.isCraftingUnlocked = savedState.isCraftingUnlocked ?? false;
+      localStorage.setItem('clickerSave', JSON.stringify(save));
+    } catch {}
 
     // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
@@ -208,7 +218,8 @@ export default function useGameState(easyMode = false) {
     prestigeCount, setPrestigeCount,
     clickHistory, setClickHistory,
     initialOfflineDuration,
-    craftingItems, setCraftingItems,
+  isCraftingUnlocked, setIsCraftingUnlocked,
+  craftingItems, setCraftingItems,
     rawMaterials, setRawMaterials,
     resourcePurchaseCounts, setResourcePurchaseCounts,
 
