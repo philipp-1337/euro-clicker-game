@@ -4,6 +4,7 @@ import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 
 export const gameConfig = {
+  craftingCooldownSeconds: 5, // Standard-Cooldown für Crafting (Sekunden)
   // Basis-Kosten für Upgrades
   baseValueUpgradeCosts: [10, 20, 30, 40, 50],
   baseCooldownUpgradeCosts: [10, 20, 30, 40, 50],
@@ -80,6 +81,7 @@ export const gameConfig = {
         { id: "parts", quantity: 2 },
       ],
       output: { money: 100000 },
+      cooldownSeconds: 2, // Individueller Cooldown für dieses Produkt
     },
     {
       id: "gold_bar",
@@ -90,6 +92,7 @@ export const gameConfig = {
         { id: "tech", quantity: 1 },
       ],
       output: { money: 500000 },
+      cooldownSeconds: 4, // Individueller Cooldown für dieses Produkt
     },
   ],
 

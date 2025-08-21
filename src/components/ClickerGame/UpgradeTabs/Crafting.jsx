@@ -1,10 +1,67 @@
 import PropTypes from 'prop-types';
+import { useState, useRef, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
 
 
 export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, craftingUnlockCost, accumulatedPrestigeShares }) {
+  // Cooldown State: Array mit Endzeitpunkt pro Rezept
+  const [cooldowns, setCooldowns] = useState([]);
+  const [processing, setProcessing] = useState([]); // Merkt sich laufende Prozesse
+  const cooldownTimers = useRef([]);
+  const DEFAULT_COOLDOWN_SECONDS = gameConfig.craftingCooldownSeconds || 5; // Default 5 Sekunden
+
+  // Timer zum Aktualisieren der Cooldowns
+  useEffect(() => {
+    // Clear Timer on unmount
+    const timers = cooldownTimers.current;
+    return () => {
+      timers.forEach(timer => clearInterval(timer));
+    };
+  }, []);
+
+  // Hilfsfunktion: Startet Cooldown für Rezept-Index mit individueller Dauer
+  const startCooldown = (index, seconds) => {
+    const endTime = Date.now() + seconds * 1000;
+    setCooldowns(prev => {
+      const next = [...prev];
+      next[index] = endTime;
+      return next;
+    });
+    setProcessing(prev => {
+      const next = [...prev];
+      next[index] = true;
+      return next;
+    });
+    // Timer für Ablauf
+    if (cooldownTimers.current[index]) clearInterval(cooldownTimers.current[index]);
+    cooldownTimers.current[index] = setInterval(() => {
+      setCooldowns(prev => {
+        const now = Date.now();
+        if (prev[index] && now >= prev[index]) {
+          // Nach Ablauf: Crafting durchführen, aber nur wenn Prozess aktiv war
+          clearInterval(cooldownTimers.current[index]);
+          let shouldCraft = false;
+          setProcessing(procPrev => {
+            const nextProc = [...procPrev];
+            if (nextProc[index]) {
+              shouldCraft = true;
+              nextProc[index] = false;
+            }
+            return nextProc;
+          });
+          if (shouldCraft) {
+            buyCraftingItem(index);
+          }
+          const next = [...prev];
+          next[index] = null;
+          return next;
+        }
+        return prev;
+      });
+    }, 250);
+  };
 Crafting.propTypes = {
   money: PropTypes.number.isRequired,
   rawMaterials: PropTypes.object.isRequired,
@@ -89,7 +146,7 @@ Crafting.propTypes = {
         </div>
       </div>
 
-      {/* Production Orders */}
+      {/* Production Orders mit Cooldown */}
       {gameConfig.craftingRecipes.map((recipe, index) => {
         const canCraft = recipe.materials.every(material => 
           (rawMaterials[material.id] || 0) >= material.quantity
@@ -97,6 +154,12 @@ Crafting.propTypes = {
         const materialsList = recipe.materials.map(material => 
           `${material.quantity}x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
         ).join(', ');
+        const now = Date.now();
+        const cooldownEnd = cooldowns[index];
+        const isOnCooldown = cooldownEnd && now < cooldownEnd;
+        const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
+        const recipeCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
+        const isProcessing = processing[index];
 
         return (
           <div key={index} className="premium-upgrade-card">
@@ -113,13 +176,25 @@ Crafting.propTypes = {
             <div className="premium-upgrade-info">
               <div className="premium-upgrade-level">
                 Crafted: {(craftingItems && craftingItems[index]) || 0}
+                {isProcessing && isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
               </div>
               <button
-                onClick={() => buyCraftingItem(index)}
-                disabled={!canCraft}
-                className={`premium-upgrade-button ${!canCraft ? 'disabled' : ''}`}
+                onClick={() => {
+                  // Rohstoffe nur hier abziehen!
+                  const recipe = gameConfig.craftingRecipes[index];
+                  if (recipe && recipe.materials) {
+                    recipe.materials.forEach(material => {
+                      if (typeof rawMaterials[material.id] === 'number') {
+                        buyMaterial(material.id, -material.quantity);
+                      }
+                    });
+                  }
+                  startCooldown(index, recipeCooldown);
+                }}
+                disabled={!canCraft || isOnCooldown || isProcessing}
+                className={`premium-upgrade-button ${(!canCraft || isOnCooldown || isProcessing) ? 'disabled' : ''}`}
               >
-                Process
+                {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${recipeCooldown !== DEFAULT_COOLDOWN_SECONDS ? ` (${recipeCooldown}s)` : ''}`}
               </button>
             </div>
           </div>

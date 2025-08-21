@@ -41,14 +41,7 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
     );
     if (!hasAllMaterials) return;
 
-    // Ziehe Rohstoffe ab
-    setRawMaterials(prev => {
-      const updated = { ...prev };
-      recipe.materials.forEach(material => {
-        updated[material.id] = (updated[material.id] || 0) - material.quantity;
-      });
-      return updated;
-    });
+  // Rohstoffe werden NICHT mehr hier abgezogen! (nur beim Button-Klick)
 
     // Füge Output hinzu (hier: Geld, kann später erweitert werden)
     if (recipe.output.money) {
