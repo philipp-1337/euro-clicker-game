@@ -161,7 +161,9 @@ Crafting.propTypes = {
         const cooldownEnd = cooldowns[index];
         const isOnCooldown = cooldownEnd && now < cooldownEnd;
         const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
-        const recipeCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
+        const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
+        const baseCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
+        const recipeCooldown = baseCooldown * costMultiplier;
         const isProcessing = processing[index];
 
         // Progressbar-Berechnung
@@ -205,7 +207,7 @@ Crafting.propTypes = {
                 disabled={!canCraft || isOnCooldown || isProcessing}
                 className={`premium-upgrade-button ${(!canCraft || isOnCooldown || isProcessing) ? 'disabled' : ''}`}
               >
-                {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${recipeCooldown !== DEFAULT_COOLDOWN_SECONDS ? ` (${recipeCooldown}s)` : ''}`}
+                {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown) !== formatNumber(DEFAULT_COOLDOWN_SECONDS) ? ` (${formatNumber(recipeCooldown)})` : ''}`}
               </button>
             </div>
             {/* Progressbar am unteren Rand der Card */}
