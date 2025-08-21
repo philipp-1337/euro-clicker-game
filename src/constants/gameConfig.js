@@ -53,6 +53,13 @@ export const gameConfig = {
     },
   ],
 
+  unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+
+  unlockCraftingCost: 100000000,
+  unlockCraftingPrestige: 1,
+  resourceCostIncreaseFactor: 1.07, // 7% increase per purchase
+
+
   investments: [
     { name: "Taxi Company", cost: 12750, income: 7 },
     { name: "Energy Drinks", cost: 26500, income: 16 },
@@ -95,8 +102,6 @@ export const gameConfig = {
       cooldownSeconds: 140, // Individueller Cooldown für dieses Produkt
     },
   ],
-
-  resourceCostIncreaseFactor: 1.07, // 7% increase per purchase
 
   // Upgrade-Multiplikatoren
   upgradeValueMultiplier: 1.1, // +10% pro Level
@@ -165,9 +170,8 @@ export const gameConfig = {
       costExponent: 1.7, // Cost scaling per level
       effectPerLevel: 0.05, // e.g., 5% earnings per level
     },
-    unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
-    craftingUnlockCost: 100000000,
   },
+
   // Prestige-Konfiguration
   prestige: {
     moneyPerBasePoint: 1000000000, // 1 Milliarde Euro

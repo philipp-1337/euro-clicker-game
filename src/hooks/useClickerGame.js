@@ -225,7 +225,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
 
   // Kauflogik für Investments freischalten
   const unlockInvestments = useCallback(() => {
-    const unlockCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier; // <--- Easy Mode berücksichtigen
+    const unlockCost = gameConfig.unlockInvestmentCost * costMultiplier; // <--- Easy Mode berücksichtigen
     if (money >= unlockCost) {
       ensureStartTime?.();
       setMoney(prev => prev - unlockCost);
@@ -233,7 +233,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     }
   }, [money, setMoney, setIsInvestmentUnlocked, costMultiplier, ensureStartTime]);
 
-  const unlockInvestmentCost = gameConfig.premiumUpgrades.unlockInvestmentCost * costMultiplier;
+  const unlockInvestmentCost = gameConfig.unlockInvestmentCost * costMultiplier;
 
   // Offline Earnings Upgrade
   const currentOfflineEarningsFactor = useMemo(() =>

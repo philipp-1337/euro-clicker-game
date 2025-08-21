@@ -5,7 +5,7 @@ import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
 
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, craftingUnlockCost, accumulatedPrestigeShares }) {
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, unlockCraftingCost, accumulatedPrestigeShares }) {
   // Cooldown State: Array mit Endzeitpunkt pro Rezept
   const [cooldowns, setCooldowns] = useState([]);
   const [processing, setProcessing] = useState([]); // Merkt sich laufende Prozesse
@@ -96,21 +96,22 @@ Crafting.propTypes = {
             <h3>Unlock Wealth Production</h3>
           </div>
           <p className="premium-upgrade-description">
-            Unlock the Wealth Production tab to craft assets and earn money. Requires at least 1 Prestige. Prestige is available from {formatNumber(availablePrestige)} €.
+            Unlock the Wealth Production tab to craft assets and earn money. Requires at least {gameConfig.unlockCraftingPrestige} Prestige. Prestige is available from {formatNumber(availablePrestige)} €.
           </p>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
               Status: Locked
             </div>
-            {typeof unlockCrafting === 'function' && typeof craftingUnlockCost === 'number' && (accumulatedPrestigeShares >= 1) && (
+            {typeof unlockCrafting === 'function' && typeof unlockCraftingCost === 'number' && (accumulatedPrestigeShares >= gameConfig.unlockCraftingPrestige) && (
               <button
                 onClick={unlockCrafting}
-                disabled={money < craftingUnlockCost}
-                className={`premium-upgrade-button ${money < craftingUnlockCost ? 'disabled' : ''}`}
+                disabled={money < unlockCraftingCost}
+                className={`premium-upgrade-button ${money < unlockCraftingCost ? 'disabled' : ''}`}
               >
-                {`${formatNumber(craftingUnlockCost)} €`}
+                {`${formatNumber(unlockCraftingCost)} €`}
               </button>
             )}
+            {/* <button onClick={() => console.log(typeof accumulatedPrestigeShares === 'number')}>Log</button> */}
           </div>
         </div>
       </div>

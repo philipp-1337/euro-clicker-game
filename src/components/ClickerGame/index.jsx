@@ -127,7 +127,7 @@ export default function ClickerGame({
 
   // Crafting Unlock Handler
   const unlockCrafting = () => {
-    const unlockCost = gameConfig.premiumUpgrades.craftingUnlockCost;
+    const unlockCost = gameConfig.unlockCraftingCost;
     if (!isCraftingUnlocked && prestigeShares >= 1 && money >= unlockCost) {
       if (typeof setMoney === "function") {
         setMoney((prev) => prev - unlockCost);

@@ -136,7 +136,7 @@ export default function UpgradeTabs({
           currentFloatingClickValue={currentFloatingClickValue}
           isCraftingUnlocked={tab.id === 'crafting' ? isCraftingUnlocked : undefined}
           unlockCrafting={tab.id === 'crafting' ? unlockCrafting : undefined}
-          craftingUnlockCost={tab.id === 'crafting' ? gameConfig.premiumUpgrades.craftingUnlockCost : undefined}
+          unlockCraftingCost={tab.id === 'crafting' ? gameConfig.unlockCraftingCost : undefined}
           accumulatedPrestigeShares={tab.id === 'crafting' ? accumulatedPrestigeShares : undefined}
           craftingItems={tab.id === 'crafting' ? craftingItems : undefined}
           buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined}
