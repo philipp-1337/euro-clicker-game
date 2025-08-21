@@ -91,11 +91,10 @@ export default function UpgradeTabs({
           key={tab.id}
           money={money}
           buttons={buttons}
-          // Props specifically needed by BasicUpgrades for multi-buy cost calculation
           valueUpgradeLevels={tab.id === 'basic' ? valueUpgradeLevels : undefined}
           cooldownUpgradeLevels={tab.id === 'basic' ? cooldownUpgradeLevels : undefined}
-          easyMode={easyMode} // Pass easyMode to all tabs that might need it
-          buyQuantity={buyQuantity} // Pass buyQuantity to all tabs
+          easyMode={easyMode}
+          buyQuantity={buyQuantity}
           valueUpgradeCosts={valueUpgradeCosts}
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}
@@ -112,35 +111,35 @@ export default function UpgradeTabs({
           valueMultipliers={valueMultipliers}
           cooldownReductions={cooldownReductions}
           isInvestmentUnlocked={isInvestmentUnlocked}
-          unlockInvestments={unlockInvestments}
+          unlockInvestments={tab.id === 'investments' ? unlockInvestments : undefined}
+          unlockInvestmentCost={tab.id === 'investments' ? unlockInvestmentCost : undefined}
           totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
           globalPriceDecrease={globalPriceDecrease}
           globalPriceDecreaseLevel={globalPriceDecreaseLevel}
           globalPriceDecreaseCost={globalPriceDecreaseCost}
           buyGlobalPriceDecrease={buyGlobalPriceDecrease}
           totalMoneyPerSecond={totalMoneyPerSecond}
-          unlockInvestmentCost={unlockInvestmentCost}
           investmentCostMultiplier={investmentCostMultiplier}
-          offlineEarningsLevel={offlineEarningsLevel}                 // New
-          currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
-          buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
-          offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
-          criticalClickChanceLevel={criticalClickChanceLevel} // New
-          currentCriticalClickChance={currentCriticalClickChance} // New
-          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
-          criticalClickChanceCost={criticalClickChanceCost} // New
-          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined} // Pass to Investments tab
-          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
+          offlineEarningsLevel={offlineEarningsLevel}
+          currentOfflineEarningsFactor={currentOfflineEarningsFactor}
+          buyOfflineEarningsLevel={buyOfflineEarningsLevel}
+          offlineEarningsLevelCost={offlineEarningsLevelCost}
+          criticalClickChanceLevel={criticalClickChanceLevel}
+          currentCriticalClickChance={currentCriticalClickChance}
+          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
+          criticalClickChanceCost={criticalClickChanceCost}
+          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined}
+          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined}
           floatingClickValueLevel={floatingClickValueLevel}
           floatingClickValueMultiplier={floatingClickValueMultiplier}
           buyFloatingClickValue={buyFloatingClickValue}
           currentFloatingClickValue={currentFloatingClickValue}
-          // Crafting unlock props
-          isCraftingUnlocked={tab.id === 'crafting' || tab.id === 'premium' ? isCraftingUnlocked : undefined}
-          unlockCrafting={tab.id === 'premium' ? unlockCrafting : undefined}
-          accumulatedPrestigeShares={tab.id === 'premium' ? accumulatedPrestigeShares : undefined}
-          craftingItems={tab.id === 'crafting' ? craftingItems : undefined} // Pass to Crafting tab
-          buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined} // Pass to Crafting tab
+          isCraftingUnlocked={tab.id === 'crafting' ? isCraftingUnlocked : undefined}
+          unlockCrafting={tab.id === 'crafting' ? unlockCrafting : undefined}
+          craftingUnlockCost={tab.id === 'crafting' ? gameConfig.premiumUpgrades.craftingUnlockCost : undefined}
+          accumulatedPrestigeShares={tab.id === 'crafting' ? accumulatedPrestigeShares : undefined}
+          craftingItems={tab.id === 'crafting' ? craftingItems : undefined}
+          buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined}
           rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
           setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
           resourcePurchaseCounts={tab.id === 'crafting' ? resourcePurchaseCounts : undefined}

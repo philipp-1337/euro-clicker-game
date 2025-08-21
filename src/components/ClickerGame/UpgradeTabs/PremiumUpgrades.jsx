@@ -1,4 +1,4 @@
-import { DollarSign, Star, Percent, HistoryIcon, Zap as ZapIcon, Warehouse } from 'lucide-react';
+import { Star, Percent, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -15,9 +15,6 @@ export default function PremiumUpgrades({
   globalPriceDecreaseCost,
   buyGlobalPriceDecrease,
   buyGlobalMultiplier,
-  isInvestmentUnlocked,
-  unlockInvestments,
-  unlockInvestmentCost,
   offlineEarningsLevel,
   currentOfflineEarningsFactor,
   buyOfflineEarningsLevel,
@@ -33,17 +30,11 @@ export default function PremiumUpgrades({
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
-  // Crafting Unlock Props
-  isCraftingUnlocked,
-  unlockCrafting,
-  accumulatedPrestigeShares,
 
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   // Crafting Unlock
-  const craftingUnlockCost = gameConfig.premiumUpgrades.craftingUnlockCost; 
-  const canShowCraftingUnlock = accumulatedPrestigeShares >= 1;
-  const canUnlockCrafting = !isCraftingUnlocked && money >= craftingUnlockCost;
+
   const globalMultiplierPercentage = getPercentage(
     gameConfig.premiumUpgrades.globalMultiplier.factor
   );
@@ -277,55 +268,7 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-        <DollarSign className="premium-icon" />
-          <h3>Investments</h3>
-        </div>
-        <p className="premium-upgrade-description">
-        Unlock the Investments tab to invest in companies.
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Status: {isInvestmentUnlocked ? 'Unlocked' : 'Locked'}
-          </div>
-          <button
-            onClick={() => {
-              console.log('Button clicked, money:', money, 'cost:', unlockInvestmentCost);
-              unlockInvestments();
-            }}
-            disabled={money < unlockInvestmentCost || isInvestmentUnlocked}
-            className={`premium-upgrade-button ${money < unlockInvestmentCost || isInvestmentUnlocked ? 'disabled' : ''}`}
-          >
-            {isInvestmentUnlocked ? 'Unlocked' : `${formatNumber(unlockInvestmentCost)} €`}
-          </button>
-        </div>
-      </div>
-
-      {/* Unlock Crafting (only visible after 1x Prestige) */}
-      {canShowCraftingUnlock && (
-        <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <Warehouse className="premium-icon" />
-            <h3>Wealth Production</h3>
-          </div>
-          <p className="premium-upgrade-description">
-            Unlock the Wealth Production tab to craft assets and earn money. Requires at least 1 Prestige.
-          </p>
-          <div className="premium-upgrade-info">
-            <div className="premium-upgrade-level">
-              Status: {isCraftingUnlocked ? 'Unlocked' : 'Locked'}
-            </div>
-            <button
-              onClick={unlockCrafting}
-              disabled={!canUnlockCrafting}
-              className={`premium-upgrade-button ${!canUnlockCrafting ? 'disabled' : ''}`}
-            >
-              {isCraftingUnlocked ? 'Unlocked' : `${formatNumber(craftingUnlockCost)} €`}
-            </button>
-          </div>
-        </div>
-      )}
+  {/* ...existing code... (removed unlock cards for Investments and Crafting) */}
     </div>
   );
 }

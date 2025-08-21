@@ -2,7 +2,7 @@ import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked }) {
+export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked, unlockInvestments, unlockInvestmentCost }) {
   const [boostClickStates, setBoostClickStates] = React.useState(() => {
     // Initialize boost states from localStorage
     return gameConfig.investments.map((investment, index) => {
@@ -57,27 +57,37 @@ export default function Investments({ money, investments, buyInvestment, totalIn
 
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">
-        Investments
-      </h2>
+      <h2 className="section-title">Investments</h2>
       {!isInvestmentUnlocked ? (
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
-            <h3>Locked</h3>
+            <h3>Unlock Investments</h3>
           </div>
           <p className="premium-upgrade-description">
-            This feature is locked. Unlock it in the Premium Upgrades tab.
+            Unlock the Investments tab to invest in companies.
           </p>
+          <div className="premium-upgrade-info">
+            <div className="premium-upgrade-level">
+              Status: Locked
+            </div>
+            {/* You may need to pass unlockInvestments and unlockInvestmentCost as props from parent */}
+            {typeof unlockInvestments === 'function' && typeof unlockInvestmentCost === 'number' && (
+              <button
+                onClick={unlockInvestments}
+                disabled={money < unlockInvestmentCost}
+                className={`premium-upgrade-button ${money < unlockInvestmentCost ? 'disabled' : ''}`}
+              >
+                {`${formatNumber(unlockInvestmentCost)} €`}
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         gameConfig.investments.map((investment, index) => {
           const cost = investment.cost * (investmentCostMultiplier ?? 1);
           const purchased = investments[index] ? true : false;
-          // Determine effective income based on the local boost click state for display purposes.
-          // The actual income calculation for totalIncomePerSecond happens in the parent hook.
           const isLocallyBoosted = boostClickStates[index].boosted;
           const displayedIncome = isLocallyBoosted ? investment.income * 2 : investment.income;
-
           return (
             <div key={index} className="premium-upgrade-card">
               <div className="premium-upgrade-header">
@@ -93,7 +103,6 @@ export default function Investments({ money, investments, buyInvestment, totalIn
                 <div className="premium-upgrade-level">
                   Purchased: {purchased ? 'Yes' : 'No'}
                 </div>
-                {/* Wrap buttons in a div to control spacing between them */}
                 <div className="investment-buttons-group">
                   <button
                     onClick={() => buyInvestment(index)}
@@ -102,11 +111,10 @@ export default function Investments({ money, investments, buyInvestment, totalIn
                   >
                     {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
                   </button>
-                  {/* Add boost button for each investment */}
                   <button
                     onClick={() => handleBoostClick(index)}
-                    disabled={!purchased || boostClickStates[index].boosted} // Disable if not purchased or already boosted
-                    className={`premium-upgrade-button ${(!purchased || boostClickStates[index].boosted) ? 'disabled' : ''}`} // Apply disabled class based on new condition
+                    disabled={!purchased || boostClickStates[index].boosted}
+                    className={`premium-upgrade-button ${(!purchased || boostClickStates[index].boosted) ? 'disabled' : ''}`}
                   >
                     {boostClickStates[index].boosted ? "Earnings Boosted" : `Boost (${boostClickStates[index].clicks}/100)`}
                   </button>

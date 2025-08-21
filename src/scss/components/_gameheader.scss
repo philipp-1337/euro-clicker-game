@@ -1,0 +1,19 @@
+.prestige-pulse {
+  display: inline-flex;
+  animation: prestige-pulse 1.2s infinite;
+}
+
+@keyframes prestige-pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px gold);
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px gold);
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 2px gold);
+  }
+}

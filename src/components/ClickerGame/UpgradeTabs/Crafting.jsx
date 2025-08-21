@@ -4,7 +4,7 @@ import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
 
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false }) {
+export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, craftingUnlockCost, accumulatedPrestigeShares }) {
 Crafting.propTypes = {
   money: PropTypes.number.isRequired,
   rawMaterials: PropTypes.object.isRequired,
@@ -27,18 +27,35 @@ Crafting.propTypes = {
     return total;
   };
 
+  const availablePrestige = gameConfig.prestige.minMoneyForModalButton;
+
   if (!isCraftingUnlocked) {
+    // You may need to pass unlockCrafting, craftingUnlockCost, accumulatedPrestigeShares as props from parent
     return (
       <div className="upgrade-section premium-section">
         <h2 className="section-title">Wealth Production</h2>
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <Warehouse className="premium-icon" />
-            <h3>Locked</h3>
+            <h3>Unlock Wealth Production</h3>
           </div>
           <p className="premium-upgrade-description">
-            This feature is locked. Unlock it in the Premium Upgrades tab after at least 1 Prestige.
+            Unlock the Wealth Production tab to craft assets and earn money. Requires at least 1 Prestige. Prestige is available from {formatNumber(availablePrestige)} €.
           </p>
+          <div className="premium-upgrade-info">
+            <div className="premium-upgrade-level">
+              Status: Locked
+            </div>
+            {typeof unlockCrafting === 'function' && typeof craftingUnlockCost === 'number' && (accumulatedPrestigeShares >= 1) && (
+              <button
+                onClick={unlockCrafting}
+                disabled={money < craftingUnlockCost}
+                className={`premium-upgrade-button ${money < craftingUnlockCost ? 'disabled' : ''}`}
+              >
+                {`${formatNumber(craftingUnlockCost)} €`}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );

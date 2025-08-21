@@ -204,11 +204,13 @@ export default function GameHeader(props) {
           {/* Prestige Button */}
           {showPrestigeButtonInHeader && (
             <button
-              className="settings-button header-icon prestige-header-button" // Add a class for styling
+              className="settings-button header-icon prestige-header-button"
               onClick={() => setShowPrestigeModal(true)}
               title="Prestige"
             >
-              <PrestigeHeaderIcon size={20} />
+              <span className="prestige-pulse">
+                <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
+              </span>
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}
