@@ -72,7 +72,7 @@ export default function UpgradeTabs({
       <div className="upgrade-tabs">
       <div className="upgrade-tabs-inner">
         {gameConfig.ui.tabs.map((tab) => (
-          ((tab.id !== 'investments' || isInvestmentUnlocked)) && (
+          (
             <button
               key={tab.id}
               className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}

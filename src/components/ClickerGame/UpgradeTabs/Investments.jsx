@@ -2,7 +2,7 @@ import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted }) {
+export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked }) {
   const [boostClickStates, setBoostClickStates] = React.useState(() => {
     // Initialize boost states from localStorage
     return gameConfig.investments.map((investment, index) => {
@@ -60,51 +60,62 @@ export default function Investments({ money, investments, buyInvestment, totalIn
       <h2 className="section-title">
         Investments
       </h2>
-      {gameConfig.investments.map((investment, index) => {
-        const cost = investment.cost * (investmentCostMultiplier ?? 1);
-        const purchased = investments[index] ? true : false;
-        // Determine effective income based on the local boost click state for display purposes.
-        // The actual income calculation for totalIncomePerSecond happens in the parent hook.
-        const isLocallyBoosted = boostClickStates[index].boosted;
-        const displayedIncome = isLocallyBoosted ? investment.income * 2 : investment.income;
-
-        return (
-          <div key={index} className="premium-upgrade-card">
-            <div className="premium-upgrade-header">
-              <h3>{investment.name}</h3>
-            </div>
-            <p className="premium-upgrade-description">
-              Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
-            </p>
-            <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
-              Click the "Boost" button 100 times to permanently double the income from this investment!
-            </p>
-            <div className="premium-upgrade-info">
-              <div className="premium-upgrade-level">
-                Purchased: {purchased ? 'Yes' : 'No'}
-              </div>
-              {/* Wrap buttons in a div to control spacing between them */}
-              <div className="investment-buttons-group">
-                <button
-                  onClick={() => buyInvestment(index)}
-                  disabled={money < cost || purchased}
-                  className={`premium-upgrade-button ${money < cost || purchased ? 'disabled' : ''}`}
-                >
-                  {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
-                </button>
-                {/* Add boost button for each investment */}
-                <button
-                  onClick={() => handleBoostClick(index)}
-                  disabled={!purchased || boostClickStates[index].boosted} // Disable if not purchased or already boosted
-                  className={`premium-upgrade-button ${(!purchased || boostClickStates[index].boosted) ? 'disabled' : ''}`} // Apply disabled class based on new condition
-                >
-                  {boostClickStates[index].boosted ? "Earnings Boosted" : `Boost (${boostClickStates[index].clicks}/100)`}
-                </button>
-              </div>
-            </div>
+      {!isInvestmentUnlocked ? (
+        <div className="premium-upgrade-card">
+          <div className="premium-upgrade-header">
+            <h3>Locked</h3>
           </div>
-        );
-      })}
+          <p className="premium-upgrade-description">
+            This feature is locked. Unlock it in the Premium Upgrades tab.
+          </p>
+        </div>
+      ) : (
+        gameConfig.investments.map((investment, index) => {
+          const cost = investment.cost * (investmentCostMultiplier ?? 1);
+          const purchased = investments[index] ? true : false;
+          // Determine effective income based on the local boost click state for display purposes.
+          // The actual income calculation for totalIncomePerSecond happens in the parent hook.
+          const isLocallyBoosted = boostClickStates[index].boosted;
+          const displayedIncome = isLocallyBoosted ? investment.income * 2 : investment.income;
+
+          return (
+            <div key={index} className="premium-upgrade-card">
+              <div className="premium-upgrade-header">
+                <h3>{investment.name}</h3>
+              </div>
+              <p className="premium-upgrade-description">
+                Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
+              </p>
+              <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
+                Click the "Boost" button 100 times to permanently double the income from this investment!
+              </p>
+              <div className="premium-upgrade-info">
+                <div className="premium-upgrade-level">
+                  Purchased: {purchased ? 'Yes' : 'No'}
+                </div>
+                {/* Wrap buttons in a div to control spacing between them */}
+                <div className="investment-buttons-group">
+                  <button
+                    onClick={() => buyInvestment(index)}
+                    disabled={money < cost || purchased}
+                    className={`premium-upgrade-button ${money < cost || purchased ? 'disabled' : ''}`}
+                  >
+                    {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
+                  </button>
+                  {/* Add boost button for each investment */}
+                  <button
+                    onClick={() => handleBoostClick(index)}
+                    disabled={!purchased || boostClickStates[index].boosted} // Disable if not purchased or already boosted
+                    className={`premium-upgrade-button ${(!purchased || boostClickStates[index].boosted) ? 'disabled' : ''}`} // Apply disabled class based on new condition
+                  >
+                    {boostClickStates[index].boosted ? "Earnings Boosted" : `Boost (${boostClickStates[index].clicks}/100)`}
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
     </div>
   );
 }
