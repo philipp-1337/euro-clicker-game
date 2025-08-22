@@ -49,6 +49,8 @@ export default function UpgradeTabs({
   currentFloatingClickValue,
   autoBuyValueUpgradeEnabled,
   setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
   craftingItems, // New prop for crafting items
   buyCraftingItem, // New prop for buying crafting items
   rawMaterials,
@@ -103,6 +105,8 @@ export default function UpgradeTabs({
           buyCooldownUpgrade={buyCooldownUpgrade}
           autoBuyValueUpgradeEnabled={tab.id === 'basic' ? autoBuyValueUpgradeEnabled : undefined}
           setAutoBuyValueUpgradeEnabled={tab.id === 'basic' ? setAutoBuyValueUpgradeEnabled : undefined}
+          autoBuyCooldownUpgradeEnabled={tab.id === 'basic' ? autoBuyCooldownUpgradeEnabled : undefined}
+          setAutoBuyCooldownUpgradeEnabled={tab.id === 'basic' ? setAutoBuyCooldownUpgradeEnabled : undefined}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           globalMultiplierCost={globalMultiplierCost}

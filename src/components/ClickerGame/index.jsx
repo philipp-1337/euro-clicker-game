@@ -125,6 +125,8 @@ export default function ClickerGame({
   setIsCraftingUnlocked,
   autoBuyValueUpgradeEnabled,
   setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   // Crafting Unlock Handler
@@ -643,6 +645,8 @@ export default function ClickerGame({
             accumulatedPrestigeShares={prestigeShares}
             autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
             setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
+            autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
+            setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
           />
         </div>
       )}

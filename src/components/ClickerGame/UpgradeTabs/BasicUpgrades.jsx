@@ -17,8 +17,10 @@ export default function BasicUpgrades({
     cooldownUpgradeCosts, // Used for single cooldown upgrades
     money, 
     buyValueUpgrade, 
-    autoBuyValueUpgradeEnabled,
-    setAutoBuyValueUpgradeEnabled,
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
     buyCooldownUpgrade,
     cooldownReductions,
     managers,
@@ -86,26 +88,37 @@ export default function BasicUpgrades({
   if (!managerCosts || managerCosts.length === 0) {
     return null; // Oder ein Lade-Indikator, falls du möchtest
   }
-    return (
-      <div className="upgrade-section">
-        <h2 className="section-title">Basic Upgrades</h2>
+  return (
+    <div className="upgrade-section">
+      <h2 className="section-title">Basic Upgrades</h2>
 
-        {/* Globaler AutoBuyer Toggle */}
-        <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+      {/* Globaler AutoBuyer Toggle */}
+      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button
+          onClick={() => setAutoBuyValueUpgradeEnabled(v => !v)}
+          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyValueUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          {autoBuyValueUpgradeEnabled ? 'AutoBuyer: Aktiviert' : 'AutoBuyer: Deaktiviert'}
+        </button>
+        <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Value Upgrade alle 1 Sekunde</span>
+      </div>
+
+      {/* Globaler Cooldown AutoBuyer Toggle */}
+      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <button
+          onClick={() => setAutoBuyCooldownUpgradeEnabled(v => !v)}
+          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyCooldownUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          {autoBuyCooldownUpgradeEnabled ? 'Cooldown AutoBuyer: Aktiviert' : 'Cooldown AutoBuyer: Deaktiviert'}
+        </button>
+        <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Cooldown Upgrade alle 1 Sekunde</span>
+      </div>
+
+      <h3 className="section-title">Increase Value</h3>
+      <div className="upgrade-buttons">
+        {buttons.map((button, index) => (
           <button
-            onClick={() => setAutoBuyValueUpgradeEnabled(v => !v)}
-            style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyValueUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
-          >
-            {autoBuyValueUpgradeEnabled ? 'AutoBuyer: Aktiviert' : 'AutoBuyer: Deaktiviert'}
-          </button>
-          <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Value Upgrade alle 1 Sekunde</span>
-        </div>
-
-        <h3 className="section-title">Increase Value</h3>
-        <div className="upgrade-buttons">
-          {buttons.map((button, index) => (
-            <button
-              key={`value-${index}`}
+            key={`value-${index}`}
               onClick={() => handleValueUpgradeClick(index)}
               disabled={money < calculateTotalValueUpgradeCost(index, buyQuantity)}
               className={`upgrade-button ${button.colorClass} ${money < calculateTotalValueUpgradeCost(index, buyQuantity) ? 'disabled' : ''}`}

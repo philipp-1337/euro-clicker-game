@@ -58,6 +58,46 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
   // Globaler AutoBuyer für Value Upgrades
   const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
+  // Globaler AutoBuyer für Cooldown Upgrades
+  const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(false);
+  // AutoBuyer-Logik: kauft alle 1 Sekunde das günstigste Cooldown Upgrade
+  useEffect(() => {
+    if (!autoBuyCooldownUpgradeEnabled) return;
+    const interval = setInterval(() => {
+      setMoney(prevMoney => {
+        let minCost = Infinity;
+        let minIndex = -1;
+        cooldownUpgradeLevels.forEach((level, idx) => {
+          const cost = calculateCostWithDifficulty(
+            gameConfig.baseCooldownUpgradeCosts[idx],
+            level,
+            gameConfig.upgrades.cooldownCostIncreaseFactor,
+            easyMode,
+            gameConfig.getCostMultiplier
+          ) * globalPriceDecrease;
+          if (cost < minCost) {
+            minCost = cost;
+            minIndex = idx;
+          }
+        });
+        if (minIndex !== -1 && minCost > 0 && prevMoney >= minCost) {
+          setCooldownReductions(prev => {
+            const updated = [...prev];
+            updated[minIndex] *= gameConfig.upgrades.cooldownReductionFactor;
+            return updated;
+          });
+          setCooldownUpgradeLevels(prev => {
+            const updated = [...prev];
+            updated[minIndex] += 1;
+            return updated;
+          });
+          return prevMoney - minCost;
+        }
+        return prevMoney;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [autoBuyCooldownUpgradeEnabled, cooldownUpgradeLevels, setCooldownUpgradeLevels, setCooldownReductions, easyMode, globalPriceDecrease, setMoney]);
   
   // Berechnungen für abgeleitete Zustände 
   const {
@@ -171,7 +211,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [autoBuyValueUpgradeEnabled, valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers, easyMode, globalPriceDecrease]);
+  }, [autoBuyValueUpgradeEnabled, valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers, easyMode, globalPriceDecrease, setMoney]);
 
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -661,6 +701,8 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   // Funktionen 
   autoBuyValueUpgradeEnabled,
   setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
     handleClick: wrappedHandleClick,
     playTime,
     buyManager,
