@@ -130,6 +130,10 @@ export const gameConfig = {
     offlineEarningsLevel: 0, // Level for offline earnings
     criticalClickChanceLevel: 0, // Level for critical click chance upgrade
     prestigeCount: 0, // Initial prestige count
+    autoBuyerInterval: 1000, // Initial interval in ms
+    autoBuyerBuffer: 0, // Initial buffer
+    autoBuyerUnlocked: false,
+    cooldownAutoBuyerUnlocked: false,
   },
   activePlayTime: 0, // Initial aktive Spielzeit
   prestigeShares: 0, // Initial prestige shares

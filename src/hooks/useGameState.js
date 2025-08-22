@@ -54,6 +54,12 @@ export default function useGameState(easyMode = false) {
   const [rawMaterials, setRawMaterials] = useState(gameConfig.initialState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
   const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(gameConfig.initialState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
 
+  // AutoBuyer Settings
+  const [autoBuyerInterval, setAutoBuyerInterval] = useState(gameConfig.initialState.autoBuyerInterval);
+  const [autoBuyerBuffer, setAutoBuyerBuffer] = useState(gameConfig.initialState.autoBuyerBuffer);
+  const [autoBuyerUnlocked, setAutoBuyerUnlocked] = useState(gameConfig.initialState.autoBuyerUnlocked);
+  const [cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked] = useState(gameConfig.initialState.cooldownAutoBuyerUnlocked);
+
   // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
     return gameConfig.investments.map((_, index) => {
@@ -100,6 +106,10 @@ export default function useGameState(easyMode = false) {
     prestigeShares, // Add prestige shares to game state
     prestigeCount, // Add prestige count to game state
     clickHistory, // Add click history to game state
+    autoBuyerInterval,
+    autoBuyerBuffer,
+    autoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked,
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -148,6 +158,10 @@ export default function useGameState(easyMode = false) {
     setCraftingItems(savedState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
     setRawMaterials(savedState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
     setResourcePurchaseCounts(savedState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
+    setAutoBuyerInterval(savedState.autoBuyerInterval ?? gameConfig.initialState.autoBuyerInterval);
+    setAutoBuyerBuffer(savedState.autoBuyerBuffer ?? gameConfig.initialState.autoBuyerBuffer);
+    setAutoBuyerUnlocked(savedState.autoBuyerUnlocked ?? gameConfig.initialState.autoBuyerUnlocked);
+    setCooldownAutoBuyerUnlocked(savedState.cooldownAutoBuyerUnlocked ?? gameConfig.initialState.cooldownAutoBuyerUnlocked);
 
     // Schreibe Crafting-Unlock-Status auch in LocalStorage für Cross-Device
     try {
@@ -212,6 +226,10 @@ export default function useGameState(easyMode = false) {
     criticalClickChanceLevel, setCriticalClickChanceLevel,
     floatingClickValueLevel, setFloatingClickValueLevel,
     floatingClickValueMultiplier, setFloatingClickValueMultiplier,
+    autoBuyerInterval, setAutoBuyerInterval,
+    autoBuyerBuffer, setAutoBuyerBuffer,
+    autoBuyerUnlocked, setAutoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
     boostedInvestments: boostedInvestmentsData,
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,

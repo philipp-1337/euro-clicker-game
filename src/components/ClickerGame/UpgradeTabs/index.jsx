@@ -66,7 +66,11 @@ export default function UpgradeTabs({
   autoBuyerUnlockCost,
   cooldownAutoBuyerUnlocked,
   buyCooldownAutoBuyerUnlock,
-  cooldownAutoBuyerUnlockCost
+  cooldownAutoBuyerUnlockCost,
+  autoBuyerInterval,
+  setAutoBuyerInterval,
+  autoBuyerBuffer,
+  setAutoBuyerBuffer,
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -119,6 +123,10 @@ export default function UpgradeTabs({
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
           buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
           cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
+          autoBuyerInterval={autoBuyerInterval}
+          setAutoBuyerInterval={setAutoBuyerInterval}
+          autoBuyerBuffer={autoBuyerBuffer}
+          setAutoBuyerBuffer={setAutoBuyerBuffer}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           globalMultiplierCost={globalMultiplierCost}
