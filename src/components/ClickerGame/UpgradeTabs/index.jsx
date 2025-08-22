@@ -47,6 +47,8 @@ export default function UpgradeTabs({
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
   craftingItems, // New prop for crafting items
   buyCraftingItem, // New prop for buying crafting items
   rawMaterials,
@@ -87,7 +89,7 @@ export default function UpgradeTabs({
 
     {gameConfig.ui.tabs.map(tab => (
       activeTab === tab.id && (
-        <tab.component
+  <tab.component
           key={tab.id}
           money={money}
           buttons={buttons}
@@ -99,6 +101,8 @@ export default function UpgradeTabs({
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}
           buyCooldownUpgrade={buyCooldownUpgrade}
+          autoBuyValueUpgradeEnabled={tab.id === 'basic' ? autoBuyValueUpgradeEnabled : undefined}
+          setAutoBuyValueUpgradeEnabled={tab.id === 'basic' ? setAutoBuyValueUpgradeEnabled : undefined}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           globalMultiplierCost={globalMultiplierCost}

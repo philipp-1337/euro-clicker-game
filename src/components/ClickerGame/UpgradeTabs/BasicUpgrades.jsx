@@ -17,6 +17,8 @@ export default function BasicUpgrades({
     cooldownUpgradeCosts, // Used for single cooldown upgrades
     money, 
     buyValueUpgrade, 
+    autoBuyValueUpgradeEnabled,
+    setAutoBuyValueUpgradeEnabled,
     buyCooldownUpgrade,
     cooldownReductions,
     managers,
@@ -87,6 +89,17 @@ export default function BasicUpgrades({
     return (
       <div className="upgrade-section">
         <h2 className="section-title">Basic Upgrades</h2>
+
+        {/* Globaler AutoBuyer Toggle */}
+        <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => setAutoBuyValueUpgradeEnabled(v => !v)}
+            style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyValueUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+          >
+            {autoBuyValueUpgradeEnabled ? 'AutoBuyer: Aktiviert' : 'AutoBuyer: Deaktiviert'}
+          </button>
+          <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Value Upgrade alle 1 Sekunde</span>
+        </div>
 
         <h3 className="section-title">Increase Value</h3>
         <div className="upgrade-buttons">

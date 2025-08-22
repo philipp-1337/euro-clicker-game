@@ -121,8 +121,10 @@ export default function ClickerGame({
     resourcePurchaseCounts,
     setRawMaterials,
     setResourcePurchaseCounts,
-    isCraftingUnlocked,
-    setIsCraftingUnlocked,
+  isCraftingUnlocked,
+  setIsCraftingUnlocked,
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   // Crafting Unlock Handler
@@ -639,6 +641,8 @@ export default function ClickerGame({
             isCraftingUnlocked={isCraftingUnlocked}
             unlockCrafting={unlockCrafting}
             accumulatedPrestigeShares={prestigeShares}
+            autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+            setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
           />
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import { calculateCostWithDifficulty } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -55,6 +56,8 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
+  // Globaler AutoBuyer für Value Upgrades
+  const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
   
   // Berechnungen für abgeleitete Zustände 
   const {
@@ -128,6 +131,47 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     easyMode, // Pass easyMode
     globalPriceDecrease // Pass globalPriceDecrease
   );
+
+  // AutoBuyer-Logik: kauft alle 1 Sekunde das günstigste Value Upgrade
+  useEffect(() => {
+    if (!autoBuyValueUpgradeEnabled) return;
+    const interval = setInterval(() => {
+      setMoney(prevMoney => {
+        let minCost = Infinity;
+        let minIndex = -1;
+        // Hole die aktuellen Upgrade-Levels synchron aus dem State
+        valueUpgradeLevels.forEach((level, idx) => {
+          const cost = calculateCostWithDifficulty(
+            gameConfig.baseValueUpgradeCosts[idx],
+            level,
+            gameConfig.upgrades.costIncreaseFactor,
+            easyMode,
+            gameConfig.getCostMultiplier
+          ) * globalPriceDecrease;
+          if (cost < minCost) {
+            minCost = cost;
+            minIndex = idx;
+          }
+        });
+        if (minIndex !== -1 && minCost > 0 && prevMoney >= minCost) {
+          // States synchron updaten
+          setValueMultipliers(prev => {
+            const updated = [...prev];
+            updated[minIndex] *= gameConfig.upgrades.valueMultiplierFactor;
+            return updated;
+          });
+          setValueUpgradeLevels(prev => {
+            const updated = [...prev];
+            updated[minIndex] += 1;
+            return updated;
+          });
+          return prevMoney - minCost;
+        }
+        return prevMoney;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [autoBuyValueUpgradeEnabled, valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers, easyMode, globalPriceDecrease]);
 
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -614,7 +658,9 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     prestigeBonusMultiplier,
     canPrestige,
     
-    // Funktionen 
+  // Funktionen 
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
     handleClick: wrappedHandleClick,
     playTime,
     buyManager,
