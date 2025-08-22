@@ -235,7 +235,7 @@ export default function GameHeader(props) {
               aria-label="Toggle Value AutoBuyer"
             >
                 <EuroIcon size={20} style={{ color: autoBuyValueUpgradeEnabled ? 'green' : undefined }} />
-                <BotIcon size={18} style={{ marginLeft: 4, color: autoBuyValueUpgradeEnabled ? 'green' : undefined }} />
+                <BotIcon size={18} style={{ marginLeft: 0, color: autoBuyValueUpgradeEnabled ? 'green' : undefined }} />
             </button>
           )}
           {cooldownAutoBuyerUnlocked && (
@@ -246,7 +246,7 @@ export default function GameHeader(props) {
               aria-label="Toggle Cooldown AutoBuyer"
             >
                 <TimerIcon size={20} style={{ color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
-                <BotIcon size={18} style={{ marginLeft: 4, color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
+                <BotIcon size={18} style={{ marginLeft: 0, color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}

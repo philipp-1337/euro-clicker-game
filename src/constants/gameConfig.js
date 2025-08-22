@@ -149,14 +149,6 @@ export const gameConfig = {
       costExponent: 1.3, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
     },
-    autoBuyerUnlock: {
-      baseCost: 10000,
-      costExponent: 1.5,
-    },
-    cooldownAutoBuyerUnlock: {
-      baseCost: 15000,
-      costExponent: 1.5,
-    },
     globalMultiplier: {
       baseCost: 1000,
       costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
@@ -179,6 +171,14 @@ export const gameConfig = {
       costExponent: 1.7, // Cost scaling per level
       effectPerLevel: 0.05, // e.g., 5% earnings per level
     },
+    autoBuyerUnlock: {
+      baseCost: 10000,
+      costExponent: 1.5,
+    },
+    cooldownAutoBuyerUnlock: {
+      baseCost: 15000,
+      costExponent: 1.5,
+    }
   },
 
   // Prestige-Konfiguration
