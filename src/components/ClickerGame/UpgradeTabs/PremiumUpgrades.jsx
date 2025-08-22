@@ -30,6 +30,12 @@ export default function PremiumUpgrades({
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
+  autoBuyerUnlocked,
+  buyAutoBuyerUnlock,
+  autoBuyerUnlockCost,
+  cooldownAutoBuyerUnlocked,
+  buyCooldownAutoBuyerUnlock,
+  cooldownAutoBuyerUnlockCost
 
 }) {
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
@@ -151,7 +157,53 @@ export default function PremiumUpgrades({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
-      {/* Floating Click Value Premium Upgrade */}
+      {/* Premium Upgrade: AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Star className="premium-icon" />
+          <h3>Value AutoBuyer Unlock</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the automatic Value Upgrade buyer. Once purchased, you can enable the AutoBuyer in the Basic Upgrades tab.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            {autoBuyerUnlocked ? 'Unlocked' : 'Locked'}
+          </div>
+          <button
+            onClick={buyAutoBuyerUnlock}
+            disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
+            className={`premium-upgrade-button ${autoBuyerUnlocked || money < autoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={autoBuyerUnlocked ? 'Already unlocked' : 'Unlock AutoBuyer'}
+          >
+            {autoBuyerUnlocked ? 'Unlocked' : `${formatNumber(autoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Cooldown AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Star className="premium-icon" />
+          <h3>Cooldown AutoBuyer Unlock</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the automatic Cooldown Upgrade buyer. Once purchased, you can enable the Cooldown AutoBuyer in the Basic Upgrades tab.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            {cooldownAutoBuyerUnlocked ? 'Unlocked' : 'Locked'}
+          </div>
+          <button
+            onClick={buyCooldownAutoBuyerUnlock}
+            disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={cooldownAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Cooldown AutoBuyer'}
+          >
+            {cooldownAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(cooldownAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Star className="premium-icon" />

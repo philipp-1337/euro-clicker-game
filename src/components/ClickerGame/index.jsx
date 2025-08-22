@@ -127,6 +127,12 @@ export default function ClickerGame({
   setAutoBuyValueUpgradeEnabled,
   autoBuyCooldownUpgradeEnabled,
   setAutoBuyCooldownUpgradeEnabled,
+  autoBuyerUnlocked,
+  buyAutoBuyerUnlock,
+  autoBuyerUnlockCost,
+  cooldownAutoBuyerUnlocked,
+  buyCooldownAutoBuyerUnlock,
+  cooldownAutoBuyerUnlockCost,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   // Crafting Unlock Handler
@@ -647,6 +653,12 @@ export default function ClickerGame({
             setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
             autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
             setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
+            autoBuyerUnlocked={autoBuyerUnlocked}
+            buyAutoBuyerUnlock={buyAutoBuyerUnlock}
+            autoBuyerUnlockCost={autoBuyerUnlockCost}
+            cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
+            buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
+            cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
           />
         </div>
       )}

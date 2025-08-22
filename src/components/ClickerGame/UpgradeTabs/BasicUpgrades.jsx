@@ -21,19 +21,21 @@ export default function BasicUpgrades({
   setAutoBuyValueUpgradeEnabled,
   autoBuyCooldownUpgradeEnabled,
   setAutoBuyCooldownUpgradeEnabled,
-    buyCooldownUpgrade,
-    cooldownReductions,
-    managers,
-    buyManager,
-    managerCosts,
-    valueMultipliers,
-    soundEffectsEnabled,
-    // Need props for cost calculation of value upgrades:
-    valueUpgradeLevels, // Added
-    easyMode, // Added
-    globalPriceDecrease, // Added
-    cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
-    buyQuantity // New prop
+  buyCooldownUpgrade,
+  cooldownReductions,
+  managers,
+  buyManager,
+  managerCosts,
+  valueMultipliers,
+  soundEffectsEnabled,
+  // Need props for cost calculation of value upgrades:
+  valueUpgradeLevels, // Added
+  easyMode, // Added
+  globalPriceDecrease, // Added
+  cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
+  buyQuantity, // New prop
+  autoBuyerUnlocked,
+  cooldownAutoBuyerUnlocked,
 }) {
   const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
 
@@ -96,22 +98,26 @@ export default function BasicUpgrades({
       <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={() => setAutoBuyValueUpgradeEnabled(v => !v)}
-          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyValueUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyValueUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: autoBuyerUnlocked ? 'pointer' : 'not-allowed' }}
+          disabled={!autoBuyerUnlocked}
         >
           {autoBuyValueUpgradeEnabled ? 'AutoBuyer: Aktiviert' : 'AutoBuyer: Deaktiviert'}
         </button>
         <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Value Upgrade alle 1 Sekunde</span>
+        {!autoBuyerUnlocked && <span style={{ color: '#e53935', fontWeight: 'bold', marginLeft: '8px' }}>Premium Upgrade erforderlich</span>}
       </div>
 
       {/* Globaler Cooldown AutoBuyer Toggle */}
       <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
         <button
           onClick={() => setAutoBuyCooldownUpgradeEnabled(v => !v)}
-          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyCooldownUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+          style={{ padding: '6px 16px', borderRadius: '6px', background: autoBuyCooldownUpgradeEnabled ? '#4caf50' : '#ccc', color: '#fff', border: 'none', fontWeight: 'bold', cursor: cooldownAutoBuyerUnlocked ? 'pointer' : 'not-allowed' }}
+          disabled={!cooldownAutoBuyerUnlocked}
         >
           {autoBuyCooldownUpgradeEnabled ? 'Cooldown AutoBuyer: Aktiviert' : 'Cooldown AutoBuyer: Deaktiviert'}
         </button>
         <span style={{ fontSize: '0.95em', color: '#666' }}>Kauft automatisch das günstigste Cooldown Upgrade alle 1 Sekunde</span>
+        {!cooldownAutoBuyerUnlocked && <span style={{ color: '#e53935', fontWeight: 'bold', marginLeft: '8px' }}>Premium Upgrade erforderlich</span>}
       </div>
 
       <h3 className="section-title">Increase Value</h3>

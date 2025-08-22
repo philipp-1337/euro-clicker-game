@@ -143,11 +143,19 @@ export const gameConfig = {
 
   // Premium-Upgrades Kostenberechnung
   premiumUpgrades: {
-    floatingClickValue: {
+  floatingClickValue: {
       // NEU: Premium-Upgrade für Floating Click Wert
       baseCost: 500,
       costExponent: 1.3, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
+    },
+    autoBuyerUnlock: {
+      baseCost: 10000,
+      costExponent: 1.5,
+    },
+    cooldownAutoBuyerUnlock: {
+      baseCost: 15000,
+      costExponent: 1.5,
     },
     globalMultiplier: {
       baseCost: 1000,

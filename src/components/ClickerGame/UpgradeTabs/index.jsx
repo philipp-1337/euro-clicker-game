@@ -61,6 +61,12 @@ export default function UpgradeTabs({
   isCraftingUnlocked,
   unlockCrafting,
   accumulatedPrestigeShares,
+  autoBuyerUnlocked,
+  buyAutoBuyerUnlock,
+  autoBuyerUnlockCost,
+  cooldownAutoBuyerUnlocked,
+  buyCooldownAutoBuyerUnlock,
+  cooldownAutoBuyerUnlockCost
 }) {
   // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
@@ -103,10 +109,16 @@ export default function UpgradeTabs({
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}
           buyCooldownUpgrade={buyCooldownUpgrade}
-          autoBuyValueUpgradeEnabled={tab.id === 'basic' ? autoBuyValueUpgradeEnabled : undefined}
-          setAutoBuyValueUpgradeEnabled={tab.id === 'basic' ? setAutoBuyValueUpgradeEnabled : undefined}
-          autoBuyCooldownUpgradeEnabled={tab.id === 'basic' ? autoBuyCooldownUpgradeEnabled : undefined}
-          setAutoBuyCooldownUpgradeEnabled={tab.id === 'basic' ? setAutoBuyCooldownUpgradeEnabled : undefined}
+          autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+          setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
+          autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
+          setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
+          autoBuyerUnlocked={autoBuyerUnlocked}
+          buyAutoBuyerUnlock={buyAutoBuyerUnlock}
+          autoBuyerUnlockCost={autoBuyerUnlockCost}
+          cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
+          buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
+          cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           globalMultiplierCost={globalMultiplierCost}

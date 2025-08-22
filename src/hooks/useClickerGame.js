@@ -56,6 +56,9 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
+  // Premium Upgrade: Unlock AutoBuyer
+  const [autoBuyerUnlocked, setAutoBuyerUnlocked] = useState(false);
+  const [cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked] = useState(false);
   // Globaler AutoBuyer für Value Upgrades
   const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
   // Globaler AutoBuyer für Cooldown Upgrades
@@ -117,6 +120,36 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     globalPriceDecreaseLevel,
     easyMode,
   );
+
+  // Premium Upgrade: Buy AutoBuyer Unlock
+  const autoBuyerUnlockCost = useMemo(() =>
+    gameConfig.premiumUpgrades.autoBuyerUnlock.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.autoBuyerUnlock.costExponent, autoBuyerUnlocked ? 1 : 0) *
+    gameConfig.getCostMultiplier(easyMode),
+    [autoBuyerUnlocked, easyMode]
+  );
+
+  const buyAutoBuyerUnlock = useCallback(() => {
+    if (!autoBuyerUnlocked && money >= autoBuyerUnlockCost) {
+      setMoney(prev => prev - autoBuyerUnlockCost);
+      setAutoBuyerUnlocked(true);
+    }
+  }, [autoBuyerUnlocked, money, autoBuyerUnlockCost, setMoney]);
+
+  // Premium Upgrade: Buy Cooldown AutoBuyer Unlock
+  const cooldownAutoBuyerUnlockCost = useMemo(() =>
+    gameConfig.premiumUpgrades.cooldownAutoBuyerUnlock.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.cooldownAutoBuyerUnlock.costExponent, cooldownAutoBuyerUnlocked ? 1 : 0) *
+    gameConfig.getCostMultiplier(easyMode),
+    [cooldownAutoBuyerUnlocked, easyMode]
+  );
+
+  const buyCooldownAutoBuyerUnlock = useCallback(() => {
+    if (!cooldownAutoBuyerUnlocked && money >= cooldownAutoBuyerUnlockCost) {
+      setMoney(prev => prev - cooldownAutoBuyerUnlockCost);
+      setCooldownAutoBuyerUnlocked(true);
+    }
+  }, [cooldownAutoBuyerUnlocked, money, cooldownAutoBuyerUnlockCost, setMoney]);
 
   // Kauflogik für das neue Upgrade
   const buyGlobalPriceDecrease = useCallback((quantity = 1) => {
@@ -699,6 +732,13 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     canPrestige,
     
   // Funktionen 
+  // Premium Upgrade Unlocks
+  autoBuyerUnlocked,
+  buyAutoBuyerUnlock,
+  autoBuyerUnlockCost,
+  cooldownAutoBuyerUnlocked,
+  buyCooldownAutoBuyerUnlock,
+  cooldownAutoBuyerUnlockCost,
   autoBuyValueUpgradeEnabled,
   setAutoBuyValueUpgradeEnabled,
   autoBuyCooldownUpgradeEnabled,
