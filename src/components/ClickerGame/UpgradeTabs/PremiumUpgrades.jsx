@@ -1,4 +1,4 @@
-import { Star, Percent, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
+import { Percent, HistoryIcon, Zap as ZapIcon, Euro, Timer, MousePointerClick, TrendingUp } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -158,11 +158,11 @@ export default function PremiumUpgrades({
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
       {/* Premium Upgrade: AutoBuyer Unlock */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Value AutoBuyer Unlock</h3>
-        </div>
+        <div className="premium-upgrade-card">
+          <div className="premium-upgrade-header">
+            <Euro className="premium-icon" />
+            <h3>Value AutoBuyer Unlock</h3>
+          </div>
         <p className="premium-upgrade-description">
           Unlocks the automatic Value Upgrade buyer. Once purchased, you can enable the AutoBuyer in the Basic Upgrades tab.
         </p>
@@ -182,11 +182,11 @@ export default function PremiumUpgrades({
       </div>
 
       {/* Premium Upgrade: Cooldown AutoBuyer Unlock */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Cooldown AutoBuyer Unlock</h3>
-        </div>
+        <div className="premium-upgrade-card">
+          <div className="premium-upgrade-header">
+            <Timer className="premium-icon" />
+            <h3>Cooldown AutoBuyer Unlock</h3>
+          </div>
         <p className="premium-upgrade-description">
           Unlocks the automatic Cooldown Upgrade buyer. Once purchased, you can enable the Cooldown AutoBuyer in the Basic Upgrades tab.
         </p>
@@ -205,10 +205,10 @@ export default function PremiumUpgrades({
         </div>
       </div>
       <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Floating Click Value</h3>
-        </div>
+          <div className="premium-upgrade-header">
+            <MousePointerClick className="premium-icon" />
+            <h3>Floating Click Value</h3>
+          </div>
         <p className="premium-upgrade-description">
           Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
         </p>
@@ -227,10 +227,10 @@ export default function PremiumUpgrades({
         </div>
       </div>
       <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Clicker Value Multiplier</h3>
-        </div>
+          <div className="premium-upgrade-header">
+            <TrendingUp className="premium-icon" />
+            <h3>Clicker Value Multiplier</h3>
+          </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalMultiplierCostIncreasePercentage}% per level.`}>
           Increases the value of all clicks by {globalMultiplierPercentage}% per level. 
         </p>

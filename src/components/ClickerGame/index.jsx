@@ -516,6 +516,12 @@ export default function ClickerGame({
           toggleBuyQuantity={toggleBuyQuantity}
           gameConfig={gameConfig}
           environment={environment}
+          autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+          setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
+          autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
+          setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
+          autoBuyerUnlocked={autoBuyerUnlocked}
+          cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
         />
       )}
 
