@@ -34,13 +34,30 @@ const AutoBuyerModal = ({
   };
 
   const handleBufferChange = (e) => {
-    const value = e.target.value;
-    setAutoBuyerBuffer(Number(value));
+    const sliderValue = Number(e.target.value);
+    if (sliderValue === 0) {
+      setAutoBuyerBuffer(0);
+      return;
+    }
+    const maxExponent = 18; // for 10^18
+    const exponent = (sliderValue / 100) * maxExponent;
+    const value = Math.pow(10, exponent);
+    setAutoBuyerBuffer(value);
+  };
+
+  const getSliderValue = (buffer) => {
+    if (buffer <= 0) {
+      return 0;
+    }
+    const maxExponent = 18;
+    const exponent = Math.log10(buffer);
+    const sliderValue = (exponent / maxExponent) * 100;
+    return Math.min(Math.max(sliderValue, 0), 100);
   };
 
   return (
     <div className="modal-backdrop">
-      <div ref={modalRef} className="modal-content">
+      <div ref={modalRef} className="modal-content autobuyer-modal">
         <div className="settings-modal-header">
           <h3>AutoBuyer Settings</h3>
           <button
@@ -56,7 +73,20 @@ const AutoBuyerModal = ({
           {autoBuyerUnlocked && (
             <div className="settings-row">
               <DollarSignIcon size={20} className="settings-icon" />
-              <span className="settings-label">Value AutoBuyer</span>
+              <button
+                className="settings-label btn"
+                onClick={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
+                title={
+                  autoBuyValueUpgradeEnabled
+                    ? 'Disable Value AutoBuyer'
+                    : 'Enable Value AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyValueUpgradeEnabled
+                  ? 'Disable Value AutoBuyer'
+                  : 'Enable Value AutoBuyer'}
+              </button>
               <button
                 className={`settings-button${autoBuyValueUpgradeEnabled ? ' active' : ''}`}
                 onClick={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
@@ -79,7 +109,20 @@ const AutoBuyerModal = ({
           {cooldownAutoBuyerUnlocked && (
             <div className="settings-row">
               <ClockIcon size={20} className="settings-icon" />
-              <span className="settings-label">Cooldown AutoBuyer</span>
+              <button
+                className="settings-label btn"
+                onClick={() => setAutoBuyCooldownUpgradeEnabled((v) => !v)}
+                title={
+                  autoBuyCooldownUpgradeEnabled
+                    ? 'Disable Cooldown AutoBuyer'
+                    : 'Enable Cooldown AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyCooldownUpgradeEnabled
+                  ? 'Disable Cooldown AutoBuyer'
+                  : 'Enable Cooldown AutoBuyer'}
+              </button>
               <button
                 className={`settings-button${
                   autoBuyCooldownUpgradeEnabled ? ' active' : ''
@@ -105,7 +148,7 @@ const AutoBuyerModal = ({
 
           <div className="settings-row">
             <TimerReset size={20} className="settings-icon" />
-            <label htmlFor="autoBuyerInterval" className="settings-label">
+            <label htmlFor="autoBuyerInterval" className="settings-label settings-label-fixed-width">
               Purchase Interval: {autoBuyerInterval / 1000}s
             </label>
             <input
@@ -122,16 +165,18 @@ const AutoBuyerModal = ({
 
           <div className="settings-row">
             <PiggyBankIcon size={20} className="settings-icon" />
-            <label htmlFor="autoBuyerBuffer" className="settings-label">
+            <label htmlFor="autoBuyerBuffer" className="settings-label settings-label-fixed-width">
               Money Buffer: {formatNumber(autoBuyerBuffer)}
             </label>
             <input
-              type="number"
+              type="range"
               id="autoBuyerBuffer"
-              value={autoBuyerBuffer}
+              min="0"
+              max="100"
+              step="1"
+              value={getSliderValue(autoBuyerBuffer)}
               onChange={handleBufferChange}
-              placeholder="Enter money buffer"
-              className="settings-input"
+              className="settings-slider"
             />
           </div>
         </div>
@@ -141,4 +186,3 @@ const AutoBuyerModal = ({
 };
 
 export default AutoBuyerModal;
-
