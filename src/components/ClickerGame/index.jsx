@@ -4,7 +4,7 @@ import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import UpgradeTabs from './UpgradeTabs';
-import useClickerGame from '@hooks/useClickerGame';
+import useGameCore from '@hooks/useGameCore';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
@@ -141,7 +141,7 @@ export default function ClickerGame({
   setAutoBuyerBuffer,
   isAutoBuyerModalOpen,
   setIsAutoBuyerModalOpen,
-  } = useClickerGame(easyMode, soundEffectsEnabled, buyQuantity);
+  } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   // Crafting Unlock Handler
   const unlockCrafting = () => {
