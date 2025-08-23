@@ -55,12 +55,11 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   isCraftingUnlocked, setIsCraftingUnlocked,
   autoBuyerInterval, setAutoBuyerInterval,
   autoBuyerBuffer, setAutoBuyerBuffer,
+  autoBuyerUnlocked, setAutoBuyerUnlocked,
+  cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
-  // Premium Upgrade: Unlock AutoBuyer
-  const [autoBuyerUnlocked, setAutoBuyerUnlocked] = useState(false);
-  const [cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked] = useState(false);
   // Globaler AutoBuyer für Value Upgrades
   const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
   // Globaler AutoBuyer für Cooldown Upgrades
@@ -137,7 +136,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       setMoney(prev => prev - autoBuyerUnlockCost);
       setAutoBuyerUnlocked(true);
     }
-  }, [autoBuyerUnlocked, money, autoBuyerUnlockCost, setMoney]);
+  }, [autoBuyerUnlocked, money, autoBuyerUnlockCost, setMoney, setAutoBuyerUnlocked]);
 
   // Premium Upgrade: Buy Cooldown AutoBuyer Unlock
   const cooldownAutoBuyerUnlockCost = useMemo(() =>
@@ -152,7 +151,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
       setMoney(prev => prev - cooldownAutoBuyerUnlockCost);
       setCooldownAutoBuyerUnlocked(true);
     }
-  }, [cooldownAutoBuyerUnlocked, money, cooldownAutoBuyerUnlockCost, setMoney]);
+  }, [cooldownAutoBuyerUnlocked, money, cooldownAutoBuyerUnlockCost, setMoney, setCooldownAutoBuyerUnlocked]);
 
   // Kauflogik für das neue Upgrade
   const buyGlobalPriceDecrease = useCallback((quantity = 1) => {
