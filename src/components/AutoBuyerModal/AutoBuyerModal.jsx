@@ -7,6 +7,7 @@ import {
   DollarSign as DollarSignIcon,
   Clock as ClockIcon,
   PiggyBank as PiggyBankIcon,
+  TimerReset,
 } from 'lucide-react';
 
 const AutoBuyerModal = ({
@@ -103,7 +104,7 @@ const AutoBuyerModal = ({
           <hr />
 
           <div className="settings-row">
-            <ClockIcon size={20} className="settings-icon" />
+            <TimerReset size={20} className="settings-icon" />
             <label htmlFor="autoBuyerInterval" className="settings-label">
               Purchase Interval: {autoBuyerInterval / 1000}s
             </label>
