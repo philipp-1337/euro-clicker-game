@@ -718,6 +718,12 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled, bu
       investments: gameConfig.initialState.investments.map(() => 0),
       boostedInvestments: gameConfig.investments.map(() => false),
       // Reset managers, upgrade levels etc., by taking them from freshInitialState
+
+      // Disable auto-buyers and reset their unlocked status on prestige
+      autoBuyValueUpgradeEnabled: false,
+      autoBuyCooldownUpgradeEnabled: false,
+      autoBuyerUnlocked: false,
+      cooldownAutoBuyerUnlocked: false,
     };
 
     // Update the persistent prestige shares state, ensuring it's a valid number
