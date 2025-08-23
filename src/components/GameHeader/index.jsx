@@ -227,6 +227,7 @@ export default function GameHeader(props) {
               </span>
             </button>
           )}
+          {/* AutoBuyer Settings Button */}
           {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (
             <button
               className="settings-button header-icon"
