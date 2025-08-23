@@ -13,6 +13,8 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 import { APP_VERSION } from '../../version';
+import AutoBuyerModal from '@components/AutoBuyerModal/AutoBuyerModal';
+import { formatNumber } from '@utils/calculators';
 
 export default function ClickerGame({
   easyMode = false,
@@ -137,6 +139,8 @@ export default function ClickerGame({
   setAutoBuyerInterval,
   autoBuyerBuffer,
   setAutoBuyerBuffer,
+  isAutoBuyerModalOpen,
+  setIsAutoBuyerModalOpen,
   } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
 
   // Crafting Unlock Handler
@@ -479,6 +483,16 @@ export default function ClickerGame({
         />
       )}
 
+      <AutoBuyerModal
+        show={isAutoBuyerModalOpen}
+        onClose={() => setIsAutoBuyerModalOpen(false)}
+        autoBuyerInterval={autoBuyerInterval}
+        setAutoBuyerInterval={setAutoBuyerInterval}
+        autoBuyerBuffer={autoBuyerBuffer}
+        setAutoBuyerBuffer={setAutoBuyerBuffer}
+        formatNumber={formatNumber}
+      />
+
       {/* Achievement Notification */}
       {showAchievement && (
         <AchievementNotification
@@ -526,6 +540,8 @@ export default function ClickerGame({
           setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
           autoBuyerUnlocked={autoBuyerUnlocked}
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
+          isAutoBuyerModalOpen={isAutoBuyerModalOpen}
+          setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
         />
       )}
 
@@ -659,20 +675,12 @@ export default function ClickerGame({
             isCraftingUnlocked={isCraftingUnlocked}
             unlockCrafting={unlockCrafting}
             accumulatedPrestigeShares={prestigeShares}
-            autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
-            setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
-            autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
-            setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
             autoBuyerUnlocked={autoBuyerUnlocked}
             buyAutoBuyerUnlock={buyAutoBuyerUnlock}
             autoBuyerUnlockCost={autoBuyerUnlockCost}
             cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
             buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
             cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
-            autoBuyerInterval={autoBuyerInterval}
-            setAutoBuyerInterval={setAutoBuyerInterval}
-            autoBuyerBuffer={autoBuyerBuffer}
-            setAutoBuyerBuffer={setAutoBuyerBuffer}
           />
         </div>
       )}

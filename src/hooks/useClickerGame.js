@@ -64,6 +64,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
   // Globaler AutoBuyer für Cooldown Upgrades
   const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(false);
+  const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
 
   // AutoBuyer-Logik: kauft alle X Sekunden das günstigste Cooldown Upgrade
   useEffect(() => {
@@ -749,6 +750,8 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   setAutoBuyerInterval,
   autoBuyerBuffer,
   setAutoBuyerBuffer,
+  isAutoBuyerModalOpen,
+  setIsAutoBuyerModalOpen,
     handleClick: wrappedHandleClick,
     playTime,
     buyManager,

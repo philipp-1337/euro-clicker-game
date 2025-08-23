@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import { Percent, HistoryIcon, Zap as ZapIcon, Euro, Timer, MousePointerClick, TrendingUp } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
-import AutoBuyerModal from '@components/AutoBuyerModal/AutoBuyerModal';
 
 export default function PremiumUpgrades({
   money,
@@ -38,13 +36,7 @@ export default function PremiumUpgrades({
   cooldownAutoBuyerUnlocked,
   buyCooldownAutoBuyerUnlock,
   cooldownAutoBuyerUnlockCost,
-  autoBuyerInterval,
-  setAutoBuyerInterval,
-  autoBuyerBuffer,
-  setAutoBuyerBuffer,
 }) {
-
-  const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
 
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   // Crafting Unlock
@@ -329,36 +321,6 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-
-      {/* AutoBuyer Settings */}
-      {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (
-        <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <h3>AutoBuyer Settings</h3>
-          </div>
-          <p className="premium-upgrade-description">
-            Configure the AutoBuyer settings.
-          </p>
-          <div className="premium-upgrade-info">
-            <button
-              onClick={() => setIsAutoBuyerModalOpen(true)}
-              className="premium-upgrade-button"
-            >
-              Open Settings
-            </button>
-          </div>
-        </div>
-      )}
-
-      <AutoBuyerModal
-        show={isAutoBuyerModalOpen}
-        onClose={() => setIsAutoBuyerModalOpen(false)}
-        autoBuyerInterval={autoBuyerInterval}
-        setAutoBuyerInterval={setAutoBuyerInterval}
-        autoBuyerBuffer={autoBuyerBuffer}
-        setAutoBuyerBuffer={setAutoBuyerBuffer}
-        formatNumber={formatNumber}
-      />
     </div>
   );
 }

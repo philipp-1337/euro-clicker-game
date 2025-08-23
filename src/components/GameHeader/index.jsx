@@ -16,7 +16,8 @@ import {
   Layers2Icon, // Icon for buy quantity 
   EuroIcon,
   TimerIcon,
-  BotIcon
+  BotIcon,
+  Settings2 as AutoBuyerSettingsIcon
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -116,6 +117,7 @@ export default function GameHeader(props) {
     setAutoBuyCooldownUpgradeEnabled,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
+    setIsAutoBuyerModalOpen
   } = props;
 
   const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
@@ -247,6 +249,16 @@ export default function GameHeader(props) {
             >
                 <TimerIcon size={20} style={{ color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
                 <BotIcon size={18} style={{ marginLeft: 0, color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
+            </button>
+          )}
+          {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setIsAutoBuyerModalOpen(true)}
+              title="AutoBuyer Settings"
+              aria-label="AutoBuyer Settings"
+            >
+              <AutoBuyerSettingsIcon size={20} />
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}
