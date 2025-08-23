@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { db } from '../firebase';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { removeUndefinedFields } from '../utils/removeUndefinedFields';
 
 // Hilfsfunktion für UUID
 function generateUUID() {
@@ -67,7 +68,7 @@ export default function useCloudSave() {
         : (gameConfig.initialState.prestigeCount ?? 0); // Fallback to initial state if undefined/invalid
 
 
-      await setDoc(doc(db, 'saves', uuid), {
+      await setDoc(doc(db, 'saves', uuid), removeUndefinedFields({
         ...gameState,
         updatedAt: Date.now(),
         clickerSave,
@@ -79,7 +80,7 @@ export default function useCloudSave() {
         musicEnabledSetting,
         soundEffectsEnabledSetting,
         prestigeCount: prestigeCountToSave, // Use the checked value
-      });
+      }));
       setCloudStatus('saved');
       return uuid;
     } catch (e) {

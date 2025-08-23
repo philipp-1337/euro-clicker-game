@@ -214,6 +214,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     playTime,
     activePlayTime,
     inactivePlayTime,
+    gameState, // <- Das fehlte!
     
     // Economy data
     totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
@@ -244,6 +245,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     
     // Auto-buyers
     ...autoBuyersHook,
+    autoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked,
     autoBuyValueUpgradeEnabled,
     setAutoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,

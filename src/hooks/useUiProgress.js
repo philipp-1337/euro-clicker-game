@@ -205,6 +205,16 @@ export function useUiProgress() {
         : valueOrUpdater;
       const next = { ...prev, showStatisticsHeaderButton: nextValue };
       saveUiProgress(next);
+      // Auch in clickerSave persistieren (Cloud Save)
+      try {
+        const clickerSaveRaw = localStorage.getItem('clickerSave');
+        if (clickerSaveRaw) {
+          const clickerSave = JSON.parse(clickerSaveRaw);
+          if (clickerSave.showStatisticsHeaderButton !== nextValue) {
+            localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, showStatisticsHeaderButton: nextValue }));
+          }
+        }
+      } catch {}
       return next;
     });
   }, []);
