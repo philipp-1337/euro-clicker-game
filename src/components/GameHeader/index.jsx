@@ -228,7 +228,7 @@ export default function GameHeader(props) {
               title="AutoBuyer Settings"
               aria-label="AutoBuyer Settings"
             >
-              <AutoBuyerSettingsIcon size={20} />
+              <AutoBuyerSettingsIcon size={24} />
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}
