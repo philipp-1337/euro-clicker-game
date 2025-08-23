@@ -57,13 +57,11 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled, bu
   autoBuyerBuffer, setAutoBuyerBuffer,
   autoBuyerUnlocked, setAutoBuyerUnlocked,
   cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
+  autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled,
   } = gameStateHook;
   
   const [manualMoneyPerSecond, setManualMoneyPerSecond] = useState(0);
-  // Globaler AutoBuyer für Value Upgrades
-  const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(false);
-  // Globaler AutoBuyer für Cooldown Upgrades
-  const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(false);
   const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
 
   // AutoBuyer-Logik: kauft alle X Sekunden das günstigste Cooldown Upgrade (jetzt mit buyQuantity)

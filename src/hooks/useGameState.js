@@ -59,6 +59,8 @@ export default function useGameState(easyMode = false) {
   const [autoBuyerBuffer, setAutoBuyerBuffer] = useState(gameConfig.initialState.autoBuyerBuffer);
   const [autoBuyerUnlocked, setAutoBuyerUnlocked] = useState(gameConfig.initialState.autoBuyerUnlocked);
   const [cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked] = useState(gameConfig.initialState.cooldownAutoBuyerUnlocked);
+  const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(gameConfig.initialState.autoBuyValueUpgradeEnabled ?? false);
+  const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(gameConfig.initialState.autoBuyCooldownUpgradeEnabled ?? false);
 
   // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
@@ -110,6 +112,8 @@ export default function useGameState(easyMode = false) {
     autoBuyerBuffer,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
+    autoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled,
     lastSaved: new Date().getTime(), // Automatically include current timestamp
   };
 
@@ -162,6 +166,8 @@ export default function useGameState(easyMode = false) {
     setAutoBuyerBuffer(savedState.autoBuyerBuffer ?? gameConfig.initialState.autoBuyerBuffer);
     setAutoBuyerUnlocked(savedState.autoBuyerUnlocked ?? gameConfig.initialState.autoBuyerUnlocked);
     setCooldownAutoBuyerUnlocked(savedState.cooldownAutoBuyerUnlocked ?? gameConfig.initialState.cooldownAutoBuyerUnlocked);
+    setAutoBuyValueUpgradeEnabled(savedState.autoBuyValueUpgradeEnabled ?? gameConfig.initialState.autoBuyValueUpgradeEnabled ?? false);
+    setAutoBuyCooldownUpgradeEnabled(savedState.autoBuyCooldownUpgradeEnabled ?? gameConfig.initialState.autoBuyCooldownUpgradeEnabled ?? false);
 
     // Schreibe Crafting-Unlock-Status auch in LocalStorage für Cross-Device
     try {
@@ -230,6 +236,8 @@ export default function useGameState(easyMode = false) {
     autoBuyerBuffer, setAutoBuyerBuffer,
     autoBuyerUnlocked, setAutoBuyerUnlocked,
     cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
+    autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled,
     boostedInvestments: boostedInvestmentsData,
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,

@@ -141,7 +141,7 @@ export default function ClickerGame({
   setAutoBuyerBuffer,
   isAutoBuyerModalOpen,
   setIsAutoBuyerModalOpen,
-  } = useClickerGame(easyMode, soundEffectsEnabled, buyQuantity); // Pass soundEffectsEnabled and buyQuantity
+  } = useClickerGame(easyMode, soundEffectsEnabled, buyQuantity);
 
   // Crafting Unlock Handler
   const unlockCrafting = () => {

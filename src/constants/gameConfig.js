@@ -134,6 +134,8 @@ export const gameConfig = {
     autoBuyerBuffer: 0, // Initial buffer
     autoBuyerUnlocked: false,
     cooldownAutoBuyerUnlocked: false,
+    autoBuyValueUpgradeEnabled: false,
+    autoBuyCooldownUpgradeEnabled: false,
   },
   activePlayTime: 0, // Initial aktive Spielzeit
   prestigeShares: 0, // Initial prestige shares
