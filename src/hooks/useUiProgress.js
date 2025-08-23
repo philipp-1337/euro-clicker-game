@@ -40,6 +40,10 @@ export function useUiProgress() {
         if (typeof clickerSave.cloudSaveMode === 'boolean' && typeof progress.cloudSaveMode !== 'boolean') {
           progress.cloudSaveMode = clickerSave.cloudSaveMode;
         }
+        // Load showStatisticsHeaderButton from clickerSave
+        if (typeof clickerSave.showStatisticsHeaderButton === 'boolean' && typeof progress.showStatisticsHeaderButton !== 'boolean') {
+          progress.showStatisticsHeaderButton = clickerSave.showStatisticsHeaderButton;
+        }
       }
     } catch {}
     return progress;
@@ -51,16 +55,29 @@ export function useUiProgress() {
   // CloudSaveMode als eigene Variable
   const cloudSaveMode = typeof uiProgress.cloudSaveMode === 'boolean' ? uiProgress.cloudSaveMode : false;
 
-  // Save to localStorage on change (inkl. cloudSaveMode auch in clickerSave speichern)
+  // Save to localStorage on change (inkl. cloudSaveMode und showStatisticsHeaderButton auch in clickerSave speichern)
   useEffect(() => {
     saveUiProgress(uiProgress);
-    // cloudSaveMode auch in clickerSave persistieren, falls vorhanden
+    // cloudSaveMode und showStatisticsHeaderButton auch in clickerSave persistieren, falls vorhanden
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
       if (clickerSaveRaw) {
         const clickerSave = JSON.parse(clickerSaveRaw);
-        if (clickerSave.cloudSaveMode !== cloudSaveMode) {
-          localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, cloudSaveMode }));
+        const updatedSave = { ...clickerSave };
+        let saveUpdated = false;
+
+        if (updatedSave.cloudSaveMode !== cloudSaveMode) {
+          updatedSave.cloudSaveMode = cloudSaveMode;
+          saveUpdated = true;
+        }
+
+        if (updatedSave.showStatisticsHeaderButton !== uiProgress.showStatisticsHeaderButton) {
+          updatedSave.showStatisticsHeaderButton = uiProgress.showStatisticsHeaderButton;
+          saveUpdated = true;
+        }
+
+        if (saveUpdated) {
+          localStorage.setItem('clickerSave', JSON.stringify(updatedSave));
         }
       }
     } catch {}
@@ -208,6 +225,23 @@ export function useUiProgress() {
       return next;
     });
   }, []);
+
+  // Sync showStatisticsHeaderButton from cloud import
+  useEffect(() => {
+    const handler = (e) => {
+      try {
+        const saveRaw = localStorage.getItem('clickerSave');
+        if (saveRaw) {
+          const save = JSON.parse(saveRaw);
+          if (typeof save.showStatisticsHeaderButton === 'boolean') {
+            setShowStatisticsHeaderButton(save.showStatisticsHeaderButton);
+          }
+        }
+      } catch {}
+    };
+    window.addEventListener('game:cloudimported', handler);
+    return () => window.removeEventListener('game:cloudimported', handler);
+  }, [setShowStatisticsHeaderButton]);
 
   return {
     uiProgress,
