@@ -88,35 +88,6 @@ export default function SettingsModal({
     return localStorage.getItem('darkMode') === 'true';
   });
 
-  // Statistics Header Button State (persistiert)
-  const [statisticsHeaderButton, setStatisticsHeaderButton] = React.useState(() => {
-    try {
-      const saveRaw = localStorage.getItem('clickerSave');
-      if (saveRaw) {
-        const save = JSON.parse(saveRaw);
-        if (typeof save.showStatisticsHeaderButton === 'boolean') return save.showStatisticsHeaderButton;
-      }
-    } catch {}
-    const local = localStorage.getItem('showStatisticsHeaderButton');
-    return local === null ? true : local === 'true';
-  });
-
-  // Synchronisiere prop/state
-  React.useEffect(() => {
-    setShowStatisticsHeaderButton(statisticsHeaderButton);
-    // eslint-disable-next-line
-  }, []);
-  React.useEffect(() => {
-    setShowStatisticsHeaderButton(statisticsHeaderButton);
-  }, [statisticsHeaderButton, setShowStatisticsHeaderButton]);
-
-  // Wenn sich prop ändert (z.B. durch externes Setzen), state anpassen
-  React.useEffect(() => {
-    if (showStatisticsHeaderButton !== statisticsHeaderButton) {
-      setStatisticsHeaderButton(showStatisticsHeaderButton);
-    }
-    // eslint-disable-next-line
-  }, [showStatisticsHeaderButton]);
   const { deleteFromCloud } = useCloudSave();
 
   // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
@@ -132,20 +103,15 @@ export default function SettingsModal({
       const saveRaw = localStorage.getItem('clickerSave');
       if (saveRaw) {
         const save = JSON.parse(saveRaw);
-        if (save.darkMode !== isDarkMode || save.showStatisticsHeaderButton !== statisticsHeaderButton) {
-          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode, showStatisticsHeaderButton: statisticsHeaderButton }));
+        if (save.darkMode !== isDarkMode) {
+          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
         }
       }
     } catch {}
-  }, [isDarkMode, statisticsHeaderButton]);
+  }, [isDarkMode]);
 
-  // showStatisticsHeaderButton in LocalStorage speichern
-  React.useEffect(() => {
-    localStorage.setItem('showStatisticsHeaderButton', statisticsHeaderButton);
-    // clickerSave wird oben schon aktualisiert
-  }, [statisticsHeaderButton]);
 
-  // Dark Mode & showStatisticsHeaderButton nach Cloud Import anwenden (Listener)
+  // Dark Mode nach Cloud Import anwenden (Listener)
   React.useEffect(() => {
     const handler = (e) => {
       try {
@@ -155,9 +121,6 @@ export default function SettingsModal({
           const save = JSON.parse(saveRaw);
           if (typeof save.darkMode === 'boolean') {
             setIsDarkMode(save.darkMode);
-          }
-          if (typeof save.showStatisticsHeaderButton === 'boolean') {
-            setStatisticsHeaderButton(save.showStatisticsHeaderButton);
           }
         }
       } catch {}
@@ -190,19 +153,19 @@ export default function SettingsModal({
             <BarChart2Icon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setStatisticsHeaderButton((v) => !v)}
-              title={statisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
               type="button"
             >
-              {statisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
             </button>
             <button
-              className={`settings-button${statisticsHeaderButton ? " active" : ""}`}
-              onClick={() => setStatisticsHeaderButton((v) => !v)}
-              title={statisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
+              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
+              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
+              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
               type="button"
             >
-              {statisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
+              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
