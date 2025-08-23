@@ -11,7 +11,7 @@ import useLocalStorage from './useLocalStorage';
 import useInvestments from './useInvestments';
 import useCrafting from './useCrafting';
 
-export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
+export default function useClickerGame(easyMode = false, soundEffectsEnabled, buyQuantity = 1) {
 
   // Spielzeit-Management & Setze Startzeit, falls sie noch nicht existiert
   const { playTime, ensureStartTime, isGameStarted } = usePlaytime(); // isGameStarted hier holen
@@ -66,7 +66,7 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
   const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(false);
   const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
 
-  // AutoBuyer-Logik: kauft alle X Sekunden das günstigste Cooldown Upgrade
+  // AutoBuyer-Logik: kauft alle X Sekunden das günstigste Cooldown Upgrade (jetzt mit buyQuantity)
   useEffect(() => {
     if (!autoBuyCooldownUpgradeEnabled) return;
     const interval = setInterval(() => {
@@ -86,24 +86,41 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
             minIndex = idx;
           }
         });
-        if (minIndex !== -1 && minCost > 0 && prevMoney >= minCost + autoBuyerBuffer) {
-          setCooldownReductions(prev => {
-            const updated = [...prev];
-            updated[minIndex] *= gameConfig.upgrades.cooldownReductionFactor;
-            return updated;
-          });
-          setCooldownUpgradeLevels(prev => {
-            const updated = [...prev];
-            updated[minIndex] += 1;
-            return updated;
-          });
-          return prevMoney - minCost;
+        if (minIndex !== -1 && minCost > 0) {
+          // Berechne Gesamtkosten für buyQuantity Upgrades
+          let totalCost = 0;
+          let tempLevel = cooldownUpgradeLevels[minIndex];
+          for (let i = 0; i < buyQuantity; i++) {
+            const costForThisStep = calculateCostWithDifficulty(
+              gameConfig.baseCooldownUpgradeCosts[minIndex],
+              tempLevel + i,
+              gameConfig.upgrades.cooldownCostIncreaseFactor,
+              easyMode,
+              gameConfig.getCostMultiplier
+            ) * globalPriceDecrease;
+            totalCost += costForThisStep;
+          }
+          if (prevMoney >= totalCost + autoBuyerBuffer) {
+            setCooldownReductions(prev => {
+              const updated = [...prev];
+              for (let i = 0; i < buyQuantity; i++) {
+                updated[minIndex] *= gameConfig.upgrades.cooldownReductionFactor;
+              }
+              return updated;
+            });
+            setCooldownUpgradeLevels(prev => {
+              const updated = [...prev];
+              updated[minIndex] += buyQuantity;
+              return updated;
+            });
+            return prevMoney - totalCost;
+          }
         }
         return prevMoney;
       });
     }, autoBuyerInterval);
     return () => clearInterval(interval);
-  }, [autoBuyCooldownUpgradeEnabled, cooldownUpgradeLevels, setCooldownUpgradeLevels, setCooldownReductions, easyMode, globalPriceDecrease, setMoney, autoBuyerInterval, autoBuyerBuffer]);
+  }, [autoBuyCooldownUpgradeEnabled, cooldownUpgradeLevels, setCooldownUpgradeLevels, setCooldownReductions, easyMode, globalPriceDecrease, setMoney, autoBuyerInterval, autoBuyerBuffer, buyQuantity]);
   
   // Berechnungen für abgeleitete Zustände 
   const {
@@ -208,14 +225,13 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
     globalPriceDecrease // Pass globalPriceDecrease
   );
 
-  // AutoBuyer-Logik: kauft alle 1 Sekunde das günstigste Value Upgrade
+  // AutoBuyer-Logik: kauft alle X Sekunden das günstigste Value Upgrade (jetzt mit buyQuantity)
   useEffect(() => {
     if (!autoBuyValueUpgradeEnabled) return;
     const interval = setInterval(() => {
       setMoney(prevMoney => {
         let minCost = Infinity;
         let minIndex = -1;
-        // Hole die aktuellen Upgrade-Levels synchron aus dem State
         valueUpgradeLevels.forEach((level, idx) => {
           const cost = calculateCostWithDifficulty(
             gameConfig.baseValueUpgradeCosts[idx],
@@ -229,25 +245,41 @@ export default function useClickerGame(easyMode = false, soundEffectsEnabled) {
             minIndex = idx;
           }
         });
-        if (minIndex !== -1 && minCost > 0 && prevMoney >= minCost + autoBuyerBuffer) {
-          // States synchron updaten
-          setValueMultipliers(prev => {
-            const updated = [...prev];
-            updated[minIndex] *= gameConfig.upgrades.valueMultiplierFactor;
-            return updated;
-          });
-          setValueUpgradeLevels(prev => {
-            const updated = [...prev];
-            updated[minIndex] += 1;
-            return updated;
-          });
-          return prevMoney - minCost;
+        if (minIndex !== -1 && minCost > 0) {
+          // Berechne Gesamtkosten für buyQuantity Upgrades
+          let totalCost = 0;
+          let tempLevel = valueUpgradeLevels[minIndex];
+          for (let i = 0; i < buyQuantity; i++) {
+            const costForThisStep = calculateCostWithDifficulty(
+              gameConfig.baseValueUpgradeCosts[minIndex],
+              tempLevel + i,
+              gameConfig.upgrades.costIncreaseFactor,
+              easyMode,
+              gameConfig.getCostMultiplier
+            ) * globalPriceDecrease;
+            totalCost += costForThisStep;
+          }
+          if (prevMoney >= totalCost + autoBuyerBuffer) {
+            setValueMultipliers(prev => {
+              const updated = [...prev];
+              for (let i = 0; i < buyQuantity; i++) {
+                updated[minIndex] *= gameConfig.upgrades.valueMultiplierFactor;
+              }
+              return updated;
+            });
+            setValueUpgradeLevels(prev => {
+              const updated = [...prev];
+              updated[minIndex] += buyQuantity;
+              return updated;
+            });
+            return prevMoney - totalCost;
+          }
         }
         return prevMoney;
       });
     }, autoBuyerInterval);
     return () => clearInterval(interval);
-  }, [autoBuyValueUpgradeEnabled, valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers, easyMode, globalPriceDecrease, setMoney, autoBuyerInterval, autoBuyerBuffer]);
+  }, [autoBuyValueUpgradeEnabled, valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers, easyMode, globalPriceDecrease, setMoney, autoBuyerInterval, autoBuyerBuffer, buyQuantity]);
 
   // Manager-Funktionen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
