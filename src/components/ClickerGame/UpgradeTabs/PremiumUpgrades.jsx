@@ -278,7 +278,7 @@ export default function PremiumUpgrades({
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <Euro className="premium-icon" />
-            <h3>Value AutoBuyer Unlock</h3>
+            <h3>Value AutoBuyer</h3>
           </div>
         <p className="premium-upgrade-description">
           Unlocks the automatic Value Upgrade buyer. It buys the cheapest upgrade every second. Once purchased, you can enable the AutoBuyer via the respective icon in the header area.
@@ -302,7 +302,7 @@ export default function PremiumUpgrades({
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <Timer className="premium-icon" />
-            <h3>Cooldown AutoBuyer Unlock</h3>
+            <h3>Cooldown AutoBuyer</h3>
           </div>
         <p className="premium-upgrade-description">
           Unlocks the automatic Cooldown Upgrade buyer. It buys the cheapest upgrade every second. Once purchased, you can enable the Cooldown AutoBuyer via the respective icon in the header area.

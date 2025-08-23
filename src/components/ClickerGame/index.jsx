@@ -491,6 +491,12 @@ export default function ClickerGame({
         autoBuyerBuffer={autoBuyerBuffer}
         setAutoBuyerBuffer={setAutoBuyerBuffer}
         formatNumber={formatNumber}
+        autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+        setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
+        autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
+        setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
+        autoBuyerUnlocked={autoBuyerUnlocked}
+        cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
       />
 
       {/* Achievement Notification */}
@@ -534,13 +540,8 @@ export default function ClickerGame({
           toggleBuyQuantity={toggleBuyQuantity}
           gameConfig={gameConfig}
           environment={environment}
-          autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
-          setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
-          autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
-          setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
           autoBuyerUnlocked={autoBuyerUnlocked}
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
-          isAutoBuyerModalOpen={isAutoBuyerModalOpen}
           setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
         />
       )}

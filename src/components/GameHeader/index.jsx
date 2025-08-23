@@ -14,10 +14,7 @@ import {
   Zap as PrestigeHeaderIcon, // Icon für Prestige
   Layers as LayersIcon,
   Layers2Icon, // Icon for buy quantity 
-  EuroIcon,
-  TimerIcon,
-  BotIcon,
-  Settings2 as AutoBuyerSettingsIcon
+  BotIcon as AutoBuyerSettingsIcon
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -111,10 +108,6 @@ export default function GameHeader(props) {
 
   // AutoBuyer toggles (moved from BasicUpgrades)
   const {
-    autoBuyValueUpgradeEnabled,
-    setAutoBuyValueUpgradeEnabled,
-    autoBuyCooldownUpgradeEnabled,
-    setAutoBuyCooldownUpgradeEnabled,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
     setIsAutoBuyerModalOpen
@@ -226,29 +219,6 @@ export default function GameHeader(props) {
               <span className="prestige-pulse">
                 <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
               </span>
-            </button>
-          )}
-          {/* AutoBuyer Icons (only if unlocked) */}
-          {autoBuyerUnlocked && (
-            <button
-              className={`settings-button header-icon autobuyer-toggle-button ${autoBuyValueUpgradeEnabled ? 'active' : ''}`}
-              onClick={() => setAutoBuyValueUpgradeEnabled(v => !v)}
-              title={autoBuyValueUpgradeEnabled ? 'AutoBuyer: Aktiviert' : 'AutoBuyer: Deaktiviert'}
-              aria-label="Toggle Value AutoBuyer"
-            >
-                <EuroIcon size={20} style={{ color: autoBuyValueUpgradeEnabled ? 'green' : undefined }} />
-                <BotIcon size={18} style={{ marginLeft: 0, color: autoBuyValueUpgradeEnabled ? 'green' : undefined }} />
-            </button>
-          )}
-          {cooldownAutoBuyerUnlocked && (
-            <button
-              className={`settings-button header-icon autobuyer-toggle-button ${autoBuyCooldownUpgradeEnabled ? 'active' : ''}`}
-              onClick={() => setAutoBuyCooldownUpgradeEnabled(v => !v)}
-              title={autoBuyCooldownUpgradeEnabled ? 'Cooldown AutoBuyer: Aktiviert' : 'Cooldown AutoBuyer: Deaktiviert'}
-              aria-label="Toggle Cooldown AutoBuyer"
-            >
-                <TimerIcon size={20} style={{ color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
-                <BotIcon size={18} style={{ marginLeft: 0, color: autoBuyCooldownUpgradeEnabled ? 'green' : undefined }} />
             </button>
           )}
           {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (

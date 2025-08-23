@@ -10,6 +10,12 @@ const AutoBuyerModal = ({
   autoBuyerBuffer,
   setAutoBuyerBuffer,
   formatNumber,
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
+  autoBuyerUnlocked,
+  cooldownAutoBuyerUnlocked,
 }) => {
   const modalRef = useModal(show, onClose);
 
@@ -66,6 +72,36 @@ const AutoBuyerModal = ({
             />
             <span>Current Buffer: {formatNumber(autoBuyerBuffer)}</span>
           </div>
+
+          {autoBuyerUnlocked && (
+            <div className="setting">
+              <label htmlFor="valueAutoBuyerToggle">Value AutoBuyer</label>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  id="valueAutoBuyerToggle"
+                  checked={autoBuyValueUpgradeEnabled}
+                  onChange={() => setAutoBuyValueUpgradeEnabled(v => !v)}
+                />
+                <span className="slider round"></span>
+              </label>
+            </div>
+          )}
+
+          {cooldownAutoBuyerUnlocked && (
+            <div className="setting">
+              <label htmlFor="cooldownAutoBuyerToggle">Cooldown AutoBuyer</label>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  id="cooldownAutoBuyerToggle"
+                  checked={autoBuyCooldownUpgradeEnabled}
+                  onChange={() => setAutoBuyCooldownUpgradeEnabled(v => !v)}
+                />
+                <span className="slider round"></span>
+              </label>
+            </div>
+          )}
         </div>
       </div>
     </div>
