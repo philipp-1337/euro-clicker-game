@@ -147,37 +147,41 @@ const AutoBuyerModal = ({
           <hr />
 
           <div className="settings-row">
-            <TimerReset size={20} className="settings-icon" />
-            <label htmlFor="autoBuyerInterval" className="settings-label settings-label-fixed-width">
-              Purchase Interval: {autoBuyerInterval / 1000}s
-            </label>
-            <input
-              type="range"
-              id="autoBuyerInterval"
-              min="500"
-              max="5000"
-              step="500"
-              value={autoBuyerInterval}
-              onChange={handleIntervalChange}
-              className="settings-slider"
-            />
+            <TimerReset size={24} className="settings-icon" />
+            <div className="settings-label-group">
+              <label htmlFor="autoBuyerInterval" className="settings-label">
+                Purchase Interval: {autoBuyerInterval / 1000}s
+              </label>
+              <input
+                type="range"
+                id="autoBuyerInterval"
+                min="500"
+                max="5000"
+                step="500"
+                value={autoBuyerInterval}
+                onChange={handleIntervalChange}
+                className="settings-slider"
+              />
+            </div>
           </div>
 
           <div className="settings-row">
-            <PiggyBankIcon size={20} className="settings-icon" />
-            <label htmlFor="autoBuyerBuffer" className="settings-label settings-label-fixed-width">
-              Money Buffer: {formatNumber(autoBuyerBuffer)}
-            </label>
-            <input
-              type="range"
-              id="autoBuyerBuffer"
-              min="0"
-              max="100"
-              step="1"
-              value={getSliderValue(autoBuyerBuffer)}
-              onChange={handleBufferChange}
-              className="settings-slider"
-            />
+            <PiggyBankIcon size={24} className="settings-icon" />
+            <div className="settings-label-group">
+              <label htmlFor="autoBuyerBuffer" className="settings-label">
+                Money Buffer: {formatNumber(autoBuyerBuffer)}
+              </label>
+              <input
+                type="range"
+                id="autoBuyerBuffer"
+                min="0"
+                max="100"
+                step="0.1"
+                value={getSliderValue(autoBuyerBuffer)}
+                onChange={handleBufferChange}
+                className="settings-slider"
+              />
+            </div>
           </div>
         </div>
       </div>

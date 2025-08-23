@@ -141,7 +141,7 @@ export default function ClickerGame({
   setAutoBuyerBuffer,
   isAutoBuyerModalOpen,
   setIsAutoBuyerModalOpen,
-  } = useClickerGame(easyMode, soundEffectsEnabled); // Pass soundEffectsEnabled
+  } = useClickerGame(easyMode, soundEffectsEnabled, buyQuantity); // Pass soundEffectsEnabled and buyQuantity
 
   // Crafting Unlock Handler
   const unlockCrafting = () => {
@@ -543,6 +543,8 @@ export default function ClickerGame({
           autoBuyerUnlocked={autoBuyerUnlocked}
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
           setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
+          autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+          autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
         />
       )}
 

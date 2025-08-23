@@ -17,3 +17,18 @@
     filter: drop-shadow(0 0 2px gold);
   }
 }
+
+.header-icon {
+  position: relative;
+
+  .active-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    border: 1px solid white;
+  }
+}

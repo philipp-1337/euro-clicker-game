@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
 import {
@@ -110,8 +111,13 @@ export default function GameHeader(props) {
   const {
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
-    setIsAutoBuyerModalOpen
+    setIsAutoBuyerModalOpen,
+    autoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled,
   } = props;
+
+  const isAutoBuyerActive =
+    autoBuyValueUpgradeEnabled || autoBuyCooldownUpgradeEnabled;
 
   const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
 
@@ -229,14 +235,15 @@ export default function GameHeader(props) {
               aria-label="AutoBuyer Settings"
             >
               <AutoBuyerSettingsIcon size={24} />
+              {isAutoBuyerActive && <span className="active-badge"></span>}
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
             onClick={toggleBuyQuantity}
-            title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
-            aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
+            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
           >
             {buyQuantity === 1 ? (
               <Layers2Icon size={20} />
@@ -347,3 +354,39 @@ export default function GameHeader(props) {
     </>
   );
 }
+
+// Hinzufügen von PropTypes
+
+GameHeader.propTypes = {
+  money: PropTypes.number.isRequired,
+  totalMoneyPerSecond: PropTypes.number.isRequired,
+  manualMoneyPerSecond: PropTypes.number,
+  playTime: PropTypes.number.isRequired,
+  activePlayTime: PropTypes.number.isRequired,
+  inactivePlayTime: PropTypes.number.isRequired,
+  floatingClicks: PropTypes.number.isRequired,
+  cloudSaveMode: PropTypes.bool.isRequired,
+  setCloudSaveMode: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  cloudUuid: PropTypes.string,
+  achievements: PropTypes.object.isRequired,
+  hasAnyAchievement: PropTypes.bool.isRequired,
+  prestigeCount: PropTypes.number.isRequired,
+  prestigeShares: PropTypes.number.isRequired,
+  currentRunShares: PropTypes.number.isRequired,
+  prestigeGame: PropTypes.func.isRequired,
+  prestigeBonusMultiplier: PropTypes.number.isRequired,
+  canPrestige: PropTypes.bool.isRequired,
+  gameConfig: PropTypes.object.isRequired,
+  buyQuantity: PropTypes.number.isRequired,
+  toggleBuyQuantity: PropTypes.func.isRequired,
+  autoBuyerUnlocked: PropTypes.bool.isRequired,
+  cooldownAutoBuyerUnlocked: PropTypes.bool.isRequired,
+  setIsAutoBuyerModalOpen: PropTypes.func.isRequired,
+  autoBuyValueUpgradeEnabled: PropTypes.bool.isRequired,
+  autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
+  musicEnabled: PropTypes.bool.isRequired,
+  setMusicEnabled: PropTypes.func.isRequired,
+  soundEffectsEnabled: PropTypes.bool.isRequired,
+  setSoundEffectsEnabled: PropTypes.func.isRequired,
+};
