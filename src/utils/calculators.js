@@ -104,10 +104,16 @@ export const formatNumber = (num, options = {}) => {
   /**
    * Calculates the global multiplier increase percentage from a multiplier factor
    * @param {number} multiplierFactor - The multiplication factor (e.g., 1.05)
+   * @param {boolean} [allowDecimals=false] - Whether to allow decimal points in the result
    * @returns {number} The percentage increase (e.g., 5 for 5%)
    */
-  export const getPercentage = (multiplierFactor) => {
-    return Math.abs(Math.round((multiplierFactor - 1) * 100));
+  export const getPercentage = (multiplierFactor, allowDecimals = false) => {
+    const percentage = Math.abs((multiplierFactor - 1) * 100);
+    if (allowDecimals) {
+      // round to 1 decimal place to avoid floating point issues
+      return Math.round(percentage * 10) / 10;
+    }
+    return Math.round(percentage);
   };
 
   /**

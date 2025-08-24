@@ -42,7 +42,8 @@ export default function PremiumUpgrades({
   // Crafting Unlock
 
   const globalMultiplierPercentage = getPercentage(
-    gameConfig.premiumUpgrades.globalMultiplier.factor
+    gameConfig.premiumUpgrades.globalMultiplier.factor,
+    String(gameConfig.premiumUpgrades.globalMultiplier.factor).split(".")[1]?.length >= 2
   );
 
   const globalCostReductionPercentage = getPercentage(
@@ -50,11 +51,13 @@ export default function PremiumUpgrades({
   );
 
   const offlineEarningsEffectPerLevelPercentage = getPercentage(
-    1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel // Convert 0.02 to 2%
+    1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel, // Convert 0.02 to 2%
+    String(gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel).split(".")[1]?.length >= 2
   );
 
   const criticalClickChanceEffectPercentage = getPercentage(
-    1 + gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel 
+    1 + gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel, 
+    String(gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel).split(".")[1]?.length >= 2
   );
 
   // Cost increase percentages

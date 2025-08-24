@@ -174,8 +174,8 @@ export const gameConfig = {
     offlineEarnings: {
       // Changed from unlockOfflineEarnings
       baseCost: 5000,
-      costExponent: 1.7, // Cost scaling per level
-      effectPerLevel: 0.05, // e.g., 5% earnings per level
+      costExponent: 1.9, // Cost scaling per level
+      effectPerLevel: 0.025, // e.g., 5% earnings per level
     },
     autoBuyerUnlock: {
       baseCost: 10000,
