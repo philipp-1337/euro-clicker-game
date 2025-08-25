@@ -15,7 +15,8 @@ import {
   Zap as PrestigeHeaderIcon, // Icon für Prestige
   Layers as LayersIcon,
   Layers2Icon, // Icon for buy quantity 
-  BotIcon as AutoBuyerSettingsIcon
+  BotIcon,
+  BotOffIcon
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -235,7 +236,7 @@ export default function GameHeader(props) {
               title="AutoBuyer Settings"
               aria-label="AutoBuyer Settings"
             >
-              <AutoBuyerSettingsIcon size={24} />
+              {isAutoBuyerActive ? <BotIcon size={24} /> : <BotOffIcon size={24} />}
               {isAutoBuyerActive && <span className="active-badge"></span>}
             </button>
           )}
