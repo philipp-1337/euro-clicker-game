@@ -1,3 +1,4 @@
+
 /**
  * Calculates the cost of the next level of an item
  * @param {number} baseCost - The base cost of the item
@@ -6,8 +7,24 @@
  * @returns {number} The cost of the next level
  */
 export const calculateNextLevelCost = (baseCost, currentLevel, growthRate = 1.15) => {
-    return Math.floor(baseCost * Math.pow(growthRate, currentLevel));
-  };
+  return Math.floor(baseCost * Math.pow(growthRate, currentLevel));
+};
+
+/**
+ * Special cost function for Investment Molds (tech):
+ * Fast initial growth, then flattens out for higher levels
+ * @param {number} baseCost - The base cost of the item
+ * @param {number} currentLevel - The current level of the item
+ * @param {number} fastFactor - Controls initial growth (default: 2.0)
+ * @param {number} flatFactor - Controls flattening (default: 0.5)
+ * @returns {number} The cost of the next level for tech
+ */
+export const calculateACost = (baseCost, currentLevel, fastFactor = 2.0, flatFactor = 0.5) => {
+  // Initial fast growth, then flatten with log
+  const fastGrowth = Math.pow(fastFactor, Math.min(currentLevel, 10));
+  const flatten = Math.log(1 + currentLevel) * flatFactor + 1;
+  return Math.floor(baseCost * fastGrowth * flatten);
+};
   
   /**
    * Calculates the total cost to upgrade from current level to target level

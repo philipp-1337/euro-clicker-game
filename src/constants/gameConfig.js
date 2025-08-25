@@ -75,9 +75,9 @@ export const gameConfig = {
   // Entfernt: resourceCostIncreaseFactor global
   // Neu: rawMaterials mit individuellem costIncreaseFactor
   rawMaterials: [
-    { id: "metal", name: "Precious Metals", baseCost: 1000, costIncreaseFactor: 1.07 },
-    { id: "parts", name: "Forging Instruments", baseCost: 5000, costIncreaseFactor: 1.10 },
-    { id: "tech", name: "Investment Molds", baseCost: 25000, costIncreaseFactor: 1.15 },
+    { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
+    { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
+    { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20,},
   ],
 
   craftingRecipes: [

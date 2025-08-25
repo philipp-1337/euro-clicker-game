@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
-import { Factory, Warehouse } from 'lucide-react';
+import { Factory, Warehouse, Anvil, Hammer, Cpu } from 'lucide-react';
 import { getLocalStorage, setLocalStorage } from '@utils/localStorage';
 
 export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, unlockCraftingCost, accumulatedPrestigeShares }) {
@@ -136,18 +136,31 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Wealth Production</h2>
 
-      {/* Resource display and purchase */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <Warehouse className="premium-icon" />
-          <h3>Assets</h3>
-        </div>
-        <div className="raw-materials-list">
-          {gameConfig.rawMaterials.map((mat) => {
-            const totalCost = calculateTotalCost(mat);
-            return (
-              <div key={mat.id} className="raw-material-item">
-                <span>{mat.name}: <strong>{rawMaterials[mat.id] || 0}</strong></span>
+      {/* Assets Section */}
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Assets</h3>
+      <div className="assets-list">
+        {gameConfig.rawMaterials.map((mat) => {
+          const totalCost = calculateTotalCost(mat);
+          const purchaseCount = resourcePurchaseCounts[mat.id] || 0;
+          // Map material id to Lucide icon
+          const MaterialIcon =
+            mat.id === 'metal' ? Anvil :
+            mat.id === 'parts' ? Hammer :
+            mat.id === 'tech' ? Cpu :
+            Warehouse;
+          return (
+            <div key={mat.id} className="premium-upgrade-card" style={{minWidth:260, flex:'1 1 260px'}}>
+              <div className="premium-upgrade-header">
+                <MaterialIcon className="premium-icon" />
+                <h3>{mat.name}</h3>
+              </div>
+              <div className="premium-upgrade-info">
+                <div className="premium-upgrade-level">
+                  Owned: <strong>{rawMaterials[mat.id] || 0}</strong>
+                </div>
+                <div className="premium-upgrade-level" style={{color:'#888', fontSize:'0.95em'}}>
+                  Previously purchased: {purchaseCount}
+                </div>
                 <button
                   className={`premium-upgrade-button ${money < totalCost ? 'disabled' : ''}`}
                   disabled={money < totalCost}
@@ -156,120 +169,123 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
                   Buy {buyQuantity} for {formatNumber(totalCost)} €
                 </button>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Production Orders mit Cooldown */}
-      {gameConfig.craftingRecipes.map((recipe, index) => {
-        const canCraft = recipe.materials.every(material => 
-          (rawMaterials[material.id] || 0) >= material.quantity
-        );
-        const materialsList = recipe.materials.map(material => 
-          `${material.quantity}x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
-        ).join(', ');
-        const now = Date.now();
-        const cooldownEnd = cooldowns[index];
-        const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
-        const baseCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
-        const recipeCooldown = baseCooldown * costMultiplier;
-        const isOnCooldown = cooldownEnd && now < cooldownEnd;
-        const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
-        const isRewardReady = rewardAvailable[index];
+      {/* Production Section */}
+      <h3 className="section-subtitle" style={{marginTop:32, marginBottom:12}}>Production</h3>
+      <div className="production-list">
+        {gameConfig.craftingRecipes.map((recipe, index) => {
+          const canCraft = recipe.materials.every(material => 
+            (rawMaterials[material.id] || 0) >= material.quantity
+          );
+          const materialsList = recipe.materials.map(material => 
+            `${material.quantity}x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
+          ).join(', ');
+          const now = Date.now();
+          const cooldownEnd = cooldowns[index];
+          const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
+          const baseCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
+          const recipeCooldown = baseCooldown * costMultiplier;
+          const isOnCooldown = cooldownEnd && now < cooldownEnd;
+          const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
+          const isRewardReady = rewardAvailable[index];
 
-        // Progressbar-Berechnung
-        let progressPercent = 0;
-        if (isOnCooldown && cooldownEnd) {
-          const total = recipeCooldown * 1000;
-          const elapsed = total - (cooldownEnd - now);
-          progressPercent = Math.max(0, Math.min(100, (elapsed / total) * 100));
-        }
+          // Progressbar-Berechnung
+          let progressPercent = 0;
+          if (isOnCooldown && cooldownEnd) {
+            const total = recipeCooldown * 1000;
+            const elapsed = total - (cooldownEnd - now);
+            progressPercent = Math.max(0, Math.min(100, (elapsed / total) * 100));
+          }
 
-        return (
-          <div key={index} className="premium-upgrade-card" style={{position:'relative', overflow:'hidden'}}>
-            <div className="premium-upgrade-header">
-              <Factory className="premium-icon" />
-              <h3>{recipe.name}</h3>
-            </div>
-            <p className="premium-upgrade-description">
-              <strong>Requires:</strong> {materialsList}
-            </p>
-            <p className="premium-upgrade-description">
-              <strong>Return:</strong> {formatNumber(recipe.output.money)} €
-            </p>
-            <div className="premium-upgrade-info">
-              <div className="premium-upgrade-level">
-                Crafted: {(craftingItems && craftingItems[index]) || 0}
-                {isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
+          return (
+            <div key={index} className="premium-upgrade-card" style={{position:'relative', overflow:'hidden', minWidth:260, flex:'1 1 260px'}}>
+              <div className="premium-upgrade-header">
+                <Factory className="premium-icon" />
+                <h3>{recipe.name}</h3>
               </div>
-              {isRewardReady ? (
-                <button
-                  onClick={() => {
-                    buyCraftingItem(index, true); // Reward und Counter erhöhen
-                    setCooldowns(prev => {
-                      const next = [...prev];
-                      next[index] = null;
-                      setLocalStorage(COOLDOWN_KEY, next);
-                      return next;
-                    });
-                    setPendingCrafts(prev => {
-                      const next = [...prev];
-                      next[index] = false;
-                      return next;
-                    });
-                    setRewardAvailable(prev => {
-                      const next = [...prev];
-                      next[index] = false;
-                      return next;
-                    });
-                  }}
-                  className="premium-upgrade-button"
-                >
-                  Request your Reward
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    // Rohstoffe nur hier abziehen!
-                    if (recipe && recipe.materials) {
-                      recipe.materials.forEach(material => {
-                        if (typeof rawMaterials[material.id] === 'number') {
-                          buyMaterial(material.id, -material.quantity);
-                        }
+              <p className="premium-upgrade-description">
+                <strong>Requires:</strong> {materialsList}
+              </p>
+              <p className="premium-upgrade-description">
+                <strong>Return:</strong> {formatNumber(recipe.output.money)} €
+              </p>
+              <div className="premium-upgrade-info">
+                <div className="premium-upgrade-level">
+                  Crafted: {(craftingItems && craftingItems[index]) || 0}
+                  {isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
+                </div>
+                {isRewardReady ? (
+                  <button
+                    onClick={() => {
+                      buyCraftingItem(index, true); // Reward und Counter erhöhen
+                      setCooldowns(prev => {
+                        const next = [...prev];
+                        next[index] = null;
+                        setLocalStorage(COOLDOWN_KEY, next);
+                        return next;
                       });
-                    }
-                    startCooldown(index, recipeCooldown);
-                  }}
-                  disabled={!canCraft || isOnCooldown}
-                  className={`premium-upgrade-button ${(!canCraft || isOnCooldown) ? 'disabled' : ''}`}
-                >
-                  {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown) !== formatNumber(DEFAULT_COOLDOWN_SECONDS) ? ` (${formatNumber(recipeCooldown)}s)` : ''}`}
-                </button>
+                      setPendingCrafts(prev => {
+                        const next = [...prev];
+                        next[index] = false;
+                        return next;
+                      });
+                      setRewardAvailable(prev => {
+                        const next = [...prev];
+                        next[index] = false;
+                        return next;
+                      });
+                    }}
+                    className="premium-upgrade-button"
+                  >
+                    Request your Return
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      // Rohstoffe nur hier abziehen!
+                      if (recipe && recipe.materials) {
+                        recipe.materials.forEach(material => {
+                          if (typeof rawMaterials[material.id] === 'number') {
+                            buyMaterial(material.id, -material.quantity);
+                          }
+                        });
+                      }
+                      startCooldown(index, recipeCooldown);
+                    }}
+                    disabled={!canCraft || isOnCooldown}
+                    className={`premium-upgrade-button ${(!canCraft || isOnCooldown) ? 'disabled' : ''}`}
+                  >
+                    {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown, {decimals: 0}) !== formatNumber(DEFAULT_COOLDOWN_SECONDS, {decimals: 0}) ? ` (${formatNumber(recipeCooldown, {decimals: 0})}s)` : ''}`}
+                  </button>
+                )}
+              </div>
+              {/* Progressbar am unteren Rand der Card */}
+              {isOnCooldown && (
+                <div style={{
+                  position: 'absolute',
+                  left: 0,
+                  bottom: 0,
+                  width: '100%',
+                  height: '6px',
+                  background: '#eee',
+                  zIndex: 1
+                }}>
+                  <div style={{
+                    width: `${progressPercent}%`,
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #4caf50 0%, #81c784 100%)',
+                    transition: 'width 0.25s linear'
+                  }} />
+                </div>
               )}
             </div>
-            {/* Progressbar am unteren Rand der Card */}
-            {isOnCooldown && (
-              <div style={{
-                position: 'absolute',
-                left: 0,
-                bottom: 0,
-                width: '100%',
-                height: '6px',
-                background: '#eee',
-                zIndex: 1
-              }}>
-                <div style={{
-                  width: `${progressPercent}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, #4caf50 0%, #81c784 100%)',
-                  transition: 'width 0.25s linear'
-                }} />
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
