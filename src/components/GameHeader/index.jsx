@@ -53,7 +53,7 @@ export default function GameHeader(props) {
     currentRunShares,
     prestigeShares, // Accumulated from previous prestiges
     prestigeGame,
-    prestigeBonusMultiplier, // Wird jetzt vom Hook geliefert
+    // prestigeBonusMultiplier,
     canPrestige
     // buyQuantity und toggleBuyQuantity werden direkt aus props bezogen
   } = useGameHeaderLogic({ ...props });
@@ -140,14 +140,14 @@ export default function GameHeader(props) {
         {displayTotalMoneyPerSecond > 0 && (
           <span className="per-second">
             +{formatNumber(displayTotalMoneyPerSecond)} €/s
-            {prestigeBonusMultiplier > 1 && (
+            {/* {prestigeBonusMultiplier > 1 && (
               <>
                 {' '}
                 <span className="prestige-bonus-display">
                   ({formatNumber((prestigeBonusMultiplier - 1) * 100)}%)
                 </span>
               </>
-            )}
+            )} */}
           </span>
         )}
       </div>
@@ -223,9 +223,13 @@ export default function GameHeader(props) {
               onClick={() => setShowPrestigeModal(true)}
               title="Prestige"
             >
-              <span className="prestige-pulse">
-                <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
-              </span>
+              {props.prestigeCount === 0 ? (
+                <span className="prestige-pulse">
+                  <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
+                </span>
+              ) : (
+                <PrestigeHeaderIcon size={20}/>
+              )}
             </button>
           )}
           {/* AutoBuyer Settings Button */}
@@ -377,7 +381,7 @@ GameHeader.propTypes = {
   prestigeShares: PropTypes.number.isRequired,
   currentRunShares: PropTypes.number.isRequired,
   prestigeGame: PropTypes.func.isRequired,
-  prestigeBonusMultiplier: PropTypes.number.isRequired,
+  // prestigeBonusMultiplier: PropTypes.number.isRequired,
   canPrestige: PropTypes.bool.isRequired,
   gameConfig: PropTypes.object.isRequired,
   buyQuantity: PropTypes.number.isRequired,
