@@ -1,77 +1,89 @@
-import PropTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse } from 'lucide-react';
-
+import { getLocalStorage, setLocalStorage } from '@utils/localStorage';
 
 export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, unlockCraftingCost, accumulatedPrestigeShares }) {
-  // Cooldown State: Array mit Endzeitpunkt pro Rezept
-  const [cooldowns, setCooldowns] = useState([]);
-  const [processing, setProcessing] = useState([]); // Merkt sich laufende Prozesse
-  const cooldownTimers = useRef([]);
-  const DEFAULT_COOLDOWN_SECONDS = gameConfig.craftingCooldownSeconds || 5; // Default 5 Sekunden
+  const COOLDOWN_KEY = 'craftingCooldowns';
+  const [cooldowns, setCooldowns] = useState(() => {
+    const loaded = getLocalStorage(COOLDOWN_KEY, []);
+    setLocalStorage(COOLDOWN_KEY, loaded);
+    return loaded;
+  });
+  const [pendingCrafts, setPendingCrafts] = useState(() => cooldowns.map(endTime => !!endTime));
+  const DEFAULT_COOLDOWN_SECONDS = gameConfig.craftingCooldownSeconds || 5;
+  const [rewardAvailable, setRewardAvailable] = useState(() => cooldowns.map((endTime) => {
+    const now = Date.now();
+    return endTime && now >= endTime;
+  }));
 
-  // Timer zum Aktualisieren der Cooldowns
+  // Synchronisiere rewardAvailable bei jedem Render
   useEffect(() => {
-    // Clear Timer on unmount
-    const timers = cooldownTimers.current;
-    return () => {
-      timers.forEach(timer => clearInterval(timer));
+    const loaded = getLocalStorage(COOLDOWN_KEY, []);
+    const now = Date.now();
+    setRewardAvailable(loaded.map((endTime) => endTime && now >= endTime));
+  }, [cooldowns]);
+
+  // Synchronisiere rewardAvailable nach jedem Tab-Wechsel (Visibility API)
+  useEffect(() => {
+    const syncRewardAvailable = () => {
+      const loaded = getLocalStorage(COOLDOWN_KEY, []);
+      const now = Date.now();
+      setRewardAvailable(loaded.map((endTime) => endTime && now >= endTime));
     };
+    document.addEventListener('visibilitychange', syncRewardAvailable);
+    return () => document.removeEventListener('visibilitychange', syncRewardAvailable);
   }, []);
 
-  // Hilfsfunktion: Startet Cooldown für Rezept-Index mit individueller Dauer
+  // Synchronisiere rewardAvailable nach Cloud-Import
+  useEffect(() => {
+    const onCloudImported = () => {
+      const loadedCooldowns = getLocalStorage(COOLDOWN_KEY, []);
+      const now = Date.now();
+      setRewardAvailable(loadedCooldowns.map((endTime) => endTime && now >= endTime));
+      setCooldowns(loadedCooldowns);
+      setPendingCrafts(loadedCooldowns.map(endTime => !!endTime));
+    };
+    window.addEventListener('game:cloudimported', onCloudImported);
+    return () => window.removeEventListener('game:cloudimported', onCloudImported);
+  }, [buyCraftingItem]);
+
+  // Cooldown-Logik: prüft bei jedem Render, ob ein Cooldown abgelaufen ist und setzt pendingCrafts
+  useEffect(() => {
+    const now = Date.now();
+    cooldowns.forEach((endTime, index) => {
+      if (endTime && now >= endTime && pendingCrafts[index]) {
+        setPendingCrafts(prev => {
+          const next = [...prev];
+          next[index] = false;
+          return next;
+        });
+      }
+    });
+    // Intervall für Progressbar/Status
+    const interval = setInterval(() => {
+      setCooldowns(prev => [...prev]);
+    }, 250);
+    return () => clearInterval(interval);
+  }, [cooldowns, pendingCrafts]);
+
+  // Hilfsfunktion: Startet Cooldown für Rezept-Index mit individueller Dauer und speichert im LocalStorage
   const startCooldown = (index, seconds) => {
     const endTime = Date.now() + seconds * 1000;
     setCooldowns(prev => {
       const next = [...prev];
       next[index] = endTime;
+      setLocalStorage(COOLDOWN_KEY, next);
       return next;
     });
-    setProcessing(prev => {
+    setPendingCrafts(prev => {
       const next = [...prev];
       next[index] = true;
       return next;
     });
-    // Timer für Ablauf
-    if (cooldownTimers.current[index]) clearInterval(cooldownTimers.current[index]);
-    cooldownTimers.current[index] = setInterval(() => {
-      setCooldowns(prev => {
-        const now = Date.now();
-        if (prev[index] && now >= prev[index]) {
-          // Nach Ablauf: Crafting durchführen, aber nur wenn Prozess aktiv war
-          clearInterval(cooldownTimers.current[index]);
-          let shouldCraft = false;
-          setProcessing(procPrev => {
-            const nextProc = [...procPrev];
-            if (nextProc[index]) {
-              shouldCraft = true;
-              nextProc[index] = false;
-            }
-            return nextProc;
-          });
-          if (shouldCraft) {
-            buyCraftingItem(index);
-          }
-          const next = [...prev];
-          next[index] = null;
-          return next;
-        }
-        return prev;
-      });
-    }, 250);
   };
-Crafting.propTypes = {
-  money: PropTypes.number.isRequired,
-  rawMaterials: PropTypes.object.isRequired,
-  buyCraftingItem: PropTypes.func.isRequired,
-  buyMaterial: PropTypes.func.isRequired,
-  craftingItems: PropTypes.array.isRequired,
-  resourcePurchaseCounts: PropTypes.object.isRequired,
-  easyMode: PropTypes.bool,
-  buyQuantity: PropTypes.number
-};
+
   // Use the same cost calculation wie in useCrafting.js, inklusive easyMode
   // Angepasst: Nutze individuellen costIncreaseFactor pro Material
   const calculateTotalCost = (material) => {
@@ -159,12 +171,12 @@ Crafting.propTypes = {
         ).join(', ');
         const now = Date.now();
         const cooldownEnd = cooldowns[index];
-        const isOnCooldown = cooldownEnd && now < cooldownEnd;
-        const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
         const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
         const baseCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
         const recipeCooldown = baseCooldown * costMultiplier;
-        const isProcessing = processing[index];
+        const isOnCooldown = cooldownEnd && now < cooldownEnd;
+        const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
+        const isRewardReady = rewardAvailable[index];
 
         // Progressbar-Berechnung
         let progressPercent = 0;
@@ -189,26 +201,52 @@ Crafting.propTypes = {
             <div className="premium-upgrade-info">
               <div className="premium-upgrade-level">
                 Crafted: {(craftingItems && craftingItems[index]) || 0}
-                {isProcessing && isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
+                {isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
               </div>
-              <button
-                onClick={() => {
-                  // Rohstoffe nur hier abziehen!
-                  const recipe = gameConfig.craftingRecipes[index];
-                  if (recipe && recipe.materials) {
-                    recipe.materials.forEach(material => {
-                      if (typeof rawMaterials[material.id] === 'number') {
-                        buyMaterial(material.id, -material.quantity);
-                      }
+              {isRewardReady ? (
+                <button
+                  onClick={() => {
+                    buyCraftingItem(index, true); // Reward und Counter erhöhen
+                    setCooldowns(prev => {
+                      const next = [...prev];
+                      next[index] = null;
+                      setLocalStorage(COOLDOWN_KEY, next);
+                      return next;
                     });
-                  }
-                  startCooldown(index, recipeCooldown);
-                }}
-                disabled={!canCraft || isOnCooldown || isProcessing}
-                className={`premium-upgrade-button ${(!canCraft || isOnCooldown || isProcessing) ? 'disabled' : ''}`}
-              >
-                {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown) !== formatNumber(DEFAULT_COOLDOWN_SECONDS) ? ` (${formatNumber(recipeCooldown)})` : ''}`}
-              </button>
+                    setPendingCrafts(prev => {
+                      const next = [...prev];
+                      next[index] = false;
+                      return next;
+                    });
+                    setRewardAvailable(prev => {
+                      const next = [...prev];
+                      next[index] = false;
+                      return next;
+                    });
+                  }}
+                  className="premium-upgrade-button"
+                >
+                  Request your Reward
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    // Rohstoffe nur hier abziehen!
+                    if (recipe && recipe.materials) {
+                      recipe.materials.forEach(material => {
+                        if (typeof rawMaterials[material.id] === 'number') {
+                          buyMaterial(material.id, -material.quantity);
+                        }
+                      });
+                    }
+                    startCooldown(index, recipeCooldown);
+                  }}
+                  disabled={!canCraft || isOnCooldown}
+                  className={`premium-upgrade-button ${(!canCraft || isOnCooldown) ? 'disabled' : ''}`}
+                >
+                  {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown) !== formatNumber(DEFAULT_COOLDOWN_SECONDS) ? ` (${formatNumber(recipeCooldown)}s)` : ''}`}
+                </button>
+              )}
             </div>
             {/* Progressbar am unteren Rand der Card */}
             {isOnCooldown && (

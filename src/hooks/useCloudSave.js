@@ -68,6 +68,10 @@ export default function useCloudSave() {
         : (gameConfig.initialState.prestigeCount ?? 0); // Fallback to initial state if undefined/invalid
 
 
+      // Beim Export: Crafting-Cooldowns aus LocalStorage holen
+      const craftingCooldowns = localStorage.getItem('craftingCooldowns');
+
+
       await setDoc(doc(db, 'saves', uuid), removeUndefinedFields({
         ...gameState,
         updatedAt: Date.now(),
@@ -80,6 +84,7 @@ export default function useCloudSave() {
         musicEnabledSetting,
         soundEffectsEnabledSetting,
         prestigeCount: prestigeCountToSave, // Use the checked value
+        craftingCooldowns, // <--- Crafting-Cooldowns speichern
       }));
       setCloudStatus('saved');
       return uuid;
@@ -155,6 +160,11 @@ export default function useCloudSave() {
           save.isCraftingUnlocked = data.isCraftingUnlocked;
           localStorage.setItem(CLICKER_SAVE_KEY, JSON.stringify(save));
         } catch {}
+      }
+
+      // Beim Import: Crafting-Cooldowns aus Cloud Save zurück in LocalStorage
+      if (data.craftingCooldowns) {
+        localStorage.setItem('craftingCooldowns', data.craftingCooldowns);
       }
 
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand

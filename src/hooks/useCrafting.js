@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
 // rawMaterials: Objekt mit Rohstoff-IDs als Keys und Mengen als Values
@@ -6,7 +7,7 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
   // Ermöglicht den Kauf von mehreren Einheiten auf einmal
-  const buyMaterial = (materialId, quantity = 1) => {
+  const buyMaterial = useCallback((materialId, quantity = 1) => {
     const material = gameConfig.rawMaterials.find(m => m.id === materialId);
     if (!material) return;
 
@@ -40,16 +41,16 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
       }));
       // resourcePurchaseCounts bleibt unverändert
     }
-  };
+  }, [money, resourcePurchaseCounts, setMoney, setRawMaterials, setResourcePurchaseCounts, easyMode, ensureStartTime]);
 
   // Crafting-Item herstellen
-  const buyCraftingItem = (index) => {
+  const buyCraftingItem = useCallback((index, force = false) => {
     const recipe = gameConfig.craftingRecipes[index];
     // Prüfe, ob alle Rohstoffe vorhanden sind
     const hasAllMaterials = recipe.materials.every(material =>
       rawMaterials[material.id] >= material.quantity
     );
-    if (!hasAllMaterials) return;
+    if (!hasAllMaterials && !force) return;
 
   // Rohstoffe werden NICHT mehr hier abgezogen! (nur beim Button-Klick)
 
@@ -66,7 +67,7 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
     });
 
     ensureStartTime?.();
-  };
+  }, [rawMaterials, setMoney, setCraftingItems, ensureStartTime]);
 
   return { buyCraftingItem, buyMaterial };
 }

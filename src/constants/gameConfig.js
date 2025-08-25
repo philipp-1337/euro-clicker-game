@@ -88,7 +88,7 @@ export const gameConfig = {
         { id: "metal", quantity: 5 },
         { id: "parts", quantity: 2 },
       ],
-      output: { money: 100000 },
+      output: { money: 100000000 },
       cooldownSeconds: 50, // Individueller Cooldown für dieses Produkt
     },
     {
@@ -99,7 +99,7 @@ export const gameConfig = {
         { id: "parts", quantity: 5 },
         { id: "tech", quantity: 1 },
       ],
-      output: { money: 500000 },
+      output: { money: 500000000 },
       cooldownSeconds: 140, // Individueller Cooldown für dieses Produkt
     },
   ],
