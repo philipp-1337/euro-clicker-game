@@ -159,7 +159,7 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
                   Owned: <strong>{rawMaterials[mat.id] || 0}</strong>
                 </div>
                 <div className="premium-upgrade-level" style={{color:'#888', fontSize:'0.95em'}}>
-                  Previously purchased: {purchaseCount}
+                  Total purchased: {purchaseCount}
                 </div>
                 <button
                   className={`premium-upgrade-button ${money < totalCost ? 'disabled' : ''}`}
