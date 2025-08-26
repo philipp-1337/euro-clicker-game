@@ -39,6 +39,7 @@ export default function UpgradeTabs({
   currentCriticalClickChance, // New
   buyCriticalClickChanceLevel,     // New
   criticalClickChanceCost,   // New
+  criticalHitMultiplier,
   onInvestmentBoosted, // New prop for handling investment boosts
   soundEffectsEnabled, // New prop
   easyMode, // Added from ClickerGame
@@ -156,6 +157,7 @@ export default function UpgradeTabs({
           currentCriticalClickChance={currentCriticalClickChance}
           buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
           criticalClickChanceCost={criticalClickChanceCost}
+          criticalHitMultiplier={criticalHitMultiplier}
           onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined}
           soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined}
           floatingClickValueLevel={floatingClickValueLevel}

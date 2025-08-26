@@ -123,24 +123,25 @@ export default function ClickerGame({
     resourcePurchaseCounts,
     setRawMaterials,
     setResourcePurchaseCounts,
-  isCraftingUnlocked,
-  setIsCraftingUnlocked,
-  autoBuyValueUpgradeEnabled,
-  setAutoBuyValueUpgradeEnabled,
-  autoBuyCooldownUpgradeEnabled,
-  setAutoBuyCooldownUpgradeEnabled,
-  autoBuyerUnlocked,
-  buyAutoBuyerUnlock,
-  autoBuyerUnlockCost,
-  cooldownAutoBuyerUnlocked,
-  buyCooldownAutoBuyerUnlock,
-  cooldownAutoBuyerUnlockCost,
-  autoBuyerInterval,
-  setAutoBuyerInterval,
-  autoBuyerBuffer,
-  setAutoBuyerBuffer,
-  isAutoBuyerModalOpen,
-  setIsAutoBuyerModalOpen,
+    isCraftingUnlocked,
+    setIsCraftingUnlocked,
+    autoBuyValueUpgradeEnabled,
+    setAutoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled,
+    setAutoBuyCooldownUpgradeEnabled,
+    autoBuyerUnlocked,
+    buyAutoBuyerUnlock,
+    autoBuyerUnlockCost,
+    cooldownAutoBuyerUnlocked,
+    buyCooldownAutoBuyerUnlock,
+    cooldownAutoBuyerUnlockCost,
+    autoBuyerInterval,
+    setAutoBuyerInterval,
+    autoBuyerBuffer,
+    setAutoBuyerBuffer,
+    isAutoBuyerModalOpen,
+    setIsAutoBuyerModalOpen,
+    criticalHitMultiplier,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   // Crafting Unlock Handler
@@ -661,6 +662,7 @@ export default function ClickerGame({
             currentCriticalClickChance={currentCriticalClickChance}
             criticalClickChanceCost={criticalClickChanceCost}
             buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
+            criticalHitMultiplier={criticalHitMultiplier}
             floatingClickValueLevel={floatingClickValueLevel}
             floatingClickValueMultiplier={floatingClickValueMultiplier}
             buyFloatingClickValue={buyFloatingClickValue}

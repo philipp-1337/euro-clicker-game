@@ -120,6 +120,14 @@ export default function usePremiumUpgrades({
     [criticalClickChanceLevel, costMultiplier]
   );
 
+  // Critical Hit Multiplier aus gameConfig
+  const baseMultiplier = gameConfig.premiumUpgrades.criticalClickChance.baseMultiplier ?? 1.0;
+  const multiplierPerLevel = gameConfig.premiumUpgrades.criticalClickChance.multiplierPerLevel ?? 0.5;
+  const criticalHitMultiplier = useMemo(() =>
+    baseMultiplier + (criticalClickChanceLevel * multiplierPerLevel),
+    [criticalClickChanceLevel, baseMultiplier, multiplierPerLevel]
+  );
+
   const buyCriticalClickChanceLevel = useCallback((quantity = 1) => {
     ensureStartTime?.();
     const maxLevel = 100;
@@ -158,34 +166,34 @@ export default function usePremiumUpgrades({
   const floatingClickValueCost = useMemo(() =>
     gameConfig.premiumUpgrades.floatingClickValue.baseCost *
     Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, floatingClickValueLevel) *
-    costMultiplier,
+      costMultiplier,
     [floatingClickValueLevel, costMultiplier]
-  );
+    );
 
   const buyFloatingClickValue = useCallback((quantity = 1) => {
-    ensureStartTime?.();
-    let totalCalculatedCost = 0;
+      ensureStartTime?.();
+      let totalCalculatedCost = 0;
     let tempLevel = floatingClickValueLevel;
-    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+      const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
 
     for (let i = 0; i < quantity; i++) {
       const costForThisStep = gameConfig.premiumUpgrades.floatingClickValue.baseCost *
         Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, tempLevel + i) *
-        currentCostMultiplier;
-      totalCalculatedCost += costForThisStep;
-    }
+          currentCostMultiplier;
+        totalCalculatedCost += costForThisStep;
+      }
 
-    if (money >= totalCalculatedCost) {
-      setMoney(prev => prev - totalCalculatedCost);
+      if (money >= totalCalculatedCost) {
+        setMoney(prev => prev - totalCalculatedCost);
       for (let i = 0; i < quantity; i++) {
         setFloatingClickValueLevel(prev => prev + 1);
         setFloatingClickValueMultiplier(prev => prev * gameConfig.premiumUpgrades.floatingClickValue.factor);
+        }
       }
-    }
-  }, [
-    money,
+    }, [
+      money,
     floatingClickValueLevel,
-    setMoney,
+      setMoney,
     setFloatingClickValueLevel,
     setFloatingClickValueMultiplier,
     ensureStartTime,
@@ -196,15 +204,13 @@ export default function usePremiumUpgrades({
     // Global Price Decrease
     globalPriceDecreaseCost,
     buyGlobalPriceDecrease,
-    
     // Offline Earnings
     offlineEarningsLevelCost,
     buyOfflineEarningsLevel,
-    
     // Critical Click Chance
     criticalClickChanceCost,
     buyCriticalClickChanceLevel,
-    
+    criticalHitMultiplier,
     // Floating Click Value
     floatingClickValueCost,
     buyFloatingClickValue,

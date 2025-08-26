@@ -14,6 +14,7 @@ export default function useFloatingClick({
   totalMoneyPerSecond,
   criticalClickChanceLevel,
   floatingClickValueMultiplier,
+  criticalHitMultiplier = 1.0,
   ensureStartTime
 }) {
   
@@ -22,14 +23,15 @@ export default function useFloatingClick({
 
   // Calculate current critical click chance
   const currentCriticalClickChance = useMemo(() =>
-    criticalClickChanceLevel * 0.01, // Assuming 1% per level, adjust based on gameConfig
+    criticalClickChanceLevel * 0.01,
     [criticalClickChanceLevel]
   );
 
   // Calculate current floating click value
-  const currentFloatingClickValue = useMemo(() => {
-    return floatingClickValueMultiplier;
-  }, [floatingClickValueMultiplier]);
+  const currentFloatingClickValue = useMemo(() => floatingClickValueMultiplier, [floatingClickValueMultiplier]);
+
+  // Calculate current critical hit multiplier
+  const currentCriticalHitMultiplier = useMemo(() => criticalHitMultiplier, [criticalHitMultiplier]);
 
   // Main floating click function
   const addQuickMoney = useCallback(() => {
@@ -42,28 +44,25 @@ export default function useFloatingClick({
     let moneyToAdd = currentFloatingClickValue;
 
     if (isCritical) {
-      const criticalAmount = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond)) 
-        ? totalMoneyPerSecond 
-        : 0;
-      moneyToAdd = Math.max(currentFloatingClickValue, criticalAmount);
+      moneyToAdd = currentFloatingClickValue * currentCriticalHitMultiplier;
     }
 
-    const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0) 
-      ? moneyToAdd 
+    const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0)
+      ? moneyToAdd
       : currentFloatingClickValue;
-      
+
     setMoney(prevMoney => {
       const currentPrevMoney = (typeof prevMoney === 'number' && !isNaN(prevMoney)) ? prevMoney : 0;
       return currentPrevMoney + finalMoneyToAdd;
     });
-    
-    return { isCritical, amount: finalMoneyToAdd };
+
+    return { isCritical, amount: finalMoneyToAdd, multiplier: isCritical ? currentCriticalHitMultiplier : 1 };
   }, [
     setMoney,
     ensureStartTime,
     currentCriticalClickChance,
-    totalMoneyPerSecond,
     currentFloatingClickValue,
+    currentCriticalHitMultiplier,
     setClickHistory
   ]);
 
@@ -99,8 +98,8 @@ export default function useFloatingClick({
     // Values
     currentCriticalClickChance,
     currentFloatingClickValue,
+    currentCriticalHitMultiplier,
     manualMoneyPerSecond,
-    
     // Functions
     addQuickMoney,
   };

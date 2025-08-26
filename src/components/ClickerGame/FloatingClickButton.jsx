@@ -6,7 +6,8 @@ export default function FloatingClickButton({
   centerMode = false,
   isCritical = false,
   criticalHitAnimations = [],
-  floatingClickValue = 1 // Neuer Prop für Wert
+  floatingClickValue = 1,
+  criticalHitMultiplier = 1 // Neuer Prop für Multiplikator
 }) {
   // The outer div will handle the fixed/absolute positioning and centerMode class
   // The inner div with position: relative is for the animated amounts relative to the button
@@ -15,7 +16,7 @@ export default function FloatingClickButton({
       <div style={{ position: 'relative', display: 'inline-block', width: '100%', height: '100%' }}> {/* For positioning amounts */}
         <button
           onClick={onClick}
-          className={`floating-click-button-actual${isCritical ? ' critical-hit' : ''}`} // Renamed class for the actual button
+          className={`floating-click-button-actual${isCritical ? ' critical-hit' : ''}`}
           aria-label="Quick Euro Button"
         >
           +{formatNumber(floatingClickValue, {decimals: 0})} €

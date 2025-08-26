@@ -167,9 +167,11 @@ export const gameConfig = {
     },
     criticalClickChance: {
       // New upgrade configuration
-      baseCost: 4000,
+      baseCost: 3500,
       costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
       effectPerLevel: 0.005, // 0.5% chance increase per level
+      baseMultiplier: 1.0, // Startwert x1.0
+      multiplierPerLevel: 0.1 // +0.5 pro Level
     },
     offlineEarnings: {
       // Changed from unlockOfflineEarnings
@@ -179,11 +181,9 @@ export const gameConfig = {
     },
     autoBuyerUnlock: {
       baseCost: 10000,
-      costExponent: 1.5,
     },
     cooldownAutoBuyerUnlock: {
       baseCost: 15000,
-      costExponent: 1.5,
     }
   },
 

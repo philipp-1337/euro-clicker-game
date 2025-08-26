@@ -148,14 +148,6 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     setMoney
   });
 
-  // Floating click system
-  const floatingClickHook = useFloatingClick({
-    money, setMoney, setClickHistory,
-    totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
-    criticalClickChanceLevel, floatingClickValueMultiplier,
-    ensureStartTime
-  });
-
   // Premium upgrades system
   const premiumUpgradesHook = usePremiumUpgrades({
     money, setMoney, easyMode, ensureStartTime,
@@ -163,6 +155,16 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     offlineEarningsLevel, setOfflineEarningsLevel,
     criticalClickChanceLevel, setCriticalClickChanceLevel,
     floatingClickValueLevel, setFloatingClickValueLevel, setFloatingClickValueMultiplier
+  });
+
+  // Floating click system
+  const floatingClickHook = useFloatingClick({
+    money, setMoney, setClickHistory,
+    totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
+    criticalClickChanceLevel,
+    floatingClickValueMultiplier,
+    criticalHitMultiplier: premiumUpgradesHook.criticalHitMultiplier,
+    ensureStartTime
   });
 
   // Click handling and cooldowns
