@@ -56,16 +56,16 @@ export const gameConfig = {
   
   
   investments: [
-    { name: "Taxi Company", cost: 12750, income: 7 },
-    { name: "Energy Drinks", cost: 26500, income: 16 },
-    { name: "Balcony Power Plants", cost: 38200, income: 23.5 },
-    { name: "Delicatessen", cost: 51500, income: 32 },
-    { name: "Fashion Label", cost: 68000, income: 43 },
-    { name: "E-Car Manufacturer", cost: 81250, income: 52 },
-    { name: "E-Cigarettes", cost: 95500, income: 61 },
-    { name: "Pharma", cost: 110750, income: 72 },
-    { name: "National Airline", cost: 128000, income: 84 },
-    { name: "Space Rocket Enterprises", cost: 145500, income: 97 },
+    { name: "Taxi Company", cost: 12750, income: 7, icon: "Car" },
+    { name: "Energy Drinks", cost: 26500, income: 16, icon: "Zap" },
+    { name: "Balcony Power Plants", cost: 38200, income: 23.5, icon: "Sunset" },
+    { name: "Delicatessen", cost: 51500, income: 32, icon: "Sandwich" },
+    { name: "Fashion Label", cost: 68000, income: 43, icon: "Shirt" },
+    { name: "E-Car Manufacturer", cost: 81250, income: 52, icon: "CarFront" },
+    { name: "E-Cigarettes", cost: 95500, income: 61, icon: "Cigarette" },
+    { name: "Pharma", cost: 110750, income: 72, icon: "Beaker" },
+    { name: "National Airline", cost: 128000, income: 84, icon: "Plane" },
+    { name: "Space Rocket Enterprises", cost: 145500, income: 97, icon: "Rocket" },
   ],
   
   unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs

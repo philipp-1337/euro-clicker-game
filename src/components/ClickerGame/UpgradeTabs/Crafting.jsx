@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
-import { Factory, Warehouse, Anvil, Hammer, Cpu } from 'lucide-react';
+import { Factory, Warehouse, Anvil, Hammer, Cpu, Unlock } from 'lucide-react';
 import { getLocalStorage, setLocalStorage } from '@utils/localStorage';
 
 export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, unlockCraftingCost, accumulatedPrestigeShares }) {
@@ -106,7 +106,7 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
         <h2 className="section-title">Wealth Production</h2>
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
-            <Warehouse className="premium-icon" />
+            <Unlock className="premium-icon" />
             <h3>Unlock Wealth Production</h3>
           </div>
           <p className="premium-upgrade-description">
