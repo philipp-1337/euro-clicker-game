@@ -63,7 +63,7 @@ export const gameConfig = {
     { name: "Fashion Label", cost: 68000, income: 43, icon: "Shirt" },
     { name: "E-Car Manufacturer", cost: 81250, income: 52, icon: "CarFront" },
     { name: "E-Cigarettes", cost: 95500, income: 61, icon: "Cigarette" },
-    { name: "Pharma", cost: 110750, income: 72, icon: "Beaker" },
+    { name: "Pharma", cost: 110750, income: 72, icon: "Pill" },
     { name: "National Airline", cost: 128000, income: 84, icon: "Plane" },
     { name: "Space Rocket Enterprises", cost: 145500, income: 97, icon: "Rocket" },
   ],

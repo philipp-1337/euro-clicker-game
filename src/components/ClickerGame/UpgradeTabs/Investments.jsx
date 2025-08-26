@@ -1,7 +1,7 @@
 import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
-import { Landmark, Unlock, Car, Zap, Sunset, Sandwich, Shirt, CarFront, Cigarette, Beaker, Plane, Rocket } from 'lucide-react';
+import { Landmark, Unlock, Car, Zap, Sunset, Sandwich, Shirt, CarFront, Cigarette, Pill, Plane, Rocket } from 'lucide-react';
 
 const InvestmentIcon = ({ iconName }) => {
   const icons = {
@@ -12,7 +12,7 @@ const InvestmentIcon = ({ iconName }) => {
     Shirt,
     CarFront,
     Cigarette,
-    Beaker,
+    Pill,
     Plane,
     Rocket,
     Landmark, // fallback
@@ -81,7 +81,7 @@ export default function Investments({ money, investments, buyInvestment, totalIn
       {!isInvestmentUnlocked ? (
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
-            <h3><Unlock className='premium-icon' />Unlock Investments</h3>
+            <Unlock className='premium-icon' /><h3>Unlock Investments</h3>
           </div>
           <p className="premium-upgrade-description">
             Unlock the Investments tab to invest in companies.
@@ -111,7 +111,10 @@ export default function Investments({ money, investments, buyInvestment, totalIn
           return (
             <div key={index} className="premium-upgrade-card">
               <div className="premium-upgrade-header">
-                <h3><InvestmentIcon iconName={investment.icon} />{investment.name}</h3>
+                <InvestmentIcon iconName={investment.icon} />
+                <h3>
+                  {investment.name}
+                </h3>
               </div>
               <p className="premium-upgrade-description">
                 Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
