@@ -1,4 +1,4 @@
-import { Percent, HistoryIcon, Zap as ZapIcon, Euro, Timer, MousePointerClick, TrendingUp } from 'lucide-react';
+import { Percent, HistoryIcon, Zap as ZapIcon, Euro, Timer, MousePointerClick, TrendingUp, Bot } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
@@ -284,12 +284,12 @@ export default function PremiumUpgrades({
             <h3>Value AutoBuyer</h3>
           </div>
         <p className="premium-upgrade-description">
-          Unlocks the automatic Value Upgrade buyer. It buys the cheapest upgrade every second. Once purchased, you can enable the AutoBuyer via the respective icon in the header area.
+          The Value Upgrade buyer automatically buys the cheapest upgrade once enabled via the <Bot size={12}/> in the header area. 
         </p>
         <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
+          {/* <div className="premium-upgrade-level">
             {autoBuyerUnlocked ? 'Unlocked' : 'Locked'}
-          </div>
+          </div> */}
           <button
             onClick={buyAutoBuyerUnlock}
             disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
@@ -308,12 +308,12 @@ export default function PremiumUpgrades({
             <h3>Cooldown AutoBuyer</h3>
           </div>
         <p className="premium-upgrade-description">
-          Unlocks the automatic Cooldown Upgrade buyer. It buys the cheapest upgrade every second. Once purchased, you can enable the Cooldown AutoBuyer via the respective icon in the header area.
+          The Cooldown Upgrade buyer automatically buys the cheapest upgrade once enabled via the <Bot size={12}/> in the header area.
         </p>
         <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
+          {/* <div className="premium-upgrade-level">
             {cooldownAutoBuyerUnlocked ? 'Unlocked' : 'Locked'}
-          </div>
+          </div> */}
           <button
             onClick={buyCooldownAutoBuyerUnlock}
             disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}

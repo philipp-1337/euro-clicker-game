@@ -4,7 +4,7 @@ import {
   X as CloseIcon,
   Power as PowerIcon,
   PowerOff as PowerOffIcon,
-  DollarSign as DollarSignIcon,
+  Euro as EuroIcon,
   Clock as ClockIcon,
   PiggyBank as PiggyBankIcon,
   TimerReset,
@@ -72,7 +72,7 @@ const AutoBuyerModal = ({
         <div className="settings-modal-content">
           {autoBuyerUnlocked && (
             <div className="settings-row">
-              <DollarSignIcon size={20} className="settings-icon" />
+              <EuroIcon size={20} className="settings-icon" />
               <button
                 className="settings-label btn"
                 onClick={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
