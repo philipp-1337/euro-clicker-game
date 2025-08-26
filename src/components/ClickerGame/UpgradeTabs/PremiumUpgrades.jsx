@@ -230,7 +230,7 @@ export default function PremiumUpgrades({
           className="premium-upgrade-description" 
           title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}
         >
-          Clicks on the floating Euro button can trigger a Critical Hit, multiplying the Floating Click Value. Each level adds {criticalClickChanceEffectPercentage}% chance and {criticalClickMultiplierPerLevelPercentage}% multiplier.
+          Clicks on the Floating Click Button can trigger a Critical Hit, multiplying the Floating Click Value. Each level adds {criticalClickChanceEffectPercentage}% chance and {criticalClickMultiplierPerLevelPercentage}% multiplier.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -274,7 +274,7 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Percent className="premium-icon" />
-          <h3>Upgrade Price Decrease</h3>
+          <h3>Price Decrease</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalPriceDecreaseCostIncreasePercentage}% per level.`}>
           Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level. 
