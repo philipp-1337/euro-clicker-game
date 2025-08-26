@@ -103,6 +103,17 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
   if (!isCraftingUnlocked) {
     return (
       <div className="upgrade-section premium-section">
+        <div style={{
+          backgroundColor: '#ffc107',
+          color: '#000',
+          padding: '10px',
+          textAlign: 'center',
+          borderRadius: '5px',
+          marginBottom: '15px',
+          border: '1px solid #e0a800'
+        }}>
+          <strong>Alpha Feature:</strong> The crafting system is currently in an early alpha stage. Features may be incomplete or subject to change.
+        </div>
         <h2 className="section-title">Wealth Production</h2>
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
@@ -134,6 +145,17 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
 
   return (
     <div className="upgrade-section premium-section">
+      <div style={{
+        backgroundColor: '#ffc107',
+        color: '#000',
+        padding: '10px',
+        textAlign: 'center',
+        borderRadius: '5px',
+        marginBottom: '15px',
+        border: '1px solid #e0a800'
+      }}>
+        <strong>Alpha Feature:</strong> The crafting system is currently in an early alpha stage. Features may be incomplete or subject to change.
+      </div>
       <h2 className="section-title">Wealth Production</h2>
 
       {/* Assets Section */}
