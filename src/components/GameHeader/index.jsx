@@ -76,7 +76,8 @@ export default function GameHeader(props) {
     setShowAchievementsHeaderButton,
     showStatisticsHeaderButton,
     setShowStatisticsHeaderButton,
-    prestigeButtonEverVisible, // Get the new state
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible, // Fix: import setter
   } = useUiProgress();
 
   // Click Counter immer beim Spielstart anzeigen
@@ -104,6 +105,13 @@ export default function GameHeader(props) {
   // Logic to show Prestige button: either money threshold is met OR it has been visible before
   const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
+
+  // Fix: Sobald der Button sichtbar ist, Wert persistent setzen
+  React.useEffect(() => {
+    if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
+      setPrestigeButtonEverVisible(true);
+    }
+  }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
