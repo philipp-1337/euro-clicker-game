@@ -155,23 +155,23 @@ export const gameConfig = {
       costExponent: 1.3, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
     },
-    globalMultiplier: {
-      baseCost: 1000,
-      costExponent: 1.4, // z.B. exponentiell steigend, anpassbar
-      factor: 1.05, // 5% Steigerung pro Level
-    },
-    globalPriceDecrease: {
-      baseCost: 2000,
-      costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
-      decreaseFactor: 0.95, // -5% pro Level (0.95^level)
-    },
     criticalClickChance: {
       // New upgrade configuration
-      baseCost: 3500,
-      costLevelMultiplier: 1.6, // Cost increases by 0.75 * baseCost for each level
+      baseCost: 1000,
+      costLevelMultiplier: 1.4, // Cost increases by 0.75 * baseCost for each level
       effectPerLevel: 0.005, // 0.5% chance increase per level
       baseMultiplier: 1.0, // Startwert x1.0
       multiplierPerLevel: 0.1 // +0.5 pro Level
+    },
+    globalMultiplier: {
+      baseCost: 2000,
+      costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
+      factor: 1.05, // 5% Steigerung pro Level
+    },
+    globalPriceDecrease: {
+      baseCost: 4000,
+      costExponent: 1.6, // z.B. exponentiell steigend, anpassbar
+      decreaseFactor: 0.90, // -5% pro Level (0.95^level)
     },
     offlineEarnings: {
       // Changed from unlockOfflineEarnings

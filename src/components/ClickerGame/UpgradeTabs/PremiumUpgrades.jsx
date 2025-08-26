@@ -197,11 +197,11 @@ export default function PremiumUpgrades({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
-      
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Floating Click Upgrades</h3>
       <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <MousePointerClick className="premium-icon" />
-            <h3>Floating Click Value</h3>
+            <h3>Click Value</h3>
           </div>
         <p className="premium-upgrade-description">
           Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
@@ -220,14 +220,41 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      {/* Critical Click Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <ActivityIcon className="premium-icon" />
+          <h3>Critical Click</h3>
+        </div>
+        <p 
+          className="premium-upgrade-description" 
+          title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}
+        >
+          Clicks on the floating Euro button can trigger a Critical Hit, multiplying the Floating Click Value. Each level adds {criticalClickChanceEffectPercentage}% chance and {criticalClickMultiplierPerLevelPercentage}% multiplier.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {formatNumber(criticalClickChanceLevel)} (Chance: {formatNumber(currentCriticalClickChance * 100)}%, Multiplier: {formatCriticalMultiplier(criticalHitMultiplier * 100)}%)
+          </div>
+          <button
+            onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
+            disabled={getCriticalClickButtonState().isDisabled}
+            className={`premium-upgrade-button ${getCriticalClickButtonState().isDisabled ? 'disabled' : ''}`}
+            title={getCriticalClickButtonState().titleText}
+          >
+            {getCriticalClickButtonState().buttonText}
+          </button>
+        </div>
+      </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Global Clicker Upgrades</h3>
       {/* Global Multiplier Upgrade */}
       <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <TrendingUp className="premium-icon" />
-            <h3>Clicker Value Multiplier</h3>
+            <h3>Value Multiplier</h3>
           </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalMultiplierCostIncreasePercentage}% per level.`}>
-          Increases the value of all clicks by {globalMultiplierPercentage}% per level. 
+          Increases the value of the 5 coloured Clicker Buttons by {globalMultiplierPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -266,32 +293,7 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      {/* Critical Click Upgrade */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <ActivityIcon className="premium-icon" />
-          <h3>Critical Click</h3>
-        </div>
-        <p 
-          className="premium-upgrade-description" 
-          title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}
-        >
-          Each click on the floating Euro button has a chance to trigger a Critical Hit which multiplies the Floating Click Value. Each level increases the chance by {criticalClickChanceEffectPercentage}% and the multiplier by {criticalClickMultiplierPerLevelPercentage}%.
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Level: {formatNumber(criticalClickChanceLevel)} (Chance: {formatNumber(currentCriticalClickChance * 100)}%, Multiplier: {formatCriticalMultiplier(criticalHitMultiplier * 100)}%)
-          </div>
-          <button
-            onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
-            disabled={getCriticalClickButtonState().isDisabled}
-            className={`premium-upgrade-button ${getCriticalClickButtonState().isDisabled ? 'disabled' : ''}`}
-            title={getCriticalClickButtonState().titleText}
-          >
-            {getCriticalClickButtonState().buttonText}
-          </button>
-        </div>
-      </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Passive Upgrades</h3>
       {/* Unlock Offline Earnings */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
