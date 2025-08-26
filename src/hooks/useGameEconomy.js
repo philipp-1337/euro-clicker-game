@@ -113,11 +113,13 @@ export default function useGameEconomy({
       investments: gameConfig.initialState.investments.map(() => 0),
       boostedInvestments: gameConfig.investments.map(() => false),
       
-      // Reset auto-buyers on prestige
-      autoBuyValueUpgradeEnabled: false,
-      autoBuyCooldownUpgradeEnabled: false,
-      autoBuyerUnlocked: false,
-      cooldownAutoBuyerUnlocked: false,
+      // Preserve auto-buyers on prestige
+      autoBuyValueUpgradeEnabled: gameState.autoBuyValueUpgradeEnabled,
+      autoBuyCooldownUpgradeEnabled: gameState.autoBuyCooldownUpgradeEnabled,
+      autoBuyerUnlocked: gameState.autoBuyerUnlocked,
+      cooldownAutoBuyerUnlocked: gameState.cooldownAutoBuyerUnlocked,
+      autoBuyerInterval: gameState.autoBuyerInterval,
+      autoBuyerBuffer: gameState.autoBuyerBuffer,
     };
 
     // Update prestige shares
