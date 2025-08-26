@@ -55,7 +55,7 @@ npm start
         /Investments.jsx
         /PremiumUpgrades.jsx  # Zweiter Tab
   /hooks
-    /useClickerGame.js        # Hauptlogik als Hook extrahiert
+    /useGameCore.js        # Hauptlogik als Hook extrahiert
     /useCooldowns.js
     /useGameCalculations.js
     /useGameState.js

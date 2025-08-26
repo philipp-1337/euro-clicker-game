@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { db } from '../firebase';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
+import { removeUndefinedFields } from '../utils/removeUndefinedFields';
 
 // Hilfsfunktion für UUID
 function generateUUID() {
@@ -67,7 +68,11 @@ export default function useCloudSave() {
         : (gameConfig.initialState.prestigeCount ?? 0); // Fallback to initial state if undefined/invalid
 
 
-      await setDoc(doc(db, 'saves', uuid), {
+      // Beim Export: Crafting-Cooldowns aus LocalStorage holen
+      const craftingCooldowns = localStorage.getItem('craftingCooldowns');
+
+
+      await setDoc(doc(db, 'saves', uuid), removeUndefinedFields({
         ...gameState,
         updatedAt: Date.now(),
         clickerSave,
@@ -79,7 +84,8 @@ export default function useCloudSave() {
         musicEnabledSetting,
         soundEffectsEnabledSetting,
         prestigeCount: prestigeCountToSave, // Use the checked value
-      });
+        craftingCooldowns, // <--- Crafting-Cooldowns speichern
+      }));
       setCloudStatus('saved');
       return uuid;
     } catch (e) {
@@ -100,7 +106,16 @@ export default function useCloudSave() {
       setCloudUuid(uuid);
 
       // Schreibe die LocalStorage-Daten zurück
-      if (data.clickerSave) localStorage.setItem(CLICKER_SAVE_KEY, data.clickerSave);
+      if (data.clickerSave) {
+        localStorage.setItem(CLICKER_SAVE_KEY, data.clickerSave);
+        // Extrahiere isCraftingUnlocked aus clickerSave und schreibe als eigenen Key
+        try {
+          const saveObj = JSON.parse(data.clickerSave);
+          if (typeof saveObj.isCraftingUnlocked === 'boolean') {
+            localStorage.setItem('isCraftingUnlocked', saveObj.isCraftingUnlocked ? 'true' : 'false');
+          }
+        } catch {}
+      }
       if (data.clickerUiProgress) localStorage.setItem(UI_PROGRESS_KEY, data.clickerUiProgress);
       if (data.startTime) localStorage.setItem(START_TIME_KEY, data.startTime);
       if (data.achievementNotificationsSeen) localStorage.setItem('achievementNotificationsSeen', data.achievementNotificationsSeen);
@@ -137,6 +152,19 @@ export default function useCloudSave() {
           save.prestigeCount = data.prestigeCount;
           localStorage.setItem(CLICKER_SAVE_KEY, JSON.stringify(save));
         } catch {}
+      }
+      // Crafting-Unlock-Status zurückschreiben
+      if (typeof data.isCraftingUnlocked === 'boolean') {
+        try {
+          const save = JSON.parse(localStorage.getItem(CLICKER_SAVE_KEY) || '{}');
+          save.isCraftingUnlocked = data.isCraftingUnlocked;
+          localStorage.setItem(CLICKER_SAVE_KEY, JSON.stringify(save));
+        } catch {}
+      }
+
+      // Beim Import: Crafting-Cooldowns aus Cloud Save zurück in LocalStorage
+      if (data.craftingCooldowns) {
+        localStorage.setItem('craftingCooldowns', data.craftingCooldowns);
       }
 
       // Entferne Firestore-Metadaten und Zusatzdaten für den eigentlichen Spielzustand

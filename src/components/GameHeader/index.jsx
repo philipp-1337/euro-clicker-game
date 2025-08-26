@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
 import {
@@ -13,7 +14,9 @@ import {
   AwardIcon,
   Zap as PrestigeHeaderIcon, // Icon für Prestige
   Layers as LayersIcon,
-  Layers2Icon, // Icon for buy quantity toggle
+  Layers2Icon, // Icon for buy quantity 
+  BotIcon,
+  BotOffIcon
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -50,7 +53,7 @@ export default function GameHeader(props) {
     currentRunShares,
     prestigeShares, // Accumulated from previous prestiges
     prestigeGame,
-    prestigeBonusMultiplier, // Wird jetzt vom Hook geliefert
+    // prestigeBonusMultiplier,
     canPrestige
     // buyQuantity und toggleBuyQuantity werden direkt aus props bezogen
   } = useGameHeaderLogic({ ...props });
@@ -73,7 +76,8 @@ export default function GameHeader(props) {
     setShowAchievementsHeaderButton,
     showStatisticsHeaderButton,
     setShowStatisticsHeaderButton,
-    prestigeButtonEverVisible, // Get the new state
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible, // Fix: import setter
   } = useUiProgress();
 
   // Click Counter immer beim Spielstart anzeigen
@@ -102,8 +106,27 @@ export default function GameHeader(props) {
   const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
 
+  // Fix: Sobald der Button sichtbar ist, Wert persistent setzen
+  React.useEffect(() => {
+    if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
+      setPrestigeButtonEverVisible(true);
+    }
+  }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
+
   // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+
+  // AutoBuyer toggles (moved from BasicUpgrades)
+  const {
+    autoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked,
+    setIsAutoBuyerModalOpen,
+    autoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled,
+  } = props;
+
+  const isAutoBuyerActive =
+    autoBuyValueUpgradeEnabled || autoBuyCooldownUpgradeEnabled;
 
   const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
 
@@ -125,14 +148,14 @@ export default function GameHeader(props) {
         {displayTotalMoneyPerSecond > 0 && (
           <span className="per-second">
             +{formatNumber(displayTotalMoneyPerSecond)} €/s
-            {prestigeBonusMultiplier > 1 && (
+            {/* {prestigeBonusMultiplier > 1 && (
               <>
                 {' '}
                 <span className="prestige-bonus-display">
                   ({formatNumber((prestigeBonusMultiplier - 1) * 100)}%)
                 </span>
               </>
-            )}
+            )} */}
           </span>
         )}
       </div>
@@ -204,19 +227,37 @@ export default function GameHeader(props) {
           {/* Prestige Button */}
           {showPrestigeButtonInHeader && (
             <button
-              className="settings-button header-icon prestige-header-button" // Add a class for styling
+              className="settings-button header-icon prestige-header-button"
               onClick={() => setShowPrestigeModal(true)}
               title="Prestige"
             >
-              <PrestigeHeaderIcon size={20} />
+              {props.prestigeCount === 0 ? (
+                <span className="prestige-pulse">
+                  <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
+                </span>
+              ) : (
+                <PrestigeHeaderIcon size={20}/>
+              )}
+            </button>
+          )}
+          {/* AutoBuyer Settings Button */}
+          {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setIsAutoBuyerModalOpen(true)}
+              title="AutoBuyer Settings"
+              aria-label="AutoBuyer Settings"
+            >
+              {isAutoBuyerActive ? <BotIcon size={24} /> : <BotOffIcon size={24} />}
+              {isAutoBuyerActive && <span className="active-badge"></span>}
             </button>
           )}
           {/* Upgrade Quantity Toggle Button */}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
             onClick={toggleBuyQuantity}
-            title={`Toggle Upgrade Quantity (Currently: x${buyQuantity})`}
-            aria-label={`Toggle Upgrade Quantity, current is x${buyQuantity}`}
+            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
           >
             {buyQuantity === 1 ? (
               <Layers2Icon size={20} />
@@ -327,3 +368,39 @@ export default function GameHeader(props) {
     </>
   );
 }
+
+// Hinzufügen von PropTypes
+
+GameHeader.propTypes = {
+  money: PropTypes.number.isRequired,
+  totalMoneyPerSecond: PropTypes.number.isRequired,
+  manualMoneyPerSecond: PropTypes.number,
+  playTime: PropTypes.number.isRequired,
+  activePlayTime: PropTypes.number.isRequired,
+  inactivePlayTime: PropTypes.number.isRequired,
+  floatingClicks: PropTypes.number.isRequired,
+  cloudSaveMode: PropTypes.bool.isRequired,
+  setCloudSaveMode: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  cloudUuid: PropTypes.string,
+  achievements: PropTypes.object.isRequired,
+  hasAnyAchievement: PropTypes.bool.isRequired,
+  prestigeCount: PropTypes.number.isRequired,
+  prestigeShares: PropTypes.number.isRequired,
+  currentRunShares: PropTypes.number.isRequired,
+  prestigeGame: PropTypes.func.isRequired,
+  // prestigeBonusMultiplier: PropTypes.number.isRequired,
+  canPrestige: PropTypes.bool.isRequired,
+  gameConfig: PropTypes.object.isRequired,
+  buyQuantity: PropTypes.number.isRequired,
+  toggleBuyQuantity: PropTypes.func.isRequired,
+  autoBuyerUnlocked: PropTypes.bool.isRequired,
+  cooldownAutoBuyerUnlocked: PropTypes.bool.isRequired,
+  setIsAutoBuyerModalOpen: PropTypes.func.isRequired,
+  autoBuyValueUpgradeEnabled: PropTypes.bool.isRequired,
+  autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
+  musicEnabled: PropTypes.bool.isRequired,
+  setMusicEnabled: PropTypes.func.isRequired,
+  soundEffectsEnabled: PropTypes.bool.isRequired,
+  setSoundEffectsEnabled: PropTypes.func.isRequired,
+};

@@ -78,7 +78,6 @@ export default function SettingsModal({
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
   // Dark Mode State (global und persistiert im Savegame)
   const [isDarkMode, setIsDarkMode] = React.useState(() => {
-    // Zuerst aus clickerSave laden, dann localStorage fallback
     try {
       const saveRaw = localStorage.getItem('clickerSave');
       if (saveRaw) {
@@ -88,6 +87,7 @@ export default function SettingsModal({
     } catch {}
     return localStorage.getItem('darkMode') === 'true';
   });
+
   const { deleteFromCloud } = useCloudSave();
 
   // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
@@ -109,6 +109,7 @@ export default function SettingsModal({
       }
     } catch {}
   }, [isDarkMode]);
+
 
   // Dark Mode nach Cloud Import anwenden (Listener)
   React.useEffect(() => {

@@ -113,9 +113,21 @@ export default function useGameHeaderLogic(props) {
     try {
       const raw = localStorage.getItem('clickerUiProgress');
       const prev = raw ? JSON.parse(raw) : {};
-      if (prev.cloudSaveMode !== cloudSaveMode) {
-        localStorage.setItem('clickerUiProgress', JSON.stringify({ ...prev, cloudSaveMode }));
-      }
+      // Default-Werte ergänzen, falls Keys fehlen
+      const defaults = {
+        gameStarted: false,
+        clickedButtons: [false, false, false, false, false],
+        floatingClicks: 0,
+        cloudSaveMode: false,
+        showPlaytime: true,
+        showClickStats: false,
+        showLeaderboard: true,
+        showAchievementsHeaderButton: true,
+        showStatisticsHeaderButton: false,
+        prestigeButtonEverVisible: false,
+      };
+      const merged = { ...defaults, ...prev, cloudSaveMode };
+      localStorage.setItem('clickerUiProgress', JSON.stringify(merged));
     } catch {}
   }, [cloudSaveMode]);
 

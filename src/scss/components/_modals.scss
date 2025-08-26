@@ -24,7 +24,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  max-height: 85vh; // Maximale Höhe für das Modal festlegen
+  max-height: 75vh; // Maximale Höhe für das Modal festlegen
 
   font-family: $font-family;
 
@@ -148,6 +148,10 @@
         box-shadow: none !important;
         text-shadow: none !important;
       }
+    }
+
+    &.settings-label-fixed-width {
+      flex: 0 0 200px;
     }
   }
 
@@ -315,5 +319,52 @@
       color: map.get($colors, secondary);
       font-size: 0.95em;
     }
+  }
+}
+
+.prestige-confirm-modal {
+  .modal-actions {
+    .modal-btn.danger {
+      background: map.get($colors, red);
+      color: map.get($colors, white);
+      &:hover {
+        background: darken(map.get($colors, red), 10%);
+      }
+    }
+  }
+}
+
+.settings-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  // width: 100%;
+  // height: 8px;
+  background: #ddd;
+  outline: none;
+  border-radius: 10px;
+  // opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: map.get($colors, blue);
+    cursor: pointer;
+    border-radius: 50%;
+  }
+
+  &::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: map.get($colors, blue);
+    cursor: pointer;
+    border-radius: 50%;
   }
 }

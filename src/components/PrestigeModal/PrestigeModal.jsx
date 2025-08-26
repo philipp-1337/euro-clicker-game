@@ -85,13 +85,13 @@ export default function PrestigeModal({
               disabled={!canPrestige}
               title={
                 canPrestige
-                  ? `Prestige now for +${currentRunShares.toFixed(2)} Shares`
-                  : `Need at least ${minSharesRequired.toFixed(1)} Share (currently ${currentRunShares.toFixed(2)})`
+                  ? `Prestige now for +${formatNumber(currentRunShares)} Shares`
+                  : `Need at least ${formatNumber(minSharesRequired)} Share (currently ${formatNumber(currentRunShares)})`
               }
             >
               {canPrestige
                 ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
-                : `Need ${minSharesRequired.toFixed(1)} Share from this run${
+                : `Need ${formatNumber(minSharesRequired)} Share from this run${
                     currentRunShares > 0
                       ? ` (currently ${formatNumber(currentRunShares)})`
                       : ''

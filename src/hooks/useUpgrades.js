@@ -19,11 +19,9 @@ export default function useUpgrades(
     // buyValueUpgrade needs to handle quantity
     function buyValueUpgrade(index, quantity = 1) {
       ensureStartTime?.();
-
+      // States synchron updaten, keine Geld-Prüfung mehr
       let totalCalculatedCost = 0;
       let tempLevel = valueUpgradeLevels[index];
-      
-      // Calculate the actual total cost for 'quantity' upgrades
       for (let i = 0; i < quantity; i++) {
         const costForThisStep = calculateCostWithDifficulty(
           gameConfig.baseValueUpgradeCosts[index],
@@ -34,24 +32,19 @@ export default function useUpgrades(
         ) * globalPriceDecrease;
         totalCalculatedCost += costForThisStep;
       }
-
-      if (money >= totalCalculatedCost) {
-        ensureStartTime?.();
-        setMoney(prev => prev - totalCalculatedCost);
+      setMoney(money - totalCalculatedCost);
+      setValueMultipliers(prev => {
+        const updated = [...prev];
         for (let i = 0; i < quantity; i++) {
-          // Apply effect for each upgrade
-          setValueMultipliers(prev => {
-            const updated = [...prev];
-            updated[index] *= gameConfig.upgrades.valueMultiplierFactor;
-            return updated;
-          });
-          setValueUpgradeLevels(prev => {
-            const updated = [...prev];
-            updated[index]++;
-            return updated;
-          });
+          updated[index] *= gameConfig.upgrades.valueMultiplierFactor;
         }
-      }
+        return updated;
+      });
+      setValueUpgradeLevels(prev => {
+        const updated = [...prev];
+        updated[index] += quantity;
+        return updated;
+      });
     }
   
     function buyCooldownUpgrade(index, quantity = 1) {

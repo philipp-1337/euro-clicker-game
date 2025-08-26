@@ -1,0 +1,161 @@
+import { useCallback, useMemo, useEffect } from 'react';
+import { gameConfig } from '@constants/gameConfig';
+
+/**
+ * Manages the core economy of the game including:
+ * - Money management
+ * - Income calculations (manager + investment income)
+ * - Prestige system (shares, bonus multipliers)
+ * - Total money per second calculations
+ */
+export default function useGameEconomy({
+  money,
+  setMoney,
+  buttons,
+  managers,
+  investments,
+  totalMoneyPerSecond: investmentIncomePerSecond,
+  prestigeShares,
+  setPrestigeShares,
+  prestigeCount,
+  setPrestigeCount,
+  gameState,
+  loadGameState,
+  saveGame,
+  ensureStartTime
+}) {
+  
+  // Manager income calculation
+  const managerIncomePerSecond = useMemo(() => {
+    return managers.reduce((sum, hasManager, idx) => {
+      if (hasManager) {
+        const button = buttons[idx];
+        return sum + (button.value / button.cooldownTime);
+      }
+      return sum;
+    }, 0);
+  }, [managers, buttons]);
+
+  // Calculate current run shares for prestige
+  const currentRunShares = useMemo(() => {
+    if (typeof money !== 'number' || isNaN(money) || money <= 0) return 0;
+    
+    const minMoneyForAnyShares = (0.01 / gameConfig.prestige.sharesPerBasePoint) * gameConfig.prestige.moneyPerBasePoint;
+    if (money < minMoneyForAnyShares) return 0;
+
+    const shares = (money / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
+    return (typeof shares === 'number' && !isNaN(shares) && shares > 0) ? shares : 0;
+  }, [money]);
+
+  // Calculate prestige bonus multiplier
+  const prestigeBonusMultiplier = useMemo(() => {
+    const effectiveTotalShares = ((typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0);
+    const bonus = 1 + (effectiveTotalShares * gameConfig.prestige.bonusPerShare);
+    return (typeof bonus === 'number' && !isNaN(bonus) && bonus > 0) ? bonus : 1;
+  }, [prestigeShares]);
+
+  // Calculate total money per second
+  const baseTotalMoneyPerSecond = managerIncomePerSecond + investmentIncomePerSecond;
+  const totalMoneyPerSecond = (typeof baseTotalMoneyPerSecond === 'number' && !isNaN(baseTotalMoneyPerSecond)) 
+    ? baseTotalMoneyPerSecond * prestigeBonusMultiplier 
+    : 0;
+
+  // Central money income effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const incomeThisTick = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond))
+        ? totalMoneyPerSecond / (1000 / gameConfig.timing.updateInterval)
+        : 0;
+      
+      setMoney(prev => {
+        const currentPrev = (typeof prev === 'number' && !isNaN(prev)) ? prev : 0;
+        const nextVal = currentPrev + incomeThisTick;
+        return (typeof nextVal === 'number' && !isNaN(nextVal)) ? nextVal : currentPrev;
+      });
+    }, gameConfig.timing.updateInterval);
+    
+    return () => clearInterval(interval);
+  }, [totalMoneyPerSecond, setMoney]);
+
+  // Prestige logic
+  const canPrestige = currentRunShares >= gameConfig.prestige.minSharesToPrestige;
+
+  const prestigeGame = useCallback(() => {
+    if (!canPrestige) return;
+
+    const currentMoneyForPrestige = (typeof money === 'number' && !isNaN(money) && money > 0) ? money : 0;
+    let sharesEarnedThisRun = 0;
+    
+    if (currentMoneyForPrestige > 0) {
+      sharesEarnedThisRun = (currentMoneyForPrestige / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
+    }
+    
+    sharesEarnedThisRun = (typeof sharesEarnedThisRun === 'number' && !isNaN(sharesEarnedThisRun) && sharesEarnedThisRun > 0) ? sharesEarnedThisRun : 0;
+    const newTotalPrestigeShares = ((typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0) + sharesEarnedThisRun;
+    
+    // Prepare fresh state for reset
+    const freshInitialState = JSON.parse(JSON.stringify(gameConfig.initialState));
+    
+    const stateToReset = {
+      ...freshInitialState,
+      // Preserve specific fields
+      prestigeShares: (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0,
+      activePlayTime: gameState.activePlayTime,
+      inactivePlayTime: gameState.inactivePlayTime,
+      lastSaved: Date.now(),
+      
+      // UI settings from localStorage
+      darkMode: localStorage.getItem('darkMode') === 'true',
+      musicEnabled: (localStorage.getItem('musicEnabled') ?? 'true') === 'true',
+      soundEffectsEnabled: (localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true',
+      
+      // Reset progression
+      investments: gameConfig.initialState.investments.map(() => 0),
+      boostedInvestments: gameConfig.investments.map(() => false),
+      
+      // Preserve auto-buyers on prestige
+      autoBuyValueUpgradeEnabled: gameState.autoBuyValueUpgradeEnabled,
+      autoBuyCooldownUpgradeEnabled: gameState.autoBuyCooldownUpgradeEnabled,
+      autoBuyerUnlocked: gameState.autoBuyerUnlocked,
+      cooldownAutoBuyerUnlocked: gameState.cooldownAutoBuyerUnlocked,
+      autoBuyerInterval: gameState.autoBuyerInterval,
+      autoBuyerBuffer: gameState.autoBuyerBuffer,
+    };
+
+    // Update prestige shares
+    const finalNewTotalPrestigeShares = (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0;
+    setPrestigeShares(finalNewTotalPrestigeShares);
+    
+    // Increment prestige counter
+    setPrestigeCount(prev => {
+      const newCount = (typeof prev === 'number' && !isNaN(prev) ? prev + 1 : 1);
+      const stateToResetWithPrestigeCount = {
+        ...stateToReset,
+        prestigeCount: newCount
+      };
+      
+      loadGameState(stateToResetWithPrestigeCount);
+      
+      // Clear boosted investment localStorage
+      gameConfig.investments.forEach((_, index) => {
+        localStorage.removeItem(`boosted-${index}`);
+        localStorage.removeItem(`boostClicks-${index}`);
+      });
+      
+      saveGame();
+      return newCount;
+    });
+  }, [money, prestigeShares, setPrestigeShares, setPrestigeCount, loadGameState, gameState, saveGame, canPrestige]);
+
+  return {
+    // Income calculations
+    managerIncomePerSecond,
+    totalMoneyPerSecond,
+    
+    // Prestige system
+    currentRunShares,
+    prestigeBonusMultiplier,
+    canPrestige,
+    prestigeGame,
+  };
+}
