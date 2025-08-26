@@ -28,7 +28,7 @@
     right: 2px;
     width: 8px;
     height: 8px;
-    background-color: rgba(255, 76, 76, 0.6);
+    background-color: rgba(46, 204, 113, 0.8);
     border-radius: 50%;
     // border: 1px solid white;
     animation: active-badge-pulse 1.5s infinite;
@@ -38,14 +38,14 @@
 @keyframes active-badge-pulse {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 2px rgba(255,0,0,0.5);
+    box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
   }
   50% {
     transform: scale(1.15);
-    box-shadow: 0 0 8px rgba(255,0,0,0.4);
+    box-shadow: 0 0 15px rgba(39, 174, 96, 0.5);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 2px rgba(255,0,0,0.5);
+    box-shadow: 0 0 4px rgba(46, 204, 113, 0.4);
   }
 }

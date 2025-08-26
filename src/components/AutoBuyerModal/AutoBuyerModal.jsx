@@ -98,9 +98,9 @@ const AutoBuyerModal = ({
                 type="button"
               >
                 {autoBuyValueUpgradeEnabled ? (
-                  <PowerIcon size={18} />
+                  <PowerIcon size={18}/>
                 ) : (
-                  <PowerOffIcon size={18} />
+                  <PowerOffIcon stroke={'red'} size={18} />
                 )}
               </button>
             </div>
@@ -136,9 +136,9 @@ const AutoBuyerModal = ({
                 type="button"
               >
                 {autoBuyCooldownUpgradeEnabled ? (
-                  <PowerIcon size={18} />
+                  <PowerIcon size={18}/>
                 ) : (
-                  <PowerOffIcon size={18} />
+                  <PowerOffIcon stroke={'red'} size={18} />
                 )}
               </button>
             </div>
