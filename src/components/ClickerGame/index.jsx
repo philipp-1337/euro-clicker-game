@@ -117,7 +117,7 @@ export default function ClickerGame({
     rawMaterials,
     resourcePurchaseCounts,
     setRawMaterials,
-    setResourcePurchaseCounts,
+    // setResourcePurchaseCounts,
     isCraftingUnlocked,
     setIsCraftingUnlocked,
     autoBuyValueUpgradeEnabled,
