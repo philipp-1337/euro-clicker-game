@@ -1,3 +1,3 @@
 // Dieses File wird automatisch generiert. Nicht manuell editieren!
 // Enthält die aktuelle Version aus package.json
-export const APP_VERSION = "0.2.4";
+export const APP_VERSION = "0.2.5";
