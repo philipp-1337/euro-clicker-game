@@ -136,6 +136,10 @@ export const gameConfig = {
     cooldownAutoBuyerUnlocked: false,
     autoBuyValueUpgradeEnabled: false,
     autoBuyCooldownUpgradeEnabled: false,
+    autoBuyGlobalMultiplierEnabled: false,
+    autoBuyGlobalPriceDecreaseEnabled: false,
+    globalMultiplierAutoBuyerUnlocked: false,
+    globalPriceDecreaseAutoBuyerUnlocked: false,
   },
   activePlayTime: 0, // Initial aktive Spielzeit
   prestigeShares: 0, // Initial prestige shares
@@ -184,6 +188,12 @@ export const gameConfig = {
     },
     cooldownAutoBuyerUnlock: {
       baseCost: 15000,
+    },
+    globalMultiplierAutoBuyerUnlock: {
+      baseCost: 20000,
+    },
+    globalPriceDecreaseAutoBuyerUnlock: {
+      baseCost: 25000,
     }
   },
 

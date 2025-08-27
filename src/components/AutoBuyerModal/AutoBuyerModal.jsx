@@ -8,6 +8,8 @@ import {
   Clock as ClockIcon,
   PiggyBank as PiggyBankIcon,
   TimerReset,
+  TrendingUp,
+  Percent
 } from 'lucide-react';
 
 const AutoBuyerModal = ({
@@ -24,6 +26,12 @@ const AutoBuyerModal = ({
   setAutoBuyCooldownUpgradeEnabled,
   autoBuyerUnlocked,
   cooldownAutoBuyerUnlocked,
+  autoBuyGlobalMultiplierEnabled,
+  setAutoBuyGlobalMultiplierEnabled,
+  globalMultiplierAutoBuyerUnlocked,
+  autoBuyGlobalPriceDecreaseEnabled,
+  setAutoBuyGlobalPriceDecreaseEnabled,
+  globalPriceDecreaseAutoBuyerUnlocked,
 }) => {
   const modalRef = useModal(show, onClose);
 
@@ -136,6 +144,82 @@ const AutoBuyerModal = ({
                 type="button"
               >
                 {autoBuyCooldownUpgradeEnabled ? (
+                  <PowerIcon size={18}/>
+                ) : (
+                  <PowerOffIcon stroke={'red'} size={18} />
+                )}
+              </button>
+            </div>
+          )}
+
+          {globalMultiplierAutoBuyerUnlocked && (
+            <div className="settings-row">
+              <TrendingUp size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setAutoBuyGlobalMultiplierEnabled((v) => !v)}
+                title={
+                  autoBuyGlobalMultiplierEnabled
+                    ? 'Disable Value Multiplier AutoBuyer'
+                    : 'Enable Value Multiplier AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyGlobalMultiplierEnabled
+                  ? 'Disable Value Multiplier AutoBuyer'
+                  : 'Enable Value Multiplier AutoBuyer'}
+              </button>
+              <button
+                className={`settings-button${
+                  autoBuyGlobalMultiplierEnabled ? ' active' : ''
+                }`}
+                onClick={() => setAutoBuyGlobalMultiplierEnabled((v) => !v)}
+                title={
+                  autoBuyGlobalMultiplierEnabled
+                    ? 'Disable Value Multiplier AutoBuyer'
+                    : 'Enable Value Multiplier AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyGlobalMultiplierEnabled ? (
+                  <PowerIcon size={18}/>
+                ) : (
+                  <PowerOffIcon stroke={'red'} size={18} />
+                )}
+              </button>
+            </div>
+          )}
+
+          {globalPriceDecreaseAutoBuyerUnlocked && (
+            <div className="settings-row">
+              <Percent size={20} className="settings-icon" />
+              <button
+                className="settings-label btn"
+                onClick={() => setAutoBuyGlobalPriceDecreaseEnabled((v) => !v)}
+                title={
+                  autoBuyGlobalPriceDecreaseEnabled
+                    ? 'Disable Price Decrease AutoBuyer'
+                    : 'Enable Price Decrease AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyGlobalPriceDecreaseEnabled
+                  ? 'Disable Price Decrease AutoBuyer'
+                  : 'Enable Price Decrease AutoBuyer'}
+              </button>
+              <button
+                className={`settings-button${
+                  autoBuyGlobalPriceDecreaseEnabled ? ' active' : ''
+                }`}
+                onClick={() => setAutoBuyGlobalPriceDecreaseEnabled((v) => !v)}
+                title={
+                  autoBuyGlobalPriceDecreaseEnabled
+                    ? 'Disable Price Decrease AutoBuyer'
+                    : 'Enable Price Decrease AutoBuyer'
+                }
+                type="button"
+              >
+                {autoBuyGlobalPriceDecreaseEnabled ? (
                   <PowerIcon size={18}/>
                 ) : (
                   <PowerOffIcon stroke={'red'} size={18} />
