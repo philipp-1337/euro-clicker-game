@@ -29,6 +29,7 @@
 @use 'components/sidemenu';
 @use 'components/gameheader';
 @use 'components/autobuyer';
+@use 'components/pwa-prompt';
 
 // Themes
 @use 'themes/dark-mode';
