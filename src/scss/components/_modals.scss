@@ -109,6 +109,19 @@
   }
 }
 
+.pwa-prompt-icons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.pwa-prompt-icon-label {
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  color: map.get($colors, accent);
+}
+
 .settings-row {
   display: flex;
   align-items: center;
