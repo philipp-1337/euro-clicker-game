@@ -333,7 +333,7 @@ export default function PremiumUpgrades({
         <p className="premium-upgrade-description">
           The Value Upgrade buyer automatically buys the cheapest value upgrade once enabled via the <Bot size={12}/> in the header area. 
         </p>
-        <div className="premium-upgrade-info">
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyAutoBuyerUnlock}
             disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
@@ -354,7 +354,7 @@ export default function PremiumUpgrades({
         <p className="premium-upgrade-description">
           The Cooldown Upgrade buyer automatically buys the cheapest cooldown upgrade once enabled via the <Bot size={12}/> in the header area.
         </p>
-        <div className="premium-upgrade-info">
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyCooldownAutoBuyerUnlock}
             disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}
@@ -375,7 +375,7 @@ export default function PremiumUpgrades({
         <p className="premium-upgrade-description">
           The Value Multiplier AutoBuyer automatically buys the global value multiplier premium upgrade once enabled via the <Bot size={12}/> in the header area.
         </p>
-        <div className="premium-upgrade-info">
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyGlobalMultiplierAutoBuyerUnlock}
             disabled={globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost}
@@ -396,7 +396,7 @@ export default function PremiumUpgrades({
         <p className="premium-upgrade-description">
           The Price Decrease AutoBuyer automatically buys the global price decrease premium upgrade once enabled via the <Bot size={12}/> in the header area.
         </p>
-        <div className="premium-upgrade-info">
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyGlobalPriceDecreaseAutoBuyerUnlock}
             disabled={globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost}
