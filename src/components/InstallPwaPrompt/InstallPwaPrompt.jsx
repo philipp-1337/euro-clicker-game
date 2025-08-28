@@ -5,13 +5,13 @@ import { ShareIcon, SquarePlusIcon, X as CloseIcon } from 'lucide-react';
 
 const InstallPwaPrompt = () => {
   const {
-    // showInstallPrompt,
+    showInstallPrompt,
     isIos,
     handleInstallClick,
     handleDismissClick,
   } = usePwaPrompt();
 
-  const showInstallPrompt = true;
+  // const showInstallPrompt = true;
 
   if (!showInstallPrompt) return null;
 
