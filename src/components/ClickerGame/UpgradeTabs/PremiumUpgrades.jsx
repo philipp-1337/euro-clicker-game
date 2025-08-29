@@ -203,14 +203,14 @@ export default function PremiumUpgrades({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
-      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Floating Click Upgrades</h3>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Floating Clicker Upgrades</h3>
       <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <MousePointerClick className="premium-icon" />
-            <h3>Click Value</h3>
-          </div>
+        <div className="premium-upgrade-header">
+          <MousePointerClick className="premium-icon" />
+          <h3>Clicker Value Boost</h3>
+        </div>
         <p className="premium-upgrade-description">
-          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
+          Boosts the value of the Floating Clicker Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -220,7 +220,7 @@ export default function PremiumUpgrades({
             onClick={() => buyFloatingClickValue(buyQuantity)}
             disabled={money < totalFloatingClickValueCost}
             className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
-            title={`Kaufe ${buyQuantity} Level(s)`}
+            title={`Buy ${buyQuantity} level(s)`}
           >
             {formatNumber(totalFloatingClickValueCost)} €
           </button>
@@ -230,13 +230,13 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <ActivityIcon className="premium-icon" />
-          <h3>Critical Click</h3>
+          <h3>Critical Hit Chance</h3>
         </div>
-        <p 
-          className="premium-upgrade-description" 
+        <p
+          className="premium-upgrade-description"
           title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}
         >
-          Clicks on the Floating Click Button can trigger a Critical Hit, multiplying the Floating Click Value. Each level adds {criticalClickChanceEffectPercentage}% chance and {criticalClickMultiplierPerLevelPercentage}% multiplier.
+          Enables critical hits for the Floating Clicker Button. Each level increases the chance by {criticalClickChanceEffectPercentage}% and the multiplier by {criticalClickMultiplierPerLevelPercentage}. Max level: 100.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -255,12 +255,12 @@ export default function PremiumUpgrades({
       <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Global Clicker Upgrades</h3>
       {/* Global Multiplier Upgrade */}
       <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <TrendingUp className="premium-icon" />
-            <h3>Value Multiplier</h3>
-          </div>
+        <div className="premium-upgrade-header">
+          <TrendingUp className="premium-icon" />
+          <h3>Value Multiplier</h3>
+        </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalMultiplierCostIncreasePercentage}% per level.`}>
-          Increases the value of the 5 coloured Clicker Buttons by {globalMultiplierPercentage}% per level.
+          Increases the value of all coloured Clicker Buttons by {globalMultiplierPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -280,10 +280,10 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Percent className="premium-icon" />
-          <h3>Price Decrease</h3>
+          <h3>Upgrade Discount</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalPriceDecreaseCostIncreasePercentage}% per level.`}>
-          Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level. 
+          Reduces the cost of all basic upgrades by {globalCostReductionPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -307,7 +307,7 @@ export default function PremiumUpgrades({
           <h3>Offline Earnings</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${offlineEarningsCostIncreasePercentage}% per level.`}>
-          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%. 
+          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -323,22 +323,22 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Auto-Buyer Unlocks</h3>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Automation Upgrades</h3>
       {/* Premium Upgrade: AutoBuyer Unlock */}
-        <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <Euro className="premium-icon" />
-            <h3>Value Upgrades</h3>
-          </div>
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Euro className="premium-icon" />
+          <h3>Auto-Buyer: Value</h3>
+        </div>
         <p className="premium-upgrade-description">
-          The Value Upgrade buyer automatically buys the cheapest value upgrade once enabled via the <Bot size={12}/> in the header area. 
+          Unlocks the Value Upgrade Auto-Buyer. Automatically purchases the cheapest value upgrade when enabled via the <Bot size={12}/> icon in the header.
         </p>
         <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyAutoBuyerUnlock}
             disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
             className={`premium-upgrade-button ${autoBuyerUnlocked || money < autoBuyerUnlockCost ? 'disabled' : ''}`}
-            title={autoBuyerUnlocked ? 'Already unlocked' : 'Unlock AutoBuyer'}
+            title={autoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Value'}
           >
             {autoBuyerUnlocked ? 'Unlocked' : `${formatNumber(autoBuyerUnlockCost)} €`}
           </button>
@@ -346,20 +346,20 @@ export default function PremiumUpgrades({
       </div>
 
       {/* Premium Upgrade: Cooldown AutoBuyer Unlock */}
-        <div className="premium-upgrade-card">
-          <div className="premium-upgrade-header">
-            <Timer className="premium-icon" />
-            <h3>Cooldown Upgrades</h3>
-          </div>
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Timer className="premium-icon" />
+          <h3>Auto-Buyer: Cooldown</h3>
+        </div>
         <p className="premium-upgrade-description">
-          The Cooldown Upgrade buyer automatically buys the cheapest cooldown upgrade once enabled via the <Bot size={12}/> in the header area.
+          Unlocks the Cooldown Upgrade Auto-Buyer. Automatically purchases the cheapest cooldown upgrade when enabled via the <Bot size={12}/> icon in the header.
         </p>
         <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyCooldownAutoBuyerUnlock}
             disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}
             className={`premium-upgrade-button ${cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost ? 'disabled' : ''}`}
-            title={cooldownAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Cooldown AutoBuyer'}
+            title={cooldownAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Cooldown'}
           >
             {cooldownAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(cooldownAutoBuyerUnlockCost)} €`}
           </button>
@@ -370,17 +370,17 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <TrendingUp className="premium-icon" />
-          <h3>Value Multiplier</h3>
+          <h3>Auto-Buyer: Multiplier</h3>
         </div>
         <p className="premium-upgrade-description">
-          The Value Multiplier AutoBuyer automatically buys the global value multiplier premium upgrade once enabled via the <Bot size={12}/> in the header area.
+          Unlocks the Global Value Multiplier Auto-Buyer. Automatically purchases the global value multiplier premium upgrade when enabled via the <Bot size={12}/> icon in the header.
         </p>
         <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyGlobalMultiplierAutoBuyerUnlock}
             disabled={globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost}
             className={`premium-upgrade-button ${globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost ? 'disabled' : ''}`}
-            title={globalMultiplierAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Value Multiplier AutoBuyer'}
+            title={globalMultiplierAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Multiplier'}
           >
             {globalMultiplierAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalMultiplierAutoBuyerUnlockCost)} €`}
           </button>
@@ -391,17 +391,17 @@ export default function PremiumUpgrades({
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Percent className="premium-icon" />
-          <h3>Price Decrease</h3>
+          <h3>Auto-Buyer: Discount</h3>
         </div>
         <p className="premium-upgrade-description">
-          The Price Decrease AutoBuyer automatically buys the global price decrease premium upgrade once enabled via the <Bot size={12}/> in the header area.
+          Unlocks the Global Discount Auto-Buyer. Automatically purchases the global discount premium upgrade when enabled via the <Bot size={12}/> icon in the header.
         </p>
         <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyGlobalPriceDecreaseAutoBuyerUnlock}
             disabled={globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost}
             className={`premium-upgrade-button ${globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost ? 'disabled' : ''}`}
-            title={globalPriceDecreaseAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Price Decrease AutoBuyer'}
+            title={globalPriceDecreaseAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Discount'}
           >
             {globalPriceDecreaseAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalPriceDecreaseAutoBuyerUnlockCost)} €`}
           </button>

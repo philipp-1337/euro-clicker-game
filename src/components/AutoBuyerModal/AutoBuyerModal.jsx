@@ -67,7 +67,7 @@ const AutoBuyerModal = ({
     <div className="modal-backdrop">
       <div ref={modalRef} className="modal-content autobuyer-modal">
         <div className="settings-modal-header">
-          <h3>AutoBuyer Settings</h3>
+          <h3>Automation Settings</h3>
           <button
             className="settings-button"
             onClick={onClose}
@@ -86,22 +86,22 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
                 title={
                   autoBuyValueUpgradeEnabled
-                    ? 'Disable Value AutoBuyer'
-                    : 'Enable Value AutoBuyer'
+                    ? 'Disable Value Auto-Buyer'
+                    : 'Enable Value Auto-Buyer'
                 }
                 type="button"
               >
                 {autoBuyValueUpgradeEnabled
-                  ? 'Disable Value AutoBuyer'
-                  : 'Enable Value AutoBuyer'}
+                  ? 'Disable Value Auto-Buyer'
+                  : 'Enable Value Auto-Buyer'}
               </button>
               <button
                 className={`settings-button${autoBuyValueUpgradeEnabled ? ' active' : ''}`}
                 onClick={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
                 title={
                   autoBuyValueUpgradeEnabled
-                    ? 'Disable Value AutoBuyer'
-                    : 'Enable Value AutoBuyer'
+                    ? 'Disable Value Auto-Buyer'
+                    : 'Enable Value Auto-Buyer'
                 }
                 type="button"
               >
@@ -122,14 +122,14 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyCooldownUpgradeEnabled((v) => !v)}
                 title={
                   autoBuyCooldownUpgradeEnabled
-                    ? 'Disable Cooldown AutoBuyer'
-                    : 'Enable Cooldown AutoBuyer'
+                    ? 'Disable Cooldown Auto-Buyer'
+                    : 'Enable Cooldown Auto-Buyer'
                 }
                 type="button"
               >
                 {autoBuyCooldownUpgradeEnabled
-                  ? 'Disable Cooldown AutoBuyer'
-                  : 'Enable Cooldown AutoBuyer'}
+                  ? 'Disable Cooldown Auto-Buyer'
+                  : 'Enable Cooldown Auto-Buyer'}
               </button>
               <button
                 className={`settings-button${
@@ -138,8 +138,8 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyCooldownUpgradeEnabled((v) => !v)}
                 title={
                   autoBuyCooldownUpgradeEnabled
-                    ? 'Disable Cooldown AutoBuyer'
-                    : 'Enable Cooldown AutoBuyer'
+                    ? 'Disable Cooldown Auto-Buyer'
+                    : 'Enable Cooldown Auto-Buyer'
                 }
                 type="button"
               >
@@ -160,14 +160,14 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyGlobalMultiplierEnabled((v) => !v)}
                 title={
                   autoBuyGlobalMultiplierEnabled
-                    ? 'Disable Value Multiplier AutoBuyer'
-                    : 'Enable Value Multiplier AutoBuyer'
+                    ? 'Disable Multiplier Auto-Buyer'
+                    : 'Enable Multiplier Auto-Buyer'
                 }
                 type="button"
               >
                 {autoBuyGlobalMultiplierEnabled
-                  ? 'Disable Value Multiplier AutoBuyer'
-                  : 'Enable Value Multiplier AutoBuyer'}
+                  ? 'Disable Multiplier Auto-Buyer'
+                  : 'Enable Multiplier Auto-Buyer'}
               </button>
               <button
                 className={`settings-button${
@@ -176,8 +176,8 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyGlobalMultiplierEnabled((v) => !v)}
                 title={
                   autoBuyGlobalMultiplierEnabled
-                    ? 'Disable Value Multiplier AutoBuyer'
-                    : 'Enable Value Multiplier AutoBuyer'
+                    ? 'Disable Multiplier Auto-Buyer'
+                    : 'Enable Multiplier Auto-Buyer'
                 }
                 type="button"
               >
@@ -198,14 +198,14 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyGlobalPriceDecreaseEnabled((v) => !v)}
                 title={
                   autoBuyGlobalPriceDecreaseEnabled
-                    ? 'Disable Price Decrease AutoBuyer'
-                    : 'Enable Price Decrease AutoBuyer'
+                    ? 'Disable Discount Auto-Buyer'
+                    : 'Enable Discount Auto-Buyer'
                 }
                 type="button"
               >
                 {autoBuyGlobalPriceDecreaseEnabled
-                  ? 'Disable Price Decrease AutoBuyer'
-                  : 'Enable Price Decrease AutoBuyer'}
+                  ? 'Disable Discount Auto-Buyer'
+                  : 'Enable Discount Auto-Buyer'}
               </button>
               <button
                 className={`settings-button${
@@ -214,8 +214,8 @@ const AutoBuyerModal = ({
                 onClick={() => setAutoBuyGlobalPriceDecreaseEnabled((v) => !v)}
                 title={
                   autoBuyGlobalPriceDecreaseEnabled
-                    ? 'Disable Price Decrease AutoBuyer'
-                    : 'Enable Price Decrease AutoBuyer'
+                    ? 'Disable Discount Auto-Buyer'
+                    : 'Enable Discount Auto-Buyer'
                 }
                 type="button"
               >
