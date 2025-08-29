@@ -34,11 +34,15 @@ export default function AboutModal({ show, onClose }) {
           </p>
           <h5>Automation & Upgrades</h5>
           <p>
-            Hire managers to automate button clicks, allowing you to earn passively even when you're not actively clicking. Invest in upgrades to boost button values and reduce cooldowns, and take advantage of premium upgrades such as global multipliers, price decreases, and offline earnings to accelerate your progress.
+            Hire managers to automate button clicks for passive income. Invest in basic upgrades to boost button values and reduce cooldowns. Unlock powerful premium upgrades like critical clicks, enhanced floating button value, global multipliers, price reductions, and offline earnings. For ultimate efficiency, unlock auto-buyers to purchase upgrades for you automatically.
           </p>
           <h5>Investments & Strategy</h5>
           <p>
             Once you've advanced, unlock the Investments tab to invest in companies for long-term, passive income.
+          </p>
+          <h5>Wealth Production</h5>
+          <p>
+            After your first prestige, you can unlock "Wealth Production." Purchase raw materials and use them to craft valuable items like Collectible Coins or Gold Reserves for a massive cash injection.
           </p>
           <h5>Progression & Achievements</h5>
           <p>

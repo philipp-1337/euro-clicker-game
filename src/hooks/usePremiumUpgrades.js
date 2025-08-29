@@ -3,6 +3,7 @@ import { gameConfig } from '@constants/gameConfig';
 
 /**
  * Manages all premium upgrades including:
+ * - Global Multiplier upgrade
  * - Global Price Decrease upgrade
  * - Offline Earnings upgrade
  * - Critical Click Chance upgrade
@@ -15,6 +16,12 @@ export default function usePremiumUpgrades({
   easyMode,
   ensureStartTime,
   
+  // Global Multiplier
+  globalMultiplier,
+  setGlobalMultiplier,
+  globalMultiplierLevel,
+  setGlobalMultiplierLevel,
+
   // Global Price Decrease
   globalPriceDecreaseLevel,
   setGlobalPriceDecreaseLevel,
@@ -35,6 +42,45 @@ export default function usePremiumUpgrades({
 }) {
   
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+  // Global Multiplier Upgrade
+  const globalMultiplierCost = useMemo(() =>
+    gameConfig.premiumUpgrades.globalMultiplier.baseCost *
+    Math.pow(gameConfig.premiumUpgrades.globalMultiplier.costExponent, globalMultiplierLevel) *
+    costMultiplier,
+    [globalMultiplierLevel, costMultiplier]
+  );
+
+  const buyGlobalMultiplier = useCallback((quantity = 1) => {
+    ensureStartTime?.();
+    let totalCalculatedCost = 0;
+    let tempLevel = globalMultiplierLevel;
+    const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+
+    for (let i = 0; i < quantity; i++) {
+      const costForThisStep = gameConfig.premiumUpgrades.globalMultiplier.baseCost *
+        Math.pow(gameConfig.premiumUpgrades.globalMultiplier.costExponent, tempLevel + i) *
+        currentCostMultiplier;
+      totalCalculatedCost += costForThisStep;
+    }
+
+    if (money >= totalCalculatedCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - totalCalculatedCost);
+      for (let i = 0; i < quantity; i++) {
+        setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
+        setGlobalMultiplierLevel(prev => prev + 1);
+      }
+    }
+  }, [
+    money,
+    globalMultiplierLevel,
+    setMoney,
+    setGlobalMultiplier,
+    setGlobalMultiplierLevel,
+    ensureStartTime,
+    easyMode
+  ]);
 
   // Global Price Decrease Upgrade
   const globalPriceDecreaseCost = useMemo(() =>
@@ -201,6 +247,9 @@ export default function usePremiumUpgrades({
   ]);
 
   return {
+    // Global Multiplier
+    globalMultiplierCost,
+    buyGlobalMultiplier,
     // Global Price Decrease
     globalPriceDecreaseCost,
     buyGlobalPriceDecrease,
