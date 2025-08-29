@@ -37,6 +37,12 @@ export default function PremiumUpgrades({
   cooldownAutoBuyerUnlocked,
   buyCooldownAutoBuyerUnlock,
   cooldownAutoBuyerUnlockCost,
+  globalMultiplierAutoBuyerUnlocked,
+  buyGlobalMultiplierAutoBuyerUnlock,
+  globalMultiplierAutoBuyerUnlockCost,
+  globalPriceDecreaseAutoBuyerUnlocked,
+  buyGlobalPriceDecreaseAutoBuyerUnlock,
+  globalPriceDecreaseAutoBuyerUnlockCost,
 }) {
 
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
@@ -301,7 +307,7 @@ export default function PremiumUpgrades({
           <h3>Offline Earnings</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${offlineEarningsCostIncreasePercentage}% per level.`}>
-          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%.
+          Earn a percentage of your income per second while away. Each level increases this by {offlineEarningsEffectPerLevelPercentage}%. 
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -317,19 +323,17 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Auto-Buyer Unlocks</h3>
       {/* Premium Upgrade: AutoBuyer Unlock */}
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <Euro className="premium-icon" />
-            <h3>Value AutoBuyer</h3>
+            <h3>Value Upgrades</h3>
           </div>
         <p className="premium-upgrade-description">
-          The Value Upgrade buyer automatically buys the cheapest upgrade once enabled via the <Bot size={12}/> in the header area. 
+          The Value Upgrade buyer automatically buys the cheapest value upgrade once enabled via the <Bot size={12}/> in the header area. 
         </p>
-        <div className="premium-upgrade-info">
-          {/* <div className="premium-upgrade-level">
-            {autoBuyerUnlocked ? 'Unlocked' : 'Locked'}
-          </div> */}
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyAutoBuyerUnlock}
             disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
@@ -345,15 +349,12 @@ export default function PremiumUpgrades({
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
             <Timer className="premium-icon" />
-            <h3>Cooldown AutoBuyer</h3>
+            <h3>Cooldown Upgrades</h3>
           </div>
         <p className="premium-upgrade-description">
-          The Cooldown Upgrade buyer automatically buys the cheapest upgrade once enabled via the <Bot size={12}/> in the header area.
+          The Cooldown Upgrade buyer automatically buys the cheapest cooldown upgrade once enabled via the <Bot size={12}/> in the header area.
         </p>
-        <div className="premium-upgrade-info">
-          {/* <div className="premium-upgrade-level">
-            {cooldownAutoBuyerUnlocked ? 'Unlocked' : 'Locked'}
-          </div> */}
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
             onClick={buyCooldownAutoBuyerUnlock}
             disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}
@@ -361,6 +362,48 @@ export default function PremiumUpgrades({
             title={cooldownAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Cooldown AutoBuyer'}
           >
             {cooldownAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(cooldownAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Global Multiplier AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <TrendingUp className="premium-icon" />
+          <h3>Value Multiplier</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          The Value Multiplier AutoBuyer automatically buys the global value multiplier premium upgrade once enabled via the <Bot size={12}/> in the header area.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyGlobalMultiplierAutoBuyerUnlock}
+            disabled={globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={globalMultiplierAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Value Multiplier AutoBuyer'}
+          >
+            {globalMultiplierAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalMultiplierAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Global Price Decrease AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Percent className="premium-icon" />
+          <h3>Price Decrease</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          The Price Decrease AutoBuyer automatically buys the global price decrease premium upgrade once enabled via the <Bot size={12}/> in the header area.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyGlobalPriceDecreaseAutoBuyerUnlock}
+            disabled={globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={globalPriceDecreaseAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Price Decrease AutoBuyer'}
+          >
+            {globalPriceDecreaseAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalPriceDecreaseAutoBuyerUnlockCost)} €`}
           </button>
         </div>
       </div>

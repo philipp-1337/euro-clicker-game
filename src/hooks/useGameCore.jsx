@@ -63,7 +63,11 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled,
     floatingClickValueLevel, setFloatingClickValueLevel,
-    floatingClickValueMultiplier, setFloatingClickValueMultiplier
+    floatingClickValueMultiplier, setFloatingClickValueMultiplier,
+    autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
+    globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
   } = gameStateHook;
 
   // UI states
@@ -88,14 +92,12 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   );
 
   // Basic upgrade functions
-  const { buyValueUpgrade, buyCooldownUpgrade, buyGlobalMultiplier } = useUpgrades(
+  const { buyValueUpgrade, buyCooldownUpgrade } = useUpgrades(
     money, setMoney,
     valueMultipliers, setValueMultipliers,
     cooldownReductions, setCooldownReductions,
     valueUpgradeLevels, setValueUpgradeLevels,
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
-    globalMultiplier, setGlobalMultiplier,
-    globalMultiplierLevel, setGlobalMultiplierLevel,
     gameConfig,
     ensureStartTime,
     easyMode,
@@ -128,6 +130,16 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     ensureStartTime
   });
 
+  // Premium upgrades system
+  const premiumUpgradesHook = usePremiumUpgrades({
+    money, setMoney, easyMode, ensureStartTime,
+    globalMultiplier, setGlobalMultiplier, globalMultiplierLevel, setGlobalMultiplierLevel,
+    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease,
+    offlineEarningsLevel, setOfflineEarningsLevel,
+    criticalClickChanceLevel, setCriticalClickChanceLevel,
+    floatingClickValueLevel, setFloatingClickValueLevel, setFloatingClickValueMultiplier
+  });
+
   // Auto-buyers system
   const autoBuyersHook = useAutoBuyers({
     money, setMoney, easyMode, globalPriceDecrease, buyQuantity, ensureStartTime,
@@ -136,7 +148,17 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyValueUpgradeEnabled, autoBuyCooldownUpgradeEnabled,
     autoBuyerInterval, autoBuyerBuffer,
     valueUpgradeLevels, setValueUpgradeLevels, setValueMultipliers,
-    cooldownUpgradeLevels, setCooldownUpgradeLevels, setCooldownReductions
+    cooldownUpgradeLevels, setCooldownUpgradeLevels, setCooldownReductions,
+    autoBuyGlobalMultiplierEnabled, 
+    autoBuyGlobalPriceDecreaseEnabled, 
+    globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
+    buyGlobalMultiplier: premiumUpgradesHook.buyGlobalMultiplier,
+    buyGlobalPriceDecrease: premiumUpgradesHook.buyGlobalPriceDecrease,
+    globalMultiplierLevel, setGlobalMultiplierLevel,
+    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
+    setGlobalMultiplier,
+    setGlobalPriceDecrease,
   });
 
   // Offline earnings system
@@ -146,15 +168,6 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     activePlayTime, setActivePlayTime,
     inactivePlayTime, setInactivePlayTime,
     setMoney
-  });
-
-  // Premium upgrades system
-  const premiumUpgradesHook = usePremiumUpgrades({
-    money, setMoney, easyMode, ensureStartTime,
-    globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease,
-    offlineEarningsLevel, setOfflineEarningsLevel,
-    criticalClickChanceLevel, setCriticalClickChanceLevel,
-    floatingClickValueLevel, setFloatingClickValueLevel, setFloatingClickValueMultiplier
   });
 
   // Floating click system
@@ -235,7 +248,6 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     buyManager,
     buyValueUpgrade,
     buyCooldownUpgrade,
-    buyGlobalMultiplier,
     unlockInvestments,
     buyInvestment,
     saveGame,
@@ -259,6 +271,10 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     setAutoBuyerBuffer,
     isAutoBuyerModalOpen,
     setIsAutoBuyerModalOpen,
+    autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
+    globalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked,
     
     // Offline earnings
     ...offlineEarningsHook,
