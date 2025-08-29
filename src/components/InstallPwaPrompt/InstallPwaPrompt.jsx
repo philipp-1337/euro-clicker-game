@@ -2,6 +2,7 @@
 import React from 'react';
 import { usePwaPrompt } from '../../hooks/usePwaPrompt';
 import { ShareIcon, SquarePlusIcon, X as CloseIcon } from 'lucide-react';
+import { isLocalhost } from '@utils/env';
 
 const InstallPwaPrompt = () => {
   const {
@@ -12,6 +13,9 @@ const InstallPwaPrompt = () => {
   } = usePwaPrompt();
 
   // const showInstallPrompt = true;
+
+  // Prevent prompt on localhost unless forced
+  if ((!showInstallPrompt || (isLocalhost()))) return null;
 
   if (!showInstallPrompt) return null;
 
