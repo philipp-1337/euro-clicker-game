@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useCloudSave from '@hooks/useCloudSave';
 import { formatPlaytime } from '../utils/calculators';
+import { isLocalhost } from '../utils/env';
 
 export default function useGameHeaderLogic(props) {
   const {
@@ -27,7 +28,7 @@ export default function useGameHeaderLogic(props) {
     const hostname = window.location.hostname;
     if (hostname.includes('beta')) setEnvironment('beta');
     else if (hostname.includes('alpha')) setEnvironment('alpha');
-    else if (hostname === 'localhost' || hostname === '127.0.0.1') setEnvironment('localhost');
+    else if (isLocalhost()) setEnvironment('localhost');
     else setEnvironment('production');
   }, []);
 
