@@ -6,11 +6,6 @@ export default function useUpgrades(
     cooldownReductions, setCooldownReductions,
     valueUpgradeLevels, setValueUpgradeLevels,
     cooldownUpgradeLevels, setCooldownUpgradeLevels,
-    globalMultiplier, setGlobalMultiplier,
-    globalMultiplierLevel, setGlobalMultiplierLevel,
-    // valueUpgradeCosts, // These are for single next level, not directly used for multi-buy logic here
-    // cooldownUpgradeCosts,
-    // globalMultiplierCost,
     gameConfig,
     ensureStartTime,
     easyMode, // Added
@@ -84,35 +79,8 @@ export default function useUpgrades(
       }
     }
   
-    function buyGlobalMultiplier(quantity = 1) {
-      ensureStartTime?.();
-      let totalCalculatedCost = 0;
-      let tempLevel = globalMultiplierLevel;
-
-      for (let i = 0; i < quantity; i++) {
-        const costForThisStep = calculateCostWithDifficulty(
-          gameConfig.premiumUpgrades.globalMultiplier.baseCost,
-          tempLevel + i,
-          gameConfig.premiumUpgrades.globalMultiplier.costExponent,
-          easyMode,
-          gameConfig.getCostMultiplier // Pass the function itself
-        ); // globalPriceDecrease does not apply to premium upgrades by default
-        totalCalculatedCost += costForThisStep;
-      }
-
-      if (money >= totalCalculatedCost) {
-        ensureStartTime?.();
-        setMoney(prev => prev - totalCalculatedCost);
-        for (let i = 0; i < quantity; i++) {
-          setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
-          setGlobalMultiplierLevel(prev => prev + 1);
-        }
-      }
-    }
-  
     return {
       buyValueUpgrade,
       buyCooldownUpgrade,
-      buyGlobalMultiplier,
     };
   }

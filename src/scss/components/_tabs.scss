@@ -168,6 +168,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  &.auto-buyer-info {
+    justify-content: end;
+  }
 }
 
 .premium-upgrade-level {

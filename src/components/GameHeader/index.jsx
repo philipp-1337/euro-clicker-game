@@ -12,9 +12,9 @@ import {
   Menu as MenuIcon,
   BarChart2 as BarChart2Icon,
   AwardIcon,
-  Zap as PrestigeHeaderIcon, // Icon für Prestige
+  Zap as PrestigeHeaderIcon,
   Layers as LayersIcon,
-  Layers2Icon, // Icon for buy quantity 
+  Layers2Icon,
   BotIcon,
   BotOffIcon
 } from 'lucide-react';
@@ -22,7 +22,7 @@ import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
-import PrestigeModal from '@components/PrestigeModal/PrestigeModal'; // Import PrestigeModal
+import PrestigeModal from '@components/PrestigeModal/PrestigeModal';
 import StatisticsModal from '../StatisticsModal/StatisticsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
 import SideMenu from '../SideMenu/SideMenu';
@@ -49,21 +49,15 @@ export default function GameHeader(props) {
     playTime,
     totalMoneyPerSecond,
     manualMoneyPerSecond,
-    // Prestige related props from ClickerGame
     currentRunShares,
-    prestigeShares, // Accumulated from previous prestiges
+    prestigeShares,
     prestigeGame,
-    // prestigeBonusMultiplier,
     canPrestige
-    // buyQuantity und toggleBuyQuantity werden direkt aus props bezogen
   } = useGameHeaderLogic({ ...props });
 
-  // Greife direkt auf buyQuantity und toggleBuyQuantity aus den GameHeader-Props zu
   const { buyQuantity, toggleBuyQuantity } = props;
-  // Settings Modal State
   const [showSettings, setShowSettings] = useState(false);
 
-  // UI-Toggles (Playtime, ClickStats, Leaderboard) aus useUiProgress
   const {
     uiProgress,
     showPlaytime,
@@ -77,56 +71,54 @@ export default function GameHeader(props) {
     showStatisticsHeaderButton,
     setShowStatisticsHeaderButton,
     prestigeButtonEverVisible,
-    setPrestigeButtonEverVisible, // Fix: import setter
+    setPrestigeButtonEverVisible,
   } = useUiProgress();
 
-  // Click Counter immer beim Spielstart anzeigen
-  // (nur falls noch nicht aktiviert)
   React.useEffect(() => {
     if (!showClickStats) setShowClickStats(true);
-    // eslint-disable-next-line
-  }, []);
+  }, [showClickStats, setShowClickStats]);
 
-  // Cloud Save Confirm Modal State
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
-
   const [showAchievements, setShowAchievements] = useState(false);
-
-  // Lokaler State für das Leaderboard-Modal
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
-
-  // State für das Statistics Modal
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
-
-  // State für Prestige Modal
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
   
-  // Logic to show Prestige button: either money threshold is met OR it has been visible before
   const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
 
-  // Fix: Sobald der Button sichtbar ist, Wert persistent setzen
   React.useEffect(() => {
     if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
       setPrestigeButtonEverVisible(true);
     }
   }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
 
-  // SideMenu State
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
-  // AutoBuyer toggles (moved from BasicUpgrades)
   const {
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
+    globalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked,
     setIsAutoBuyerModalOpen,
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
+    autoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled,
   } = props;
 
   const isAutoBuyerActive =
-    autoBuyValueUpgradeEnabled || autoBuyCooldownUpgradeEnabled;
+    autoBuyValueUpgradeEnabled || 
+    autoBuyCooldownUpgradeEnabled || 
+    autoBuyGlobalMultiplierEnabled || 
+    autoBuyGlobalPriceDecreaseEnabled;
+
+  const anyAutoBuyerUnlocked = 
+    autoBuyerUnlocked || 
+    cooldownAutoBuyerUnlocked || 
+    globalMultiplierAutoBuyerUnlocked || 
+    globalPriceDecreaseAutoBuyerUnlocked;
 
   const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
 
@@ -148,19 +140,9 @@ export default function GameHeader(props) {
         {displayTotalMoneyPerSecond > 0 && (
           <span className="per-second">
             +{formatNumber(displayTotalMoneyPerSecond)} €/s
-            {/* {prestigeBonusMultiplier > 1 && (
-              <>
-                {' '}
-                <span className="prestige-bonus-display">
-                  ({formatNumber((prestigeBonusMultiplier - 1) * 100)}%)
-                </span>
-              </>
-            )} */}
           </span>
         )}
       </div>
-      {/* Der menu-toggle-button ist position:fixed und beeinflusst den Flow hier nicht direkt,
-          aber wir brauchen Platz dafür im .header-actions Bereich. */}
       <button
         className="menu-toggle-button"
         onClick={() => setIsSideMenuOpen(true)}
@@ -169,9 +151,8 @@ export default function GameHeader(props) {
       >
         <MenuIcon size={22} />
       </button>
-      <div className="header-actions"> {/* Äußerer, scrollbarer Container */}
-        <div className="header-actions-content"> {/* Innerer Container für die Icons */}
-          {/* Settings Button */}
+      <div className="header-actions">
+        <div className="header-actions-content">
           <button
             className="settings-button header-icon"
             onClick={() => setShowSettings(true)}
@@ -180,7 +161,6 @@ export default function GameHeader(props) {
           >
             <SettingsIcon size={20} />
           </button>
-          {/* Cloud / Save Button */}
           <button
             className="settings-button header-icon"
             onClick={handleSave}
@@ -192,7 +172,6 @@ export default function GameHeader(props) {
               : <SaveIcon size={20} />
             }
           </button>
-          {/* Statistics Button */}
           {uiProgress.showStatisticsHeaderButton && (
             <button
               className="settings-button header-icon"
@@ -203,7 +182,6 @@ export default function GameHeader(props) {
               <BarChart2Icon size={20} />
             </button>
           )}
-          {/* Achievements Button */}
           {uiProgress.showAchievementsHeaderButton && props.hasAnyAchievement && (
           <button
             className="settings-button header-icon"
@@ -214,7 +192,6 @@ export default function GameHeader(props) {
             <AwardIcon size={20} />
           </button>
           )}
-          {/* Crown Icon für Leaderboard-Mode */}
           {uiProgress.showLeaderboard && (
             <button
               className="settings-button header-icon"
@@ -224,7 +201,6 @@ export default function GameHeader(props) {
               <CrownIcon size={22} />
             </button>
           )}
-          {/* Prestige Button */}
           {showPrestigeButtonInHeader && (
             <button
               className="settings-button header-icon prestige-header-button"
@@ -240,8 +216,7 @@ export default function GameHeader(props) {
               )}
             </button>
           )}
-          {/* AutoBuyer Settings Button */}
-          {(autoBuyerUnlocked || cooldownAutoBuyerUnlocked) && (
+          {anyAutoBuyerUnlocked && (
             <button
               className="settings-button header-icon"
               onClick={() => setIsAutoBuyerModalOpen(true)}
@@ -252,7 +227,6 @@ export default function GameHeader(props) {
               {isAutoBuyerActive && <span className="active-badge"></span>}
             </button>
           )}
-          {/* Upgrade Quantity Toggle Button */}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
             onClick={toggleBuyQuantity}
@@ -266,14 +240,12 @@ export default function GameHeader(props) {
             )}
             <span className="buy-quantity-label">x{buyQuantity}</span>
           </button>
-          {/* Click-Counter */}
           {showClickStats && (
             <span className="header-clickstats">
               <MousePointerClickIcon size={20} />
               {String(floatingClicks ?? 0).padStart(5, '0')}
             </span>
           )}
-          {/* Playtime */}
           {showPlaytime && (
             <span className="header-playtime">
               <ClockIcon size={20} />
@@ -281,7 +253,6 @@ export default function GameHeader(props) {
           )}
         </div>
       </div>
-      {/* Settings Modal */}
       <SettingsModal
         showSettings={showSettings}
         setShowSettings={setShowSettings}
@@ -306,15 +277,15 @@ export default function GameHeader(props) {
         importError={importError}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
-        hasAnyAchievement={props.hasAnyAchievement} // Prop hier weitergeben
+        hasAnyAchievement={props.hasAnyAchievement}
         showAchievementsHeaderButton={showAchievementsHeaderButton}
         setShowAchievementsHeaderButton={setShowAchievementsHeaderButton}
         showStatisticsHeaderButton={showStatisticsHeaderButton}
         setShowStatisticsHeaderButton={setShowStatisticsHeaderButton}
-        musicEnabled={props.musicEnabled} // Pass down
-        setMusicEnabled={props.setMusicEnabled} // Pass down
-        soundEffectsEnabled={props.soundEffectsEnabled} // Pass down
-        setSoundEffectsEnabled={props.setSoundEffectsEnabled} // Pass down
+        musicEnabled={props.musicEnabled}
+        setMusicEnabled={props.setMusicEnabled}
+        soundEffectsEnabled={props.soundEffectsEnabled}
+        setSoundEffectsEnabled={props.setSoundEffectsEnabled}
       />
       <AchievementsModal
         showAchievements={showAchievements}
@@ -324,7 +295,6 @@ export default function GameHeader(props) {
         totalClicks={props.floatingClicks}
         gameTime={props.playTime}
       />
-      {/* Prestige Modal */}
       {showPrestigeModal && (
         <PrestigeModal
           show={showPrestigeModal}
@@ -333,17 +303,15 @@ export default function GameHeader(props) {
           accumulatedPrestigeShares={prestigeShares}
           onPrestige={() => {
             prestigeGame();
-            setShowPrestigeModal(false); // Close modal after prestiging
+            setShowPrestigeModal(false);
           }}
           canPrestige={canPrestige}
         />
       )}
       <MoneyBanner money={formatNumber(money)} />
-      {/* Leaderboard Modal */}
       {showLeaderboardModal && (
         <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
       )}
-      {/* Statistics Modal */}
 
       <StatisticsModal
         show={showStatisticsModal}
@@ -362,14 +330,12 @@ export default function GameHeader(props) {
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
         onOpenStatistics={() => setShowStatisticsModal(true)}
-        showPrestigeOption={showPrestigeButtonInHeader} // Pass visibility to SideMenu
-        onOpenPrestige={() => setShowPrestigeModal(true)} // Handler to open PrestigeModal
+        showPrestigeOption={showPrestigeButtonInHeader}
+        onOpenPrestige={() => setShowPrestigeModal(true)}
       />
     </>
   );
 }
-
-// Hinzufügen von PropTypes
 
 GameHeader.propTypes = {
   money: PropTypes.number.isRequired,
@@ -389,16 +355,19 @@ GameHeader.propTypes = {
   prestigeShares: PropTypes.number.isRequired,
   currentRunShares: PropTypes.number.isRequired,
   prestigeGame: PropTypes.func.isRequired,
-  // prestigeBonusMultiplier: PropTypes.number.isRequired,
   canPrestige: PropTypes.bool.isRequired,
   gameConfig: PropTypes.object.isRequired,
   buyQuantity: PropTypes.number.isRequired,
   toggleBuyQuantity: PropTypes.func.isRequired,
   autoBuyerUnlocked: PropTypes.bool.isRequired,
   cooldownAutoBuyerUnlocked: PropTypes.bool.isRequired,
+  globalMultiplierAutoBuyerUnlocked: PropTypes.bool.isRequired,
+  globalPriceDecreaseAutoBuyerUnlocked: PropTypes.bool.isRequired,
   setIsAutoBuyerModalOpen: PropTypes.func.isRequired,
   autoBuyValueUpgradeEnabled: PropTypes.bool.isRequired,
   autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
+  autoBuyGlobalMultiplierEnabled: PropTypes.bool.isRequired,
+  autoBuyGlobalPriceDecreaseEnabled: PropTypes.bool.isRequired,
   musicEnabled: PropTypes.bool.isRequired,
   setMusicEnabled: PropTypes.func.isRequired,
   soundEffectsEnabled: PropTypes.bool.isRequired,

@@ -23,6 +23,7 @@ export default function useOfflineEarnings({
   // State for offline earnings modal
   const [lastInactiveDuration, setLastInactiveDuration] = useState(0);
   const [calculatedOfflineEarnings, setCalculatedOfflineEarnings] = useState(0);
+  const isFirstCalculation = useRef(true);
   
   // Ref to track when inactivity period started
   const inactiveStartTimeRef = useRef(null);
@@ -43,12 +44,15 @@ export default function useOfflineEarnings({
 
   // Effect to calculate offline earnings when lastInactiveDuration changes
   useEffect(() => {
-    if (offlineEarningsLevel > 0 && lastInactiveDuration > 0 && totalMoneyPerSecond > 0) {
-      const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * currentOfflineEarningsFactor);
-      setCalculatedOfflineEarnings(earnings);
-      console.log(`[useOfflineEarnings] Calculated offline earnings: ${earnings} for duration ${lastInactiveDuration}s`);
-    } else {
-      setCalculatedOfflineEarnings(0);
+    if (lastInactiveDuration > 0 && isFirstCalculation.current) {
+      if (offlineEarningsLevel > 0 && totalMoneyPerSecond > 0) {
+        const earnings = Math.floor(lastInactiveDuration * totalMoneyPerSecond * currentOfflineEarningsFactor);
+        setCalculatedOfflineEarnings(earnings);
+        isFirstCalculation.current = false;
+        console.log(`[useOfflineEarnings] Calculated offline earnings: ${earnings} for duration ${lastInactiveDuration}s`);
+      } else {
+        setCalculatedOfflineEarnings(0);
+      }
     }
   }, [lastInactiveDuration, offlineEarningsLevel, totalMoneyPerSecond, currentOfflineEarningsFactor]);
 
@@ -64,6 +68,7 @@ export default function useOfflineEarnings({
   const clearLastInactiveDuration = useCallback(() => {
     setLastInactiveDuration(0);
     setCalculatedOfflineEarnings(0);
+    isFirstCalculation.current = true;
   }, []);
 
   // Effect to track active/inactive play time and handle visibility changes

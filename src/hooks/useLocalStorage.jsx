@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { saveGameState, loadGameState as loadGameStateUtil, hasSavedGame } from '@utils/localStorage';
+import { isLocalhost } from '../utils/env';
 import { gameConfig } from '@constants/gameConfig'; // Benötigt für den Reset zum Initialzustand
 
 const STORAGE_KEY = 'clickerSave';
@@ -27,7 +28,7 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
         case 'success':
         case 'success_old_format': // Altes Format als Erfolg für das Laden behandeln
           loadGameStateHook(loadResult.payload);
-          if (loadResult.type === 'success_old_format' && window.location.hostname !== 'localhost') {
+          if (loadResult.type === 'success_old_format' && !isLocalhost()) {
             console.log('[useLocalStorage] Old storage format loaded. It is updated with a checksum the next time it is saved.');
           }
           break;
