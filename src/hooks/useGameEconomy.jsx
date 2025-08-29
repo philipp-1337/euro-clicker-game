@@ -103,21 +103,25 @@ export default function useGameEconomy({
       activePlayTime: gameState.activePlayTime,
       inactivePlayTime: gameState.inactivePlayTime,
       lastSaved: Date.now(),
-      
+
       // UI settings from localStorage
       darkMode: localStorage.getItem('darkMode') === 'true',
       musicEnabled: (localStorage.getItem('musicEnabled') ?? 'true') === 'true',
       soundEffectsEnabled: (localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true',
-      
+
       // Reset progression
       investments: gameConfig.initialState.investments.map(() => 0),
       boostedInvestments: gameConfig.investments.map(() => false),
-      
+
       // Preserve auto-buyers on prestige
       autoBuyValueUpgradeEnabled: gameState.autoBuyValueUpgradeEnabled,
       autoBuyCooldownUpgradeEnabled: gameState.autoBuyCooldownUpgradeEnabled,
       autoBuyerUnlocked: gameState.autoBuyerUnlocked,
       cooldownAutoBuyerUnlocked: gameState.cooldownAutoBuyerUnlocked,
+      globalMultiplierAutoBuyerUnlocked: gameState.globalMultiplierAutoBuyerUnlocked,
+      globalPriceDecreaseAutoBuyerUnlocked: gameState.globalPriceDecreaseAutoBuyerUnlocked,
+      autoBuyGlobalMultiplierEnabled: gameState.autoBuyGlobalMultiplierEnabled,
+      autoBuyGlobalPriceDecreaseEnabled: gameState.autoBuyGlobalPriceDecreaseEnabled,
       autoBuyerInterval: gameState.autoBuyerInterval,
       autoBuyerBuffer: gameState.autoBuyerBuffer,
     };
