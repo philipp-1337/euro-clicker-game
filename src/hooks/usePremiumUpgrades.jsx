@@ -161,7 +161,7 @@ export default function usePremiumUpgrades({
   // Critical Click Chance Upgrade
   const criticalClickChanceCost = useMemo(() =>
     gameConfig.premiumUpgrades.criticalClickChance.baseCost *
-    (1 + criticalClickChanceLevel * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+    Math.pow(gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier, criticalClickChanceLevel) *
     costMultiplier,
     [criticalClickChanceLevel, costMultiplier]
   );
@@ -184,10 +184,11 @@ export default function usePremiumUpgrades({
     let totalCalculatedCost = 0;
     let tempLevel = criticalClickChanceLevel;
     const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+    const costExponent = gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier;
 
     for (let i = 0; i < actualQuantity; i++) {
       const costForThisStep = gameConfig.premiumUpgrades.criticalClickChance.baseCost *
-        (1 + (tempLevel + i) * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
+        Math.pow(costExponent, tempLevel + i) *
         currentCostMultiplier;
       totalCalculatedCost += costForThisStep;
     }
