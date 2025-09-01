@@ -247,22 +247,82 @@ export default function usePremiumUpgrades({
     easyMode
   ]);
 
+  // Utility-Funktionen für die Berechnung der Upgrade-Kosten
+  const calculateGlobalMultiplierCost = (level, quantity, config, costMultiplier) => {
+    let totalCost = 0;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += config.premiumUpgrades.globalMultiplier.baseCost *
+        Math.pow(config.premiumUpgrades.globalMultiplier.costExponent, level + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  const calculateGlobalPriceDecreaseCost = (level, quantity, config, costMultiplier) => {
+    let totalCost = 0;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += config.premiumUpgrades.globalPriceDecrease.baseCost *
+        Math.pow(config.premiumUpgrades.globalPriceDecrease.costExponent, level + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  const calculateOfflineEarningsCost = (level, quantity, config, costMultiplier) => {
+    let totalCost = 0;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += config.premiumUpgrades.offlineEarnings.baseCost *
+        Math.pow(config.premiumUpgrades.offlineEarnings.costExponent, level + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  const calculateFloatingClickValueCost = (level, quantity, config, costMultiplier) => {
+    let totalCost = 0;
+    for (let i = 0; i < quantity; i++) {
+      totalCost += config.premiumUpgrades.floatingClickValue.baseCost *
+        Math.pow(config.premiumUpgrades.floatingClickValue.costExponent, level + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
+  const calculateCriticalClickChanceCost = (level, quantity, config, costMultiplier) => {
+    const maxLevel = 100;
+    const actualQuantityToBuy = Math.min(quantity, maxLevel - level);
+    if (actualQuantityToBuy <= 0) return Infinity;
+    let totalCost = 0;
+    const costExponent = config.premiumUpgrades.criticalClickChance.costLevelMultiplier;
+    for (let i = 0; i < actualQuantityToBuy; i++) {
+      totalCost += config.premiumUpgrades.criticalClickChance.baseCost *
+        Math.pow(costExponent, level + i) *
+        costMultiplier;
+    }
+    return totalCost;
+  };
+
   return {
     // Global Multiplier
     globalMultiplierCost,
     buyGlobalMultiplier,
+    calculateGlobalMultiplierCost,
     // Global Price Decrease
     globalPriceDecreaseCost,
     buyGlobalPriceDecrease,
+    calculateGlobalPriceDecreaseCost,
     // Offline Earnings
     offlineEarningsLevelCost,
     buyOfflineEarningsLevel,
+    calculateOfflineEarningsCost,
     // Critical Click Chance
     criticalClickChanceCost,
     buyCriticalClickChanceLevel,
     criticalHitMultiplier,
+    calculateCriticalClickChanceCost,
     // Floating Click Value
     floatingClickValueCost,
     buyFloatingClickValue,
+    calculateFloatingClickValueCost,
   };
 }

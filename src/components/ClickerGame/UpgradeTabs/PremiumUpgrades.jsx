@@ -4,46 +4,56 @@ import {
   getPercentage, 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
+import usePremiumUpgrades from '@hooks/usePremiumUpgrades';
 
-export default function PremiumUpgrades({
-  money,
-  globalMultiplier,
-  globalMultiplierLevel,
-  globalMultiplierCost,
-  globalPriceDecrease,
-  globalPriceDecreaseLevel,
-  globalPriceDecreaseCost,
-  buyGlobalPriceDecrease,
-  buyGlobalMultiplier,
-  offlineEarningsLevel,
-  currentOfflineEarningsFactor,
-  buyOfflineEarningsLevel,
-  offlineEarningsLevelCost,
-  criticalClickChanceLevel,
-  currentCriticalClickChance,
-  buyCriticalClickChanceLevel,
-  criticalClickChanceCost,
-  criticalHitMultiplier,
-  managers,
-  buyQuantity,
-  easyMode,
-  floatingClickValueLevel,
-  floatingClickValueMultiplier,
-  buyFloatingClickValue,
-  currentFloatingClickValue,
-  autoBuyerUnlocked,
-  buyAutoBuyerUnlock,
-  autoBuyerUnlockCost,
-  cooldownAutoBuyerUnlocked,
-  buyCooldownAutoBuyerUnlock,
-  cooldownAutoBuyerUnlockCost,
-  globalMultiplierAutoBuyerUnlocked,
-  buyGlobalMultiplierAutoBuyerUnlock,
-  globalMultiplierAutoBuyerUnlockCost,
-  globalPriceDecreaseAutoBuyerUnlocked,
-  buyGlobalPriceDecreaseAutoBuyerUnlock,
-  globalPriceDecreaseAutoBuyerUnlockCost,
-}) {
+export default function PremiumUpgrades(props) {
+  // Props wie gehabt
+  const {
+    money,
+    globalMultiplier,
+    globalMultiplierLevel,
+    globalMultiplierCost,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    globalPriceDecreaseCost,
+    buyGlobalPriceDecrease,
+    buyGlobalMultiplier,
+    offlineEarningsLevel,
+    currentOfflineEarningsFactor,
+    buyOfflineEarningsLevel,
+    offlineEarningsLevelCost,
+    criticalClickChanceLevel,
+    currentCriticalClickChance,
+    buyCriticalClickChanceLevel,
+    criticalClickChanceCost,
+    criticalHitMultiplier,
+    managers,
+    buyQuantity,
+    easyMode,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    buyFloatingClickValue,
+    currentFloatingClickValue,
+    autoBuyerUnlocked,
+    buyAutoBuyerUnlock,
+    autoBuyerUnlockCost,
+    cooldownAutoBuyerUnlocked,
+    buyCooldownAutoBuyerUnlock,
+    cooldownAutoBuyerUnlockCost,
+    globalMultiplierAutoBuyerUnlocked,
+    buyGlobalMultiplierAutoBuyerUnlock,
+    globalMultiplierAutoBuyerUnlockCost,
+    globalPriceDecreaseAutoBuyerUnlocked,
+    buyGlobalPriceDecreaseAutoBuyerUnlock,
+    globalPriceDecreaseAutoBuyerUnlockCost,
+  } = props;
+
+  // Hole die Utility-Funktion aus dem Hook
+  const { calculateCriticalClickChanceCost } = usePremiumUpgrades({
+    money,
+    easyMode,
+    criticalClickChanceLevel,
+  });
 
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
   // Crafting Unlock
@@ -114,25 +124,15 @@ export default function PremiumUpgrades({
     return totalCost;
   };
 
-  // Helper to calculate total cost for 'n' Critical Click Chance upgrades
-  const calculateTotalCriticalClickChanceCost = (quantity) => {
-    const maxLevel = 100;
-    const actualQuantityToBuy = Math.min(quantity, maxLevel - criticalClickChanceLevel);
-    if (actualQuantityToBuy <= 0) return Infinity;
-
-    let totalCost = 0;
-    let currentLevel = criticalClickChanceLevel;
-    const costExponent = gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier;
-    for (let i = 0; i < actualQuantityToBuy; i++) {
-      totalCost += gameConfig.premiumUpgrades.criticalClickChance.baseCost *
-        Math.pow(costExponent, currentLevel + i) *
-        costMultiplier;
-    }
-    return totalCost;
-  };
-
-    // Determine actual buyable quantity for Critical Click Chance
-    const actualBuyableCriticalClick = Math.min(buyQuantity, 100 - criticalClickChanceLevel);
+  // Berechne die Kosten für Critical Click Chance Upgrade über die Utility-Funktion
+  const totalCriticalClickChanceCost = calculateCriticalClickChanceCost(
+    criticalClickChanceLevel,
+    buyQuantity,
+    gameConfig,
+    gameConfig.getCostMultiplier(easyMode)
+  );
+  // Determine actual buyable quantity for Critical Click Chance
+  const actualBuyableCriticalClick = Math.min(buyQuantity, 100 - criticalClickChanceLevel);
 
 
   // Helper to calculate total cost for 'n' Offline Earnings upgrades
@@ -196,7 +196,6 @@ export default function PremiumUpgrades({
   // Costs for current buyQuantity
   const totalGlobalMultiplierCost = calculateTotalGlobalMultiplierCost(buyQuantity);
   const totalGlobalPriceDecreaseCost = calculateTotalGlobalPriceDecreaseCost(buyQuantity);
-  const totalCriticalClickChanceCost = calculateTotalCriticalClickChanceCost(buyQuantity);
   const totalOfflineEarningsCost = calculateTotalOfflineEarningsCost(buyQuantity);
 
 
