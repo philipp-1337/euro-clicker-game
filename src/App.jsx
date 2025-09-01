@@ -9,8 +9,9 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
   const {
-    offlineReady: [offlineReady, setOfflineReady],
-    needRefresh: [needRefresh, setNeedRefresh],
+    needRefresh: [
+      needRefresh
+    ],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
