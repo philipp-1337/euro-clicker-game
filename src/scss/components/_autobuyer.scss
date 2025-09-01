@@ -1,3 +1,68 @@
+// iOS Switch Styles
+.switch-label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  margin-left: 0;
+}
+// Linker Bereich für Icon und Label
+.settings-row-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+// Settings row: Switch rechtsbündig
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.switch-text {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+}
+
+.switch {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  background: #ccc;
+  border-radius: 14px;
+  transition: background 0.2s;
+}
+
+.switch-label .switch:checked + .switch-slider {
+  background: #4cd964;
+}
+
+.switch-slider:before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+.switch-label .switch:checked + .switch-slider:before {
+  transform: translateX(20px);
+}
 .modal-content.autobuyer-modal {
   width: 450px;
   max-width: 95vw;
