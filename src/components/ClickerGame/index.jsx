@@ -20,7 +20,6 @@ export default function ClickerGame({
   easyMode = false,
   onEasyModeToggle,
   registerSaveGameHandler,
-  musicPlaying, // This is from App.js, not used directly here for control
   setMusicPlaying,
   musicEnabled, // New
   setMusicEnabled, // New
@@ -234,7 +233,7 @@ export default function ClickerGame({
     try {
       const stored = localStorage.getItem(LEADERBOARD_CHECKPOINTS_KEY);
       return stored ? JSON.parse(stored) : [];
-    } catch (e) {
+    } catch {
       return [];
     }
   }
@@ -399,7 +398,7 @@ export default function ClickerGame({
   }, [saveGame, registerSaveGameHandler]);
 
   useEffect(() => {
-    const handleTampering = (event) => {
+  const handleTampering = () => {
       unlockSpecificAchievementById("cheater");
     };
     window.addEventListener("gamestateTampered", handleTampering);

@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   formatNumber, 
   calculateValueUpgradePercentage, 
@@ -13,8 +12,6 @@ import { Check } from 'lucide-react';
 
 export default function BasicUpgrades({ 
   buttons,
-  // valueUpgradeCosts, // No longer directly used for display/logic if always calculating total
-  cooldownUpgradeCosts, // Used for single cooldown upgrades
   money, 
   buyValueUpgrade, 
   buyCooldownUpgrade,
@@ -24,7 +21,6 @@ export default function BasicUpgrades({
   managerCosts,
   valueMultipliers,
   soundEffectsEnabled,
-  // Need props for cost calculation of value upgrades:
   valueUpgradeLevels, // Added
   easyMode, // Added
   globalPriceDecrease, // Added

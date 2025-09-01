@@ -1,5 +1,6 @@
 {
   "name": "euro-clicker-game",
+  "type": "module",
   "version": "0.2.7",
   "private": true,
   "dependencies": {

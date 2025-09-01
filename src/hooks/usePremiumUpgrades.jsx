@@ -17,7 +17,6 @@ export default function usePremiumUpgrades({
   ensureStartTime,
   
   // Global Multiplier
-  globalMultiplier,
   setGlobalMultiplier,
   globalMultiplierLevel,
   setGlobalMultiplierLevel,

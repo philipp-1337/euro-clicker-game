@@ -66,7 +66,7 @@ export default function LeaderboardModal({ show, onClose }) {
           return 0; // Default if all criteria are equal or incomparable
         });
         setEntries(data);
-      } catch (e) {
+      } catch {
         setEntries([]);
       } finally {
         setLoading(false);
@@ -138,14 +138,14 @@ export default function LeaderboardModal({ show, onClose }) {
                     try {
                       const d = new Date(entry.checkpointDate);
                       dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) {
+                    } catch {
                       dateString = entry.checkpointDate;
                     }
                   } else if (entry.timestamp) {
                     try {
                       const d = new Date(entry.timestamp);
                       dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) {
+                    } catch {
                       dateString = entry.timestamp;
                     }
                   }

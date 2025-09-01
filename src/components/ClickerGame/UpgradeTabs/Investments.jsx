@@ -22,7 +22,7 @@ const InvestmentIcon = ({ iconName }) => {
   return <IconComponent className="premium-icon" />;
 };
 
-export default function Investments({ money, investments, buyInvestment, totalIncomePerSecond, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked, unlockInvestments, unlockInvestmentCost }) {
+export default function Investments({ money, investments, buyInvestment, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked, unlockInvestments, unlockInvestmentCost }) {
   const [boostClickStates, setBoostClickStates] = React.useState(() => {
     // Initialize boost states from localStorage
     return gameConfig.investments.map((investment, index) => {
@@ -120,7 +120,7 @@ export default function Investments({ money, investments, buyInvestment, totalIn
                 Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
               </p>
               <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
-                Click the "Boost" button 100 times to permanently double the income from this investment!
+                Click the &quot;Boost&quot; button 100 times to permanently double the income from this investment!
               </p>
               <div className="premium-upgrade-info">
                 <div className="premium-upgrade-level">

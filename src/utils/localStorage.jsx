@@ -13,7 +13,9 @@ export function getLocalStorage(key, fallback) {
 export function setLocalStorage(key, value) {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {}
+  } catch (e) {
+    console.error(`Error setting localStorage for key '${key}':`, e);
+  }
 }
 
 const ANTI_CHEAT_SECRET = "€UROCL1CK€R_S€CR€T_CH€CK_V1.0.3"; // Ein geheimer Schlüssel

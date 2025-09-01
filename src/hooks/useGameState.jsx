@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function useGameState(easyMode = false) {
+export default function useGameState() {
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
   const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
@@ -162,7 +162,9 @@ export default function useGameState(easyMode = false) {
       const save = JSON.parse(localStorage.getItem('clickerSave') || '{}');
       save.isCraftingUnlocked = savedState.isCraftingUnlocked ?? false;
       localStorage.setItem('clickerSave', JSON.stringify(save));
-    } catch {}
+    } catch (e) {
+      console.error('Error updating localStorage for clickerSave:', e);
+    }
 
     const loadedBoosted = gameConfig.investments.map((_, index) => {
       if (savedState.boostedInvestments && typeof savedState.boostedInvestments[index] === 'boolean') {

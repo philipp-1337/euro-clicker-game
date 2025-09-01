@@ -13,16 +13,13 @@ export default function useGameEconomy({
   setMoney,
   buttons,
   managers,
-  investments,
   totalMoneyPerSecond: investmentIncomePerSecond,
   prestigeShares,
   setPrestigeShares,
-  prestigeCount,
   setPrestigeCount,
   gameState,
   loadGameState,
-  saveGame,
-  ensureStartTime
+  saveGame
 }) {
   
   // Manager income calculation

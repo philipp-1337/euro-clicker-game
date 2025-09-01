@@ -13,9 +13,7 @@ export default function useOfflineEarnings({
   totalMoneyPerSecond,
   offlineEarningsLevel,
   initialOfflineDuration,
-  activePlayTime,
   setActivePlayTime,
-  inactivePlayTime,
   setInactivePlayTime,
   setMoney
 }) {

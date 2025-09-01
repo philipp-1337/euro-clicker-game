@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ConfirmModal from './ConfirmModal';
 import { X as CloseIcon } from 'lucide-react';
 import { useModal } from '@hooks/useModal';
@@ -112,7 +112,7 @@ export default function PrestigeModal({
 
           {!canPrestige && (
             <p className="text-secondary" style={{ fontSize: '0.85em', marginTop: 8 }}>
-              You need {formatNumber(moneyNeededForNextShare)} € more to earn the next share and prestige.
+              You need {formatNumber(moneyNeededForNextShare)} € more to earn the next share and prestige.
             </p>
           )}
         </div>

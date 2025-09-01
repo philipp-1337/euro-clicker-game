@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { usePwaPrompt } from '../../hooks/usePwaPrompt';
 import { ShareIcon, SquarePlusIcon, X as CloseIcon } from 'lucide-react';
 import { isLocalhost } from '@utils/env';

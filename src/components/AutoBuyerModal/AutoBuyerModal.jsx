@@ -1,4 +1,3 @@
-import React from 'react';
 import { useModal } from '../../hooks/useModal';
 import {
   X as CloseIcon,

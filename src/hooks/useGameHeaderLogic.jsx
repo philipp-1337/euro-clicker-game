@@ -46,9 +46,15 @@ export default function useGameHeaderLogic(props) {
     return (
       <span
         className={`env-label ${environment}`}
+        role="button"
+        tabIndex={canToggleEasyMode ? 0 : -1}
         onClick={canToggleEasyMode ? toggleEasyMode : undefined}
+        onKeyDown={canToggleEasyMode ? (e => {
+          if (e.key === 'Enter' || e.key === ' ') toggleEasyMode();
+        }) : undefined}
         title={canToggleEasyMode ? "Toggle Easy Mode" : "Easy Mode only available in localhost and alpha"}
         style={!canToggleEasyMode ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+        aria-disabled={!canToggleEasyMode}
       >
         {displayText}
       </span>
@@ -88,7 +94,9 @@ export default function useGameHeaderLogic(props) {
         const parsed = JSON.parse(raw);
         if (typeof parsed.cloudSaveMode === 'boolean') return parsed.cloudSaveMode;
       }
-    } catch {}
+    } catch (e) {
+      console.error('Error reading clickerUiProgress from localStorage:', e);
+        }
     return false;
   });
 
@@ -129,7 +137,9 @@ export default function useGameHeaderLogic(props) {
       };
       const merged = { ...defaults, ...prev, cloudSaveMode };
       localStorage.setItem('clickerUiProgress', JSON.stringify(merged));
-    } catch {}
+    } catch (e) {
+      console.error('Error writing clickerUiProgress to localStorage:', e);
+    }
   }, [cloudSaveMode]);
 
   // Cloud Save Export Handler
@@ -198,7 +208,6 @@ export default function useGameHeaderLogic(props) {
     };
     window.addEventListener('game:autosaved', handleAutoSave);
     return () => window.removeEventListener('game:autosaved', handleAutoSave);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudSaveMode, gameState, handleExportCloud, triggerSaveFeedback]);
 
   return {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'; // Importiere useRef
+import { useState, useEffect, useRef } from 'react';
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
 import VersionDisplay from './components/VersionDisplay/VersionDisplay';
@@ -113,7 +113,9 @@ function App() {
         src="/sounds/background-music.mp3"
         loop
         style={{ display: 'none' }}
-      />
+      >
+        <track kind="captions" label="Background music" srcLang="en" />
+      </audio>
       {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}

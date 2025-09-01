@@ -26,7 +26,9 @@ export default function useAchievementNotifications(achievements, unlockedAchiev
         const updated = [...seen, id];
         localStorage.setItem('achievementNotificationsSeen', JSON.stringify(updated));
       }
-    } catch {}
+    } catch {
+      console.error('Error marking achievement notification as seen');
+    }
   }, [getSeenAchievementNotifications]);
 
   const hasSeenAchievementNotification = useCallback((id) => {

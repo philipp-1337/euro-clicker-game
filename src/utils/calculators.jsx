@@ -194,7 +194,7 @@ export const formatNumber = (num, options = {}) => {
   };
 
   /**
-   * Berechnet die Upgrade-Kosten unter Berücksichtigung des Schwierigkeitsgrads (z. B. Easy Mode)
+   * Berechnet die Upgrade-Kosten unter Berücksichtigung des Schwierigkeitsgrads (z.B. Easy Mode)
    * @param {number} baseCost - Basispreis
    * @param {number} level - Aktueller Level
    * @param {number} growthFactor - Wachstumsfaktor (default: 1.5)

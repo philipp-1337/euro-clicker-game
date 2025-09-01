@@ -1,4 +1,3 @@
-import React from 'react';
 import { X as CloseIcon, ClockIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 import { formatPlaytime, formatNumber } from '../../utils/calculators';
