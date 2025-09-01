@@ -21,7 +21,7 @@ export default function PrestigeModal({
 
   const totalSharesAfterPrestige = accumulatedPrestigeShares + currentRunShares;
   const bonusPerSharePercentage = gameConfig.prestige.bonusPerShare * 100;
-  const activeBonusFromAccumulatedShares = accumulatedPrestigeShares * bonusPerSharePercentage;
+  // const activeBonusFromAccumulatedShares = accumulatedPrestigeShares * bonusPerSharePercentage;
   const potentialBonusAfterPrestige = totalSharesAfterPrestige * bonusPerSharePercentage;
   const minSharesRequired = gameConfig.prestige.minSharesToPrestige;
   // Kosten für den nächsten Share: Index = bereits vorhandene Shares

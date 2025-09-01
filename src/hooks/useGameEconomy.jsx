@@ -87,13 +87,11 @@ export default function useGameEconomy({
     const currentMoneyForPrestige = (typeof money === 'number' && !isNaN(money) && money > 0) ? money : 0;
     // Berechne, wie viele Shares man sich leisten kann und wie viel Geld dafür ausgegeben wird
     let sharesEarnedThisRun = 0;
-    let spentMoney = 0;
     let remainingMoney = currentMoneyForPrestige;
     while (true) {
       const cost = gameConfig.prestige.getShareCost(sharesEarnedThisRun);
       if (remainingMoney >= cost) {
         remainingMoney -= cost;
-        spentMoney += cost;
         sharesEarnedThisRun++;
       } else {
         break;

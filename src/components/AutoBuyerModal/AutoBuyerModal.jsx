@@ -1,8 +1,8 @@
 import { useModal } from '../../hooks/useModal';
 import {
   X as CloseIcon,
-  Power as PowerIcon,
-  PowerOff as PowerOffIcon,
+  // Power as PowerIcon,
+  // PowerOff as PowerOffIcon,
   Euro as EuroIcon,
   Clock as ClockIcon,
   PiggyBank as PiggyBankIcon,
@@ -89,6 +89,7 @@ const AutoBuyerModal = ({
                     className="switch"
                     checked={autoBuyValueUpgradeEnabled}
                     onChange={() => setAutoBuyValueUpgradeEnabled((v) => !v)}
+                    aria-label="Value Auto-Buyer"
                   />
                   <span className="switch-slider" />
                 </label>
@@ -107,6 +108,7 @@ const AutoBuyerModal = ({
                     className="switch"
                     checked={autoBuyCooldownUpgradeEnabled}
                     onChange={() => setAutoBuyCooldownUpgradeEnabled((v) => !v)}
+                    aria-label="Cooldown Auto-Buyer"
                   />
                   <span className="switch-slider" />
                 </label>
@@ -125,6 +127,7 @@ const AutoBuyerModal = ({
                     className="switch"
                     checked={autoBuyGlobalMultiplierEnabled}
                     onChange={() => setAutoBuyGlobalMultiplierEnabled((v) => !v)}
+                    aria-label="Multiplier Auto-Buyer"
                   />
                   <span className="switch-slider" />
                 </label>
@@ -143,6 +146,7 @@ const AutoBuyerModal = ({
                     className="switch"
                     checked={autoBuyGlobalPriceDecreaseEnabled}
                     onChange={() => setAutoBuyGlobalPriceDecreaseEnabled((v) => !v)}
+                    aria-label="Discount Auto-Buyer"
                   />
                   <span className="switch-slider" />
                 </label>
