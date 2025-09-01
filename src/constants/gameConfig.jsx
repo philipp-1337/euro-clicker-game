@@ -155,13 +155,13 @@ export const gameConfig = {
   premiumUpgrades: {
   floatingClickValue: {
       // NEU: Premium-Upgrade für Floating Click Wert
-      baseCost: 500,
-      costExponent: 1.3, // exponentiell steigend
+      baseCost: 250,
+      costExponent: 1.2, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
     },
     criticalClickChance: {
       // New upgrade configuration
-      baseCost: 1000,
+      baseCost: 500,
       costLevelMultiplier: 1.4, // Cost increases by 0.75 * baseCost for each level
       effectPerLevel: 0.005, // 0.5% chance increase per level
       baseMultiplier: 1.0, // Startwert x1.0
@@ -184,16 +184,16 @@ export const gameConfig = {
       effectPerLevel: 0.025, // e.g., 5% earnings per level
     },
     autoBuyerUnlock: {
-      baseCost: 10000,
+      baseCost: 50000,
     },
     cooldownAutoBuyerUnlock: {
-      baseCost: 15000,
+      baseCost: 50000,
     },
     globalMultiplierAutoBuyerUnlock: {
-      baseCost: 20000,
+      baseCost: 75000,
     },
     globalPriceDecreaseAutoBuyerUnlock: {
-      baseCost: 25000,
+      baseCost: 75000,
     }
   },
 
