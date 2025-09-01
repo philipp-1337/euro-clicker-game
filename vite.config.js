@@ -9,7 +9,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'prompt',
       workbox: {
+        // Precache nur kleine Dateien
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,webmanifest}'],
+        // MP3 nicht precachen
+        globIgnores: ['sounds/background-music-quiet.mp3'],
       },
       devOptions: {
         enabled: true,
@@ -19,7 +22,7 @@ export default defineConfig({
         name: 'Euro Clicker Game',
         short_name: 'EuroClicker',
         description: 'A simple clicker game about earning euros.',
-        theme_color: '#ffffff',
+        theme_color: '#003399',
         icons: [
           {
             src: 'web-app-manifest-192x192.png',
