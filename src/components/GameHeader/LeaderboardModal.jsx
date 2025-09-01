@@ -59,14 +59,14 @@ export default function LeaderboardModal({ show, onClose }) {
             return aActive - bActive;
           }
 
-          // 3. Sort by clicks (ascending)
+          // 3. Sort by clicks (.ascending)
           if (typeof a.clicks === 'number' && typeof b.clicks === 'number') {
             return a.clicks - b.clicks;
           }
           return 0; // Default if all criteria are equal or incomparable
         });
         setEntries(data);
-      } catch (e) {
+      } catch {
         setEntries([]);
       } finally {
         setLoading(false);
@@ -96,7 +96,7 @@ export default function LeaderboardModal({ show, onClose }) {
           </button>
         </div>
         <div className="upgrade-tabs" style={{ borderBottom: 'none', marginTop: '10px', marginBottom: '5px' }}>
-          <div className="upgrade-tabs-inner">
+          <div className="upgrade-tabs-inner" style={{ marginRight: '-60px' }}>
             {CHECKPOINTS.map(checkpoint => (
               <button
                 key={checkpoint.id}
@@ -138,14 +138,14 @@ export default function LeaderboardModal({ show, onClose }) {
                     try {
                       const d = new Date(entry.checkpointDate);
                       dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) {
+                    } catch {
                       dateString = entry.checkpointDate;
                     }
                   } else if (entry.timestamp) {
                     try {
                       const d = new Date(entry.timestamp);
                       dateString = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) {
+                    } catch {
                       dateString = entry.timestamp;
                     }
                   }
@@ -189,10 +189,11 @@ export default function LeaderboardModal({ show, onClose }) {
                       </tr>
                       {expanded && (
                         <tr className="leaderboard-details-row">
-                          <td colSpan={4} style={{ background: '#f8f8f8', fontSize: 14 }}>
+                          <td colSpan={5} style={{ background: '#f8f8f8', fontSize: 14 }}>
                             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', padding: '6px 0' }}>
                               <span><b>Active:</b> {typeof entry.activePlaytime === 'number' ? formatPlaytime(entry.activePlaytime, true, true) : 'N/A'}</span>
                               <span><b>Clicks:</b> {entry.clicks}</span>
+                              <span><b>Prestige:</b> {typeof entry.prestigeCount === 'number' ? entry.prestigeCount : 'N/A'}</span>
                               <span><b>Date:</b> {dateString}</span>
                               <span><b>Version:</b> {entry.version || 'N/A'}</span>
                             </div>

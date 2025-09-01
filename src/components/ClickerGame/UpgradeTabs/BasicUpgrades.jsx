@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   formatNumber, 
   calculateValueUpgradePercentage, 
@@ -12,24 +11,21 @@ import { Check } from 'lucide-react';
 // Load sound effect
 
 export default function BasicUpgrades({ 
-    buttons,
-    // valueUpgradeCosts, // No longer directly used for display/logic if always calculating total
-    cooldownUpgradeCosts, // Used for single cooldown upgrades
-    money, 
-    buyValueUpgrade, 
-    buyCooldownUpgrade,
-    cooldownReductions,
-    managers,
-    buyManager,
-    managerCosts,
-    valueMultipliers,
-    soundEffectsEnabled,
-    // Need props for cost calculation of value upgrades:
-    valueUpgradeLevels, // Added
-    easyMode, // Added
-    globalPriceDecrease, // Added
-    cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
-    buyQuantity // New prop
+  buttons,
+  money, 
+  buyValueUpgrade, 
+  buyCooldownUpgrade,
+  cooldownReductions,
+  managers,
+  buyManager,
+  managerCosts,
+  valueMultipliers,
+  soundEffectsEnabled,
+  valueUpgradeLevels, // Added
+  easyMode, // Added
+  globalPriceDecrease, // Added
+  cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
+  buyQuantity
 }) {
   const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
 
@@ -84,15 +80,15 @@ export default function BasicUpgrades({
   if (!managerCosts || managerCosts.length === 0) {
     return null; // Oder ein Lade-Indikator, falls du möchtest
   }
-    return (
-      <div className="upgrade-section">
-        <h2 className="section-title">Basic Upgrades</h2>
+  return ( 
+    <div className="upgrade-section">
+      <h2 className="section-title">Basic Upgrades</h2>
 
-        <h3 className="section-title">Increase Value</h3>
-        <div className="upgrade-buttons">
-          {buttons.map((button, index) => (
-            <button
-              key={`value-${index}`}
+      <h3 className="section-title">Increase Value</h3>
+      <div className="upgrade-buttons">
+        {buttons.map((button, index) => (
+          <button
+            key={`value-${index}`}
               onClick={() => handleValueUpgradeClick(index)}
               disabled={money < calculateTotalValueUpgradeCost(index, buyQuantity)}
               className={`upgrade-button ${button.colorClass} ${money < calculateTotalValueUpgradeCost(index, buyQuantity) ? 'disabled' : ''}`}

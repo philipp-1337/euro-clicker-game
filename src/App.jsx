@@ -1,15 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'; // Importiere useRef
+import { useState, useEffect, useRef } from 'react';
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
 import VersionDisplay from './components/VersionDisplay/VersionDisplay';
+import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
+import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
+  const {
+    needRefresh: [
+      needRefresh
+    ],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(r) {
+      console.log('SW Registered:', r);
+    },
+    onRegisterError(error) {
+      console.log('SW registration error:', error);
+    },
+  });
+
   // Initialisiere easyMode basierend auf localStorage
   const [easyMode, setEasyMode] = useState(localStorage.getItem('easyMode') === 'true');
-  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
-  const [waitingWorker, setWaitingWorker] = useState(null);
   const saveGameRef = useRef(null); // Ref für die saveGame Funktion
   const audioRef = useRef(null);
   const [musicPlaying, setMusicPlaying] = useState(false);
@@ -17,20 +31,6 @@ function App() {
   const [musicEnabled, setMusicEnabled] = useState((localStorage.getItem('musicEnabled') ?? 'true') === 'true');
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState((localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true');
 
-
-  useEffect(() => {
-    const handleUpdateReady = (event) => {
-      console.log('Update-Event empfangen:', event.detail);
-      setWaitingWorker(event.detail.waiting);
-      setShowUpdateBanner(true);
-    };
-
-    window.addEventListener('swUpdateReady', handleUpdateReady);
-
-    return () => {
-      window.removeEventListener('swUpdateReady', handleUpdateReady);
-    };
-  }, []);
 
   // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
   useEffect(() => {
@@ -71,7 +71,7 @@ function App() {
     localStorage.setItem('soundEffectsEnabled', soundEffectsEnabled.toString());
   }, [soundEffectsEnabled]);
 
-  // Handler für Easy-Mode-Toggle
+  // Handler für Easy-mode-Toggle
   const handleEasyModeToggle = (isEasyMode) => {
     setEasyMode(isEasyMode);
     localStorage.setItem('easyMode', isEasyMode.toString());
@@ -87,16 +87,7 @@ function App() {
       console.warn('saveGame function not available for pre-update save.');
     }
 
-    if (waitingWorker) {
-      // Sende eine Nachricht an den wartenden Service Worker, um die Aktivierung zu starten
-      waitingWorker.postMessage({ type: 'SKIP_WAITING' });
-      // Warte kurz, damit der SW aktivieren kann, bevor neu geladen wird
-      // `clients.claim()` im SW sollte den Rest erledigen
-      setShowUpdateBanner(false); // Banner ausblenden
-      setTimeout(() => {
-        window.location.reload();
-      }, 100); // Kurze Verzögerung
-    }
+    updateServiceWorker(true);
   };
 
   // Callback, um die saveGame Funktion von ClickerGame zu erhalten
@@ -112,8 +103,10 @@ function App() {
         src="/sounds/background-music.mp3"
         loop
         style={{ display: 'none' }}
-      />
-      {showUpdateBanner && <UpdateBanner onUpdate={handleUpdate} />}
+      >
+        <track kind="captions" label="Background music" srcLang="en" />
+      </audio>
+      {needRefresh && <UpdateBanner onUpdate={handleUpdate} />}
       <ClickerGame
         easyMode={easyMode}
         onEasyModeToggle={handleEasyModeToggle}
@@ -126,6 +119,7 @@ function App() {
         setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
       <VersionDisplay />
+      <InstallPwaPrompt />
     </div>
   );
 }

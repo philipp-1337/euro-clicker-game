@@ -1,43 +1,60 @@
-import { DollarSign, Star, Percent, HistoryIcon, Zap as ZapIcon } from 'lucide-react';
+import { Percent, HistoryIcon, Euro, Timer, MousePointerClick, TrendingUp, Bot, ActivityIcon } from 'lucide-react';
 import { 
   formatNumber, 
   getPercentage, 
 } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
+import usePremiumUpgrades from '@hooks/usePremiumUpgrades';
 
-export default function PremiumUpgrades({
-  money,
-  globalMultiplier,
-  globalMultiplierLevel,
-  globalMultiplierCost,
-  globalPriceDecrease,
-  globalPriceDecreaseLevel,
-  globalPriceDecreaseCost,
-  buyGlobalPriceDecrease,
-  buyGlobalMultiplier,
-  isInvestmentUnlocked,
-  unlockInvestments,
-  unlockInvestmentCost,
-  offlineEarningsLevel,
-  currentOfflineEarningsFactor,
-  buyOfflineEarningsLevel,
-  offlineEarningsLevelCost,
-  criticalClickChanceLevel,
-  currentCriticalClickChance,
-  buyCriticalClickChanceLevel,
-  criticalClickChanceCost,
-  managers,
-  buyQuantity,
-  easyMode,
-  floatingClickValueLevel,
-  floatingClickValueMultiplier,
-  buyFloatingClickValue,
-  currentFloatingClickValue,
+export default function PremiumUpgrades(props) {
+  // Props wie gehabt
+  const {
+    money,
+    globalMultiplier,
+    globalMultiplierLevel,
+    globalPriceDecrease,
+    globalPriceDecreaseLevel,
+    buyGlobalPriceDecrease,
+    buyGlobalMultiplier,
+    offlineEarningsLevel,
+    currentOfflineEarningsFactor,
+    buyOfflineEarningsLevel,
+    criticalClickChanceLevel,
+    currentCriticalClickChance,
+    buyCriticalClickChanceLevel,
+    criticalHitMultiplier,
+    buyQuantity,
+    easyMode,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    buyFloatingClickValue,
+    autoBuyerUnlocked,
+    buyAutoBuyerUnlock,
+    autoBuyerUnlockCost,
+    cooldownAutoBuyerUnlocked,
+    buyCooldownAutoBuyerUnlock,
+    cooldownAutoBuyerUnlockCost,
+    globalMultiplierAutoBuyerUnlocked,
+    buyGlobalMultiplierAutoBuyerUnlock,
+    globalMultiplierAutoBuyerUnlockCost,
+    globalPriceDecreaseAutoBuyerUnlocked,
+    buyGlobalPriceDecreaseAutoBuyerUnlock,
+    globalPriceDecreaseAutoBuyerUnlockCost,
+  } = props;
 
-}) {
+  // Hole die Utility-Funktion aus dem Hook
+  const { calculateCriticalClickChanceCost } = usePremiumUpgrades({
+    money,
+    easyMode,
+    criticalClickChanceLevel,
+  });
+
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
+  // Crafting Unlock
+
   const globalMultiplierPercentage = getPercentage(
-    gameConfig.premiumUpgrades.globalMultiplier.factor
+    gameConfig.premiumUpgrades.globalMultiplier.factor,
+    String(gameConfig.premiumUpgrades.globalMultiplier.factor).split(".")[1]?.length >= 2
   );
 
   const globalCostReductionPercentage = getPercentage(
@@ -45,11 +62,18 @@ export default function PremiumUpgrades({
   );
 
   const offlineEarningsEffectPerLevelPercentage = getPercentage(
-    1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel // Convert 0.02 to 2%
+    1 + gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel, // Convert 0.02 to 2%
+    String(gameConfig.premiumUpgrades.offlineEarnings.effectPerLevel).split(".")[1]?.length >= 2
+  );
+
+  const criticalClickMultiplierPerLevelPercentage = getPercentage(
+    1 + gameConfig.premiumUpgrades.criticalClickChance.multiplierPerLevel, 
+    String(gameConfig.premiumUpgrades.criticalClickChance.multiplierPerLevel).split(".")[1]?.length >= 2
   );
 
   const criticalClickChanceEffectPercentage = getPercentage(
-    1 + gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel 
+    1 + gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel, 
+    String(gameConfig.premiumUpgrades.criticalClickChance.effectPerLevel).split(".")[1]?.length >= 2
   );
 
   // Cost increase percentages
@@ -68,8 +92,6 @@ export default function PremiumUpgrades({
     gameConfig.premiumUpgrades.offlineEarnings.costExponent
   );
 
-  // Check if any manager is bought
-  const hasAnyManager = managers ? managers.some(manager => manager === true) : false;
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
 
   // Helper to calculate total cost for 'n' Global Multiplier upgrades
@@ -96,24 +118,15 @@ export default function PremiumUpgrades({
     return totalCost;
   };
 
-  // Helper to calculate total cost for 'n' Critical Click Chance upgrades
-  const calculateTotalCriticalClickChanceCost = (quantity) => {
-    const maxLevel = 100;
-    const actualQuantityToBuy = Math.min(quantity, maxLevel - criticalClickChanceLevel);
-    if (actualQuantityToBuy <= 0) return Infinity; // Cannot buy more
-
-    let totalCost = 0;
-    let currentLevel = criticalClickChanceLevel;
-    for (let i = 0; i < actualQuantityToBuy; i++) {
-      totalCost += gameConfig.premiumUpgrades.criticalClickChance.baseCost *
-        (1 + (currentLevel + i) * gameConfig.premiumUpgrades.criticalClickChance.costLevelMultiplier) *
-        costMultiplier;
-    }
-    return totalCost;
-  };
-
-    // Determine actual buyable quantity for Critical Click Chance
-    const actualBuyableCriticalClick = Math.min(buyQuantity, 100 - criticalClickChanceLevel);
+  // Berechne die Kosten für Critical Click Chance Upgrade über die Utility-Funktion
+  const totalCriticalClickChanceCost = calculateCriticalClickChanceCost(
+    criticalClickChanceLevel,
+    buyQuantity,
+    gameConfig,
+    gameConfig.getCostMultiplier(easyMode)
+  );
+  // Determine actual buyable quantity for Critical Click Chance
+  const actualBuyableCriticalClick = Math.min(buyQuantity, 100 - criticalClickChanceLevel);
 
 
   // Helper to calculate total cost for 'n' Offline Earnings upgrades
@@ -126,6 +139,38 @@ export default function PremiumUpgrades({
         costMultiplier;
     }
     return totalCost;
+  };
+
+  // Helper-Funktionen am Anfang der Komponente (vor dem return)
+  const formatCriticalMultiplier = (multiplier) => {
+    const safeMultiplier = isNaN(Number(multiplier)) ? 1.0 : Number(multiplier);
+    return safeMultiplier.toLocaleString(undefined, {
+      minimumFractionDigits: 1, 
+      maximumFractionDigits: 2
+    });
+  };
+
+  const getCriticalClickButtonState = () => {
+    const isMaxLevel = criticalClickChanceLevel >= 100;
+    const hasInsufficientFunds = money < totalCriticalClickChanceCost;
+    const noBuyableAmount = actualBuyableCriticalClick <= 0;
+    
+    const isDisabled = hasInsufficientFunds || isMaxLevel || noBuyableAmount;
+    
+    let buttonText, titleText;
+    
+    if (isMaxLevel) {
+      buttonText = 'Max Level';
+      titleText = 'Max Level Reached';
+    } else if (noBuyableAmount) {
+      buttonText = 'Max Level with this buy';
+      titleText = `Buy ${buyQuantity} level(s)`;
+    } else {
+      buttonText = `${formatNumber(totalCriticalClickChanceCost)} €`;
+      titleText = `Buy ${actualBuyableCriticalClick} level(s)`;
+    }
+    
+    return { isDisabled, buttonText, titleText };
   };
 
   // Floating Click Value Premium Upgrade
@@ -145,21 +190,20 @@ export default function PremiumUpgrades({
   // Costs for current buyQuantity
   const totalGlobalMultiplierCost = calculateTotalGlobalMultiplierCost(buyQuantity);
   const totalGlobalPriceDecreaseCost = calculateTotalGlobalPriceDecreaseCost(buyQuantity);
-  const totalCriticalClickChanceCost = calculateTotalCriticalClickChanceCost(buyQuantity);
   const totalOfflineEarningsCost = calculateTotalOfflineEarningsCost(buyQuantity);
 
 
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Premium Upgrades</h2>
-      {/* Floating Click Value Premium Upgrade */}
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Floating Clicker Upgrades</h3>
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Floating Click Value</h3>
+          <MousePointerClick className="premium-icon" />
+          <h3>Clicker Value Boost</h3>
         </div>
         <p className="premium-upgrade-description">
-          Increases the value of the Floating Click Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
+          Boosts the value of the Floating Clicker Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -169,19 +213,47 @@ export default function PremiumUpgrades({
             onClick={() => buyFloatingClickValue(buyQuantity)}
             disabled={money < totalFloatingClickValueCost}
             className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
-            title={`Kaufe ${buyQuantity} Level(s)`}
+            title={`Buy ${buyQuantity} level(s)`}
           >
             {formatNumber(totalFloatingClickValueCost)} €
           </button>
         </div>
       </div>
+      {/* Critical Click Upgrade */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
-          <Star className="premium-icon" />
-          <h3>Clicker Value Multiplier</h3>
+          <ActivityIcon className="premium-icon" />
+          <h3>Critical Hit Chance</h3>
+        </div>
+        <p
+          className="premium-upgrade-description"
+          title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}
+        >
+          Enables critical hits for the Floating Clicker Button. Each level increases the chance by {criticalClickChanceEffectPercentage}% and the multiplier by {criticalClickMultiplierPerLevelPercentage}. Max level: 100.
+        </p>
+        <div className="premium-upgrade-info">
+          <div className="premium-upgrade-level">
+            Level: {formatNumber(criticalClickChanceLevel)} (Chance: {formatNumber(currentCriticalClickChance * 100)}%, Multiplier: {formatCriticalMultiplier(criticalHitMultiplier * 100)}%)
+          </div>
+          <button
+            onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
+            disabled={getCriticalClickButtonState().isDisabled}
+            className={`premium-upgrade-button ${getCriticalClickButtonState().isDisabled ? 'disabled' : ''}`}
+            title={getCriticalClickButtonState().titleText}
+          >
+            {getCriticalClickButtonState().buttonText}
+          </button>
+        </div>
+      </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Global Clicker Upgrades</h3>
+      {/* Global Multiplier Upgrade */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <TrendingUp className="premium-icon" />
+          <h3>Value Multiplier</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalMultiplierCostIncreasePercentage}% per level.`}>
-          Increases the value of all clicks by {globalMultiplierPercentage}% per level. 
+          Increases the value of all coloured Clicker Buttons by {globalMultiplierPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -197,13 +269,14 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      {/* Global Price Decrease Upgrade */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
           <Percent className="premium-icon" />
-          <h3>Upgrade Price Decrease</h3>
+          <h3>Upgrade Discount</h3>
         </div>
         <p className="premium-upgrade-description" title={`Cost increases by ${globalPriceDecreaseCostIncreasePercentage}% per level.`}>
-          Reduces all basic upgrade costs by {globalCostReductionPercentage}% per level. 
+          Reduces the cost of all basic upgrades by {globalCostReductionPercentage}% per level.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -219,33 +292,7 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
-      {/* Critical Click Chance Upgrade */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <ZapIcon className="premium-icon" />
-          <h3>Critical Click Chance</h3>
-        </div>
-        <p className="premium-upgrade-description" title={`Cost increases by ${criticalClickChanceCostIncreasePercentage}% of the base cost per level. Max Level: 100.`}>
-          Each click on the floating Euro button has a chance to grant your current income per second instead of +1€. Each level increases this chance by {criticalClickChanceEffectPercentage}%.
-        </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Level: {formatNumber(criticalClickChanceLevel)} (Currently: {formatNumber(currentCriticalClickChance * 100)}%)
-          </div>
-          <button
-            onClick={() => buyCriticalClickChanceLevel(buyQuantity)}
-            disabled={money < totalCriticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager || actualBuyableCriticalClick <= 0}
-            className={`premium-upgrade-button ${money < totalCriticalClickChanceCost || criticalClickChanceLevel >= 100 || !hasAnyManager || actualBuyableCriticalClick <= 0 ? 'disabled' : ''}`}
-            title={!hasAnyManager ? "Requires at least one manager." : (criticalClickChanceLevel >= 100 ? "Max Level Reached" : `Buy ${actualBuyableCriticalClick > 0 ? actualBuyableCriticalClick : buyQuantity} level(s)`)}
-          >
-            {criticalClickChanceLevel >= 100
-              ? 'Max Level'
-              : !hasAnyManager
-                ? 'Requires Manager'
-                : (actualBuyableCriticalClick <= 0 ? 'Max Level with this buy' : `${formatNumber(totalCriticalClickChanceCost)} €`)}
-          </button>
-        </div>
-      </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Passive Upgrades</h3>
       {/* Unlock Offline Earnings */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
@@ -269,27 +316,87 @@ export default function PremiumUpgrades({
           </button>
         </div>
       </div>
+      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Automation Upgrades</h3>
+      {/* Premium Upgrade: AutoBuyer Unlock */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
-        <DollarSign className="premium-icon" />
-          <h3>Investments</h3>
+          <Euro className="premium-icon" />
+          <h3>Auto-Buyer: Value</h3>
         </div>
         <p className="premium-upgrade-description">
-        Unlock the Investments tab to invest in companies.
+          Unlocks the Value Upgrade Auto-Buyer. Automatically purchases the cheapest value upgrade when enabled via the <Bot size={12}/> icon in the header.
         </p>
-        <div className="premium-upgrade-info">
-          <div className="premium-upgrade-level">
-            Status: {isInvestmentUnlocked ? 'Unlocked' : 'Locked'}
-          </div>
+        <div className="premium-upgrade-info auto-buyer-info">
           <button
-            onClick={() => {
-              console.log('Button clicked, money:', money, 'cost:', unlockInvestmentCost);
-              unlockInvestments();
-            }}
-            disabled={money < unlockInvestmentCost || isInvestmentUnlocked}
-            className={`premium-upgrade-button ${money < unlockInvestmentCost || isInvestmentUnlocked ? 'disabled' : ''}`}
+            onClick={buyAutoBuyerUnlock}
+            disabled={autoBuyerUnlocked || money < autoBuyerUnlockCost}
+            className={`premium-upgrade-button ${autoBuyerUnlocked || money < autoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={autoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Value'}
           >
-            {isInvestmentUnlocked ? 'Unlocked' : `${formatNumber(unlockInvestmentCost)} €`}
+            {autoBuyerUnlocked ? 'Unlocked' : `${formatNumber(autoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Cooldown AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Timer className="premium-icon" />
+          <h3>Auto-Buyer: Cooldown</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the Cooldown Upgrade Auto-Buyer. Automatically purchases the cheapest cooldown upgrade when enabled via the <Bot size={12}/> icon in the header.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyCooldownAutoBuyerUnlock}
+            disabled={cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${cooldownAutoBuyerUnlocked || money < cooldownAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={cooldownAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Cooldown'}
+          >
+            {cooldownAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(cooldownAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Global Multiplier AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <TrendingUp className="premium-icon" />
+          <h3>Auto-Buyer: Multiplier</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the Global Value Multiplier Auto-Buyer. Automatically purchases the global value multiplier premium upgrade when enabled via the <Bot size={12}/> icon in the header.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyGlobalMultiplierAutoBuyerUnlock}
+            disabled={globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${globalMultiplierAutoBuyerUnlocked || money < globalMultiplierAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={globalMultiplierAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Multiplier'}
+          >
+            {globalMultiplierAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalMultiplierAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+
+      {/* Premium Upgrade: Global Price Decrease AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <Percent className="premium-icon" />
+          <h3>Auto-Buyer: Discount</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the Global Discount Auto-Buyer. Automatically purchases the global discount premium upgrade when enabled via the <Bot size={12}/> icon in the header.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyGlobalPriceDecreaseAutoBuyerUnlock}
+            disabled={globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost}
+            className={`premium-upgrade-button ${globalPriceDecreaseAutoBuyerUnlocked || money < globalPriceDecreaseAutoBuyerUnlockCost ? 'disabled' : ''}`}
+            title={globalPriceDecreaseAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Discount'}
+          >
+            {globalPriceDecreaseAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalPriceDecreaseAutoBuyerUnlockCost)} €`}
           </button>
         </div>
       </div>

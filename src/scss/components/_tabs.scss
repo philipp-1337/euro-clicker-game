@@ -7,7 +7,7 @@
 .upgrade-tabs {
   @include mask;
   @include flex-center;
-  width: 100%;
+  // width: 100%;
   margin: 20px 0 15px;
   border-bottom: 2px solid #e0e0e0;
   overflow-x: auto;
@@ -37,7 +37,7 @@
   @include flex-center;
   gap: clamp(5px, 2vw, 16px);
   min-width: max-content;
-  margin: 0 auto 8px auto;
+  margin: 8px auto 8px auto;
   width: 100%;
 }
 
@@ -168,9 +168,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  
+  &.auto-buyer-info {
+    justify-content: end;
+  }
 }
 
 .premium-upgrade-level {
   font-size: 0.9rem;
   color: map.get($colors, dark-hue);
+}
+
+.raw-materials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.raw-material-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
 }

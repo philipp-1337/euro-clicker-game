@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   X as CloseIcon,
   Home as HomeIcon,
@@ -36,7 +36,14 @@ export default function SideMenu({
 
   return (
     <>
-      <div className={`sidemenu-backdrop ${isOpen ? 'open' : ''}`} onClick={() => setIsOpen(false)} />
+      <div
+        className={`sidemenu-backdrop ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(false)}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setIsOpen(false); }}
+        role="button"
+        tabIndex={0}
+        aria-label="Close side menu"
+      />
 
       <div ref={menuRef} className={`sidemenu ${isOpen ? 'open' : ''}`}>
         <div className="sidemenu-header">
@@ -51,58 +58,100 @@ export default function SideMenu({
         </div>
 
         <div className="sidemenu-content">
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => setIsOpen(false)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') setIsOpen(false);
+            }}
+            aria-label="Home"
           >
             <HomeIcon size={20} className="sidemenu-icon" />
             <span>Home</span>
           </div>
 
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => handleMenuItemClick(onOpenSettings)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenSettings);
+            }}
+            aria-label="Settings"
           >
             <SettingsIcon size={20} className="sidemenu-icon" />
             <span>Settings</span>
           </div>
 
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => handleMenuItemClick(onOpenStatistics)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenStatistics);
+            }}
+            aria-label="Statistics"
           >
             <StatsIcon size={20} className="sidemenu-icon" />
             <span>Statistics</span>
           </div>
 
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => handleMenuItemClick(onToggleLeaderboard)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onToggleLeaderboard);
+            }}
+            aria-label="Leaderboard"
           >
             <CrownIcon size={20} className="sidemenu-icon" />
             <span>Leaderboard</span>
           </div>
 
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => handleMenuItemClick(onOpenAchievements)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenAchievements);
+            }}
+            aria-label="Achievements"
           >
             <AchievementsIcon size={20} className="sidemenu-icon" />
             <span>Achievements</span>
           </div>
 
-          {showPrestigeOption && ( // Nur anzeigen, wenn Bedingung erfüllt
+          {showPrestigeOption && (
             <div
               className="sidemenu-item"
+              role="button"
+              tabIndex={0}
               onClick={() => handleMenuItemClick(onOpenPrestige)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenPrestige);
+              }}
+              aria-label="Prestige"
             >
               <PrestigeSideMenuIcon size={20} className="sidemenu-icon" />
               <span>Prestige</span>
             </div>
           )}
-          <div 
-            className="sidemenu-item" 
+          <div
+            className="sidemenu-item"
+            role="button"
+            tabIndex={0}
             onClick={() => handleMenuItemClick(() => setShowAbout(true))}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(() => setShowAbout(true));
+            }}
+            aria-label="About"
           >
             <InfoIcon size={20} className="sidemenu-icon" />
             <span>About</span>

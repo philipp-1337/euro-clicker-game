@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Trophy as TrophyIcon } from 'lucide-react';
 
 export default function AchievementNotification({ achievement, onClose }) {

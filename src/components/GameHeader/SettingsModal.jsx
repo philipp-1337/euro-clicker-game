@@ -78,16 +78,18 @@ export default function SettingsModal({
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
   // Dark Mode State (global und persistiert im Savegame)
   const [isDarkMode, setIsDarkMode] = React.useState(() => {
-    // Zuerst aus clickerSave laden, dann localStorage fallback
     try {
       const saveRaw = localStorage.getItem('clickerSave');
       if (saveRaw) {
         const save = JSON.parse(saveRaw);
         if (typeof save.darkMode === 'boolean') return save.darkMode;
       }
-    } catch {}
+    } catch (e) {
+      console.error('Error reading darkMode from clickerSave:', e);
+    }
     return localStorage.getItem('darkMode') === 'true';
   });
+
   const { deleteFromCloud } = useCloudSave();
 
   // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
@@ -107,12 +109,15 @@ export default function SettingsModal({
           localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
         }
       }
-    } catch {}
+    } catch {
+      console.error('Error applying darkMode from clickerSave after cloud import');
+    }
   }, [isDarkMode]);
+
 
   // Dark Mode nach Cloud Import anwenden (Listener)
   React.useEffect(() => {
-    const handler = (e) => {
+    const handler = () => {
       try {
         // Nach Cloud Import: clickerSave prüfen
         const saveRaw = localStorage.getItem('clickerSave');
@@ -122,7 +127,9 @@ export default function SettingsModal({
             setIsDarkMode(save.darkMode);
           }
         }
-      } catch {}
+      } catch {
+        console.error('Error applying darkMode from clickerSave after cloud import');
+      }
     };
     window.addEventListener('game:cloudimported', handler);
     return () => window.removeEventListener('game:cloudimported', handler);
@@ -380,6 +387,10 @@ export default function SettingsModal({
                     navigator.clipboard?.writeText(cloudUuid);
                     triggerSaveFeedback("UUID copied");
                   }}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { navigator.clipboard?.writeText(cloudUuid); triggerSaveFeedback("UUID copied"); } }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Copy cloud save UUID"
                 >
                   {cloudUuid}
                 </span> 
@@ -467,7 +478,6 @@ export default function SettingsModal({
                 placeholder="Enter UUID"
                 value={importUuid}
                 onChange={(e) => setImportUuid(e.target.value)}
-                autoFocus
               />
               {importError && <div className="modal-error">{importError}</div>}
               <div className="modal-actions">

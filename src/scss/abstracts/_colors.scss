@@ -34,6 +34,7 @@ $backgrounds: (
   off-white: #f8f9fa,
   transparent-black-30: rgba(0, 0, 0, 0.3),
   transparent-black-90: rgba(0, 0, 0, 0.9),
+  transparent-white-10: rgba(255, 255, 255, 0.1),
   transparent-white-30: rgba(255, 255, 255, 0.3),
   transparent-white-90: rgba(255, 255, 255, 0.9),
 );
@@ -49,8 +50,8 @@ $button-colors: (
     #27ae60,
   ),
   "yellow": (
-    #f1c40f,
-    #d4ac0d,
+    #f1c61d,
+    #deb71c,
   ),
   "red": (
     #e74c3c,

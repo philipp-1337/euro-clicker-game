@@ -31,24 +31,53 @@ export default function UpgradeTabs({
   totalMoneyPerSecond,
   unlockInvestmentCost,
   investmentCostMultiplier,
-  offlineEarningsLevel,      // New
-  currentOfflineEarningsFactor, // New
-  buyOfflineEarningsLevel,     // New
-  offlineEarningsLevelCost,   // New
-  criticalClickChanceLevel,      // New
-  currentCriticalClickChance, // New
-  buyCriticalClickChanceLevel,     // New
-  criticalClickChanceCost,   // New
-  onInvestmentBoosted, // New prop for handling investment boosts
-  soundEffectsEnabled, // New prop
-  easyMode, // Added from ClickerGame
-  buyQuantity, // Added from ClickerGame
+  offlineEarningsLevel,
+  currentOfflineEarningsFactor,
+  buyOfflineEarningsLevel,
+  offlineEarningsLevelCost,
+  criticalClickChanceLevel,
+  currentCriticalClickChance,
+  buyCriticalClickChanceLevel,
+  criticalClickChanceCost,
+  criticalHitMultiplier,
+  onInvestmentBoosted,
+  soundEffectsEnabled,
+  easyMode,
+  buyQuantity,
   floatingClickValueLevel,
   floatingClickValueMultiplier,
   buyFloatingClickValue,
   currentFloatingClickValue,
+  autoBuyValueUpgradeEnabled,
+  setAutoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  setAutoBuyCooldownUpgradeEnabled,
+  craftingItems,
+  buyCraftingItem,
+  rawMaterials,
+  setRawMaterials,
+  buyMaterial,
+  resourcePurchaseCounts,
+  isCraftingUnlocked,
+  unlockCrafting,
+  accumulatedPrestigeShares,
+  autoBuyerUnlocked,
+  buyAutoBuyerUnlock,
+  autoBuyerUnlockCost,
+  cooldownAutoBuyerUnlocked,
+  buyCooldownAutoBuyerUnlock,
+  cooldownAutoBuyerUnlockCost,
+  autoBuyerInterval,
+  setAutoBuyerInterval,
+  autoBuyerBuffer,
+  setAutoBuyerBuffer,
+  globalMultiplierAutoBuyerUnlocked,
+  buyGlobalMultiplierAutoBuyerUnlock,
+  globalMultiplierAutoBuyerUnlockCost,
+  globalPriceDecreaseAutoBuyerUnlocked,
+  buyGlobalPriceDecreaseAutoBuyerUnlock,
+  globalPriceDecreaseAutoBuyerUnlockCost,
 }) {
-  // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
     calculateButtonValueMultiplier(buttons[i].value, buttons[i].baseValue, globalMultiplier)
   );
@@ -62,7 +91,7 @@ export default function UpgradeTabs({
       <div className="upgrade-tabs">
       <div className="upgrade-tabs-inner">
         {gameConfig.ui.tabs.map((tab) => (
-          ((tab.id !== 'investments' || isInvestmentUnlocked)) && (
+          (
             <button
               key={tab.id}
               className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
@@ -77,19 +106,32 @@ export default function UpgradeTabs({
 
     {gameConfig.ui.tabs.map(tab => (
       activeTab === tab.id && (
-        <tab.component
+  <tab.component
           key={tab.id}
           money={money}
           buttons={buttons}
-          // Props specifically needed by BasicUpgrades for multi-buy cost calculation
           valueUpgradeLevels={tab.id === 'basic' ? valueUpgradeLevels : undefined}
           cooldownUpgradeLevels={tab.id === 'basic' ? cooldownUpgradeLevels : undefined}
-          easyMode={easyMode} // Pass easyMode to all tabs that might need it
-          buyQuantity={buyQuantity} // Pass buyQuantity to all tabs
+          easyMode={easyMode}
+          buyQuantity={buyQuantity}
           valueUpgradeCosts={valueUpgradeCosts}
           cooldownUpgradeCosts={cooldownUpgradeCosts}
           buyValueUpgrade={buyValueUpgrade}
           buyCooldownUpgrade={buyCooldownUpgrade}
+          autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
+          setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
+          autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
+          setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
+          autoBuyerUnlocked={autoBuyerUnlocked}
+          buyAutoBuyerUnlock={buyAutoBuyerUnlock}
+          autoBuyerUnlockCost={autoBuyerUnlockCost}
+          cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
+          buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
+          cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
+          autoBuyerInterval={autoBuyerInterval}
+          setAutoBuyerInterval={setAutoBuyerInterval}
+          autoBuyerBuffer={autoBuyerBuffer}
+          setAutoBuyerBuffer={setAutoBuyerBuffer}
           globalMultiplier={globalMultiplier}
           globalMultiplierLevel={globalMultiplierLevel}
           globalMultiplierCost={globalMultiplierCost}
@@ -102,29 +144,46 @@ export default function UpgradeTabs({
           valueMultipliers={valueMultipliers}
           cooldownReductions={cooldownReductions}
           isInvestmentUnlocked={isInvestmentUnlocked}
-          unlockInvestments={unlockInvestments}
+          unlockInvestments={tab.id === 'investments' ? unlockInvestments : undefined}
+          unlockInvestmentCost={tab.id === 'investments' ? unlockInvestmentCost : undefined}
           totalIncomePerSecond={tab.id === 'investments' ? totalIncomePerSecond : undefined}
           globalPriceDecrease={globalPriceDecrease}
           globalPriceDecreaseLevel={globalPriceDecreaseLevel}
           globalPriceDecreaseCost={globalPriceDecreaseCost}
           buyGlobalPriceDecrease={buyGlobalPriceDecrease}
           totalMoneyPerSecond={totalMoneyPerSecond}
-          unlockInvestmentCost={unlockInvestmentCost}
           investmentCostMultiplier={investmentCostMultiplier}
-          offlineEarningsLevel={offlineEarningsLevel}                 // New
-          currentOfflineEarningsFactor={currentOfflineEarningsFactor} // New
-          buyOfflineEarningsLevel={buyOfflineEarningsLevel}           // New
-          offlineEarningsLevelCost={offlineEarningsLevelCost}         // New
-          criticalClickChanceLevel={criticalClickChanceLevel} // New
-          currentCriticalClickChance={currentCriticalClickChance} // New
-          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel} // New
-          criticalClickChanceCost={criticalClickChanceCost} // New
-          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined} // Pass to Investments tab
-          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined} // Pass to BasicUpgrades
+          offlineEarningsLevel={offlineEarningsLevel}
+          currentOfflineEarningsFactor={currentOfflineEarningsFactor}
+          buyOfflineEarningsLevel={buyOfflineEarningsLevel}
+          offlineEarningsLevelCost={offlineEarningsLevelCost}
+          criticalClickChanceLevel={criticalClickChanceLevel}
+          currentCriticalClickChance={currentCriticalClickChance}
+          buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
+          criticalClickChanceCost={criticalClickChanceCost}
+          criticalHitMultiplier={criticalHitMultiplier}
+          onInvestmentBoosted={tab.id === 'investments' ? onInvestmentBoosted : undefined}
+          soundEffectsEnabled={tab.id === 'basic' ? soundEffectsEnabled : undefined}
           floatingClickValueLevel={floatingClickValueLevel}
           floatingClickValueMultiplier={floatingClickValueMultiplier}
           buyFloatingClickValue={buyFloatingClickValue}
           currentFloatingClickValue={currentFloatingClickValue}
+          isCraftingUnlocked={tab.id === 'crafting' ? isCraftingUnlocked : undefined}
+          unlockCrafting={tab.id === 'crafting' ? unlockCrafting : undefined}
+          unlockCraftingCost={tab.id === 'crafting' ? gameConfig.unlockCraftingCost : undefined}
+          accumulatedPrestigeShares={tab.id === 'crafting' ? accumulatedPrestigeShares : undefined}
+          craftingItems={tab.id === 'crafting' ? craftingItems : undefined}
+          buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined}
+          rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
+          setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
+          resourcePurchaseCounts={tab.id === 'crafting' ? resourcePurchaseCounts : undefined}
+          globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
+          buyGlobalMultiplierAutoBuyerUnlock={buyGlobalMultiplierAutoBuyerUnlock}
+          globalMultiplierAutoBuyerUnlockCost={globalMultiplierAutoBuyerUnlockCost}
+          globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
+          buyGlobalPriceDecreaseAutoBuyerUnlock={buyGlobalPriceDecreaseAutoBuyerUnlock}
+          globalPriceDecreaseAutoBuyerUnlockCost={globalPriceDecreaseAutoBuyerUnlockCost}
+          {...(tab.id === 'crafting' ? { buyMaterial } : {})}
         />
       )
     ))}

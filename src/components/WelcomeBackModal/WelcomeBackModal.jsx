@@ -1,5 +1,4 @@
-import React from 'react';
-import { X as CloseIcon, Zap as ZapIcon } from 'lucide-react'; // Using ZapIcon for a "recharged" feel
+import { X as CloseIcon, HistoryIcon } from 'lucide-react'; // Using ZapIcon for a "recharged" feel
 import { useModal } from '@hooks/useModal';
 import { formatPlaytime, formatNumber } from '@utils/calculators';
 
@@ -24,7 +23,7 @@ export default function WelcomeBackModal({ show, onClose, duration, offlineEarni
           </button>
         </div>
         <div className="settings-modal-content">
-          <ZapIcon size={48} style={{ margin: '20px auto', color: '#f39c12' }} />
+          <HistoryIcon size={48} style={{ margin: '20px auto', color: '#f39c12' }} />
           <p>You were away for {formatPlaytime(duration, true)}.</p>
           {isOfflineEarningsUnlocked && offlineEarnings > 0 && (
             <p style={{ marginTop: '10px', fontWeight: 'bold', color: '#2ecc71' }}>

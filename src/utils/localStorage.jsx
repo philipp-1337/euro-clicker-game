@@ -1,3 +1,23 @@
+import { isLocalhost } from './env';
+// Hilfsfunktionen für Crafting-Cooldown
+export function getLocalStorage(key, fallback) {
+  try {
+    const val = window.localStorage.getItem(key);
+    if (val === null) return fallback;
+    return JSON.parse(val);
+  } catch {
+    return fallback;
+  }
+}
+
+export function setLocalStorage(key, value) {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(`Error setting localStorage for key '${key}':`, e);
+  }
+}
+
 const ANTI_CHEAT_SECRET = "€UROCL1CK€R_S€CR€T_CH€CK_V1.0.3"; // Ein geheimer Schlüssel
 
 /**
@@ -76,7 +96,7 @@ export const saveGameState = (key, dataFromHook) => {
         const { payload, chk } = parsedData;
 
         // Auf localhost die Prüfung überspringen
-        if (window.location.hostname === 'localhost') {
+        if (isLocalhost()) {
           console.log('[AntiCheat] Skipping checksum validation on localhost.');
           return { type: 'success', payload: payload };
         }
@@ -90,7 +110,7 @@ export const saveGameState = (key, dataFromHook) => {
         return { type: 'success', payload: payload }; // Daten sind valide
       } else {
         // Altes Format ohne Prüfsumme
-        if (window.location.hostname === 'localhost') {
+        if (isLocalhost()) {
           console.log('[AntiCheat] Loading old format data on localhost.');
           return { type: 'success_old_format', payload: parsedData }; // parsedData ist hier der gameState direkt
         }

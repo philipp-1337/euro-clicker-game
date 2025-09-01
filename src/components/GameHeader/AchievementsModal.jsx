@@ -1,9 +1,8 @@
-import React from 'react';
 import { X as CloseIcon, Trophy as TrophyIcon, Lock as LockIcon, PartyPopperIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 // import { formatNumber } from '@utils/calculators';
 
-export default function AchievementsModal({ showAchievements, setShowAchievements, achievements, money, totalClicks, gameTime }) {
+export default function AchievementsModal({ showAchievements, setShowAchievements, achievements }) {
   const modalRef = useModal(showAchievements, () => setShowAchievements(false));
 
   if (!showAchievements) return null;

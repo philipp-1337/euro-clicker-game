@@ -1,21 +1,41 @@
 {
   "name": "Euro Clicker Game",
   "short_name": "Euro Clicker",
+  "description": "Euro Clicker Game is a fun and addictive game where you click to earn euros and upgrade your earnings!",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/web-app-screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/web-app-screenshot-mobile.png",
+      "sizes": "375x667",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
   "theme_color": "#003399",
-  "background_color": "#003399",
-  "display": "standalone"
+  "background_color": "#003399"
 }

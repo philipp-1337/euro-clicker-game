@@ -1,119 +1,78 @@
 # Euro Clicker Game
 
-A fun idle-clicker game built with React. Earn virtual money by clicking, buy managers to generate automatic clicks, and improve your money sources through upgrades.
+A modern and feature-rich idle-clicker game built with React. Earn virtual money, automate your income, invest in companies, and climb the leaderboards.
 
 ## Description
 
-Euro Clicker Game is an idle game in the style of "Cookie Clicker" or "Adventure Capitalist," but with a European money theme. The game features:
+Euro Clicker Game is an idle/incremental game inspired by classics like "Cookie Clicker" and "Adventure Capitalist," but with a modern feature set and a European money theme.
 
-- Different colored click buttons with varying values
-- Cooldown timers for each button
-- Managers to automate clicks
-- Two types of upgrades:
-  - Value upgrades (increase the amount of money per click)
-  - Time upgrades (reduce cooldown time)
-- Simple and intuitive user interface
+### Core Features
+
+- **Click & Earn**: Start by clicking and unlock more valuable sources of income.
+- **Managers**: Hire managers to automate your clicks and generate passive income.
+- **Upgrades**:
+  - **Basic Upgrades**: Increase the value and reduce the cooldown of your clicks.
+  - **Premium Upgrades**: Unlock powerful global boosts like critical clicks, offline earnings, cost reductions, and more.
+- **Investments**: Purchase shares in various companies to build a steady, long-term passive income stream.
+- **Wealth Production (Crafting)**: After prestiging, unlock the ability to buy raw materials and craft high-value items for massive payouts.
+- **Auto-Buyers**: Automate the purchasing of upgrades to streamline your progress.
+- **Prestige System**: Reset your progress to earn "Prestige Shares," which provide a permanent boost to your income, allowing for faster progression in subsequent runs.
+- **Cloud Saving**: Securely save and load your progress across devices using Firebase.
+- **Leaderboards**: Compete with other players and submit your high scores for various milestones.
+- **Achievements**: Unlock achievements for reaching specific goals and milestones.
+- **Modern UI/UX**: Enjoy a clean, responsive interface with dark mode, sound effects, and background music.
 
 ## Installation
 
-- Make sure Node.js and npm are installed on your system
-- Clone this repository or download it
-- Navigate to the project directory in your terminal
-- Install the dependencies:
+- Make sure Node.js and npm are installed on your system.
+- Clone this repository.
+- Navigate to the project directory and install the dependencies:
 
-```bash
-npm install
-```
+    ```bash
+    npm install
+    ```
 
-- *Start the application:
+- Start the application:
 
-```bash
-npm start
-```
+    ```bash
+    npm start
+    ```
 
-- Open [http://localhost:3000](http://localhost:3000) in your browser to play the game
+- Open [http://localhost:3000](http://localhost:3000) in your browser to play.
 
 ## Technologies Used
 
-- React.js
-- React Hooks (useState, useEffect)
-- CSS
-- Lucide React (for icons)
+- React.js (with React Hooks)
+- SCSS for styling
+- Firebase for Cloud Firestore (leaderboards, cloud saves)
+- Lucide React for icons
 
-## Folder- & File-Structure
+## Project Structure
+
+The project follows a component-based architecture with a clear separation of concerns.
 
 ```bash
 /src
-  /components
-    /ClickerGame
-      /index.jsx              # Hauptkomponente, exportiert ClickerGame
-      /GameHeader.jsx         # Titel und Geldanzeige
-      /ClickerButtons.jsx     # Die Haupt-Click-Buttons
-      /UpgradeTabs
-        /BasicUpgrades.jsx    # Erster Tab
-        /index.jsx            # Tab-Container
-        /Investments.jsx
-        /PremiumUpgrades.jsx  # Zweiter Tab
-  /hooks
-    /useClickerGame.js        # Hauptlogik als Hook extrahiert
-    /useCooldowns.js
-    /useGameCalculations.js
-    /useGameState.js
-    /useInvestments.js
-    /useLocalStorage.js
-    /useManagers.js
-    /useUpgrades.js
-  /utils
-    /calculators.js           # Hilfsfunktionen für Berechnungen
-    /localStorage.js          # Funktionen für LocalStorage-Verwaltung
-  /constants
-    /gameConfig.js            # Spielkonfiguration (Kosten, Multiplikatoren, etc.)
+  /components     # React components for UI elements (Modals, Buttons, etc.)
+  /hooks          # Custom hooks containing the core game logic for each feature
+  /constants      # Central game configuration (upgrades, costs, achievements)
+  /scss           # Global styles, variables, and mixins
+  /utils          # Helper functions
+  firebase.js     # Firebase initialization
+  App.js          # Main application component
 ```
 
 ## How to Play
 
-1. **Basic Principle**: Click on the buttons to earn money. Each button has its own value and cooldown time.
-
-2. **Managers**: Once you have enough money, you can buy managers who will automatically click for you. Each manager is associated with a specific button.
-
-3. **Upgrades**:
-   - **Value Upgrades**: Increase the money value of the respective button by 10%
-   - **Time Upgrades**: Reduce the cooldown time of the respective button by 10%
-
-4. **Strategy**: Decide wisely when to invest in managers or upgrades to maximize your money growth!
-
-### Prestige System
-
-Reach new heights with the Prestige system!
-
-- **Unlock Condition:** Becomes available once you reach 1 Billion €.
-- **Mechanics:** When you choose to Prestige, your current game progress (money, upgrades, investments, managers) will be reset.
-- **Rewards:** In return for resetting, you gain "Prestige Shares." Each share grants a permanent percentage bonus to your income per second.
-- **Earning Shares:** You earn 1 Prestige Share for every 1 Billion € you have at the time of prestiging.
-- **Activation:** You can trigger Prestige from a modal accessible via a button in the game header. This button appears once you've reached 1 Billion €, and you can activate Prestige once you have earned at least 1 full share in your current run.
-- **Goal:** Prestiging allows you to accelerate your progress in subsequent playthroughs, reaching higher levels of wealth and unlocking content faster.
-
-## Customization
-
-You can easily customize the game by changing the values and prices in the code:
-
-- Modify the base values and cooldown times in the `baseButtons` array
-- Adjust the manager and upgrade costs
-- Add more button types or change their colors
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Troubleshooting
-
-If you encounter any issues:
-
-1. Make sure you're using the latest version of Node.js and npm
-2. Verify that all dependencies were properly installed
-3. Delete the `node_modules` folder and run `npm install` again
-4. If there are display problems, clear your browser cache
-
-## Contributing
-
-Contributions are welcome! Feel free to report bugs or create pull requests.
+1. **Start Earning**: Click the floating Euro button to generate your first income.
+2. **Unlock & Upgrade**: As you earn more, new click buttons and upgrade tabs will become available.
+    - Invest in **Basic Upgrades** to increase the value of each button and reduce its cooldown.
+    - Hire **Managers** to automate the clicking process.
+3. **Expand Your Empire**:
+    - Unlock the **Investments** tab to buy shares in companies for a steady passive income.
+    - Purchase **Premium Upgrades** for powerful, game-changing boosts.
+4. **Prestige for Power**: Once you reach 1 Billion €, you can **Prestige**. This resets your game but grants you permanent income bonuses, making each new run faster and more profitable.
+5. **Advanced Mechanics**:
+    - After your first prestige, unlock **Wealth Production** to craft valuable items.
+    - Unlock **Auto-Buyers** from the premium upgrades to automate your upgrade strategy.
+6. **Compete**: Submit your score to the **Leaderboard** and unlock **Achievements** as you progress.

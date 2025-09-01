@@ -1,7 +1,6 @@
-import React from 'react';
 import { X as CloseIcon, ClockIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
-import { formatPlaytime } from '../../utils/calculators';
+import { formatPlaytime, formatNumber } from '../../utils/calculators';
 
 export default function StatisticsModal({
   show,
@@ -70,11 +69,11 @@ export default function StatisticsModal({
               </li>
               <li>
                 <span className="stats-label">Prestige Shares:</span>
-                <span className="stats-value">{Number(prestigeShares).toFixed(2)}</span>
+                <span className="stats-value">{formatNumber(prestigeShares)}</span>
               </li>
               <li>
                 <span className="stats-label">Prestige Multiplier:</span>
-                <span className="stats-value">{prestigeCount !== undefined && prestigeShares !== undefined && prestigeShares > 0 ? (1 + prestigeShares * 0.01).toFixed(2) : '1.00'}x</span>
+                <span className="stats-value">{prestigeCount !== undefined && prestigeShares !== undefined && prestigeShares > 0 ? `${formatNumber(1 + prestigeShares * 0.01)}x` : '1.00x'}</span>
               </li>
             </ul>
           )}

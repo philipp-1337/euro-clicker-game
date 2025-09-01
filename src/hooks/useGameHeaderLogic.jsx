@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useCloudSave from '@hooks/useCloudSave';
 import { formatPlaytime } from '../utils/calculators';
+import { isLocalhost } from '../utils/env';
 
 export default function useGameHeaderLogic(props) {
   const {
@@ -10,6 +11,7 @@ export default function useGameHeaderLogic(props) {
     playTime,
     onSaveGame,
     totalMoneyPerSecond,
+    manualMoneyPerSecond, // Add this prop
     floatingClicks,
     gameState,
     onImportCloudSave,
@@ -26,7 +28,7 @@ export default function useGameHeaderLogic(props) {
     const hostname = window.location.hostname;
     if (hostname.includes('beta')) setEnvironment('beta');
     else if (hostname.includes('alpha')) setEnvironment('alpha');
-    else if (hostname === 'localhost' || hostname === '127.0.0.1') setEnvironment('localhost');
+    else if (isLocalhost()) setEnvironment('localhost');
     else setEnvironment('production');
   }, []);
 
@@ -44,9 +46,15 @@ export default function useGameHeaderLogic(props) {
     return (
       <span
         className={`env-label ${environment}`}
+        role="button"
+        tabIndex={canToggleEasyMode ? 0 : -1}
         onClick={canToggleEasyMode ? toggleEasyMode : undefined}
+        onKeyDown={canToggleEasyMode ? (e => {
+          if (e.key === 'Enter' || e.key === ' ') toggleEasyMode();
+        }) : undefined}
         title={canToggleEasyMode ? "Toggle Easy Mode" : "Easy Mode only available in localhost and alpha"}
         style={!canToggleEasyMode ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+        aria-disabled={!canToggleEasyMode}
       >
         {displayText}
       </span>
@@ -86,7 +94,9 @@ export default function useGameHeaderLogic(props) {
         const parsed = JSON.parse(raw);
         if (typeof parsed.cloudSaveMode === 'boolean') return parsed.cloudSaveMode;
       }
-    } catch {}
+    } catch (e) {
+      console.error('Error reading clickerUiProgress from localStorage:', e);
+        }
     return false;
   });
 
@@ -112,10 +122,24 @@ export default function useGameHeaderLogic(props) {
     try {
       const raw = localStorage.getItem('clickerUiProgress');
       const prev = raw ? JSON.parse(raw) : {};
-      if (prev.cloudSaveMode !== cloudSaveMode) {
-        localStorage.setItem('clickerUiProgress', JSON.stringify({ ...prev, cloudSaveMode }));
-      }
-    } catch {}
+      // Default-Werte ergänzen, falls Keys fehlen
+      const defaults = {
+        gameStarted: false,
+        clickedButtons: [false, false, false, false, false],
+        floatingClicks: 0,
+        cloudSaveMode: false,
+        showPlaytime: true,
+        showClickStats: false,
+        showLeaderboard: true,
+        showAchievementsHeaderButton: true,
+        showStatisticsHeaderButton: false,
+        prestigeButtonEverVisible: false,
+      };
+      const merged = { ...defaults, ...prev, cloudSaveMode };
+      localStorage.setItem('clickerUiProgress', JSON.stringify(merged));
+    } catch (e) {
+      console.error('Error writing clickerUiProgress to localStorage:', e);
+    }
   }, [cloudSaveMode]);
 
   // Cloud Save Export Handler
@@ -184,7 +208,6 @@ export default function useGameHeaderLogic(props) {
     };
     window.addEventListener('game:autosaved', handleAutoSave);
     return () => window.removeEventListener('game:autosaved', handleAutoSave);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cloudSaveMode, gameState, handleExportCloud, triggerSaveFeedback]);
 
   return {
@@ -214,6 +237,7 @@ export default function useGameHeaderLogic(props) {
     easyMode,
     playTime,
     totalMoneyPerSecond,
+    manualMoneyPerSecond,
     onSaveGame,
     gameState,
     showCloudSaveDisableConfirm,
