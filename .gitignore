@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# Vite PWA dev build artifacts
+dev-dist/
+
 # testing
 /coverage
 

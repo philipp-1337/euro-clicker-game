@@ -1,11 +1,22 @@
 {
-    "compilerOptions": {
-      "baseUrl": "src",
-      "paths": {
-        "@utils/*": ["utils/*"],
-        "@components/*": ["components/*"],
-        "@hooks/*": ["hooks/*"],
-        "@constants/*": ["constants/*"]
-      }
-    }
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@constants/*": [
+        "constants/*"
+      ]
+    },
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
   }
+}
