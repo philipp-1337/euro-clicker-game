@@ -33,16 +33,23 @@ export default function useGameEconomy({
     }, 0);
   }, [managers, buttons]);
 
-  // Calculate current run shares for prestige
+  // Neue Berechnung: Wie viele Shares kann man sich mit dem aktuellen Geld leisten?
   const currentRunShares = useMemo(() => {
     if (typeof money !== 'number' || isNaN(money) || money <= 0) return 0;
-    
-    const minMoneyForAnyShares = (0.01 / gameConfig.prestige.sharesPerBasePoint) * gameConfig.prestige.moneyPerBasePoint;
-    if (money < minMoneyForAnyShares) return 0;
-
-    const shares = (money / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
-    return (typeof shares === 'number' && !isNaN(shares) && shares > 0) ? shares : 0;
-  }, [money]);
+    let shares = 0;
+    let remainingMoney = money;
+    let startIndex = (typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0;
+    while (true) {
+      const cost = gameConfig.prestige.getShareCost(startIndex + shares);
+      if (remainingMoney >= cost) {
+        remainingMoney -= cost;
+        shares++;
+      } else {
+        break;
+      }
+    }
+    return shares;
+  }, [money, prestigeShares]);
 
   // Calculate prestige bonus multiplier
   const prestigeBonusMultiplier = useMemo(() => {
@@ -63,14 +70,12 @@ export default function useGameEconomy({
       const incomeThisTick = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond))
         ? totalMoneyPerSecond / (1000 / gameConfig.timing.updateInterval)
         : 0;
-      
       setMoney(prev => {
         const currentPrev = (typeof prev === 'number' && !isNaN(prev)) ? prev : 0;
         const nextVal = currentPrev + incomeThisTick;
         return (typeof nextVal === 'number' && !isNaN(nextVal)) ? nextVal : currentPrev;
       });
     }, gameConfig.timing.updateInterval);
-    
     return () => clearInterval(interval);
   }, [totalMoneyPerSecond, setMoney]);
 
@@ -79,20 +84,27 @@ export default function useGameEconomy({
 
   const prestigeGame = useCallback(() => {
     if (!canPrestige) return;
-
     const currentMoneyForPrestige = (typeof money === 'number' && !isNaN(money) && money > 0) ? money : 0;
+    // Berechne, wie viele Shares man sich leisten kann und wie viel Geld dafür ausgegeben wird
     let sharesEarnedThisRun = 0;
-    
-    if (currentMoneyForPrestige > 0) {
-      sharesEarnedThisRun = (currentMoneyForPrestige / gameConfig.prestige.moneyPerBasePoint) * gameConfig.prestige.sharesPerBasePoint;
+    let spentMoney = 0;
+    let remainingMoney = currentMoneyForPrestige;
+    while (true) {
+      const cost = gameConfig.prestige.getShareCost(sharesEarnedThisRun);
+      if (remainingMoney >= cost) {
+        remainingMoney -= cost;
+        spentMoney += cost;
+        sharesEarnedThisRun++;
+      } else {
+        break;
+      }
     }
-    
     sharesEarnedThisRun = (typeof sharesEarnedThisRun === 'number' && !isNaN(sharesEarnedThisRun) && sharesEarnedThisRun > 0) ? sharesEarnedThisRun : 0;
     const newTotalPrestigeShares = ((typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0) + sharesEarnedThisRun;
-    
+
     // Prepare fresh state for reset
     const freshInitialState = JSON.parse(JSON.stringify(gameConfig.initialState));
-    
+
     const stateToReset = {
       ...freshInitialState,
       // Preserve specific fields
@@ -126,7 +138,7 @@ export default function useGameEconomy({
     // Update prestige shares
     const finalNewTotalPrestigeShares = (typeof newTotalPrestigeShares === 'number' && !isNaN(newTotalPrestigeShares)) ? newTotalPrestigeShares : 0;
     setPrestigeShares(finalNewTotalPrestigeShares);
-    
+
     // Increment prestige counter
     setPrestigeCount(prev => {
       const newCount = (typeof prev === 'number' && !isNaN(prev) ? prev + 1 : 1);
@@ -134,15 +146,12 @@ export default function useGameEconomy({
         ...stateToReset,
         prestigeCount: newCount
       };
-      
       loadGameState(stateToResetWithPrestigeCount);
-      
       // Clear boosted investment localStorage
       gameConfig.investments.forEach((_, index) => {
         localStorage.removeItem(`boosted-${index}`);
         localStorage.removeItem(`boostClicks-${index}`);
       });
-      
       saveGame();
       return newCount;
     });

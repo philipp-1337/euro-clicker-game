@@ -24,8 +24,10 @@ export default function PrestigeModal({
   const activeBonusFromAccumulatedShares = accumulatedPrestigeShares * bonusPerSharePercentage;
   const potentialBonusAfterPrestige = totalSharesAfterPrestige * bonusPerSharePercentage;
   const minSharesRequired = gameConfig.prestige.minSharesToPrestige;
-  const moneyNeededForNextShare =
-    gameConfig.prestige.moneyPerBasePoint * (minSharesRequired - currentRunShares);
+  // Kosten für den nächsten Share: Index = bereits vorhandene Shares
+  const nextShareCost = gameConfig.prestige.getShareCost(accumulatedPrestigeShares);
+  // Fehlende Summe für den nächsten Share
+  const moneyNeededForNextShare = nextShareCost;
 
   const handlePrestigeClick = () => setShowConfirm(true);
   const handleConfirm = () => {
@@ -50,32 +52,42 @@ export default function PrestigeModal({
         </div>
         <div>
           <p>
-            Reset your progress (money, upgrades, investments) and gain permanent{' '}
-            <span className="prestige-text">Prestige Shares</span>.
+            Reset your progress and gain permanent <span className="prestige-text">Prestige Shares</span>.<br />
+            Each share costs more than the last.
           </p>
-          <p>
-            Each share boosts your income per second by{' '}
-            <strong>+{bonusPerSharePercentage.toFixed(1)}%</strong>.
-          </p>
-          <p>
-            Earn <strong>{gameConfig.prestige.sharesPerBasePoint} share</strong> per{' '}
-            <strong>{formatNumber(gameConfig.prestige.moneyPerBasePoint)} €</strong>.
-          </p>
-
           <div className="prestige-summary">
-            <p>
-              Current Shares: <strong>{formatNumber(accumulatedPrestigeShares)}</strong>{' '}
-              <span className="text-secondary">
-                (+{formatNumber(activeBonusFromAccumulatedShares)}% income)
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>Current Shares:</span>
+              <strong>{formatNumber(accumulatedPrestigeShares)}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>This Run:</span>
+              <strong>{formatNumber(currentRunShares)}</strong>
+            </div>
+            {canPrestige && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>After Prestige:</span>
+              <strong className="prestige-text">{formatNumber(totalSharesAfterPrestige)} Shares</strong>
+            </div>
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span>
+                {!canPrestige && (
+                  <span>Current </span>
+                )}
+                {canPrestige && (
+                  <span>New </span>
+                )}
+                Income Bonus:
               </span>
-            </p>
-            <p>Shares from this run: <strong>{formatNumber(currentRunShares)}</strong></p>
-            <p className="prestige-text">
-              After Prestige: <strong>{formatNumber(totalSharesAfterPrestige)} Shares</strong>
-            </p>
-            <p className="success-text">
-              New Income Bonus: +{formatNumber(potentialBonusAfterPrestige)}%
-            </p>
+              <strong>+{formatNumber(potentialBonusAfterPrestige)}%</strong>
+            </div>
+            {!canPrestige && (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Next 1 share costs:</span>
+              <strong>{formatNumber(moneyNeededForNextShare)} €</strong>
+            </div>
+            )}
           </div>
 
           <div className="modal-actions">
@@ -91,7 +103,7 @@ export default function PrestigeModal({
             >
               {canPrestige
                 ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
-                : `Need ${formatNumber(minSharesRequired)} Share from this run${
+                : `Need ${formatNumber(minSharesRequired)} Share${
                     currentRunShares > 0
                       ? ` (currently ${formatNumber(currentRunShares)})`
                       : ''
@@ -99,22 +111,16 @@ export default function PrestigeModal({
             </button>
           </div>
 
-        <ConfirmModal
-          show={showConfirm}
-          title="Confirm Prestige"
-          message={"Are you sure? All your game progress will be reset, but you will receive Prestige Shares. This cannot be undone."}
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-          confirmText="Prestige Now"
-          cancelText="Cancel"
-          danger
-        />
-
-          {!canPrestige && (
-            <p className="text-secondary" style={{ fontSize: '0.85em', marginTop: 8 }}>
-              You need {formatNumber(moneyNeededForNextShare)} € more to earn the next share and prestige.
-            </p>
-          )}
+          <ConfirmModal
+            show={showConfirm}
+            title="Confirm Prestige"
+            message={"Are you sure? Progress will be reset, but you get Prestige Shares. This cannot be undone."}
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+            confirmText="Prestige Now"
+            cancelText="Cancel"
+            danger
+          />
         </div>
       </div>
     </div>

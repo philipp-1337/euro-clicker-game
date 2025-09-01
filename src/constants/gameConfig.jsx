@@ -204,6 +204,23 @@ export const gameConfig = {
     bonusPerShare: 0.01, // 1% Bonus pro Anteil auf Einkommen/Sekunde
     minMoneyForModalButton: 1000000000, // 1 Milliarde für Button-Sichtbarkeit
     minSharesToPrestige: 1.0, // Mindestanteile für Prestige-Aktion
+    // Neue Funktion: Kosten für den n-ten Share (progressiv, mit Sättigung)
+    getShareCost: (shareIndex) => {
+      // shareIndex: 0 = erster Share, 1 = zweiter Share, ...
+      const base = 1000000000; // 1 Milliarde
+      const exponent = 1.01; // Anfangs langsam, dann steiler
+      const saturation = 1000000000000000000; // 1 Quintillion
+      const cost = base * Math.pow(exponent, shareIndex);
+      return cost >= saturation ? saturation : Math.floor(cost);
+    },
+    getTotalCostForShares: (numShares) => {
+      // Summe der Kosten für numShares Shares
+      let total = 0;
+      for (let i = 0; i < numShares; i++) {
+        total += gameConfig.prestige.getShareCost(i);
+      }
+      return total;
+    },
   },
 
   // Timing-Konstanten

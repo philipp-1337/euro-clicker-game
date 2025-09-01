@@ -319,29 +319,35 @@
   }
 
   .prestige-summary {
-    border-top: 1px solid map.get($colors, light-gray);
-    padding-top: 15px;
-    margin-bottom: 15px;
+    background: map.get($backgrounds, off-white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(230, 194, 0, 0.04);
+    border-top: 2px solid map.get($colors, prestige);
+    padding: 18px 16px 15px 16px;
+    margin-bottom: 18px;
     text-align: left;
-    font-size: 1rem;
+    font-size: 1.08rem;
 
     p {
-      margin: 6px 0;
+      margin: 8px 0;
+      line-height: 1.5;
     }
 
     .prestige-text {
       color: map.get($colors, prestige-dark);
       font-weight: bold;
+      font-size: 1.08em;
     }
 
     .success-text {
       color: map.get($colors, success);
       font-weight: bold;
+      font-size: 1.08em;
     }
 
     .text-secondary {
       color: map.get($colors, secondary);
-      font-size: 0.95em;
+      font-size: 0.97em;
     }
   }
 }

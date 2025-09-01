@@ -65,6 +65,17 @@ body.dark {
     }
   }
 
+
+  // Prestige Modal dark mode
+  .prestige-summary {
+    background: map.get($backgrounds, dark) !important;
+    border-top: 2px solid map.get($colors, prestige-dark) !important;
+    color: map.get($colors, text-light) !important;
+  }
+  .prestige-text {
+    color: map.get($colors, prestige) !important;
+  }
+
   // UI elements in dark mode
   .env-label,
   .save-feedback-banner,
