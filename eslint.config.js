@@ -8,6 +8,9 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default [
   {
+    ignores: ['dev-dist/**'], // <-- top-level ignores, nicht innerhalb files
+  },
+  {
     files: ['src/**/*.{js,jsx}'],
     languageOptions: {
         globals: {
