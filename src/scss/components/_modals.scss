@@ -1,5 +1,6 @@
 // Modal components
 @use "sass:map";
+@use "sass:color";
 @use "../abstracts/colors" as *;
 @use "../abstracts/mixins" as *;
 @use "../abstracts/functions" as *;
@@ -25,12 +26,11 @@
   flex-direction: column;
   align-items: stretch;
   max-height: 75vh; // Maximale Höhe für mobile Geräte
+  font-family: $font-family;
 
   @media (min-width: 601px) {
     max-height: 85vh; // Maximale Höhe für Desktops
   }
-
-  font-family: $font-family;
 
   .settings-modal-header {
     display: flex;
@@ -53,7 +53,7 @@
   p {
     margin: 18px 0;
 
-    & + p {
+    &+p {
       margin-top: 0;
     }
   }
@@ -104,6 +104,7 @@
   margin-top: 18px;
   flex-grow: 1; // Erlaubt dem Inhaltsbereich, den verfügbaren Platz auszufüllen
   overflow-y: auto; // Vertikales Scrollen aktivieren, wenn nötig
+
   @media (max-height: 700px) {
     padding-right: 10px; // Platz für die Scrollleiste, um Überlappung zu vermeiden
   }
@@ -131,9 +132,9 @@
   }
 
   .settings-label {
-    background: none; 
-    border: none; 
-    padding: 6px; 
+    background: none;
+    border: none;
+    padding: 6px;
     flex: 1;
     font-family: $font-family;
     font-size: 1rem;
@@ -144,7 +145,7 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     user-select: none;
-    
+
     &.btn {
       cursor: pointer;
       /* iOS/Safari Button-Override: Einheitliches Styling */
@@ -154,7 +155,7 @@
       appearance: none !important;
       box-shadow: none !important;
       text-shadow: none !important;
-      
+
       &:active,
       &:focus,
       &:visited {
@@ -208,10 +209,8 @@
   transform: translateX(-50%);
   min-width: 280px;
   max-width: 95vw;
-  background: gradient-background(
-    map.get($backgrounds, lighter-blue),
-    map.get($backgrounds, off-white)
-  );
+  background: gradient-background(map.get($backgrounds, lighter-blue),
+      map.get($backgrounds, off-white));
   color: map.get($colors, primary);
   padding: 16px 28px;
   border-radius: 14px;
@@ -292,11 +291,13 @@
     color: map.get($colors, white);
     transform: translateY(-1px) scale(1.04);
   }
+
   &:active:not(.disabled) {
     background: map.get($colors, prestige-dark);
     color: map.get($colors, white);
     transform: translateY(1px) scale(0.98);
   }
+
   &.disabled {
     background: map.get($backgrounds, light);
     color: map.get($colors, gray);
@@ -312,29 +313,41 @@
     justify-content: center;
     margin: 10px 0 20px 0;
   }
+
   .prestige-icon {
     color: map.get($colors, prestige);
   }
+
   .prestige-summary {
-    border-top: 1px solid map.get($colors, light-gray);
-    padding-top: 15px;
-    margin-bottom: 15px;
+    background: map.get($backgrounds, off-white);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(230, 194, 0, 0.04);
+    border-top: 2px solid map.get($colors, prestige);
+    padding: 18px 16px 15px 16px;
+    margin-bottom: 18px;
     text-align: left;
-    font-size: 1rem;
+    font-size: 1.08rem;
+
     p {
-      margin: 6px 0;
+      margin: 8px 0;
+      line-height: 1.5;
     }
+
     .prestige-text {
       color: map.get($colors, prestige-dark);
       font-weight: bold;
+      font-size: 1.08em;
     }
+
     .success-text {
       color: map.get($colors, success);
       font-weight: bold;
+      font-size: 1.08em;
     }
+
     .text-secondary {
       color: map.get($colors, secondary);
-      font-size: 0.95em;
+      font-size: 0.97em;
     }
   }
 }
@@ -344,8 +357,9 @@
     .modal-btn.danger {
       background: map.get($colors, red);
       color: map.get($colors, white);
+
       &:hover {
-        background: darken(map.get($colors, red), 10%);
+        background: color.adjust(map.get($colors, red), $lightness: -10%);
       }
     }
   }

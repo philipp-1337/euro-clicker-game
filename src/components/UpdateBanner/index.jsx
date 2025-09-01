@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function UpdateBanner({ onUpdate }) {
   return (
     <div className="update-banner">

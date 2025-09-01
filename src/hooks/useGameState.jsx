@@ -1,30 +1,25 @@
 import { useState, useCallback } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
-export default function useGameState(easyMode = false) {
-  // Hauptzustände
+export default function useGameState() {
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
   const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
   
-  // Upgrade-Zustände
   const [valueMultipliers, setValueMultipliers] = useState([...gameConfig.initialState.valueMultipliers]);
   const [cooldownReductions, setCooldownReductions] = useState([...gameConfig.initialState.cooldownReductions]);
   const [valueUpgradeLevels, setValueUpgradeLevels] = useState([...gameConfig.initialState.valueUpgradeLevels]);
   const [cooldownUpgradeLevels, setCooldownUpgradeLevels] = useState([...gameConfig.initialState.cooldownUpgradeLevels]);
   
-  // Premium-Upgrade-Zustände
   const [globalMultiplier, setGlobalMultiplier] = useState(gameConfig.initialState.globalMultiplier);
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
   const [globalPriceDecrease, setGlobalPriceDecrease] = useState(gameConfig.initialState.globalPriceDecrease);
   const [globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel] = useState(gameConfig.initialState.globalPriceDecreaseLevel);
 
-  // Investment-Tab-Status
   const [isInvestmentUnlocked, setIsInvestmentUnlocked] = useState(
     gameConfig.initialState.isInvestmentUnlocked ?? false
   );
 
-  // Investments
   const [investments, setInvestments] = useState(
     gameConfig.initialState.investments ?? gameConfig.investments.map(() => 0)
   );
@@ -32,37 +27,32 @@ export default function useGameState(easyMode = false) {
   const [activePlayTime, setActivePlayTime] = useState(gameConfig.initialState.activePlayTime ?? 0);
   const [inactivePlayTime, setInactivePlayTime] = useState(gameConfig.initialState.inactivePlayTime ?? 0);
 
-  // State to store the calculated offline duration on initial load
   const [initialOfflineDuration, setInitialOfflineDuration] = useState(0);
 
-  // State für Offline-Einnahmen
   const [offlineEarningsLevel, setOfflineEarningsLevel] = useState(gameConfig.initialState.offlineEarningsLevel);
 
-  // State for Critical Click Chance
   const [criticalClickChanceLevel, setCriticalClickChanceLevel] = useState(gameConfig.initialState.criticalClickChanceLevel);
 
-  // State für Floating Click Value Premium Upgrade
   const [floatingClickValueLevel, setFloatingClickValueLevel] = useState(gameConfig.initialState.floatingClickValueLevel ?? 0);
   const [floatingClickValueMultiplier, setFloatingClickValueMultiplier] = useState(gameConfig.initialState.floatingClickValueMultiplier ?? 1);
 
-  // State für Crafting Tab freigeschaltet
   const [isCraftingUnlocked, setIsCraftingUnlocked] = useState(gameConfig.initialState.isCraftingUnlocked ?? false);
-  // State for crafting items
   const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
 
-  // State for raw materials and purchase counts
   const [rawMaterials, setRawMaterials] = useState(gameConfig.initialState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
   const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(gameConfig.initialState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
 
-  // AutoBuyer Settings
   const [autoBuyerInterval, setAutoBuyerInterval] = useState(gameConfig.initialState.autoBuyerInterval);
   const [autoBuyerBuffer, setAutoBuyerBuffer] = useState(gameConfig.initialState.autoBuyerBuffer);
   const [autoBuyerUnlocked, setAutoBuyerUnlocked] = useState(gameConfig.initialState.autoBuyerUnlocked);
   const [cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked] = useState(gameConfig.initialState.cooldownAutoBuyerUnlocked);
   const [autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled] = useState(gameConfig.initialState.autoBuyValueUpgradeEnabled ?? false);
   const [autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled] = useState(gameConfig.initialState.autoBuyCooldownUpgradeEnabled ?? false);
+  const [globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked] = useState(gameConfig.initialState.globalMultiplierAutoBuyerUnlocked);
+  const [globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked] = useState(gameConfig.initialState.globalPriceDecreaseAutoBuyerUnlocked);
+  const [autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled] = useState(gameConfig.initialState.autoBuyGlobalMultiplierEnabled);
+  const [autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled] = useState(gameConfig.initialState.autoBuyGlobalPriceDecreaseEnabled);
 
-  // State for boosted investments
   const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
     return gameConfig.investments.map((_, index) => {
       const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
@@ -70,16 +60,11 @@ export default function useGameState(easyMode = false) {
     });
   });
 
-  // State for Prestige Shares
   const [prestigeShares, setPrestigeShares] = useState(gameConfig.initialState.prestigeShares);
-  // State for Prestige Count (wie oft Prestige ausgelöst wurde)
   const [prestigeCount, setPrestigeCount] = useState(gameConfig.initialState.prestigeCount ?? 0);
 
-  // State for click history (for calculating clicks per second)
   const [clickHistory, setClickHistory] = useState([]);
 
-
-  // Kompakter Spielzustand für Speichern/Laden
   const gameState = {
     money,
     cooldowns,
@@ -96,31 +81,33 @@ export default function useGameState(easyMode = false) {
     investments,
     activePlayTime,
     inactivePlayTime,
-    offlineEarningsLevel, // Add to game state
-    criticalClickChanceLevel, // Add to game state
-    floatingClickValueLevel, // Add to game state
-    floatingClickValueMultiplier, // Add to game state
-    isCraftingUnlocked, // Crafting Tab freigeschaltet
-    craftingItems, // Add crafting items to game state
+    offlineEarningsLevel,
+    criticalClickChanceLevel,
+    floatingClickValueLevel,
+    floatingClickValueMultiplier,
+    isCraftingUnlocked,
+    craftingItems,
     rawMaterials,
     resourcePurchaseCounts,
-    boostedInvestments: boostedInvestmentsData, // Add to game state
-    prestigeShares, // Add prestige shares to game state
-    prestigeCount, // Add prestige count to game state
-    clickHistory, // Add click history to game state
+    boostedInvestments: boostedInvestmentsData,
+    prestigeShares,
+    prestigeCount,
+    clickHistory,
     autoBuyerInterval,
     autoBuyerBuffer,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
-    lastSaved: new Date().getTime(), // Automatically include current timestamp
+    globalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked,
+    autoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled,
+    lastSaved: new Date().getTime(),
   };
 
-  // Funktion zum Setzen des kompletten Spielzustands (für Load-Funktionalität)
   const loadGameState = (savedState) => {
     if (!savedState) return;
-    // Ensure money is a valid number, default to initial state if not
     const loadedMoney = savedState.money;
     setMoney(typeof loadedMoney === 'number' && !isNaN(loadedMoney)
       ? loadedMoney
@@ -139,22 +126,20 @@ export default function useGameState(easyMode = false) {
     setInvestments(savedState.investments ?? gameConfig.investments.map(() => 0));
     setActivePlayTime(savedState.activePlayTime ?? gameConfig.initialState.activePlayTime ?? 0);
 
-    // Load offlineEarningsLevel, with migration for old isOfflineEarningsUnlocked
     if (savedState.offlineEarningsLevel !== undefined) {
       setOfflineEarningsLevel(savedState.offlineEarningsLevel);
     } else if (savedState.isOfflineEarningsUnlocked === true) {
-      setOfflineEarningsLevel(1); // Migrate old save: if it was unlocked, set to level 1
+      setOfflineEarningsLevel(1);
     } else {
       setOfflineEarningsLevel(gameConfig.initialState.offlineEarningsLevel);
     }
     const loadedPrestigeShares = savedState.prestigeShares;
     setPrestigeShares(typeof loadedPrestigeShares === 'number' && !isNaN(loadedPrestigeShares)
       ? loadedPrestigeShares : gameConfig.initialState.prestigeShares);
-    // Prestige Count laden
     setPrestigeCount(typeof savedState.prestigeCount === 'number' && !isNaN(savedState.prestigeCount)
       ? savedState.prestigeCount : (gameConfig.initialState.prestigeCount ?? 0));
     setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
-    setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0); // Lädt die gespeicherte Inaktivitätszeit
+    setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0);
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
     setFloatingClickValueMultiplier(savedState.floatingClickValueMultiplier ?? (gameConfig.initialState.floatingClickValueMultiplier ?? 1));
     setClickHistory(savedState.clickHistory ?? []);
@@ -168,43 +153,39 @@ export default function useGameState(easyMode = false) {
     setCooldownAutoBuyerUnlocked(savedState.cooldownAutoBuyerUnlocked ?? gameConfig.initialState.cooldownAutoBuyerUnlocked);
     setAutoBuyValueUpgradeEnabled(savedState.autoBuyValueUpgradeEnabled ?? gameConfig.initialState.autoBuyValueUpgradeEnabled ?? false);
     setAutoBuyCooldownUpgradeEnabled(savedState.autoBuyCooldownUpgradeEnabled ?? gameConfig.initialState.autoBuyCooldownUpgradeEnabled ?? false);
+    setGlobalMultiplierAutoBuyerUnlocked(savedState.globalMultiplierAutoBuyerUnlocked ?? false);
+    setGlobalPriceDecreaseAutoBuyerUnlocked(savedState.globalPriceDecreaseAutoBuyerUnlocked ?? false);
+    setAutoBuyGlobalMultiplierEnabled(savedState.autoBuyGlobalMultiplierEnabled ?? false);
+    setAutoBuyGlobalPriceDecreaseEnabled(savedState.autoBuyGlobalPriceDecreaseEnabled ?? false);
 
-    // Schreibe Crafting-Unlock-Status auch in LocalStorage für Cross-Device
     try {
       const save = JSON.parse(localStorage.getItem('clickerSave') || '{}');
       save.isCraftingUnlocked = savedState.isCraftingUnlocked ?? false;
       localStorage.setItem('clickerSave', JSON.stringify(save));
-    } catch {}
+    } catch (e) {
+      console.error('Error updating localStorage for clickerSave:', e);
+    }
 
-    // Load boostedInvestments state
     const loadedBoosted = gameConfig.investments.map((_, index) => {
       if (savedState.boostedInvestments && typeof savedState.boostedInvestments[index] === 'boolean') {
-        // Wenn im Savegame vorhanden, diesen Wert nehmen und auch im localStorage aktualisieren
         localStorage.setItem(`boosted-${index}`, JSON.stringify(savedState.boostedInvestments[index]));
         return savedState.boostedInvestments[index];
       }
-      // Fallback auf individuellen localStorage (für Kompatibilität oder direkte Manipulation)
       const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
       return storedValue ? JSON.parse(storedValue) : false;
     });
     setBoostedInvestmentsData(loadedBoosted);
-    // Calculate initial offline duration if lastSaved timestamp exists in saved state
     if (savedState.lastSaved) {
-      console.log('[useGameState] loadGameState: savedState.lastSaved exists.', { lastSavedTimestamp: savedState.lastSaved, lastSavedDate: new Date(savedState.lastSaved).toISOString() });
       const currentTime = Date.now();
-      console.log('[useGameState] loadGameState: Current time for calculation:', new Date(currentTime).toISOString());
       const offlineMs = currentTime - savedState.lastSaved;
       const offlineSeconds = Math.floor(offlineMs / 1000);
-      console.log(`[useGameState] loadGameState: Calculated initialOfflineDuration: ${offlineSeconds}s (offlineMs: ${offlineMs})`);
       setInitialOfflineDuration(offlineSeconds);
     }
   };
 
-  // Setter for boostedInvestments that also persists to localStorage
   const setBoostedInvestments = useCallback((updater) => {
     setBoostedInvestmentsData(prevBoosted => {
       const newBoostedArray = typeof updater === 'function' ? updater(prevBoosted) : updater;
-      // Persist each boosted state individually to localStorage
       newBoostedArray.forEach((isBoosted, index) => {
         localStorage.setItem(`boosted-${index}`, JSON.stringify(isBoosted));
       });
@@ -238,18 +219,20 @@ export default function useGameState(easyMode = false) {
     cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
     autoBuyValueUpgradeEnabled, setAutoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled, setAutoBuyCooldownUpgradeEnabled,
+    globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
+    autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
     boostedInvestments: boostedInvestmentsData,
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,
     prestigeCount, setPrestigeCount,
     clickHistory, setClickHistory,
     initialOfflineDuration,
-  isCraftingUnlocked, setIsCraftingUnlocked,
-  craftingItems, setCraftingItems,
+    isCraftingUnlocked, setIsCraftingUnlocked,
+    craftingItems, setCraftingItems,
     rawMaterials, setRawMaterials,
     resourcePurchaseCounts, setResourcePurchaseCounts,
-
-    // Save/Load
     gameState,
     loadGameState
   };

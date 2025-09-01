@@ -1,4 +1,3 @@
-import React from 'react';
 import { X as CloseIcon, HistoryIcon } from 'lucide-react'; // Using ZapIcon for a "recharged" feel
 import { useModal } from '@hooks/useModal';
 import { formatPlaytime, formatNumber } from '@utils/calculators';

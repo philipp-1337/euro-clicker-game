@@ -31,19 +31,19 @@ export default function UpgradeTabs({
   totalMoneyPerSecond,
   unlockInvestmentCost,
   investmentCostMultiplier,
-  offlineEarningsLevel,      // New
-  currentOfflineEarningsFactor, // New
-  buyOfflineEarningsLevel,     // New
-  offlineEarningsLevelCost,   // New
-  criticalClickChanceLevel,      // New
-  currentCriticalClickChance, // New
-  buyCriticalClickChanceLevel,     // New
-  criticalClickChanceCost,   // New
+  offlineEarningsLevel,
+  currentOfflineEarningsFactor,
+  buyOfflineEarningsLevel,
+  offlineEarningsLevelCost,
+  criticalClickChanceLevel,
+  currentCriticalClickChance,
+  buyCriticalClickChanceLevel,
+  criticalClickChanceCost,
   criticalHitMultiplier,
-  onInvestmentBoosted, // New prop for handling investment boosts
-  soundEffectsEnabled, // New prop
-  easyMode, // Added from ClickerGame
-  buyQuantity, // Added from ClickerGame
+  onInvestmentBoosted,
+  soundEffectsEnabled,
+  easyMode,
+  buyQuantity,
   floatingClickValueLevel,
   floatingClickValueMultiplier,
   buyFloatingClickValue,
@@ -52,13 +52,12 @@ export default function UpgradeTabs({
   setAutoBuyValueUpgradeEnabled,
   autoBuyCooldownUpgradeEnabled,
   setAutoBuyCooldownUpgradeEnabled,
-  craftingItems, // New prop for crafting items
-  buyCraftingItem, // New prop for buying crafting items
+  craftingItems,
+  buyCraftingItem,
   rawMaterials,
   setRawMaterials,
   buyMaterial,
   resourcePurchaseCounts,
-  // Crafting unlock props
   isCraftingUnlocked,
   unlockCrafting,
   accumulatedPrestigeShares,
@@ -72,8 +71,13 @@ export default function UpgradeTabs({
   setAutoBuyerInterval,
   autoBuyerBuffer,
   setAutoBuyerBuffer,
+  globalMultiplierAutoBuyerUnlocked,
+  buyGlobalMultiplierAutoBuyerUnlock,
+  globalMultiplierAutoBuyerUnlockCost,
+  globalPriceDecreaseAutoBuyerUnlocked,
+  buyGlobalPriceDecreaseAutoBuyerUnlock,
+  globalPriceDecreaseAutoBuyerUnlockCost,
 }) {
-  // Berechnete Werte mit ausgelagerten Funktionen
   const valueMultipliers = valueUpgradeLevels.map((_, i) => 
     calculateButtonValueMultiplier(buttons[i].value, buttons[i].baseValue, globalMultiplier)
   );
@@ -173,6 +177,12 @@ export default function UpgradeTabs({
           rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
           setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
           resourcePurchaseCounts={tab.id === 'crafting' ? resourcePurchaseCounts : undefined}
+          globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
+          buyGlobalMultiplierAutoBuyerUnlock={buyGlobalMultiplierAutoBuyerUnlock}
+          globalMultiplierAutoBuyerUnlockCost={globalMultiplierAutoBuyerUnlockCost}
+          globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
+          buyGlobalPriceDecreaseAutoBuyerUnlock={buyGlobalPriceDecreaseAutoBuyerUnlock}
+          globalPriceDecreaseAutoBuyerUnlockCost={globalPriceDecreaseAutoBuyerUnlockCost}
           {...(tab.id === 'crafting' ? { buyMaterial } : {})}
         />
       )

@@ -1,4 +1,3 @@
-import React from 'react';
 import { formatNumber } from '@utils/calculators'; // Import formatNumber
 
 export default function FloatingClickButton({
@@ -7,7 +6,6 @@ export default function FloatingClickButton({
   isCritical = false,
   criticalHitAnimations = [],
   floatingClickValue = 1,
-  criticalHitMultiplier = 1 // Neuer Prop für Multiplikator
 }) {
   // The outer div will handle the fixed/absolute positioning and centerMode class
   // The inner div with position: relative is for the animated amounts relative to the button

@@ -8,10 +8,8 @@ import { useCallback, useMemo, useEffect, useState } from 'react';
  * - Click-based income statistics
  */
 export default function useFloatingClick({
-  money,
   setMoney,
   setClickHistory,
-  totalMoneyPerSecond,
   criticalClickChanceLevel,
   floatingClickValueMultiplier,
   criticalHitMultiplier = 1.0,

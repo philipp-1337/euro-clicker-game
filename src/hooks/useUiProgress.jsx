@@ -15,7 +15,9 @@ function loadUiProgress() {
 function saveUiProgress(progress) {
   try {
     localStorage.setItem(UI_PROGRESS_KEY, JSON.stringify(progress));
-  } catch {}
+  } catch (e) {
+    console.error(`Error: `, e);
+  }
 }
 
 export function useUiProgress() {
@@ -26,26 +28,35 @@ export function useUiProgress() {
       clickedButtons: [false, false, false, false, false],
       floatingClicks: 0,
       cloudSaveMode: false,
-      showPlaytime: true,      // <--- Default: eingeblendet
-      showClickStats: false,   // <--- Default: ausgeblendet
-      showLeaderboard: true,   // <--- Default: Leaderboard-Button sichtbar
+      showPlaytime: true, // <--- Default: eingeblendet
+      showClickStats: false, // <--- Default: ausgeblendet
+      showLeaderboard: true, // <--- Default: Leaderboard-Button sichtbar
       showAchievementsHeaderButton: true, // Default: Achievements button in header is visible
-      showStatisticsHeaderButton: false,  // Default: Statistics button in header is hidden
+      showStatisticsHeaderButton: false, // Default: Statistics button in header is hidden
       prestigeButtonEverVisible: false, // New: Tracks if the prestige button has ever been visible
     };
     try {
-      const clickerSaveRaw = localStorage.getItem('clickerSave');
+      const clickerSaveRaw = localStorage.getItem("clickerSave");
       if (clickerSaveRaw) {
         const clickerSave = JSON.parse(clickerSaveRaw);
-        if (typeof clickerSave.cloudSaveMode === 'boolean' && typeof progress.cloudSaveMode !== 'boolean') {
+        if (
+          typeof clickerSave.cloudSaveMode === "boolean" &&
+          typeof progress.cloudSaveMode !== "boolean"
+        ) {
           progress.cloudSaveMode = clickerSave.cloudSaveMode;
         }
         // Load showStatisticsHeaderButton from clickerSave
-        if (typeof clickerSave.showStatisticsHeaderButton === 'boolean' && typeof progress.showStatisticsHeaderButton !== 'boolean') {
-          progress.showStatisticsHeaderButton = clickerSave.showStatisticsHeaderButton;
+        if (
+          typeof clickerSave.showStatisticsHeaderButton === "boolean" &&
+          typeof progress.showStatisticsHeaderButton !== "boolean"
+        ) {
+          progress.showStatisticsHeaderButton =
+            clickerSave.showStatisticsHeaderButton;
         }
       }
-    } catch {}
+    } catch (e) {
+      console.error(`Error: `, e);
+    }
     return progress;
   });
 
@@ -60,7 +71,7 @@ export function useUiProgress() {
     saveUiProgress(uiProgress);
     // cloudSaveMode und showStatisticsHeaderButton auch in clickerSave persistieren, falls vorhanden
     try {
-      const clickerSaveRaw = localStorage.getItem('clickerSave');
+      const clickerSaveRaw = localStorage.getItem("clickerSave");
       if (clickerSaveRaw) {
         const clickerSave = JSON.parse(clickerSaveRaw);
         const updatedSave = { ...clickerSave };
@@ -71,16 +82,22 @@ export function useUiProgress() {
           saveUpdated = true;
         }
 
-        if (updatedSave.showStatisticsHeaderButton !== uiProgress.showStatisticsHeaderButton) {
-          updatedSave.showStatisticsHeaderButton = uiProgress.showStatisticsHeaderButton;
+        if (
+          updatedSave.showStatisticsHeaderButton !==
+          uiProgress.showStatisticsHeaderButton
+        ) {
+          updatedSave.showStatisticsHeaderButton =
+            uiProgress.showStatisticsHeaderButton;
           saveUpdated = true;
         }
 
         if (saveUpdated) {
-          localStorage.setItem('clickerSave', JSON.stringify(updatedSave));
+          localStorage.setItem("clickerSave", JSON.stringify(updatedSave));
         }
       }
-    } catch {}
+    } catch (e) {
+      console.error(`Error: `, e);
+    }
   }, [uiProgress, cloudSaveMode]);
 
   // Setze Spielstart
@@ -132,7 +149,9 @@ export function useUiProgress() {
             localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, cloudSaveMode: nextValue }));
           }
         }
-      } catch {}
+      } catch (e) {
+        console.error(`Error: `, e);
+      }
       return next;
     });
   }, []);
@@ -228,7 +247,7 @@ export function useUiProgress() {
 
   // Sync showStatisticsHeaderButton from cloud import
   useEffect(() => {
-    const handler = (e) => {
+    const handler = () => {
       try {
         const saveRaw = localStorage.getItem('clickerSave');
         if (saveRaw) {
@@ -237,7 +256,9 @@ export function useUiProgress() {
             setShowStatisticsHeaderButton(save.showStatisticsHeaderButton);
           }
         }
-      } catch {}
+      } catch (e) {
+        console.error('Error reading clickerSave during cloud import:', e);
+      }
     };
     window.addEventListener('game:cloudimported', handler);
     return () => window.removeEventListener('game:cloudimported', handler);

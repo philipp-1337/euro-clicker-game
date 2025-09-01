@@ -136,6 +136,10 @@ export const gameConfig = {
     cooldownAutoBuyerUnlocked: false,
     autoBuyValueUpgradeEnabled: false,
     autoBuyCooldownUpgradeEnabled: false,
+    autoBuyGlobalMultiplierEnabled: false,
+    autoBuyGlobalPriceDecreaseEnabled: false,
+    globalMultiplierAutoBuyerUnlocked: false,
+    globalPriceDecreaseAutoBuyerUnlocked: false,
   },
   activePlayTime: 0, // Initial aktive Spielzeit
   prestigeShares: 0, // Initial prestige shares
@@ -151,13 +155,13 @@ export const gameConfig = {
   premiumUpgrades: {
   floatingClickValue: {
       // NEU: Premium-Upgrade für Floating Click Wert
-      baseCost: 500,
-      costExponent: 1.3, // exponentiell steigend
+      baseCost: 250,
+      costExponent: 1.2, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
     },
     criticalClickChance: {
       // New upgrade configuration
-      baseCost: 1000,
+      baseCost: 500,
       costLevelMultiplier: 1.4, // Cost increases by 0.75 * baseCost for each level
       effectPerLevel: 0.005, // 0.5% chance increase per level
       baseMultiplier: 1.0, // Startwert x1.0
@@ -180,10 +184,16 @@ export const gameConfig = {
       effectPerLevel: 0.025, // e.g., 5% earnings per level
     },
     autoBuyerUnlock: {
-      baseCost: 10000,
+      baseCost: 50000,
     },
     cooldownAutoBuyerUnlock: {
-      baseCost: 15000,
+      baseCost: 50000,
+    },
+    globalMultiplierAutoBuyerUnlock: {
+      baseCost: 75000,
+    },
+    globalPriceDecreaseAutoBuyerUnlock: {
+      baseCost: 75000,
     }
   },
 
@@ -194,6 +204,23 @@ export const gameConfig = {
     bonusPerShare: 0.01, // 1% Bonus pro Anteil auf Einkommen/Sekunde
     minMoneyForModalButton: 1000000000, // 1 Milliarde für Button-Sichtbarkeit
     minSharesToPrestige: 1.0, // Mindestanteile für Prestige-Aktion
+    // Neue Funktion: Kosten für den n-ten Share (progressiv, mit Sättigung)
+    getShareCost: (shareIndex) => {
+      // shareIndex: 0 = erster Share, 1 = zweiter Share, ...
+      const base = 1000000000; // 1 Milliarde
+      const exponent = 1.01; // Anfangs langsam, dann steiler
+      const saturation = 1000000000000000000; // 1 Quintillion
+      const cost = base * Math.pow(exponent, shareIndex);
+      return cost >= saturation ? saturation : Math.floor(cost);
+    },
+    getTotalCostForShares: (numShares) => {
+      // Summe der Kosten für numShares Shares
+      let total = 0;
+      for (let i = 0; i < numShares; i++) {
+        total += gameConfig.prestige.getShareCost(i);
+      }
+      return total;
+    },
   },
 
   // Timing-Konstanten
