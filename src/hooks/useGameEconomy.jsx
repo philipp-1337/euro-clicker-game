@@ -111,8 +111,13 @@ export default function useGameEconomy({
       inactivePlayTime: gameState.inactivePlayTime,
       lastSaved: Date.now(),
 
-      // UI settings from localStorage
-      darkMode: localStorage.getItem('darkMode') === 'true',
+      // UI settings: darkMode übernimmt Systemwert, falls nicht gesetzt
+      darkMode: (() => {
+        const localStorageValue = localStorage.getItem('darkMode');
+        if (localStorageValue === 'true') return true;
+        if (localStorageValue === 'false') return false;
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      })(),
       musicEnabled: (localStorage.getItem('musicEnabled') ?? 'true') === 'true',
       soundEffectsEnabled: (localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true',
 

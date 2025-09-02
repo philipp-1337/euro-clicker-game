@@ -87,7 +87,11 @@ export default function SettingsModal({
     } catch (e) {
       console.error('Error reading darkMode from clickerSave:', e);
     }
-    return localStorage.getItem('darkMode') === 'true';
+    const localStorageValue = localStorage.getItem('darkMode');
+    if (localStorageValue === 'true') return true;
+    if (localStorageValue === 'false') return false;
+    // Systemwert übernehmen, falls kein Wert gesetzt ist
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
   const { deleteFromCloud } = useCloudSave();
