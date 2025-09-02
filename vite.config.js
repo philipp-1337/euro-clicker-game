@@ -13,6 +13,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,mp3,webmanifest}'],
         // MP3 nicht precachen
         globIgnores: ['sounds/background-music-quiet.mp3'],
+    skipWaiting: true,
       },
       devOptions: {
         enabled: true,
