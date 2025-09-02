@@ -32,6 +32,29 @@ function App() {
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState((localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true');
 
 
+        // Darkmode direkt beim App-Start setzen
+        useEffect(() => {
+          const getInitialDarkMode = () => {
+            try {
+              const saveRaw = localStorage.getItem('clickerSave');
+              if (saveRaw) {
+                const save = JSON.parse(saveRaw);
+                if (typeof save.darkMode === 'boolean') return save.darkMode;
+              }
+            } catch (e) {
+              console.error('Error reading darkMode from clickerSave:', e);
+            }
+            const localStorageValue = localStorage.getItem('darkMode');
+            if (localStorageValue === 'true') return true;
+            if (localStorageValue === 'false') return false;
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          };
+          if (getInitialDarkMode()) {
+            document.body.classList.add('dark');
+          } else {
+            document.body.classList.remove('dark');
+          }
+        }, []);
   // Listener für das Event, das bei manipulierten Speicherdaten ausgelöst wird
   useEffect(() => {
     const handleTampering = (event) => {
