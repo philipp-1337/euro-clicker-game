@@ -2,21 +2,79 @@
 @use "../abstracts/colors" as *;
 @use "../abstracts/mixins" as *;
 
+// Tab-spezifische Farben als Map
+$tab-colors: (
+  default: map.get($colors, blue),
+  basic: #2ecc71,
+  premium: map.get($colors, prestige),
+  investments: #9b59b6,
+  crafting: map.get($colors, orange)
+);
+
+// Mixin für aktive Tab-Styles (Liquid Glass Style)
+@mixin active-tab-styles($color) {
+  color: $color;
+  transform: translateY(-2px) scale(1.05);
+  
+  .bottom-tab-icon {
+    color: $color;
+    filter: drop-shadow(0 2px 8px rgba($color, 0.4)) drop-shadow(0 0 12px rgba($color, 0.2));
+    transform: scale(1.1);
+  }
+  
+  .bottom-tab-label {
+    font-weight: 600;
+    text-shadow: 0 0 8px rgba($color, 0.3);
+  }
+}
+
 .bottom-tab-menu {
   position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 64px;
-  background: map.get($colors, white);
-  border-top: 2px solid map.get($colors, light-gray);
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  width: clamp(280px, 85vw, 400px);
+  height: 72px;
+  
+  // Liquid Glass Effekt
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 36px;
+  
+  // Subtiler Schatten für Floating-Effekt
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 1001;
-  // @include box-shadow(0, -2px, 1px, rgba(0,0,0,0.08)); // Fallback falls kein Mixin, sonst map.get($colors, transparent-black-30)
-  backdrop-filter: blur(8px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding: 8px 16px;
+  margin-bottom: env(safe-area-inset-bottom, 0px);
+  
+  // Animierte Erscheinung
+  animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  @media (max-width: 600px) {
+    width: clamp(260px, 90vw, 350px);
+    height: 64px;
+    bottom: 16px;
+    padding: 6px 12px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
 }
 
 .bottom-tab-btn {
@@ -25,62 +83,63 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 2px;
+  padding: 6px 4px;
   background: none;
   border: none;
   outline: none;
   cursor: pointer;
-  color: map.get($colors, gray);
+  color: rgba(1, 1, 1, 0.7);
   font-family: inherit;
   font-size: 13px;
-  transition: color 0.18s, background 0.18s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
   height: 100%;
-}
-
-.bottom-tab-btn.active {
-  color: map.get($colors, blue);
-  background: map.get($colors, transparent-blue-07, rgba(52, 152, 219, 0.07)); // Fallback falls nicht vorhanden
-
-  .bottom-tab-icon {
-    color: map.get($colors, blue);
-    filter: drop-shadow(0 0 4px map.get($colors, lighter-blue));
-  }
-
-  &.basic {
-    $active-color: #2ecc71;
-    color: $active-color;
-    background: rgba($active-color, 0.1);
+  border-radius: 20px;
+  
+  // Hover-Effekt
+  &:hover:not(.active) {
+    color: rgba(1, 1, 1, 0.9);
+    transform: translateY(-1px);
+    
     .bottom-tab-icon {
-      color: $active-color;
-      filter: drop-shadow(0 0 4px $active-color);
+      transform: scale(1.05);
     }
   }
-  &.premium {
-    $active-color: map.get($colors, prestige);
-    color: $active-color;
-    background: rgba($active-color, 0.1);
-    .bottom-tab-icon {
-      color: $active-color;
-      filter: drop-shadow(0 0 4px $active-color);
-    }
+  
+  // Active-State mit Liquid Glass Morphing
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   inset: 0;
+  //   border-radius: 20px;
+  //   background: linear-gradient(135deg, 
+  //     rgba(255, 255, 255, 0.1) 0%, 
+  //     rgba(255, 255, 255, 0.05) 50%,
+  //     rgba(255, 255, 255, 0.02) 100%);
+  //   opacity: 0;
+  //   transition: opacity 0.3s ease;
+  //   pointer-events: none;
+  // }
+
+  @media (max-width: 600px) {
+    font-size: 12px;
+    padding: 4px 2px;
   }
-  &.investments {
-    $active-color: #9b59b6;
-    color: $active-color;
-    background: rgba($active-color, 0.1);
-    .bottom-tab-icon {
-      color: $active-color;
-      filter: drop-shadow(0 0 4px $active-color);
+
+  &.active {
+    @include active-tab-styles(map.get($tab-colors, default));
+    
+    &::before {
+      opacity: 1;
     }
-  }
-  &.crafting {
-    $active-color: map.get($colors, orange);
-    color: $active-color;
-    background: rgba($active-color, 0.1);
-    .bottom-tab-icon {
-      color: $active-color;
-      filter: drop-shadow(0 0 4px $active-color);
+
+    // Spezifische Tab-Styles
+    @each $tab-name, $color in $tab-colors {
+      @if $tab-name != default {
+        &.#{$tab-name} {
+          @include active-tab-styles($color);
+        }
+      }
     }
   }
 }
@@ -91,7 +150,15 @@
   justify-content: center;
   font-size: 26px;
   margin-bottom: 2px;
-  transition: color 0.18s, filter 0.18s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  appearance: none;
+  -webkit-appearance: none;
+  backface-visibility: hidden;
+  will-change: transform;
+  
+  @media (max-width: 600px) {
+    font-size: 24px;
+  }
 }
 
 .bottom-tab-label {
@@ -99,88 +166,46 @@
   margin-top: 2px;
   letter-spacing: 0.01em;
   font-weight: 500;
-  text-shadow: 0 1px 0 map.get($colors, white);
-}
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-@media (max-width: 600px) {
-  .bottom-tab-menu {
-    height: 56px;
-    font-size: 12px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .bottom-tab-btn {
-    font-size: 12px;
-    padding: 0 1px;
-  }
-  .bottom-tab-label {
+  @media (max-width: 600px) {
     font-size: 10px;
   }
 }
 
-// DARK MODE SUPPORT
+// DARK MODE SUPPORT (Liquid Glass funktioniert in beiden Modi)
 body.dark {
   .bottom-tab-menu {
-    background: map.get($backgrounds, darker) !important;
-    border-top: 2px solid map.get($backgrounds, dark) !important;
-    // @include box-shadow("0", "-2px", "8px", map.get($colors, transparent-black-30, "rgba(0,0,0,0.32)"));
-    backdrop-filter: blur(8px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: bg(glass-dark);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid bg(glass-border-dark);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
   }
+
   .bottom-tab-btn {
-    color: map.get($colors, text-light) !important;
-    background: none !important;
-  }
-  .bottom-tab-btn.active {
-    color: map.get($colors, blue) !important;
-    background: map.get($colors, transparent-blue-13, rgba(52, 152, 219, 0.13)) !important;
-
-    .bottom-tab-icon {
-      color: map.get($colors, blue) !important;
-      filter: drop-shadow(0 0 6px map.get($colors, blue));
+    color: rgba(255, 255, 255, 0.6);
+    
+    &:hover:not(.active) {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    &::before {
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.08) 0%, 
+        rgba(255, 255, 255, 0.04) 50%,
+        rgba(255, 255, 255, 0.01) 100%);
     }
 
-    &.basic {
-      $active-color: #2ecc71;
-      color: $active-color !important;
-      background: rgba($active-color, 0.13) !important;
-      .bottom-tab-icon {
-        color: $active-color !important;
-        filter: drop-shadow(0 0 6px $active-color);
-      }
+    &.active {
+      @include active-tab-styles(tab-color(default));
+      
+      &.basic { @include active-tab-styles(tab-color(basic)); }
+      &.premium { @include active-tab-styles(tab-color(premium)); }
+      &.investments { @include active-tab-styles(tab-color(investments)); }
+      &.crafting { @include active-tab-styles(tab-color(crafting)); }
     }
-    &.premium {
-      $active-color: map.get($colors, prestige);
-      color: $active-color !important;
-      background: rgba($active-color, 0.13) !important;
-      .bottom-tab-icon {
-        color: $active-color !important;
-        filter: drop-shadow(0 0 6px $active-color);
-      }
-    }
-    &.investments {
-      $active-color: #9b59b6;
-      color: $active-color !important;
-      background: rgba($active-color, 0.13) !important;
-      .bottom-tab-icon {
-        color: $active-color !important;
-        filter: drop-shadow(0 0 6px $active-color);
-      }
-    }
-    &.crafting {
-      $active-color: map.get($colors, orange);
-      color: $active-color !important;
-      background: rgba($active-color, 0.13) !important;
-      .bottom-tab-icon {
-        color: $active-color !important;
-        filter: drop-shadow(0 0 6px $active-color);
-      }
-    }
-  }
-  .bottom-tab-icon {
-    color: map.get($colors, text-light) !important;
-  }
-  .bottom-tab-label {
-    color: map.get($colors, text-light) !important;
-    text-shadow: none;
   }
 }

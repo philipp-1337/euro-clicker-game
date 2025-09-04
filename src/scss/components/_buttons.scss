@@ -129,11 +129,14 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
-// Button variants
-@each $name, $colors in $button-colors {
+// Button variants - Updated für neue Map-Struktur
+@each $name, $color-map in $button-colors {
   .clicker-button.#{$name},
   .upgrade-button.#{$name} {
-    @include color-variant(list.nth($colors, 1), list.nth($colors, 2));
+    @include color-variant(
+      map.get($color-map, base), 
+      map.get($color-map, hover)
+    );
   }
 }
 
