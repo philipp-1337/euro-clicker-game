@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import AboutModal from '../AboutModal/AboutModal';
 import { useModal } from '../../hooks/useModal';
+import VersionDisplay from '../VersionDisplay/VersionDisplay';
 
 export default function SideMenu({ 
   isOpen,
@@ -159,7 +160,7 @@ export default function SideMenu({
         </div>
 
         <div className="sidemenu-footer">
-          Euro Clicker Game v1.0
+          Euro Clicker Game <VersionDisplay />
         </div>
       </div>
       {/* About Modal */}

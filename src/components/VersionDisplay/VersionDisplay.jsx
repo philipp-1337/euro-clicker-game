@@ -1,7 +1,7 @@
 import { APP_VERSION } from "../../version";
 
 const VersionDisplay = () => (
-  <div className="version-display">
+  <div>
     v{APP_VERSION}
   </div>
 );
