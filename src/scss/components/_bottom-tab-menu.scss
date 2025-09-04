@@ -14,7 +14,7 @@
   justify-content: space-around;
   align-items: center;
   z-index: 1001;
-  @include box-shadow(0, -2px, 16px, rgba(0,0,0,0.08)); // Fallback falls kein Mixin, sonst map.get($colors, transparent-black-30)
+  // @include box-shadow(0, -2px, 1px, rgba(0,0,0,0.08)); // Fallback falls kein Mixin, sonst map.get($colors, transparent-black-30)
   backdrop-filter: blur(8px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -85,7 +85,7 @@ body.dark {
   .bottom-tab-menu {
     background: map.get($backgrounds, darker) !important;
     border-top: 2px solid map.get($backgrounds, dark) !important;
-    @include box-shadow("0", "-2px", "16px", map.get($colors, transparent-black-30, "rgba(0,0,0,0.32)"));
+    // @include box-shadow("0", "-2px", "8px", map.get($colors, transparent-black-30, "rgba(0,0,0,0.32)"));
     backdrop-filter: blur(8px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
