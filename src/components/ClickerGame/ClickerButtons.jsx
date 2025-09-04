@@ -1,11 +1,11 @@
 import { formatNumber } from '@utils/calculators';  // Import von formatNumber
-import { PiggyBank, Euro, Gift, Handshake, Sparkles } from 'lucide-react';
+import { PiggyBank, Banknote, Gift, Handshake, Sparkles } from 'lucide-react';
 
 export default function ClickerButtons({ buttons, cooldowns, handleClick }) {
   // Map icon string to Lucide component
   const iconMap = {
     PiggyBank,
-    Euro,
+    Banknote,
     Gift,
     Handshake,
     Sparkles,
