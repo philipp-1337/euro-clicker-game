@@ -12,6 +12,7 @@
   z-index: 1001;
   box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
   backdrop-filter: blur(8px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .bottom-tab-btn {
@@ -64,6 +65,7 @@
   .bottom-tab-menu {
     height: 56px;
     font-size: 12px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   .bottom-tab-btn {
     font-size: 12px;
@@ -81,6 +83,7 @@ body.dark {
     border-top: 2px solid #222 !important;
     box-shadow: 0 -2px 16px rgba(0,0,0,0.32);
     backdrop-filter: blur(8px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   .bottom-tab-btn {
     color: #b0b8c1 !important;
