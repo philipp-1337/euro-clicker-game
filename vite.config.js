@@ -19,7 +19,7 @@ export default defineConfig({
       skipWaiting: true,
       clientsClaim: true,
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "favicon.svg"],
       manifest: {
