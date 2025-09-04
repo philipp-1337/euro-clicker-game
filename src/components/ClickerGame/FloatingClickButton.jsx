@@ -6,11 +6,15 @@ export default function FloatingClickButton({
   isCritical = false,
   criticalHitAnimations = [],
   floatingClickValue = 1,
+  bottomOffset = 0,
 }) {
   // The outer div will handle the fixed/absolute positioning and centerMode class
   // The inner div with position: relative is for the animated amounts relative to the button
   return (
-    <div className={`floating-click-button-container${centerMode ? ' center-mode' : ''}`}>
+    <div
+      className={`floating-click-button-container${centerMode ? ' center-mode' : ''}`}
+      style={{ bottom: `${20 + bottomOffset}px` }}
+    >
       <div style={{ position: 'relative', display: 'inline-block', width: '100%', height: '100%' }}> {/* For positioning amounts */}
         <button
           onClick={onClick}

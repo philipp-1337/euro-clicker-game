@@ -3,7 +3,11 @@ import { useUiProgress } from '@hooks/useUiProgress';
 import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
-import UpgradeTabs from './UpgradeTabs';
+import BottomTabMenu from './BottomTabMenu';
+import BasicUpgrades from './UpgradeTabs/BasicUpgrades';
+import Investments from './UpgradeTabs/Investments';
+import Crafting from './UpgradeTabs/Crafting';
+import PremiumUpgrades from './UpgradeTabs/PremiumUpgrades';
 import useGameCore from '@hooks/useGameCore';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
@@ -563,79 +567,96 @@ export default function ClickerGame({
       )}
 
       {uiProgress.gameStarted && upgradeTabsUnlocked && (
-        <div className="upgrade-tabs-fade">
-          <UpgradeTabs
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            money={money}
-            buttons={buttons}
-            investments={investments}
-            buyInvestment={buyInvestment}
-            valueUpgradeLevels={valueUpgradeLevels}
-            cooldownUpgradeLevels={cooldownUpgradeLevels}
-            valueUpgradeCosts={valueUpgradeCosts}
-            cooldownUpgradeCosts={cooldownUpgradeCosts}
-            buyValueUpgrade={buyValueUpgrade}
-            buyCooldownUpgrade={buyCooldownUpgrade}
-            globalMultiplier={globalMultiplier}
-            buyQuantity={buyQuantity}
-            globalMultiplierLevel={globalMultiplierLevel}
-            easyMode={easyMode}
-            globalMultiplierCost={globalMultiplierCost}
-            buyGlobalMultiplier={buyGlobalMultiplier}
-            managers={managers}
-            buyManager={buyManager}
-            managerCosts={managerCosts}
-            valueMultipliers={valueMultipliers}
-            cooldownReductions={cooldownReductions}
-            isInvestmentUnlocked={isInvestmentUnlocked}
-            unlockInvestments={unlockInvestments}
-            totalIncomePerSecond={totalIncomePerSecond}
-            globalPriceDecrease={globalPriceDecrease}
-            globalPriceDecreaseLevel={globalPriceDecreaseLevel}
-            globalPriceDecreaseCost={globalPriceDecreaseCost}
-            buyGlobalPriceDecrease={buyGlobalPriceDecrease}
-            totalMoneyPerSecond={totalMoneyPerSecond}
-            unlockInvestmentCost={unlockInvestmentCost}
-            investmentCostMultiplier={investmentCostMultiplier}
-            offlineEarningsLevel={offlineEarningsLevel}
-            currentOfflineEarningsFactor={currentOfflineEarningsFactor}
-            buyOfflineEarningsLevel={buyOfflineEarningsLevel}
-            offlineEarningsLevelCost={offlineEarningsLevelCost}
-            criticalClickChanceLevel={criticalClickChanceLevel}
-            currentCriticalClickChance={currentCriticalClickChance}
-            criticalClickChanceCost={criticalClickChanceCost}
-            buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
-            criticalHitMultiplier={criticalHitMultiplier}
-            floatingClickValueLevel={floatingClickValueLevel}
-            floatingClickValueMultiplier={floatingClickValueMultiplier}
-            buyFloatingClickValue={buyFloatingClickValue}
-            currentFloatingClickValue={currentFloatingClickValue}
-            onInvestmentBoosted={handleInvestmentBoost}
-            soundEffectsEnabled={soundEffectsEnabled}
-            craftingItems={craftingItems}
-            buyCraftingItem={buyCraftingItem}
-            rawMaterials={rawMaterials}
-            setRawMaterials={setRawMaterials}
-            buyMaterial={buyMaterial}
-            resourcePurchaseCounts={resourcePurchaseCounts}
-            isCraftingUnlocked={isCraftingUnlocked}
-            unlockCrafting={unlockCrafting}
-            accumulatedPrestigeShares={prestigeShares}
-            autoBuyerUnlocked={autoBuyerUnlocked}
-            buyAutoBuyerUnlock={buyAutoBuyerUnlock}
-            autoBuyerUnlockCost={autoBuyerUnlockCost}
-            cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
-            buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
-            cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
-            globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
-            buyGlobalMultiplierAutoBuyerUnlock={buyGlobalMultiplierAutoBuyerUnlock}
-            globalMultiplierAutoBuyerUnlockCost={globalMultiplierAutoBuyerUnlockCost}
-            globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
-            buyGlobalPriceDecreaseAutoBuyerUnlock={buyGlobalPriceDecreaseAutoBuyerUnlock}
-            globalPriceDecreaseAutoBuyerUnlockCost={globalPriceDecreaseAutoBuyerUnlockCost}
-          />
-        </div>
+        <>
+          <div style={{ paddingBottom: '64px' }}>
+            {activeTab === 'basic' && (
+              <BasicUpgrades
+                money={money}
+                buttons={buttons}
+                valueUpgradeLevels={valueUpgradeLevels}
+                cooldownUpgradeLevels={cooldownUpgradeLevels}
+                valueUpgradeCosts={valueUpgradeCosts}
+                cooldownUpgradeCosts={cooldownUpgradeCosts}
+                buyValueUpgrade={buyValueUpgrade}
+                buyCooldownUpgrade={buyCooldownUpgrade}
+                managers={managers}
+                buyManager={buyManager}
+                managerCosts={managerCosts}
+                valueMultipliers={valueMultipliers}
+                cooldownReductions={cooldownReductions}
+                soundEffectsEnabled={soundEffectsEnabled}
+                buyQuantity={buyQuantity}
+                easyMode={easyMode}
+                globalPriceDecrease={globalPriceDecrease}
+              />
+            )}
+            {activeTab === 'investments' && (
+              <Investments
+                money={money}
+                investments={investments}
+                buyInvestment={buyInvestment}
+                investmentCostMultiplier={investmentCostMultiplier}
+                onInvestmentBoosted={handleInvestmentBoost}
+                isInvestmentUnlocked={isInvestmentUnlocked}
+                unlockInvestments={unlockInvestments}
+                unlockInvestmentCost={unlockInvestmentCost}
+                totalIncomePerSecond={totalIncomePerSecond}
+              />
+            )}
+            {activeTab === 'crafting' && (
+              <Crafting
+                money={money}
+                rawMaterials={rawMaterials}
+                buyCraftingItem={buyCraftingItem}
+                buyMaterial={buyMaterial}
+                craftingItems={craftingItems}
+                resourcePurchaseCounts={resourcePurchaseCounts}
+                easyMode={easyMode}
+                buyQuantity={buyQuantity}
+                isCraftingUnlocked={isCraftingUnlocked}
+                unlockCrafting={unlockCrafting}
+                unlockCraftingCost={gameConfig.unlockCraftingCost}
+                accumulatedPrestigeShares={prestigeShares}
+              />
+            )}
+            {activeTab === 'premium' && (
+              <PremiumUpgrades
+                money={money}
+                globalMultiplier={globalMultiplier}
+                globalMultiplierLevel={globalMultiplierLevel}
+                globalPriceDecrease={globalPriceDecrease}
+                globalPriceDecreaseLevel={globalPriceDecreaseLevel}
+                buyGlobalPriceDecrease={buyGlobalPriceDecrease}
+                buyGlobalMultiplier={buyGlobalMultiplier}
+                offlineEarningsLevel={offlineEarningsLevel}
+                currentOfflineEarningsFactor={currentOfflineEarningsFactor}
+                buyOfflineEarningsLevel={buyOfflineEarningsLevel}
+                criticalClickChanceLevel={criticalClickChanceLevel}
+                currentCriticalClickChance={currentCriticalClickChance}
+                buyCriticalClickChanceLevel={buyCriticalClickChanceLevel}
+                criticalHitMultiplier={criticalHitMultiplier}
+                buyQuantity={buyQuantity}
+                easyMode={easyMode}
+                floatingClickValueLevel={floatingClickValueLevel}
+                floatingClickValueMultiplier={floatingClickValueMultiplier}
+                buyFloatingClickValue={buyFloatingClickValue}
+                autoBuyerUnlocked={autoBuyerUnlocked}
+                buyAutoBuyerUnlock={buyAutoBuyerUnlock}
+                autoBuyerUnlockCost={autoBuyerUnlockCost}
+                cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
+                buyCooldownAutoBuyerUnlock={buyCooldownAutoBuyerUnlock}
+                cooldownAutoBuyerUnlockCost={cooldownAutoBuyerUnlockCost}
+                globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
+                buyGlobalMultiplierAutoBuyerUnlock={buyGlobalMultiplierAutoBuyerUnlock}
+                globalMultiplierAutoBuyerUnlockCost={globalMultiplierAutoBuyerUnlockCost}
+                globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
+                buyGlobalPriceDecreaseAutoBuyerUnlock={buyGlobalPriceDecreaseAutoBuyerUnlock}
+                globalPriceDecreaseAutoBuyerUnlockCost={globalPriceDecreaseAutoBuyerUnlockCost}
+              />
+            )}
+          </div>
+          <BottomTabMenu activeTab={activeTab} setActiveTab={setActiveTab} />
+        </>
       )}
 
       <FloatingClickButton
@@ -644,6 +665,7 @@ export default function ClickerGame({
         isCritical={showCriticalEffect}
         criticalHitAnimations={criticalHitAnimations}
         floatingClickValue={currentFloatingClickValue}
+        bottomOffset={64} // Höhe des BottomTabMenus
       />
     </div>
   );

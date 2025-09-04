@@ -229,12 +229,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     playTime,
     activePlayTime,
     inactivePlayTime,
-    gameState, // <- Das fehlte!
-    
+    gameState,
+    valueMultipliers,
+    cooldownReductions,
+
     // Economy data
     totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
     manualMoneyPerSecond: floatingClickHook.manualMoneyPerSecond,
-    
+
     // Prestige system
     prestigeShares,
     prestigeCount,
@@ -242,7 +244,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     prestigeBonusMultiplier: economyHook.prestigeBonusMultiplier,
     canPrestige: economyHook.canPrestige,
     prestigeGame: economyHook.prestigeGame,
-    
+
     // Core functions
     handleClick: wrappedHandleClick,
     buyManager,
@@ -253,10 +255,10 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     saveGame,
     addQuickMoney: floatingClickHook.addQuickMoney,
     handleInvestmentBoost,
-    
+
     // Premium upgrades
     ...premiumUpgradesHook,
-    
+
     // Auto-buyers
     ...autoBuyersHook,
     autoBuyerUnlocked,
@@ -275,16 +277,16 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
-    
+
     // Offline earnings
     ...offlineEarningsHook,
     offlineEarningsLevel,
-    
+
     // Floating click
     ...floatingClickHook,
     floatingClickValueLevel,
     floatingClickValueMultiplier,
-    
+
     // Upgrade info
     valueUpgradeLevels,
     cooldownUpgradeLevels,
@@ -298,13 +300,13 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     managerCosts,
     unlockInvestmentCost,
     investmentCostMultiplier,
-    
+
     // Critical clicks
     criticalClickChanceLevel,
-    
+
     // Boosted investments
     boostedInvestments,
-    
+
     // Crafting system
     craftingItems,
     buyCraftingItem,

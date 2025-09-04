@@ -27,15 +27,29 @@ export default function BasicUpgrades({
   cooldownUpgradeLevels, // Added for consistency if cooldown costs were to be calculated here
   buyQuantity
 }) {
-  const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
+  // Defensive: Nur rendern, wenn alle relevanten Arrays existieren und synchron sind
+  const arraysReady =
+    Array.isArray(buttons) &&
+    Array.isArray(valueUpgradeLevels) &&
+    Array.isArray(cooldownUpgradeLevels) &&
+    Array.isArray(valueMultipliers) &&
+    Array.isArray(cooldownReductions) &&
+    Array.isArray(managerCosts) &&
+    buttons.length > 0 &&
+    buttons.length === valueUpgradeLevels.length &&
+    buttons.length === cooldownUpgradeLevels.length &&
+    buttons.length === valueMultipliers.length &&
+    buttons.length === cooldownReductions.length &&
+    managerCosts.length > 0;
 
-  // Prozentsatz für Value-Upgrade aus der gameConfig berechnen
+  if (!arraysReady) {
+    return null; // Alternativ: Lade-Indikator
+  }
+
+  const { playSound } = useSoundEffects(soundEffectsEnabled);
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
-  
-  // Prozentsatz für Cooldown-Upgrade aus der gameConfig berechnen
   const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
 
-  // Helper to calculate total cost for 'n' value upgrades
   const calculateTotalValueUpgradeCost = (buttonIndex, quantity) => {
     let totalCost = 0;
     let currentLevel = valueUpgradeLevels[buttonIndex];
@@ -51,7 +65,6 @@ export default function BasicUpgrades({
     return totalCost;
   };
 
-  // Helper to calculate total cost for 'n' cooldown upgrades
   const calculateTotalCooldownUpgradeCost = (buttonIndex, quantity) => {
     let totalCost = 0;
     let currentLevel = cooldownUpgradeLevels[buttonIndex];
@@ -68,18 +81,14 @@ export default function BasicUpgrades({
   };
 
   const handleValueUpgradeClick = (index) => {
-    playSound('valueUpgrade'); // Play sound effect when value upgrade is bought
-    buyValueUpgrade(index, buyQuantity); // Pass the quantity
+    playSound('valueUpgrade');
+    buyValueUpgrade(index, buyQuantity);
   };
 
   const handleCooldownUpgradeClick = (index) => {
-    playSound('valueUpgrade'); // Play sound effect when cooldown upgrade is bought // TODO: Consider different sound
-    buyCooldownUpgrade(index, buyQuantity); // Pass the quantity
+    playSound('valueUpgrade');
+    buyCooldownUpgrade(index, buyQuantity);
   };
-
-  if (!managerCosts || managerCosts.length === 0) {
-    return null; // Oder ein Lade-Indikator, falls du möchtest
-  }
   return ( 
     <div className="upgrade-section">
       <h2 className="section-title">Basic Upgrades</h2>
