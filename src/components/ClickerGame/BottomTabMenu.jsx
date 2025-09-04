@@ -13,7 +13,7 @@ export default function BottomTabMenu({ activeTab, setActiveTab }) {
 			{tabs.map(tab => (
 				<button
 					key={tab.key}
-					className={`bottom-tab-btn${
+					className={`bottom-tab-btn ${tab.key}${
 						activeTab === tab.key ? ' active' : ''
 					}`}
 					onClick={() => setActiveTab(tab.key)}

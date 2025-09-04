@@ -41,11 +41,48 @@
 .bottom-tab-btn.active {
   color: map.get($colors, blue);
   background: map.get($colors, transparent-blue-07, rgba(52, 152, 219, 0.07)); // Fallback falls nicht vorhanden
-}
 
-.bottom-tab-btn.active .bottom-tab-icon {
-  color: map.get($colors, blue);
-  filter: drop-shadow(0 0 4px map.get($colors, lighter-blue));
+  .bottom-tab-icon {
+    color: map.get($colors, blue);
+    filter: drop-shadow(0 0 4px map.get($colors, lighter-blue));
+  }
+
+  &.basic {
+    $active-color: #2ecc71;
+    color: $active-color;
+    background: rgba($active-color, 0.1);
+    .bottom-tab-icon {
+      color: $active-color;
+      filter: drop-shadow(0 0 4px $active-color);
+    }
+  }
+  &.premium {
+    $active-color: map.get($colors, prestige);
+    color: $active-color;
+    background: rgba($active-color, 0.1);
+    .bottom-tab-icon {
+      color: $active-color;
+      filter: drop-shadow(0 0 4px $active-color);
+    }
+  }
+  &.investments {
+    $active-color: #9b59b6;
+    color: $active-color;
+    background: rgba($active-color, 0.1);
+    .bottom-tab-icon {
+      color: $active-color;
+      filter: drop-shadow(0 0 4px $active-color);
+    }
+  }
+  &.crafting {
+    $active-color: map.get($colors, orange);
+    color: $active-color;
+    background: rgba($active-color, 0.1);
+    .bottom-tab-icon {
+      color: $active-color;
+      filter: drop-shadow(0 0 4px $active-color);
+    }
+  }
 }
 
 .bottom-tab-icon {
@@ -96,10 +133,48 @@ body.dark {
   .bottom-tab-btn.active {
     color: map.get($colors, blue) !important;
     background: map.get($colors, transparent-blue-13, rgba(52, 152, 219, 0.13)) !important;
-  }
-  .bottom-tab-btn.active .bottom-tab-icon {
-    color: map.get($colors, blue) !important;
-    filter: drop-shadow(0 0 6px map.get($colors, blue));
+
+    .bottom-tab-icon {
+      color: map.get($colors, blue) !important;
+      filter: drop-shadow(0 0 6px map.get($colors, blue));
+    }
+
+    &.basic {
+      $active-color: #2ecc71;
+      color: $active-color !important;
+      background: rgba($active-color, 0.13) !important;
+      .bottom-tab-icon {
+        color: $active-color !important;
+        filter: drop-shadow(0 0 6px $active-color);
+      }
+    }
+    &.premium {
+      $active-color: map.get($colors, prestige);
+      color: $active-color !important;
+      background: rgba($active-color, 0.13) !important;
+      .bottom-tab-icon {
+        color: $active-color !important;
+        filter: drop-shadow(0 0 6px $active-color);
+      }
+    }
+    &.investments {
+      $active-color: #9b59b6;
+      color: $active-color !important;
+      background: rgba($active-color, 0.13) !important;
+      .bottom-tab-icon {
+        color: $active-color !important;
+        filter: drop-shadow(0 0 6px $active-color);
+      }
+    }
+    &.crafting {
+      $active-color: map.get($colors, orange);
+      color: $active-color !important;
+      background: rgba($active-color, 0.13) !important;
+      .bottom-tab-icon {
+        color: $active-color !important;
+        filter: drop-shadow(0 0 6px $active-color);
+      }
+    }
   }
   .bottom-tab-icon {
     color: map.get($colors, text-light) !important;
