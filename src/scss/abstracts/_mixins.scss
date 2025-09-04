@@ -4,6 +4,11 @@
 
 // Common mixins für die gesamte Anwendung
 
+// Flexibles Box-Shadow-Mixin für Komponenten
+@mixin box-shadow($x, $y, $blur, $color) {
+  box-shadow: #{$x} #{$y} #{$blur} #{$color};
+}
+
 // Flex centering
 @mixin flex-center {
   display: flex;

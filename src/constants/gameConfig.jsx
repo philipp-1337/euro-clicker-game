@@ -25,7 +25,7 @@ export const gameConfig = {
       colorClass: "green",
       managerCost: 1000,
       label: "Revenue",
-      icon: "Euro",
+      icon: "Banknote",
     },
     {
       baseValue: 30,

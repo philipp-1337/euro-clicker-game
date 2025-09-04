@@ -1,9 +1,9 @@
-import { DollarSign, Star, Hammer, Crown } from 'lucide-react';
+import { Hammer, Landmark, Euro, Star } from 'lucide-react';
 
 const tabs = [
-	{ key: 'basic', label: 'Basic', icon: <DollarSign size={26} /> },
-	{ key: 'premium', label: 'Premium', icon: <Crown size={26} /> },
-	{ key: 'investments', label: 'Investments', icon: <Star size={26} /> },
+	{ key: 'basic', label: 'Basic', icon: <Euro size={26} /> },
+	{ key: 'premium', label: 'Premium', icon: <Star size={26} /> },
+	{ key: 'investments', label: 'Investments', icon: <Landmark size={26} /> },
 	{ key: 'crafting', label: 'Crafting', icon: <Hammer size={26} /> },
 ];
 
