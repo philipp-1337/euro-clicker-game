@@ -1,16 +1,20 @@
+@use "sass:map";
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+
 .bottom-tab-menu {
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100vw;
   height: 64px;
-  background: rgba(255,255,255,0.97);
-  border-top: 2px solid #e0e0e0;
+  background: map.get($colors, white);
+  border-top: 2px solid map.get($colors, light-gray);
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 1001;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+  @include box-shadow(0, -2px, 16px, rgba(0,0,0,0.08)); // Fallback falls kein Mixin, sonst map.get($colors, transparent-black-30)
   backdrop-filter: blur(8px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -26,7 +30,7 @@
   border: none;
   outline: none;
   cursor: pointer;
-  color: #888;
+  color: map.get($colors, gray);
   font-family: inherit;
   font-size: 13px;
   transition: color 0.18s, background 0.18s;
@@ -35,13 +39,13 @@
 }
 
 .bottom-tab-btn.active {
-  color: #1976d2;
-  background: rgba(25, 118, 210, 0.07);
+  color: map.get($colors, blue);
+  background: map.get($colors, transparent-blue-07, rgba(52, 152, 219, 0.07)); // Fallback falls nicht vorhanden
 }
 
 .bottom-tab-btn.active .bottom-tab-icon {
-  color: #1976d2;
-  filter: drop-shadow(0 0 4px #90caf9);
+  color: map.get($colors, blue);
+  filter: drop-shadow(0 0 4px map.get($colors, lighter-blue));
 }
 
 .bottom-tab-icon {
@@ -58,7 +62,7 @@
   margin-top: 2px;
   letter-spacing: 0.01em;
   font-weight: 500;
-  text-shadow: 0 1px 0 #fff;
+  text-shadow: 0 1px 0 map.get($colors, white);
 }
 
 @media (max-width: 600px) {
@@ -79,29 +83,29 @@
 // DARK MODE SUPPORT
 body.dark {
   .bottom-tab-menu {
-    background: #181c22 !important;
-    border-top: 2px solid #222 !important;
-    box-shadow: 0 -2px 16px rgba(0,0,0,0.32);
+    background: map.get($backgrounds, darker) !important;
+    border-top: 2px solid map.get($backgrounds, dark) !important;
+    @include box-shadow("0", "-2px", "16px", map.get($colors, transparent-black-30, "rgba(0,0,0,0.32)"));
     backdrop-filter: blur(8px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   .bottom-tab-btn {
-    color: #b0b8c1 !important;
+    color: map.get($colors, text-light) !important;
     background: none !important;
   }
   .bottom-tab-btn.active {
-    color: #90caf9 !important;
-    background: rgba(25, 118, 210, 0.13) !important;
+    color: map.get($colors, blue) !important;
+    background: map.get($colors, transparent-blue-13, rgba(52, 152, 219, 0.13)) !important;
   }
   .bottom-tab-btn.active .bottom-tab-icon {
-    color: #90caf9 !important;
-    filter: drop-shadow(0 0 6px #1976d2);
+    color: map.get($colors, blue) !important;
+    filter: drop-shadow(0 0 6px map.get($colors, blue));
   }
   .bottom-tab-icon {
-    color: #b0b8c1 !important;
+    color: map.get($colors, text-light) !important;
   }
   .bottom-tab-label {
-    color: #b0b8c1 !important;
+    color: map.get($colors, text-light) !important;
     text-shadow: none;
   }
 }
