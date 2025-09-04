@@ -9,7 +9,7 @@ export const usePwaPrompt = () => {
     const handleBeforeInstallPrompt = (event) => {
       event.preventDefault();
       setInstallPrompt(event);
-      setTimeout(() => setShowInstallPrompt(true), 3000);
+            setTimeout(() => setShowInstallPrompt(true), 5000);
     };
 
     const userAgent = window.navigator.userAgent;
@@ -18,7 +18,7 @@ export const usePwaPrompt = () => {
 
     if (isIosDevice && !isStandalone) {
       setIsIos(true);
-      setTimeout(() => setShowInstallPrompt(true), 3000);
+            setTimeout(() => setShowInstallPrompt(true), 5000);
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
