@@ -13,7 +13,9 @@ export default function FloatingClickButton({
   return (
     <div
       className={`floating-click-button-container${centerMode ? ' center-mode' : ''}`}
-      style={{ bottom: `${20 + bottomOffset}px` }}
+      style={{
+        bottom: `calc(${20 + bottomOffset}px + env(safe-area-inset-bottom, 0px))`
+      }}
     >
       <div style={{ position: 'relative', display: 'inline-block', width: '100%', height: '100%' }}> {/* For positioning amounts */}
         <button
