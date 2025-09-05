@@ -15,13 +15,7 @@
   z-index: 1500;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  padding-bottom: calc(92px + env(safe-area-inset-bottom)); // Safe Area + BottomTabMenu Höhe
 
-  @media (max-width: 600px) {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
-  }
-  
   &.open {
     transform: translateX(0);
   }
@@ -43,6 +37,7 @@
   .sidemenu-content {
     flex: 1;
     padding: 16px;
+    overflow-y: auto;
   }
   
   .sidemenu-item {
