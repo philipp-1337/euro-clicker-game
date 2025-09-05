@@ -28,6 +28,7 @@ export default function BasicUpgrades({
   buyQuantity
 }) {
   // Defensive: Nur rendern, wenn alle relevanten Arrays existieren und synchron sind
+  const { playSound } = useSoundEffects(soundEffectsEnabled);
   const arraysReady =
     Array.isArray(buttons) &&
     Array.isArray(valueUpgradeLevels) &&
@@ -45,8 +46,6 @@ export default function BasicUpgrades({
   if (!arraysReady) {
     return null; // Alternativ: Lade-Indikator
   }
-
-  const { playSound } = useSoundEffects(soundEffectsEnabled);
   const valueUpgradePercentage = calculateValueUpgradePercentage(gameConfig.upgrades.valueMultiplierFactor);
   const cooldownUpgradePercentage = calculateCooldownUpgradePercentage(gameConfig.upgrades.cooldownReductionFactor);
 

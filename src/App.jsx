@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
-import VersionDisplay from './components/VersionDisplay/VersionDisplay';
 import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
