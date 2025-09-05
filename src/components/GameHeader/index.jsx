@@ -137,7 +137,7 @@ export default function GameHeader(props) {
       </div>
       <div id="money-display" className="money-display">
         {formatNumber(money)} €
-        {displayTotalMoneyPerSecond > 0 && (
+        {displayTotalMoneyPerSecond > -1 && (
           <span className="per-second">
             +{formatNumber(displayTotalMoneyPerSecond)} €/s
           </span>

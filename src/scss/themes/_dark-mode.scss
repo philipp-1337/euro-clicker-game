@@ -1,6 +1,7 @@
 @use "sass:map";
 @use "sass:list";
 @use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
 @use "../abstracts/functions" as *;
 @use "../abstracts/variables" as *;
 
@@ -68,12 +69,7 @@ body.dark {
 
   // Prestige Modal dark mode
   .prestige-summary {
-    background: map.get($backgrounds, dark) !important;
-    border-top: 2px solid map.get($colors, prestige-dark) !important;
-    color: map.get($colors, text-light) !important;
-  }
-  .prestige-text {
-    color: map.get($colors, prestige) !important;
+    @include card-base(map.get($colors, prestige), true);
   }
 
   // UI elements in dark mode

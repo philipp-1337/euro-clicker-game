@@ -5,10 +5,10 @@
 // Tab-spezifische Farben als Map
 $tab-colors: (
   default: map.get($colors, blue),
-  basic: #2ecc71,
-  premium: map.get($colors, prestige),
-  investments: #9b59b6,
-  crafting: map.get($colors, orange)
+  basic: map.get($colors, green),
+  premium: map.get($colors, yellow),
+  investments: map.get($colors, red),
+  crafting: map.get($colors, purple)
 );
 
 // Mixin für aktive Tab-Styles (Liquid Glass Style)

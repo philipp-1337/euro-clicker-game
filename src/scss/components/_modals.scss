@@ -319,10 +319,7 @@
   }
 
   .prestige-summary {
-    background: map.get($backgrounds, off-white);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(230, 194, 0, 0.04);
-    border-top: 2px solid map.get($colors, prestige);
+    @include card-base(map.get($colors, prestige), false);
     padding: 18px 16px 15px 16px;
     margin-bottom: 18px;
     text-align: left;
