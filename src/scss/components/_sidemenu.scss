@@ -2,19 +2,20 @@
 @use "../abstracts/colors" as *;
 @use "../abstracts/mixins" as *;
 
+// Sidemenu Styles
 .sidemenu {
   background-color: map.get($colors, white);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  height: 100dvh;
-  height: 100vh;
-  left: 0;
   position: fixed;
   top: 0;
+  left: 0;
+  width: 265px;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
-  width: 265px;
   z-index: 1500;
   
   @supports (-webkit-touch-callout: none) {
@@ -25,7 +26,7 @@
     transform: translateX(0);
   }
   
-  .sidemenu-header {
+  &-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -39,13 +40,13 @@
     }
   }
   
-  .sidemenu-content {
+  &-content {
     flex: 1;
     padding: 16px;
     overflow-y: auto;
   }
   
-  .sidemenu-item {
+  &-item {
     display: flex;
     align-items: center;
     padding: 12px 16px;
@@ -62,14 +63,14 @@
       background-color: rgba(map.get($colors, primary), 0.1);
       color: map.get($colors, primary);
     }
-    
-    .sidemenu-icon {
-      margin-right: 12px;
-    }
   }
   
-  .sidemenu-footer {
-    padding: 16px;
+  &-icon {
+    margin-right: 12px;
+  }
+  
+  &-footer {
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
     border-top: 1px solid #eee;
     font-size: 0.8rem;
     text-align: center;
@@ -77,6 +78,7 @@
   }
 }
 
+// Sidemenu Backdrop
 .sidemenu-backdrop {
   position: fixed;
   top: 0;
@@ -95,65 +97,143 @@
   }
 }
 
+// Menu Toggle Button
 .menu-toggle-button {
   @include button-base;
-  color: (map.get($colors, text-dark));
   position: fixed;
   top: 16px;
   left: 16px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: map.get($colors, white);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.2s;
+  
+  // Glass Effect Background
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.25) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  
+  // Icon Color - SCHWARZ im Light Mode
+  color: map.get($colors, text-dark);
+  
+  // Smooth Transitions
+  transition: 
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background 0.3s ease,
+    backdrop-filter 0.3s ease;
+
+  // Icon Styling
+  svg, .icon {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    opacity: 0.9;
+  }
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.08) translateY(-1px);
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.35) 0%, 
+      rgba(255, 255, 255, 0.15) 50%, 
+      rgba(255, 255, 255, 0.08) 100%);
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+    box-shadow: 
+      0 12px 48px rgba(0, 0, 0, 0.15),
+      0 4px 24px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.15);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.96) translateY(0px);
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.2) 0%, 
+      rgba(255, 255, 255, 0.08) 50%, 
+      rgba(255, 255, 255, 0.03) 100%);
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      0 1px 8px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  // Optional floating animation
+  animation: float 6s ease-in-out infinite;
+}
+
+// Floating Animation
+@keyframes float {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-2px) scale(1.02); }
+}
+
+// Fallback for browsers without backdrop-filter support
+@supports not (backdrop-filter: blur(20px)) {
+  .menu-toggle-button {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 2px 16px rgba(0, 0, 0, 0.04);
   }
 }
 
-// Dark Mode Support
+// Dark Mode Styles
 body.dark {
   .sidemenu {
-    background-color:  map.get($backgrounds, dark);
+    background-color: map.get($backgrounds, dark);
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
 
-    .sidemenu-header {
+    &-header {
       border-bottom-color: map.get($colors, primary);
-
       h3 {
         color: map.get($colors, text-light);
       }
     }
 
-    .sidemenu-item {
+    &-item {
       &:hover {
-        background-color:  map.get($backgrounds, darker);
+        background-color: map.get($backgrounds, darker);
       }
-
       &.active {
         background-color: rgba(map.get($colors, primary), 0.2);
       }
     }
 
-    .sidemenu-footer {
+    &-footer {
       border-top-color: map.get($colors, primary);
       color: map.get($colors, secondary);
     }
   }
 
+  // Menu Toggle Button - WEIß im Dark Mode
   .menu-toggle-button {
-    background-color: #333;
-    color: #eee;
+    color: map.get($colors, white);
+    
+    svg, .icon {
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    }
+  }
+  
+  // Fallback für Dark Mode ohne backdrop-filter
+  @supports not (backdrop-filter: blur(20px)) {
+    .menu-toggle-button {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        0 2px 16px rgba(0, 0, 0, 0.1);
+    }
   }
 }
