@@ -23,7 +23,7 @@ $tab-colors: (
   }
   
   .bottom-tab-label {
-    font-weight: 600;
+    // font-weight: 600;
     text-shadow: 0 0 8px rgba($color, 0.3);
   }
 }
@@ -34,7 +34,7 @@ $tab-colors: (
   bottom: 20px;
   transform: translateX(-50%);
   width: clamp(280px, 85vw, 400px);
-  height: 72px;
+  height: 64px;
   
   // Liquid Glass Effekt
   background: rgba(255, 255, 255, 0.08);
@@ -60,8 +60,8 @@ $tab-colors: (
 
   @media (max-width: 600px) {
     width: clamp(260px, 90vw, 350px);
-    height: 64px;
-    bottom: 16px;
+    height: 48px;
+    bottom: 8px;
     padding: 6px 12px;
   }
 }
@@ -186,10 +186,10 @@ body.dark {
   }
 
   .bottom-tab-btn {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(180, 180, 180, 0.9);
     
     &:hover:not(.active) {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(180, 180, 180, 0.9);
     }
     
     &::before {
