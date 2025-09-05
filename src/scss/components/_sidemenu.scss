@@ -3,18 +3,23 @@
 @use "../abstracts/mixins" as *;
 
 .sidemenu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 265px;
   background-color: map.get($colors, white);
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  z-index: 1500;
   display: flex;
   flex-direction: column;
+  height: 100dvh;
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  width: 265px;
+  z-index: 1500;
+  
+  @supports (-webkit-touch-callout: none) {
+    height: -webkit-fill-available;
+  }
 
   &.open {
     transform: translateX(0);
