@@ -1,37 +1,82 @@
 @use "sass:map";
 
-// Farb-Maps für die gesamte Anwendung
+// ============================================
+// COLOR SYSTEM - Streamlined & Organized
+// ============================================
 
-// Hauptfarben
-$colors: (
+// Brand & Primary Colors
+$primary-colors: (
   primary: #2c3e50,
   secondary: #999,
   accent: #5f9ea0,
-  warning: #ffcc00,
-  text-dark: #555,
-  text-light: #e1e6eb,
-  gray: #7f8c8d,
-  light-gray: #beccd9,
-  lighter-blue: #e0f7f7,
-  blue: #3498db,
-  dark-blue: #2980b9,
-  white: #fff,
-  red: #ff7675,
-  dark-red: #c0392b,
-  orange: #f39c12,
-  dark-hue: #34495e,
-  prestige: #e6c200, // Gold for prestige
-  prestige-dark: #bfa100, // Darker gold for text
+  prestige: #e6c200,
+  prestige-dark: #bfa100,
 );
 
-// Hintergrundfarben
+// UI Colors (Grays & Neutrals)
+$ui-colors: (
+  white: #fff,
+  light-gray: #beccd9,
+  light: #f5f5f5,
+  gray: #7f8c8d,
+  text-dark: #555,
+  text-light: #e1e6eb,
+  dark-hue: #34495e,
+);
+
+// Semantic Colors (Status & Actions)
+$semantic-colors: (
+  blue: #3498db,
+  dark-blue: #2980b9,
+  lighter-blue: #e0f7f7,
+  green: #2ecc71,
+  green-dark: #27ae60,
+  orange: #f39c12,
+  red: #e74c3c,
+  dark-red: #c0392b,
+  purple: #9b59b6,
+  purple-dark: #8e44ad,
+  yellow: #f1c61d,
+  yellow-dark: #deb71c,
+  warning: #ffcc00,
+);
+
+// Tab Colors (für Bottom Tab Menu)
+$tab-colors: (
+  default: map.get($semantic-colors, blue),
+  basic: map.get($semantic-colors, green),
+  premium: map.get($primary-colors, prestige),
+  investments: map.get($semantic-colors, purple),
+  crafting: map.get($semantic-colors, orange),
+);
+
+// Consolidated Colors Map
+$colors: map.merge(
+  map.merge($primary-colors, $ui-colors),
+  map.merge($semantic-colors, (
+    tab-colors: $tab-colors
+  ))
+);
+
+// Background System
 $backgrounds: (
+  // Dark Theme
   dark: #20242a,
   darker: #181c20,
   off-dark: #23272e,
+  
+  // Light Theme
   light: #f5f5f5,
-  lighter-blue: #e0f7f7,
   off-white: #f8f9fa,
+  lighter-blue: map.get($semantic-colors, lighter-blue),
+  
+  // Glass/Transparency Effects
+  glass-light: rgba(255, 255, 255, 0.08),
+  glass-dark: rgba(0, 0, 0, 0.15),
+  glass-border-light: rgba(255, 255, 255, 0.18),
+  glass-border-dark: rgba(255, 255, 255, 0.1),
+  
+  // Legacy Transparency (deprecated - use glass- variants)
   transparent-black-30: rgba(0, 0, 0, 0.3),
   transparent-black-90: rgba(0, 0, 0, 0.9),
   transparent-white-10: rgba(255, 255, 255, 0.1),
@@ -39,26 +84,62 @@ $backgrounds: (
   transparent-white-90: rgba(255, 255, 255, 0.9),
 );
 
-// Button-Farbkombinationen
+// Button Color System (Semantic Pairs)
 $button-colors: (
   "blue": (
-    map.get($colors, blue),
-    map.get($colors, dark-blue),
+    base: map.get($semantic-colors, blue),
+    hover: map.get($semantic-colors, dark-blue)
   ),
   "green": (
-    #2ecc71,
-    #27ae60,
+    base: map.get($semantic-colors, green),
+    hover: map.get($semantic-colors, green-dark)
   ),
   "yellow": (
-    #f1c61d,
-    #deb71c,
+    base: map.get($semantic-colors, yellow),
+    hover: map.get($semantic-colors, yellow-dark)
   ),
   "red": (
-    #e74c3c,
-    #c0392b,
+    base: map.get($semantic-colors, red),
+    hover: map.get($semantic-colors, dark-red)
   ),
   "purple": (
-    #9b59b6,
-    #8e44ad,
+    base: map.get($semantic-colors, purple),
+    hover: map.get($semantic-colors, purple-dark)
+  ),
+  "prestige": (
+    base: map.get($primary-colors, prestige),
+    hover: map.get($primary-colors, prestige-dark)
   ),
 );
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+// Get color from any map
+@function color($key, $variant: null) {
+  @if $variant {
+    @return map.get($colors, $key, $variant);
+  }
+  @return map.get($colors, $key);
+}
+
+// Get background color
+@function bg($key) {
+  @return map.get($backgrounds, $key);
+}
+
+// Get button color pair
+@function btn-color($key, $state: base) {
+  @return map.get($button-colors, $key, $state);
+}
+
+// Get tab color
+@function tab-color($key) {
+  @return map.get($tab-colors, $key);
+}
+
+// ============================================
+// EXPORT MAPS (for backwards compatibility)
+// ============================================
+// Diese können nach und nach durch die Utility Functions ersetzt werden

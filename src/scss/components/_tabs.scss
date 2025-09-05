@@ -109,10 +109,6 @@
   margin-bottom: 15px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #3498db;
-
-  &.experimental {
-    border-left: 4px solid #e74c3c;
-  }
 }
 
 .investment-buttons-group {
@@ -131,25 +127,6 @@
 // .investment-buttons-group .premium-upgrade-button {
 //   flex-shrink: 0;
 // }
-
-.experimental-label {
-  color: map.get($colors, red);
-  font-weight: bold;
-  margin-top: 8px;
-  text-align: center;
-}
-
-.premium-upgrade-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-
-  h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    color: map.get($colors, primary);
-  }
-}
 
 .premium-icon {
   color: map.get($colors, orange);

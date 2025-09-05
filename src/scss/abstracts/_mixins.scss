@@ -39,11 +39,20 @@
 }
 
 // Basis für Karten-Elemente
-@mixin card-base {
-  background-color: map.get($backgrounds, off-white);
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+@mixin card-base($border-color: map.get($colors, blue), $dark-mode: false) {
+  @if $dark-mode {
+    // Dark Mode Styles
+    background-color: map.get($backgrounds, dark); // Füge dark-card zu deiner $backgrounds map hinzu
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid $border-color;
+    border-radius: 10px;
+  } @else {
+    // Light Mode Styles (Standard)
+    background-color: map.get($backgrounds, off-white);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid $border-color;
+    border-radius: 10px;
+  }
 }
 
 // Basis für Modals

@@ -6,12 +6,22 @@
 
 // Displays
 .money-display {
-  @include card-base;
+  background-color: map.get($backgrounds, off-white);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: map.get($colors, primary);
   font-size: 2.5rem;
   font-weight: bold;
-  text-align: center;
   margin-bottom: 30px;
-  color: map.get($colors, primary);
+  padding: 15px;
+  text-align: center;
+}
+
+body.dark {
+  .money-display {
+    background-color: map.get($backgrounds, dark);
+    color: map.get($colors, light);
+  }
 }
 
 .playtime-display {
