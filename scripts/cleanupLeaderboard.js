@@ -1,4 +1,4 @@
-const admin = require("firebase-admin");
+import admin from "firebase-admin";
 
 // Konfiguration
 const BATCH_SIZE = 500; // Firestore Batch-Limit
