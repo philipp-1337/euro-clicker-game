@@ -1,4 +1,4 @@
-const admin = require("firebase-admin");
+import admin from "firebase-admin";
 
 // Konfiguration
 const RETENTION_DAYS = parseInt(process.env.RETENTION_DAYS || '7', 10);
