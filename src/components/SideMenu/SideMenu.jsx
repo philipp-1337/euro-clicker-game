@@ -7,10 +7,11 @@ import {
   Award as AchievementsIcon,  
   Info as InfoIcon,
   Bell as NotificationIcon,
-  CrownIcon,
+  Crown as CrownIcon,
   Zap as PrestigeSideMenuIcon, // Icon für Prestige
 } from 'lucide-react';
 import AboutModal from '../AboutModal/AboutModal';
+import MenuItem from '../NotificationCenter/MenuItem';
 import NotificationCenter from '../NotificationCenter/NotificationCenter';
 import { useModal } from '../../hooks/useModal';
 import VersionDisplay from '../VersionDisplay/VersionDisplay';
@@ -62,116 +63,48 @@ export default function SideMenu({
         </div>
 
         <div className="sidemenu-content">
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          <MenuItem
+            icon={HomeIcon}
+            label="Home"
             onClick={() => setIsOpen(false)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') setIsOpen(false);
-            }}
-            aria-label="Home"
-          >
-            <HomeIcon size={20} className="sidemenu-icon" />
-            <span>Home</span>
-          </div>
-
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          />
+          <MenuItem
+            icon={SettingsIcon}
+            label="Settings"
             onClick={() => handleMenuItemClick(onOpenSettings)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenSettings);
-            }}
-            aria-label="Settings"
-          >
-            <SettingsIcon size={20} className="sidemenu-icon" />
-            <span>Settings</span>
-          </div>
-
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          />
+          <MenuItem
+            icon={StatsIcon}
+            label="Statistics"
             onClick={() => handleMenuItemClick(onOpenStatistics)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenStatistics);
-            }}
-            aria-label="Statistics"
-          >
-            <StatsIcon size={20} className="sidemenu-icon" />
-            <span>Statistics</span>
-          </div>
-
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          />
+          <MenuItem
+            icon={CrownIcon}
+            label="Leaderboard"
             onClick={() => handleMenuItemClick(onToggleLeaderboard)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onToggleLeaderboard);
-            }}
-            aria-label="Leaderboard"
-          >
-            <CrownIcon size={20} className="sidemenu-icon" />
-            <span>Leaderboard</span>
-          </div>
-
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          />
+          <MenuItem
+            icon={AchievementsIcon}
+            label="Achievements"
             onClick={() => handleMenuItemClick(onOpenAchievements)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenAchievements);
-            }}
-            aria-label="Achievements"
-          >
-            <AchievementsIcon size={20} className="sidemenu-icon" />
-            <span>Achievements</span>
-          </div>
-
+          />
           {showPrestigeOption && (
-            <div
-              className="sidemenu-item"
-              role="button"
-              tabIndex={0}
+            <MenuItem
+              icon={PrestigeSideMenuIcon}
+              label="Prestige"
               onClick={() => handleMenuItemClick(onOpenPrestige)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(onOpenPrestige);
-              }}
-              aria-label="Prestige"
-            >
-              <PrestigeSideMenuIcon size={20} className="sidemenu-icon" />
-              <span>Prestige</span>
-            </div>
+            />
           )}
-          <div
-            className="sidemenu-item"
-            role="button"
-            tabIndex={0}
+          <MenuItem
+            icon={InfoIcon}
+            label="About"
             onClick={() => handleMenuItemClick(() => setShowAbout(true))}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(() => setShowAbout(true));
-            }}
-            aria-label="About"
-          >
-            <InfoIcon size={20} className="sidemenu-icon" />
-            <span>About</span>
-          </div>
-          <div
-            className="sidemenu-item"
-            tabIndex={0}
+          />
+          <MenuItem
+            icon={NotificationIcon}
+            label="Benachrichtigungen"
             onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(() => setShowNotifications(true));
-            }}
-            aria-label="Benachrichtigungen"
-          >
-            <NotificationIcon size={20} className="sidemenu-icon" />
-            <span>Benachrichtigungen</span>
-          </div>
+          />
         </div>
 
         <div className="sidemenu-footer">
