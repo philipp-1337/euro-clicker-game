@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
@@ -8,7 +8,7 @@ import useNotificationReads from "../../hooks/useNotificationReads";
 const NotificationCenter = ({ show, onClose }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { seenIds, markAllAsSeen, setSeenIds } = useNotificationReads();
+  const { markAllAsSeen, setSeenIds } = useNotificationReads();
 
   useEffect(() => {
     if (!show) return;
@@ -38,7 +38,7 @@ const NotificationCenter = ({ show, onClose }) => {
         setSeenIds(allIds); // Optimistisches Update
       }
     }
-  }, [show, notifications, markAllAsSeen]);
+  }, [show, notifications, markAllAsSeen, setSeenIds]);
 
   return (
     <Modal show={show} onClose={onClose} title="Benachrichtigungen">

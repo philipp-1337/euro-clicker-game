@@ -1,4 +1,3 @@
-import React, { useRef, useEffect } from 'react';
 import { X as CloseIcon } from 'lucide-react';
 import { useModal } from '../../hooks/useModal';
 

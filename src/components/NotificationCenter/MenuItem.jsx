@@ -1,5 +1,3 @@
-import React from 'react';
-
 const MenuItem = ({ icon: Icon, label, onClick, ariaLabel, children }) => {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
