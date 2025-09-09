@@ -18,8 +18,6 @@ import VersionDisplay from '../VersionDisplay/VersionDisplay';
 import useNotifications from '../../hooks/useNotifications';
 import useNotificationReads from '../../hooks/useNotificationReads';
 import NotificationBadge from '../NotificationCenter/NotificationBadge';
-import { collection, query, orderBy, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase'; // Importiere deine Firebase-Konfiguration
 
 export default function SideMenu({ 
   isOpen,

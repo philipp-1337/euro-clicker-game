@@ -1,4 +1,3 @@
-import React from 'react';
 import './NotificationBadge.scss';
 
 const NotificationBadge = ({ count }) => {
