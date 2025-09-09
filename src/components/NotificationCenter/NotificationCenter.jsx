@@ -3,10 +3,12 @@ import Modal from "./Modal";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
 import "./NotificationCenter.scss";
+import useNotificationReads from "../../hooks/useNotificationReads";
 
 const NotificationCenter = ({ show, onClose }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { seenIds, markAllAsSeen, setSeenIds } = useNotificationReads();
 
   useEffect(() => {
     if (!show) return;
@@ -26,6 +28,17 @@ const NotificationCenter = ({ show, onClose }) => {
     };
     fetchNotifications();
   }, [show]);
+
+  useEffect(() => {
+    if (show && notifications.length > 0) {
+      // Markiere alle geladenen Notifications als gesehen
+      const allIds = notifications.map((n) => n.id);
+      if (allIds.length > 0) {
+        markAllAsSeen(allIds);
+        setSeenIds(allIds); // Optimistisches Update
+      }
+    }
+  }, [show, notifications, markAllAsSeen]);
 
   return (
     <Modal show={show} onClose={onClose} title="Benachrichtigungen">

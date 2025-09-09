@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   X as CloseIcon,
   Home as HomeIcon,
@@ -15,6 +15,11 @@ import MenuItem from '../NotificationCenter/MenuItem';
 import NotificationCenter from '../NotificationCenter/NotificationCenter';
 import { useModal } from '../../hooks/useModal';
 import VersionDisplay from '../VersionDisplay/VersionDisplay';
+import useNotifications from '../../hooks/useNotifications';
+import useNotificationReads from '../../hooks/useNotificationReads';
+import NotificationBadge from '../NotificationCenter/NotificationBadge';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase'; // Importiere deine Firebase-Konfiguration
 
 export default function SideMenu({ 
   isOpen,
@@ -31,6 +36,29 @@ export default function SideMenu({
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
+  const { notifications, loading: loadingNotifications } = useNotifications();
+  const { seenIds, markAllAsSeen, loading: loadingSeen, setSeenIds, reloadSeenIds } = useNotificationReads();
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  // notificationCount nur beim Öffnen des Sidemenu berechnen
+  useEffect(() => {
+    if (isOpen && !loadingNotifications && !loadingSeen) {
+      const allIds = notifications.map(n => n.id);
+      const newCount = allIds.filter(id => !seenIds.includes(id)).length;
+      console.log('[SideMenu] notificationCount:', newCount, 'allIds:', allIds, 'seenIds:', seenIds);
+      setNotificationCount(newCount);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  // Lade die gesehenen IDs nur nach Schließen des NotificationCenters neu
+  useEffect(() => {
+    if (!showNotifications) {
+      setTimeout(() => {
+        reloadSeenIds(); // Firestore braucht etwas Zeit, dann neu laden
+      }, 350);
+    }
+  }, [showNotifications, reloadSeenIds]);
 
   const handleMenuItemClick = (action) => {
     if (action) {
@@ -104,7 +132,13 @@ export default function SideMenu({
             icon={NotificationIcon}
             label="Benachrichtigungen"
             onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
-          />
+            ariaLabel="Benachrichtigungen"
+          >
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <NotificationIcon size={20} className="sidemenu-icon" />
+              {notificationCount > 0 && <NotificationBadge count={notificationCount} />}
+            </div>
+          </MenuItem>
         </div>
 
         <div className="sidemenu-footer">
@@ -113,7 +147,17 @@ export default function SideMenu({
       </div>
       {/* About Modal */}
       <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
-      <NotificationCenter show={showNotifications} onClose={() => setShowNotifications(false)} />
+      <NotificationCenter
+        show={showNotifications}
+        onClose={() => {
+          setShowNotifications(false);
+          setTimeout(() => reloadSeenIds(), 350); // Firestore braucht etwas Zeit
+        }}
+        notifications={notifications}
+        seenIds={seenIds}
+        setSeenIds={setSeenIds}
+        markAllAsSeen={markAllAsSeen}
+      />
     </>
   );
 }

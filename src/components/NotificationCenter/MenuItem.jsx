@@ -1,6 +1,6 @@
 import React from 'react';
 
-const MenuItem = ({ icon: Icon, label, onClick, ariaLabel }) => {
+const MenuItem = ({ icon: Icon, label, onClick, ariaLabel, children }) => {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       onClick();
@@ -16,7 +16,7 @@ const MenuItem = ({ icon: Icon, label, onClick, ariaLabel }) => {
       onKeyDown={handleKeyDown}
       aria-label={ariaLabel || label}
     >
-      <Icon size={20} className="sidemenu-icon" />
+      {children ? children : <Icon size={20} className="sidemenu-icon" />}
       <span>{label}</span>
     </div>
   );
