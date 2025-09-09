@@ -113,7 +113,7 @@ export default function SideMenu({
       </div>
       {/* About Modal */}
       <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
-  <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
+      <NotificationCenter show={showNotifications} onClose={() => setShowNotifications(false)} />
     </>
   );
 }
