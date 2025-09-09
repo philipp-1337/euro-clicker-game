@@ -32,5 +32,10 @@ service cloud.firestore {
           request.resource.data.flagged is bool &&
           (!request.resource.data.flagged || (request.resource.data.flaggedReason is string && request.resource.data.flaggedReason.size() > 0));
     }
+    // Notifications
+    match /notifications/{id} {
+      allow read: if true; // Jeder darf Benachrichtigungen lesen
+      // allow write: if ... // Optional, falls Schreiben erlaubt sein soll
+    }
   }
 }
