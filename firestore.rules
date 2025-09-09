@@ -34,7 +34,7 @@ service cloud.firestore {
     }
     // Notifications
     match /notifications/{id} {
-      allow read: if true; // Jeder darf Benachrichtigungen lesen
+      allow read: if true; // Jeder darf Notification lesen
       // allow write: if ... // Optional, falls Schreiben erlaubt sein soll
     }
     // Notification Reads

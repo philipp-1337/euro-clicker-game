@@ -128,9 +128,9 @@ export default function SideMenu({
           />
           <MenuItem
             icon={NotificationIcon}
-            label="Benachrichtigungen"
+            label="Notification"
             onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
-            ariaLabel="Benachrichtigungen"
+            ariaLabel="Notification"
           >
             <div style={{ position: 'relative', display: 'inline-block' }}>
               <NotificationIcon size={20} className="sidemenu-icon" />
