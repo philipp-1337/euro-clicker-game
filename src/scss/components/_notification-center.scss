@@ -84,6 +84,8 @@ body.dark {
 
     &.unread {
       background: bg(darker);
+      border-left: 4px solid map.get($semantic-colors, orange);
+
     }
   }
 
