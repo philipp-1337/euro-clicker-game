@@ -18,18 +18,19 @@
 @use 'layout/sections';
 
 // Components
-@use 'components/buttons';
-@use 'components/modals';
-@use 'components/tabs';
 @use 'components/achievements';
-@use 'components/leaderboard';
-@use 'components/displays';
-@use 'components/money-banner';
-@use 'components/statistics-modal';
-@use 'components/sidemenu';
-@use 'components/gameheader';
 @use 'components/autobuyer';
 @use 'components/bottom-tab-menu';
+@use 'components/buttons';
+@use 'components/displays';
+@use 'components/gameheader';
+@use 'components/leaderboard';
+@use 'components/modals';
+@use 'components/money-banner';
+@use 'components/notification-center';
+@use 'components/sidemenu';
+@use 'components/statistics-modal';
+@use 'components/tabs';
 
 // Themes
 @use 'themes/dark-mode';

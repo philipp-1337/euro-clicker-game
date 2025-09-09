@@ -39,6 +39,7 @@ export default function GameHeader(props) {
     seenIds,
     loading: loadingSeen,
     reloadSeenIds,
+    markAllAsSeen,
   } = useNotificationReads();
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -388,9 +389,13 @@ export default function GameHeader(props) {
         onOpenStatistics={() => setShowStatisticsModal(true)}
         showPrestigeOption={showPrestigeButtonInHeader}
         onOpenPrestige={() => setShowPrestigeModal(true)}
-        reloadSeenIds={reloadSeenIds}
         showNotifications={showNotifications}
         setShowNotifications={setShowNotifications}
+        notifications={notifications}
+        loadingNotifications={loadingNotifications}
+        seenIds={seenIds}
+        loadingSeen={loadingSeen}
+        markAllAsSeen={markAllAsSeen}
       />
     </>
   );

@@ -14,46 +14,39 @@ function getOrCreateInstanceUuid() {
 }
 
 export default function useNotificationReads() {
-  const reloadSeenIds = async () => {
-    const docRef = doc(db, 'notificationReads', instanceUuid);
-    const snap = await getDoc(docRef);
-    if (snap.exists()) {
-      setSeenIds(snap.data().seen || []);
-    } else {
-      setSeenIds([]);
-    }
-  };
   const instanceUuid = getOrCreateInstanceUuid();
   const [seenIds, setSeenIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchSeen = useCallback(async () => {
+    if (!instanceUuid) {
+      setSeenIds([]);
+      return;
+    }
+    try {
+      const docRef = doc(db, 'notificationReads', instanceUuid);
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        setSeenIds(snap.data().seen || []);
+      } else {
+        setSeenIds([]);
+      }
+    } catch (error) {
+      console.error('[useNotificationReads] Error fetching seen notifications:', error);
+      setSeenIds([]);
+    }
+  }, [instanceUuid]);
+
   // Lade die gesehenen Notification-IDs aus Firestore
   useEffect(() => {
-    if (!instanceUuid) return;
     setLoading(true);
-    const fetchSeen = async () => {
-      try {
-        const docRef = doc(db, 'notificationReads', instanceUuid);
-        const snap = await getDoc(docRef);
-        if (snap.exists()) {
-          setSeenIds(snap.data().seen || []);
-        } else {
-          setSeenIds([]);
-        }
-      } catch {
-        setSeenIds([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchSeen();
-  }, [instanceUuid]);
+    fetchSeen().finally(() => setLoading(false));
+  }, [fetchSeen]);
 
   // Schreibe die gesehenen IDs in Firestore
   const markAllAsSeen = useCallback(async (ids) => {
     if (!instanceUuid) return;
     try {
-      console.log('[NotificationReads] Schreibe gesehen:', ids, 'für', instanceUuid);
       await setDoc(doc(db, 'notificationReads', instanceUuid), {
         seen: ids,
         lastSeenAt: Date.now(), // Timestamp für Cleanup
@@ -64,5 +57,5 @@ export default function useNotificationReads() {
     }
   }, [instanceUuid]);
 
-    return { seenIds, markAllAsSeen, loading, setSeenIds, reloadSeenIds };
+    return { seenIds, markAllAsSeen, loading, setSeenIds, reloadSeenIds: fetchSeen };
 }

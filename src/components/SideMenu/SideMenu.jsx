@@ -26,17 +26,19 @@ export default function SideMenu({
   onOpenAchievements,
   onOpenStatistics,
   showPrestigeOption, // Neue Prop für Sichtbarkeit
-  onOpenPrestige,     // Neue Prop zum Öffnen des Prestige-Modals
-  reloadSeenIds,      // Neu: Callback aus GameHeader
+  onOpenPrestige, // Neue Prop zum Öffnen des Prestige-Modals
   showNotifications,  // Neu: zentraler State aus GameHeader
-  setShowNotifications // Neu: Setter aus GameHeader
+  setShowNotifications, // Neu: Setter aus GameHeader
+  notifications,
+  loadingNotifications,
+  seenIds,
+  loadingSeen,
+  markAllAsSeen
 }) {
   const [showAbout, setShowAbout] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
-  const { notifications, loading: loadingNotifications } = useNotifications();
-  const { seenIds, markAllAsSeen, loading: loadingSeen, setSeenIds } = useNotificationReads();
   const [notificationCount, setNotificationCount] = useState(0);
 
   // notificationCount nur beim Öffnen des Sidemenu berechnen
@@ -48,7 +50,7 @@ export default function SideMenu({
       setNotificationCount(newCount);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+  }, [isOpen, notifications, seenIds, loadingNotifications, loadingSeen]);
 
   // Lade die gesehenen IDs nur nach Schließen des NotificationCenters neu
   useEffect(() => {
@@ -146,12 +148,14 @@ export default function SideMenu({
         show={showNotifications}
         onClose={() => {
           setShowNotifications(false);
-          setTimeout(() => reloadSeenIds(), 350); // Firestore braucht etwas Zeit
+          const allIds = notifications.map((n) => n.id);
+          if (allIds.length > 0) {
+            markAllAsSeen(allIds);
+          }
         }}
         notifications={notifications}
         seenIds={seenIds}
-        setSeenIds={setSeenIds}
-        markAllAsSeen={markAllAsSeen}
+        loading={loadingNotifications || loadingSeen}
       />
     </>
   );

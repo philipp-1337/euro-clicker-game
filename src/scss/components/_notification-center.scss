@@ -1,21 +1,72 @@
+@use "../abstracts/colors" as *;
+@use "../abstracts/mixins" as *;
+@use "sass:map";
+
 .notification-list {
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  max-height: 60vh;
+  overflow-y: auto;
+
+  // Scrollbar etwas dezenter
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: map.get($colors, light-gray);
+    border-radius: 3px;
+  }
 }
+
 .notification-item {
-  border-bottom: 1px solid #eee;
-  padding: 1rem 0;
+  @include card-base(map.get($semantic-colors, blue), $dark-mode: true);
+  margin-bottom: 0.8rem;
+  padding: 0.9rem 1.1rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background: bg(off-dark);
+    transform: translateY(-2px);
+  }
+
+  &.unread {
+    border-left: 4px solid map.get($semantic-colors, orange);
+    background: bg(darker);
+  }
 }
+
 .notification-date {
-  font-size: 0.85em;
-  color: #888;
-  margin-bottom: 0.2em;
+  font-size: 0.75rem;
+  color: map.get($colors, light-gray);
+  margin-bottom: 0.25rem;
 }
+
 .notification-subject {
-  font-weight: bold;
-  margin-bottom: 0.3em;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: map.get($colors, white);
+  margin-bottom: 0.35rem;
 }
+
 .notification-body {
-  margin-bottom: 0.2em;
+  font-size: 0.85rem;
+  color: map.get($colors, text-light);
+  line-height: 1.4;
+}
+
+.notification-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    @include button-base;
+    @include color-variant(
+      map.get($semantic-colors, blue),
+      map.get($semantic-colors, dark-blue)
+    );
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+  }
 }
