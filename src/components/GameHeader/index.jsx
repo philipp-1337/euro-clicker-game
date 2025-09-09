@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import useNotifications from '@hooks/useNotifications';
+import useNotificationReads from '@hooks/useNotificationReads';
 import PropTypes from 'prop-types';
 import { formatNumber } from '@utils/calculators';
 import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
@@ -16,7 +18,9 @@ import {
   Layers as LayersIcon,
   Layers2Icon,
   BotIcon,
-  BotOffIcon
+  BotOffIcon,
+  MailIcon,
+  MailOpenIcon
 } from 'lucide-react';
 import SettingsModal from './SettingsModal';
 import AchievementsModal from './AchievementsModal';
@@ -28,6 +32,31 @@ import { useUiProgress } from '@hooks/useUiProgress';
 import SideMenu from '../SideMenu/SideMenu';
 
 export default function GameHeader(props) {
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+  // Notification Badge Logik
+  const { notifications, loading: loadingNotifications } = useNotifications();
+  const {
+    seenIds,
+    loading: loadingSeen,
+    reloadSeenIds,
+  } = useNotificationReads();
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // notificationCount nur berechnen, wenn Daten geladen sind und SideMenu geschlossen ist
+  React.useEffect(() => {
+    if (!isSideMenuOpen && !loadingNotifications && !loadingSeen) {
+      const allIds = notifications.map((n) => n.id);
+      const newCount = allIds.filter((id) => !seenIds.includes(id)).length;
+      setNotificationCount(newCount);
+    }
+  }, [
+    isSideMenuOpen,
+    notifications,
+    seenIds,
+    loadingNotifications,
+    loadingSeen,
+  ]);
   const {
     renderEnvironmentLabel,
     formatPlaytime,
@@ -52,7 +81,7 @@ export default function GameHeader(props) {
     currentRunShares,
     prestigeShares,
     prestigeGame,
-    canPrestige
+    canPrestige,
   } = useGameHeaderLogic({ ...props });
 
   const { buyQuantity, toggleBuyQuantity } = props;
@@ -79,22 +108,27 @@ export default function GameHeader(props) {
   }, [showClickStats, setShowClickStats]);
 
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
-  const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
+  const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] =
+    useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
-  
-  const shouldShowPrestigeButtonBasedOnMoney = props.money >= props.gameConfig.prestige.minMoneyForModalButton;
-  const showPrestigeButtonInHeader = prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
+
+  const shouldShowPrestigeButtonBasedOnMoney =
+    props.money >= props.gameConfig.prestige.minMoneyForModalButton;
+  const showPrestigeButtonInHeader =
+    prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
 
   React.useEffect(() => {
     if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
       setPrestigeButtonEverVisible(true);
     }
-  }, [shouldShowPrestigeButtonBasedOnMoney, prestigeButtonEverVisible, setPrestigeButtonEverVisible]);
-
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+  }, [
+    shouldShowPrestigeButtonBasedOnMoney,
+    prestigeButtonEverVisible,
+    setPrestigeButtonEverVisible,
+  ]);
 
   const {
     autoBuyerUnlocked,
@@ -109,25 +143,24 @@ export default function GameHeader(props) {
   } = props;
 
   const isAutoBuyerActive =
-    autoBuyValueUpgradeEnabled || 
-    autoBuyCooldownUpgradeEnabled || 
-    autoBuyGlobalMultiplierEnabled || 
+    autoBuyValueUpgradeEnabled ||
+    autoBuyCooldownUpgradeEnabled ||
+    autoBuyGlobalMultiplierEnabled ||
     autoBuyGlobalPriceDecreaseEnabled;
 
-  const anyAutoBuyerUnlocked = 
-    autoBuyerUnlocked || 
-    cooldownAutoBuyerUnlocked || 
-    globalMultiplierAutoBuyerUnlocked || 
+  const anyAutoBuyerUnlocked =
+    autoBuyerUnlocked ||
+    cooldownAutoBuyerUnlocked ||
+    globalMultiplierAutoBuyerUnlocked ||
     globalPriceDecreaseAutoBuyerUnlocked;
 
-  const displayTotalMoneyPerSecond = totalMoneyPerSecond + (manualMoneyPerSecond || 0);
+  const displayTotalMoneyPerSecond =
+    totalMoneyPerSecond + (manualMoneyPerSecond || 0);
 
   return (
     <>
       {isSaving && (
-        <div className="save-feedback-banner">
-          {saveMessage || 'Saving...'}
-        </div>
+        <div className="save-feedback-banner">{saveMessage || "Saving..."}</div>
       )}
       <div className="game-header-container">
         <h1 className="game-title">
@@ -167,10 +200,24 @@ export default function GameHeader(props) {
             title="Save"
             aria-label="Save"
           >
-            {cloudSaveMode
-              ? <CloudUploadIcon size={20} />
-              : <SaveIcon size={20} />
-            }
+            {cloudSaveMode ? (
+              <CloudUploadIcon size={20} />
+            ) : (
+              <SaveIcon size={20} />
+            )}
+          </button>
+          <button
+            className="settings-button header-icon"
+            onClick={() => setShowNotifications(true)}
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            {notificationCount === 0 ? <MailOpenIcon size={20}/> : <MailIcon size={20}/>}
+            {notificationCount > 0 && (
+              <span className="notification-badge">
+                {/* {notificationCount} */}
+              </span>
+            )}
           </button>
           {uiProgress.showStatisticsHeaderButton && (
             <button
@@ -182,16 +229,17 @@ export default function GameHeader(props) {
               <BarChart2Icon size={20} />
             </button>
           )}
-          {uiProgress.showAchievementsHeaderButton && props.hasAnyAchievement && (
-          <button
-            className="settings-button header-icon"
-            onClick={() => setShowAchievements(true)}
-            title="Achievements"
-            aria-label="Achievements"
-          >
-            <AwardIcon size={20} />
-          </button>
-          )}
+          {uiProgress.showAchievementsHeaderButton &&
+            props.hasAnyAchievement && (
+              <button
+                className="settings-button header-icon"
+                onClick={() => setShowAchievements(true)}
+                title="Achievements"
+                aria-label="Achievements"
+              >
+                <AwardIcon size={20} />
+              </button>
+            )}
           {uiProgress.showLeaderboard && (
             <button
               className="settings-button header-icon"
@@ -209,10 +257,10 @@ export default function GameHeader(props) {
             >
               {props.prestigeCount === 0 ? (
                 <span className="prestige-pulse">
-                  <PrestigeHeaderIcon size={20} fill='gold' stroke='gold'/>
+                  <PrestigeHeaderIcon size={20} fill="gold" stroke="gold" />
                 </span>
               ) : (
-                <PrestigeHeaderIcon size={20}/>
+                <PrestigeHeaderIcon size={20} />
               )}
             </button>
           )}
@@ -223,7 +271,11 @@ export default function GameHeader(props) {
               title="AutoBuyer Settings"
               aria-label="AutoBuyer Settings"
             >
-              {isAutoBuyerActive ? <BotIcon size={24} /> : <BotOffIcon size={24} />}
+              {isAutoBuyerActive ? (
+                <BotIcon size={24} />
+              ) : (
+                <BotOffIcon size={24} />
+              )}
               {isAutoBuyerActive && <span className="active-badge"></span>}
             </button>
           )}
@@ -243,13 +295,14 @@ export default function GameHeader(props) {
           {showClickStats && (
             <span className="header-clickstats">
               <MousePointerClickIcon size={20} />
-              {String(floatingClicks ?? 0).padStart(5, '0')}
+              {String(floatingClicks ?? 0).padStart(5, "0")}
             </span>
           )}
           {showPlaytime && (
             <span className="header-playtime">
               <ClockIcon size={20} />
-              {formatPlaytime(playTime, false)}</span>
+              {formatPlaytime(playTime, false)}
+            </span>
           )}
         </div>
       </div>
@@ -310,7 +363,10 @@ export default function GameHeader(props) {
       )}
       <MoneyBanner money={formatNumber(money)} />
       {showLeaderboardModal && (
-        <LeaderboardModal show={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
+        <LeaderboardModal
+          show={showLeaderboardModal}
+          onClose={() => setShowLeaderboardModal(false)}
+        />
       )}
 
       <StatisticsModal
@@ -323,15 +379,18 @@ export default function GameHeader(props) {
         prestigeCount={props.prestigeCount}
         prestigeShares={props.prestigeShares}
       />
-      <SideMenu 
+      <SideMenu
         isOpen={isSideMenuOpen}
         setIsOpen={setIsSideMenuOpen}
-        onOpenSettings={() => setShowSettings(true)} 
+        onOpenSettings={() => setShowSettings(true)}
         onToggleLeaderboard={() => setShowLeaderboardModal(true)}
         onOpenAchievements={() => setShowAchievements(true)}
         onOpenStatistics={() => setShowStatisticsModal(true)}
         showPrestigeOption={showPrestigeButtonInHeader}
         onOpenPrestige={() => setShowPrestigeModal(true)}
+        reloadSeenIds={reloadSeenIds}
+        showNotifications={showNotifications}
+        setShowNotifications={setShowNotifications}
       />
     </>
   );
