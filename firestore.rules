@@ -37,5 +37,9 @@ service cloud.firestore {
       allow read: if true; // Jeder darf Benachrichtigungen lesen
       // allow write: if ... // Optional, falls Schreiben erlaubt sein soll
     }
+    // Notification Reads
+    match /notificationReads/{uuid} {
+      allow read, write: if true; // Jeder darf Instanz-Notification-Status lesen und schreiben
+    }
   }
 }
