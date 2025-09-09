@@ -10,13 +10,11 @@ import {
   Crown as CrownIcon,
   Zap as PrestigeSideMenuIcon, // Icon für Prestige
 } from 'lucide-react';
-import AboutModal from '../AboutModal/AboutModal';
-import MenuItem from '../NotificationCenter/MenuItem';
-import NotificationCenter from '../NotificationCenter/NotificationCenter';
-import { useModal } from '../../hooks/useModal';
-import VersionDisplay from '../VersionDisplay/VersionDisplay';
-import useNotifications from '../../hooks/useNotifications';
-import useNotificationReads from '../../hooks/useNotificationReads';
+import AboutModal from '@components/AboutModal/AboutModal';
+import MenuItem from '@components/SideMenu/MenuItem';
+import NotificationCenter from '@components/NotificationCenter/NotificationCenter';
+import { useModal } from '@hooks/useModal';
+import VersionDisplay from '@components/VersionDisplay/VersionDisplay';
 
 export default function SideMenu({ 
   isOpen,
@@ -26,29 +24,19 @@ export default function SideMenu({
   onOpenAchievements,
   onOpenStatistics,
   showPrestigeOption, // Neue Prop für Sichtbarkeit
-  onOpenPrestige,     // Neue Prop zum Öffnen des Prestige-Modals
-  reloadSeenIds,      // Neu: Callback aus GameHeader
+  onOpenPrestige, // Neue Prop zum Öffnen des Prestige-Modals
   showNotifications,  // Neu: zentraler State aus GameHeader
-  setShowNotifications // Neu: Setter aus GameHeader
+  setShowNotifications, // Neu: Setter aus GameHeader
+  notifications,
+  loadingNotifications,
+  seenIds,
+  loadingSeen,
+  markAllAsSeen
 }) {
   const [showAbout, setShowAbout] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
-  const { notifications, loading: loadingNotifications } = useNotifications();
-  const { seenIds, markAllAsSeen, loading: loadingSeen, setSeenIds } = useNotificationReads();
-  const [notificationCount, setNotificationCount] = useState(0);
-
-  // notificationCount nur beim Öffnen des Sidemenu berechnen
-  useEffect(() => {
-    if (isOpen && !loadingNotifications && !loadingSeen) {
-      const allIds = notifications.map(n => n.id);
-      const newCount = allIds.filter(id => !seenIds.includes(id)).length;
-      console.log('[SideMenu] notificationCount:', newCount, 'allIds:', allIds, 'seenIds:', seenIds);
-      setNotificationCount(newCount);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
 
   // Lade die gesehenen IDs nur nach Schließen des NotificationCenters neu
   useEffect(() => {
@@ -146,12 +134,14 @@ export default function SideMenu({
         show={showNotifications}
         onClose={() => {
           setShowNotifications(false);
-          setTimeout(() => reloadSeenIds(), 350); // Firestore braucht etwas Zeit
+          const allIds = notifications.map((n) => n.id);
+          if (allIds.length > 0) {
+            markAllAsSeen(allIds);
+          }
         }}
         notifications={notifications}
         seenIds={seenIds}
-        setSeenIds={setSeenIds}
-        markAllAsSeen={markAllAsSeen}
+        loading={loadingNotifications || loadingSeen}
       />
     </>
   );

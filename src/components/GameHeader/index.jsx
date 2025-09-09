@@ -27,9 +27,9 @@ import AchievementsModal from './AchievementsModal';
 import LeaderboardModal from './LeaderboardModal';
 import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
 import PrestigeModal from '@components/PrestigeModal/PrestigeModal';
-import StatisticsModal from '../StatisticsModal/StatisticsModal';
+import StatisticsModal from '@components/StatisticsModal/StatisticsModal';
 import { useUiProgress } from '@hooks/useUiProgress';
-import SideMenu from '../SideMenu/SideMenu';
+import SideMenu from '@components/SideMenu/SideMenu';
 
 export default function GameHeader(props) {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -38,7 +38,7 @@ export default function GameHeader(props) {
   const {
     seenIds,
     loading: loadingSeen,
-    reloadSeenIds,
+    markAllAsSeen,
   } = useNotificationReads();
   const [notificationCount, setNotificationCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -388,9 +388,13 @@ export default function GameHeader(props) {
         onOpenStatistics={() => setShowStatisticsModal(true)}
         showPrestigeOption={showPrestigeButtonInHeader}
         onOpenPrestige={() => setShowPrestigeModal(true)}
-        reloadSeenIds={reloadSeenIds}
         showNotifications={showNotifications}
         setShowNotifications={setShowNotifications}
+        notifications={notifications}
+        loadingNotifications={loadingNotifications}
+        seenIds={seenIds}
+        loadingSeen={loadingSeen}
+        markAllAsSeen={markAllAsSeen}
       />
     </>
   );

@@ -1,4 +1,4 @@
-import { useModal } from '../../hooks/useModal';
+import { useModal } from '@hooks/useModal';
 import {
   X as CloseIcon,
   // Power as PowerIcon,

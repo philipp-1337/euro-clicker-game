@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { db } from '../firebase';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
-import { removeUndefinedFields } from '../utils/removeUndefinedFields';
+import { removeUndefinedFields } from '@utils/removeUndefinedFields';
 
 // Hilfsfunktion für UUID
 function generateUUID() {
