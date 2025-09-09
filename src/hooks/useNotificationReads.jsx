@@ -54,7 +54,10 @@ export default function useNotificationReads() {
     if (!instanceUuid) return;
     try {
       console.log('[NotificationReads] Schreibe gesehen:', ids, 'für', instanceUuid);
-      await setDoc(doc(db, 'notificationReads', instanceUuid), { seen: ids });
+      await setDoc(doc(db, 'notificationReads', instanceUuid), {
+        seen: ids,
+        lastSeenAt: Date.now(), // Timestamp für Cleanup
+      });
       setSeenIds(ids);
     } catch (e) {
       console.error('[NotificationReads] Fehler beim Schreiben:', e);
