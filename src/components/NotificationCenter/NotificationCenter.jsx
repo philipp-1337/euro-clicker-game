@@ -41,11 +41,11 @@ const NotificationCenter = ({ show, onClose }) => {
   }, [show, notifications, markAllAsSeen, setSeenIds]);
 
   return (
-    <Modal show={show} onClose={onClose} title="Benachrichtigungen">
+    <Modal show={show} onClose={onClose} title="Notification">
       {loading ? (
-        <div>Lade Benachrichtigungen...</div>
+        <div>Load Notification...</div>
       ) : notifications.length === 0 ? (
-        <div>Keine Benachrichtigungen vorhanden.</div>
+        <div>No (new) notification available.</div>
       ) : (
         <ul className="notification-list">
           {notifications.map((n) => (
