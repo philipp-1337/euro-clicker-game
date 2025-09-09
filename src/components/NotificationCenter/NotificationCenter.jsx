@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../StatisticsModal/StatisticsModal'; // Modal-Logik wiederverwenden
-import { getFirestore, collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { app } from '../../firebase';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '../../firebase';
 import './NotificationCenter.scss';
-
-const db = getFirestore(app);
 
 const NotificationCenter = ({ isOpen, onClose }) => {
   const [notifications, setNotifications] = useState([]);
