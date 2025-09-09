@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Modal from "./Modal";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
-import useNotificationReads from "../../hooks/useNotificationReads";
+import useNotificationReads from "@hooks/useNotificationReads";
 
 const NotificationCenter = ({ show, onClose }) => {
   const [notifications, setNotifications] = useState([]);

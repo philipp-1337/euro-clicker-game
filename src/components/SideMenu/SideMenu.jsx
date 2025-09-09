@@ -17,7 +17,6 @@ import { useModal } from '../../hooks/useModal';
 import VersionDisplay from '../VersionDisplay/VersionDisplay';
 import useNotifications from '../../hooks/useNotifications';
 import useNotificationReads from '../../hooks/useNotificationReads';
-import NotificationBadge from '../NotificationCenter/NotificationBadge';
 
 export default function SideMenu({ 
   isOpen,
@@ -27,15 +26,17 @@ export default function SideMenu({
   onOpenAchievements,
   onOpenStatistics,
   showPrestigeOption, // Neue Prop für Sichtbarkeit
-  onOpenPrestige      // Neue Prop zum Öffnen des Prestige-Modals
+  onOpenPrestige,     // Neue Prop zum Öffnen des Prestige-Modals
+  reloadSeenIds,      // Neu: Callback aus GameHeader
+  showNotifications,  // Neu: zentraler State aus GameHeader
+  setShowNotifications // Neu: Setter aus GameHeader
 }) {
   const [showAbout, setShowAbout] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
   const { notifications, loading: loadingNotifications } = useNotifications();
-  const { seenIds, markAllAsSeen, loading: loadingSeen, setSeenIds, reloadSeenIds } = useNotificationReads();
+  const { seenIds, markAllAsSeen, loading: loadingSeen, setSeenIds } = useNotificationReads();
   const [notificationCount, setNotificationCount] = useState(0);
 
   // notificationCount nur beim Öffnen des Sidemenu berechnen
@@ -51,12 +52,8 @@ export default function SideMenu({
 
   // Lade die gesehenen IDs nur nach Schließen des NotificationCenters neu
   useEffect(() => {
-    if (!showNotifications) {
-      setTimeout(() => {
-        reloadSeenIds(); // Firestore braucht etwas Zeit, dann neu laden
-      }, 350);
-    }
-  }, [showNotifications, reloadSeenIds]);
+    // Entferne das automatische Neuladen beim Schließen des NotificationCenters hier
+  }, [showNotifications]);
 
   const handleMenuItemClick = (action) => {
     if (action) {
@@ -124,13 +121,13 @@ export default function SideMenu({
           <MenuItem
             icon={NotificationIcon}
             label="Notification"
-            onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
+            onClick={() => {
+              setShowNotifications(true);
+              handleMenuItemClick();
+            }}
             ariaLabel="Notification"
           >
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <NotificationIcon size={20} className="sidemenu-icon" />
-              {notificationCount > 0 && <NotificationBadge count={notificationCount} />}
-            </div>
+            {/* Badge kann bei Bedarf wieder angezeigt werden */}
           </MenuItem>
           <MenuItem
             icon={InfoIcon}

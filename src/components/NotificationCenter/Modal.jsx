@@ -1,5 +1,5 @@
 import { X as CloseIcon } from 'lucide-react';
-import { useModal } from '../../hooks/useModal';
+import { useModal } from '@hooks/useModal';
 
 const Modal = ({ show, onClose, title, children }) => {
   const modalRef = useModal(show, onClose);
