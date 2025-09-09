@@ -10,13 +10,13 @@ import {
   Crown as CrownIcon,
   Zap as PrestigeSideMenuIcon, // Icon für Prestige
 } from 'lucide-react';
-import AboutModal from '../AboutModal/AboutModal';
-import MenuItem from '../NotificationCenter/MenuItem';
-import NotificationCenter from '../NotificationCenter/NotificationCenter';
-import { useModal } from '../../hooks/useModal';
-import VersionDisplay from '../VersionDisplay/VersionDisplay';
-import useNotifications from '../../hooks/useNotifications';
-import useNotificationReads from '../../hooks/useNotificationReads';
+import AboutModal from '@components/AboutModal/AboutModal';
+import MenuItem from '@components/SideMenu/MenuItem';
+import NotificationCenter from '@components/NotificationCenter/NotificationCenter';
+import { useModal } from '@hooks/useModal';
+import VersionDisplay from '@components/VersionDisplay/VersionDisplay';
+import useNotifications from '@hooks/useNotifications';
+import useNotificationReads from '@hooks/useNotificationReads';
 
 export default function SideMenu({ 
   isOpen,
