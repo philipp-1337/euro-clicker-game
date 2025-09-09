@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { saveGameState, loadGameState as loadGameStateUtil, hasSavedGame } from '@utils/localStorage';
-import { isLocalhost } from '../utils/env';
+import { isLocalhost } from '@utils/env';
 import { gameConfig } from '@constants/gameConfig'; // Benötigt für den Reset zum Initialzustand
 
 const STORAGE_KEY = 'clickerSave';

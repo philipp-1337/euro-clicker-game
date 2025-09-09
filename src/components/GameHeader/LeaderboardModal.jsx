@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { db } from "../../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore"; // Import query and where
 import { X as CloseIcon, Medal as MedalIcon, OctagonAlertIcon } from "lucide-react";
-import { formatPlaytime } from '../../utils/calculators';
-import { useModal } from '../../hooks/useModal';
+import { formatPlaytime } from '@utils/calculators';
+import { useModal } from '@hooks/useModal';
 import { CHECKPOINTS } from "@constants/gameConfig"; // Import CHECKPOINTS
 
 export default function LeaderboardModal({ show, onClose }) {

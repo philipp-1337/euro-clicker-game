@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import useCloudSave from '@hooks/useCloudSave';
-import { formatPlaytime } from '../utils/calculators';
-import { isLocalhost } from '../utils/env';
+import { formatPlaytime } from '@utils/calculators';
+import { isLocalhost } from '@utils/env';
 
 export default function useGameHeaderLogic(props) {
   const {

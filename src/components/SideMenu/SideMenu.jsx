@@ -15,8 +15,6 @@ import MenuItem from '@components/SideMenu/MenuItem';
 import NotificationCenter from '@components/NotificationCenter/NotificationCenter';
 import { useModal } from '@hooks/useModal';
 import VersionDisplay from '@components/VersionDisplay/VersionDisplay';
-import useNotifications from '@hooks/useNotifications';
-import useNotificationReads from '@hooks/useNotificationReads';
 
 export default function SideMenu({ 
   isOpen,
@@ -39,7 +37,7 @@ export default function SideMenu({
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [setNotificationCount] = useState(0);
 
   // notificationCount nur beim Öffnen des Sidemenu berechnen
   useEffect(() => {

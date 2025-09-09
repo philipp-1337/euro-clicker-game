@@ -27,7 +27,7 @@ import {
   AwardIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
-import { useModal } from '../../hooks/useModal';
+import { useModal } from '@hooks/useModal';
 
 // Hilfsfunktion für Standalone-Detection
 function isStandaloneMobile() {
