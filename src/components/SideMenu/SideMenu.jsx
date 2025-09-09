@@ -6,10 +6,12 @@ import {
   BarChart2 as StatsIcon,
   Award as AchievementsIcon,  
   Info as InfoIcon,
+  Bell as NotificationIcon,
   CrownIcon,
   Zap as PrestigeSideMenuIcon, // Icon für Prestige
 } from 'lucide-react';
 import AboutModal from '../AboutModal/AboutModal';
+import NotificationCenter from '../NotificationCenter/NotificationCenter';
 import { useModal } from '../../hooks/useModal';
 import VersionDisplay from '../VersionDisplay/VersionDisplay';
 
@@ -24,6 +26,7 @@ export default function SideMenu({
   onOpenPrestige      // Neue Prop zum Öffnen des Prestige-Modals
 }) {
   const [showAbout, setShowAbout] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
@@ -157,6 +160,18 @@ export default function SideMenu({
             <InfoIcon size={20} className="sidemenu-icon" />
             <span>About</span>
           </div>
+          <div
+            className="sidemenu-item"
+            tabIndex={0}
+            onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') handleMenuItemClick(() => setShowNotifications(true));
+            }}
+            aria-label="Benachrichtigungen"
+          >
+            <NotificationIcon size={20} className="sidemenu-icon" />
+            <span>Benachrichtigungen</span>
+          </div>
         </div>
 
         <div className="sidemenu-footer">
@@ -165,6 +180,7 @@ export default function SideMenu({
       </div>
       {/* About Modal */}
       <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
+  <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
     </>
   );
 }
