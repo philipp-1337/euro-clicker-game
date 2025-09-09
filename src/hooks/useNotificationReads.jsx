@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import useCloudSave from './useCloudSave';
 
 function getOrCreateInstanceUuid() {
   let uuid = localStorage.getItem('notificationInstanceUuid');
@@ -41,7 +40,7 @@ export default function useNotificationReads() {
         } else {
           setSeenIds([]);
         }
-      } catch (e) {
+      } catch {
         setSeenIds([]);
       } finally {
         setLoading(false);
