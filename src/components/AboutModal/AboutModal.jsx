@@ -1,5 +1,5 @@
 import { X as CloseIcon, Code, Coffee as CoffeeIcon } from 'lucide-react';
-import { useModal } from '../../hooks/useModal';
+import { useModal } from '@hooks/useModal';
 
 export default function AboutModal({ show, onClose }) {
   const modalRef = useModal(show, onClose);
