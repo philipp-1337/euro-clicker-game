@@ -37,18 +37,6 @@ export default function SideMenu({
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
-  const [setNotificationCount] = useState(0);
-
-  // notificationCount nur beim Öffnen des Sidemenu berechnen
-  useEffect(() => {
-    if (isOpen && !loadingNotifications && !loadingSeen) {
-      const allIds = notifications.map(n => n.id);
-      const newCount = allIds.filter(id => !seenIds.includes(id)).length;
-      console.log('[SideMenu] notificationCount:', newCount, 'allIds:', allIds, 'seenIds:', seenIds);
-      setNotificationCount(newCount);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, notifications, seenIds, loadingNotifications, loadingSeen]);
 
   // Lade die gesehenen IDs nur nach Schließen des NotificationCenters neu
   useEffect(() => {
