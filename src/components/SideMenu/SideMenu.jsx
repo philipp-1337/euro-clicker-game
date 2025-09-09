@@ -122,11 +122,6 @@ export default function SideMenu({
             />
           )}
           <MenuItem
-            icon={InfoIcon}
-            label="About"
-            onClick={() => handleMenuItemClick(() => setShowAbout(true))}
-          />
-          <MenuItem
             icon={NotificationIcon}
             label="Notification"
             onClick={() => handleMenuItemClick(() => setShowNotifications(true))}
@@ -137,6 +132,11 @@ export default function SideMenu({
               {notificationCount > 0 && <NotificationBadge count={notificationCount} />}
             </div>
           </MenuItem>
+          <MenuItem
+            icon={InfoIcon}
+            label="About"
+            onClick={() => handleMenuItemClick(() => setShowAbout(true))}
+          />
         </div>
 
         <div className="sidemenu-footer">
