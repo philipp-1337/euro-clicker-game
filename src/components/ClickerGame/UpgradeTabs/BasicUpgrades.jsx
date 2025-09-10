@@ -126,7 +126,7 @@ export default function BasicUpgrades({
                 title={`-${cooldownUpgradePercentage}% Zeit (x${buyQuantity})`}
               >
                 <span>{formatNumber(calculateTotalCooldownUpgradeCost(index, buyQuantity))} €</span>
-                <span>{(cooldownReductions[index]).toFixed(0)}%</span>
+                  <span>{(cooldownReductions[index] * 100).toFixed(0)}%</span>
               </div>
             </button>
           ))}
