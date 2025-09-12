@@ -23,9 +23,10 @@ export default function PrestigeModal({
   const bonusPerSharePercentage = gameConfig.prestige.bonusPerShare * 100;
   // const activeBonusFromAccumulatedShares = accumulatedPrestigeShares * bonusPerSharePercentage;
   const potentialBonusAfterPrestige = totalSharesAfterPrestige * bonusPerSharePercentage;
-  const minSharesRequired = gameConfig.prestige.minSharesToPrestige;
+  // const minSharesRequired = gameConfig.prestige.minSharesToPrestige;
   // Kosten für den nächsten Share: Index = bereits vorhandene Shares
   const nextShareCost = gameConfig.prestige.getShareCost(accumulatedPrestigeShares);
+  const nextShareCosts = gameConfig.prestige.getShareCost(currentRunShares + accumulatedPrestigeShares);
   // Fehlende Summe für den nächsten Share
   const moneyNeededForNextShare = nextShareCost;
 
@@ -82,32 +83,26 @@ export default function PrestigeModal({
               </span>
               <strong>+{formatNumber(potentialBonusAfterPrestige)}%</strong>
             </div>
-            {!canPrestige && (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <span>Next 1 share costs:</span>
-              <strong>{formatNumber(moneyNeededForNextShare)} €</strong>
+              <strong>{formatNumber(nextShareCosts)} €</strong>
             </div>
-            )}
           </div>
 
           <div className="modal-actions">
             <button
-              className="modal-btn prestige-btn"
+              className={`modal-btn prestige-btn ${!canPrestige ? 'disabled' : ''}`.trim()}
               onClick={handlePrestigeClick}
               disabled={!canPrestige}
               title={
                 canPrestige
                   ? `Prestige now for +${formatNumber(currentRunShares)} Shares`
-                  : `Need at least ${formatNumber(minSharesRequired)} Share (currently ${formatNumber(currentRunShares)})`
+                  : `Need at least ${formatNumber(moneyNeededForNextShare)} € more to get the next Share`
               }
             >
               {canPrestige
                 ? `Prestige (+${formatNumber(currentRunShares)} Shares)`
-                : `Need ${formatNumber(minSharesRequired)} Share${
-                    currentRunShares > 0
-                      ? ` (currently ${formatNumber(currentRunShares)})`
-                      : ''
-                  }`}
+                : `Need ${formatNumber(moneyNeededForNextShare)} €`}
             </button>
           </div>
 

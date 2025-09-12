@@ -207,7 +207,7 @@ export const gameConfig = {
     // Neue Funktion: Kosten für den n-ten Share (progressiv, mit Sättigung)
     getShareCost: (shareIndex) => {
       // shareIndex: 0 = erster Share, 1 = zweiter Share, ...
-      const base = 1000000000; // 1 Milliarde
+      const base = 1000000000; // 1 Billion
       const exponent = 1.01; // Anfangs langsam, dann steiler
       const saturation = 1000000000000000000; // 1 Quintillion
       const cost = base * Math.pow(exponent, shareIndex);
