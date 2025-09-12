@@ -251,33 +251,59 @@ export default function ClickerGame({
   const [showLeaderboardCongrats, setShowLeaderboardCongrats] = useState(false);
   const [leaderboardSubmitted, setLeaderboardSubmitted] = useState(false);
   const [currentCheckpoint, setCurrentCheckpoint] = useState(null);
+  // Pending checkpoints state, initialized from localStorage
+  const [pendingCheckpoints, setPendingCheckpoints] = useState(() => {
+    try {
+      const stored = localStorage.getItem("pendingCheckpoints");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
+  // Helper to update both state and localStorage
+  function updatePendingCheckpoints(newPending) {
+    setPendingCheckpoints(newPending);
+    localStorage.setItem("pendingCheckpoints", JSON.stringify(newPending));
+  }
+
+  // Check for new checkpoints and manage pendingCheckpoints
   useEffect(() => {
     const reachedCheckpointsInStorage = getReachedCheckpointsFromStorage();
-    const newTargetCheckpoint = CHECKPOINTS.slice()
-      .reverse()
-      .find(
-        (cp) =>
-          money >= cp.value && !reachedCheckpointsInStorage.includes(cp.id)
-      );
+    // Find all new targets not yet reached or pending, sorted ascending
+    const allPending = Array.isArray(pendingCheckpoints) ? pendingCheckpoints : [];
+    const newTargets = CHECKPOINTS.filter(
+      (cp) =>
+        money >= cp.value &&
+        !reachedCheckpointsInStorage.includes(cp.id) &&
+        !allPending.includes(cp.id)
+    ).sort((a, b) => a.value - b.value);
 
-    if (newTargetCheckpoint) {
-      if (
-        !currentCheckpoint ||
-        currentCheckpoint.id !== newTargetCheckpoint.id
-      ) {
-        setCurrentCheckpoint(newTargetCheckpoint);
-        setLeaderboardName(localStorage.getItem("leaderboardName") || "");
-        setShowLeaderboardCongrats(true);
-        setLeaderboardSubmitted(false);
+    if (newTargets.length > 0) {
+      // Append to pendingCheckpoints and update storage
+      const newPending = [...allPending, ...newTargets.map((cp) => cp.id)];
+      updatePendingCheckpoints(newPending);
+    }
+    // If not showing modal, show the first pending checkpoint immediately
+    if (!showLeaderboardCongrats) {
+      const nextCheckpointId = (Array.isArray(pendingCheckpoints) && pendingCheckpoints.length > 0)
+        ? pendingCheckpoints[0]
+        : (newTargets.length > 0 ? newTargets[0].id : null);
+      if (nextCheckpointId) {
+        const nextCheckpoint = CHECKPOINTS.find(cp => cp.id === nextCheckpointId);
+        if (nextCheckpoint && (!currentCheckpoint || currentCheckpoint.id !== nextCheckpoint.id)) {
+          setCurrentCheckpoint(nextCheckpoint);
+          addCheckpointToStorage(nextCheckpoint.id);
+          setLeaderboardName(localStorage.getItem("leaderboardName") || "");
+          setShowLeaderboardCongrats(true);
+          setLeaderboardSubmitted(false);
+        }
       }
     }
-  }, [money, currentCheckpoint, showLeaderboardCongrats, leaderboardSubmitted]);
+  // eslint-disable-next-line
+  }, [money, currentCheckpoint, showLeaderboardCongrats, leaderboardSubmitted, pendingCheckpoints]);
 
   const handleLeaderboardCongratsClose = async () => {
-    if (currentCheckpoint && !leaderboardSubmitted) {
-      addCheckpointToStorage(currentCheckpoint.id);
-    }
     if (cloudSaveMode) {
       try {
         if (!cloudUuid) {
@@ -291,7 +317,25 @@ export default function ClickerGame({
     } else if (typeof saveGame === "function") {
       saveGame();
     }
-    setShowLeaderboardCongrats(false);
+    // Remove first from pendingCheckpoints and update state/storage
+    let nextPending = Array.isArray(pendingCheckpoints) ? [...pendingCheckpoints] : [];
+    nextPending.shift();
+    updatePendingCheckpoints(nextPending);
+    if (nextPending.length > 0) {
+      // Show next checkpoint modal
+      const nextCheckpoint = CHECKPOINTS.find(cp => cp.id === nextPending[0]);
+      if (nextCheckpoint) {
+        setCurrentCheckpoint(nextCheckpoint);
+        addCheckpointToStorage(nextCheckpoint.id);
+        setLeaderboardName(localStorage.getItem("leaderboardName") || "");
+        setShowLeaderboardCongrats(true);
+        setLeaderboardSubmitted(false);
+      } else {
+        setShowLeaderboardCongrats(false);
+      }
+    } else {
+      setShowLeaderboardCongrats(false);
+    }
   };
 
   const [environment, setEnvironment] = useState("production");
@@ -344,8 +388,25 @@ export default function ClickerGame({
     } else if (typeof saveGame === "function") {
       saveGame();
     }
-    addCheckpointToStorage(currentCheckpoint.id);
-    setShowLeaderboardCongrats(false);
+    // Remove first from pendingCheckpoints and update state/storage
+    let nextPending = Array.isArray(pendingCheckpoints) ? [...pendingCheckpoints] : [];
+    nextPending.shift();
+    updatePendingCheckpoints(nextPending);
+    if (nextPending.length > 0) {
+      // Show next checkpoint modal
+      const nextCheckpoint = CHECKPOINTS.find(cp => cp.id === nextPending[0]);
+      if (nextCheckpoint) {
+        setCurrentCheckpoint(nextCheckpoint);
+        addCheckpointToStorage(nextCheckpoint.id);
+        setLeaderboardName(localStorage.getItem("leaderboardName") || "");
+        setShowLeaderboardCongrats(true);
+        setLeaderboardSubmitted(false);
+      } else {
+        setShowLeaderboardCongrats(false);
+      }
+    } else {
+      setShowLeaderboardCongrats(false);
+    }
   };
 
   useEffect(() => {
