@@ -43,10 +43,11 @@ export default function PremiumUpgrades(props) {
   } = props;
 
   // Hole die Utility-Funktion aus dem Hook
-  const { calculateCriticalClickChanceCost } = usePremiumUpgrades({
+  const { calculateCriticalClickChanceCost, calculateFloatingClickValueCost } = usePremiumUpgrades({
     money,
     easyMode,
     criticalClickChanceLevel,
+    floatingClickValueLevel
   });
 
   // Berechne Prozentsätze mit den Hilfsfunktionen und Config-Werten
@@ -174,18 +175,12 @@ export default function PremiumUpgrades(props) {
   };
 
   // Floating Click Value Premium Upgrade
-  // Helper to calculate total cost for 'n' Floating Click Value upgrades
-  const calculateTotalFloatingClickValueCost = (quantity) => {
-    let totalCost = 0;
-    let currentLevel = floatingClickValueLevel ?? 0;
-    for (let i = 0; i < quantity; i++) {
-      totalCost += gameConfig.premiumUpgrades.floatingClickValue.baseCost *
-        Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, currentLevel + i) *
-        costMultiplier;
-    }
-    return totalCost;
-  };
-  const totalFloatingClickValueCost = calculateTotalFloatingClickValueCost(buyQuantity);
+  const totalFloatingClickValueCost = calculateFloatingClickValueCost(
+    floatingClickValueLevel,
+    buyQuantity,
+    gameConfig,
+    costMultiplier
+  );
 
   // Costs for current buyQuantity
   const totalGlobalMultiplierCost = calculateTotalGlobalMultiplierCost(buyQuantity);
@@ -203,7 +198,7 @@ export default function PremiumUpgrades(props) {
           <h3>Clicker Value Boost</h3>
         </div>
         <p className="premium-upgrade-description">
-          Boosts the value of the Floating Clicker Button. Each level multiplies the value by {gameConfig.premiumUpgrades.floatingClickValue.factor}.
+          Boosts the value of the Floating Clicker Button.
         </p>
         <div className="premium-upgrade-info">
           <div className="premium-upgrade-level">
@@ -215,7 +210,7 @@ export default function PremiumUpgrades(props) {
             className={`premium-upgrade-button ${money < totalFloatingClickValueCost ? 'disabled' : ''}`}
             title={`Buy ${buyQuantity} level(s)`}
           >
-            {formatNumber(totalFloatingClickValueCost)} €
+            {`${formatNumber(totalFloatingClickValueCost)} €`}
           </button>
         </div>
       </div>

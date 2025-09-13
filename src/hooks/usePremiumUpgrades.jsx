@@ -1,6 +1,16 @@
 import { useCallback, useMemo } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 
+// Helper function to calculate Fibonacci numbers
+const fibonacci = (n) => {
+  if (n <= 1) return 1;
+  let a = 1, b = 1;
+  for (let i = 2; i <= n; i++) {
+    [a, b] = [b, a + b];
+  }
+  return b;
+};
+
 /**
  * Manages all premium upgrades including:
  * - Global Multiplier upgrade
@@ -209,41 +219,40 @@ export default function usePremiumUpgrades({
   ]);
 
   // Floating Click Value Upgrade
-  const floatingClickValueCost = useMemo(() =>
-    gameConfig.premiumUpgrades.floatingClickValue.baseCost *
-    Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, floatingClickValueLevel) *
-      costMultiplier,
-    [floatingClickValueLevel, costMultiplier]
-    );
+  const floatingClickValueCost = useMemo(() => {
+    const currentLevel = floatingClickValueLevel ?? 0;
+    const nextValue = fibonacci(currentLevel + 1);
+    return nextValue * gameConfig.premiumUpgrades.floatingClickValue.costMultiplier * costMultiplier;
+  }, [floatingClickValueLevel, costMultiplier]);
 
   const buyFloatingClickValue = useCallback((quantity = 1) => {
-      ensureStartTime?.();
-      let totalCalculatedCost = 0;
-    let tempLevel = floatingClickValueLevel;
-      const currentCostMultiplier = gameConfig.getCostMultiplier(easyMode);
+    ensureStartTime?.();
+    const currentLevel = floatingClickValueLevel ?? 0;
+    let totalCost = 0;
+    let levelsToBuy = 0;
 
     for (let i = 0; i < quantity; i++) {
-      const costForThisStep = gameConfig.premiumUpgrades.floatingClickValue.baseCost *
-        Math.pow(gameConfig.premiumUpgrades.floatingClickValue.costExponent, tempLevel + i) *
-          currentCostMultiplier;
-        totalCalculatedCost += costForThisStep;
-      }
+      const nextLevel = currentLevel + i;
+      const nextValue = fibonacci(nextLevel + 1);
+      totalCost += nextValue * gameConfig.premiumUpgrades.floatingClickValue.costMultiplier * costMultiplier;
+      levelsToBuy++;
+    }
 
-      if (money >= totalCalculatedCost) {
-        setMoney(prev => prev - totalCalculatedCost);
-      for (let i = 0; i < quantity; i++) {
-        setFloatingClickValueLevel(prev => prev + 1);
-        setFloatingClickValueMultiplier(prev => prev * gameConfig.premiumUpgrades.floatingClickValue.factor);
-        }
-      }
-    }, [
-      money,
+    if (money >= totalCost && levelsToBuy > 0) {
+      setMoney(prev => prev - totalCost);
+      const newLevel = currentLevel + levelsToBuy;
+      const newValue = fibonacci(newLevel);
+      setFloatingClickValueLevel(newLevel);
+      setFloatingClickValueMultiplier(newValue);
+    }
+  }, [
+    money,
     floatingClickValueLevel,
-      setMoney,
+    setMoney,
     setFloatingClickValueLevel,
     setFloatingClickValueMultiplier,
     ensureStartTime,
-    easyMode
+    costMultiplier
   ]);
 
   // Utility-Funktionen für die Berechnung der Upgrade-Kosten
@@ -280,9 +289,9 @@ export default function usePremiumUpgrades({
   const calculateFloatingClickValueCost = (level, quantity, config, costMultiplier) => {
     let totalCost = 0;
     for (let i = 0; i < quantity; i++) {
-      totalCost += config.premiumUpgrades.floatingClickValue.baseCost *
-        Math.pow(config.premiumUpgrades.floatingClickValue.costExponent, level + i) *
-        costMultiplier;
+      const nextLevel = level + i;
+      const nextValue = fibonacci(nextLevel + 1);
+      totalCost += nextValue * config.premiumUpgrades.floatingClickValue.costMultiplier * costMultiplier;
     }
     return totalCost;
   };
