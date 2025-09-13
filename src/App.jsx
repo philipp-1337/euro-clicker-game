@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import ClickerGame from '@components/ClickerGame';
 import UpdateBanner from '@components/UpdateBanner';
 import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
+import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
 import { useRegisterSW } from 'virtual:pwa-register/react';
@@ -119,6 +120,7 @@ function App() {
 
   return (
     <div className="App">
+      <BetaEndBanner />
       {/* Background music */}
       <audio
         ref={audioRef}
