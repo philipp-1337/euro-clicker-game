@@ -10,9 +10,7 @@ export default defineConfig({
       registerType: "prompt",
       workbox: {
         // Precache nur kleine Dateien
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,mp3,webmanifest}"],
-        // MP3 nicht precachen
-        globIgnores: ["sounds/background-music-quiet.mp3"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
       },
       skipWaiting: true,
       clientsClaim: true,

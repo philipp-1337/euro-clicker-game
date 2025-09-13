@@ -124,7 +124,7 @@ function App() {
       {/* Background music */}
       <audio
         ref={audioRef}
-        src="/sounds/background-music.mp3"
+        src="/sounds/background-music-quiet.mp3"
         loop
         style={{ display: 'none' }}
       >

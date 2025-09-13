@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import useCloudSave from '@hooks/useCloudSave';
 import { formatPlaytime } from '@utils/calculators';
 import { isLocalhost } from '@utils/env';
+import { APP_VERSION } from '../version';
 
 export default function useGameHeaderLogic(props) {
   const {
@@ -40,9 +41,13 @@ export default function useGameHeaderLogic(props) {
   }, [canToggleEasyMode, onEasyModeToggle, easyMode]);
 
   const renderEnvironmentLabel = useCallback(() => {
-    if (environment === 'production') return null;
-    let labelText = environment;
-    const displayText = easyMode ? `${labelText} (easy)` : labelText;
+    const versionText = `v${APP_VERSION}`;
+    if (environment === 'production') {
+      return <span className="env-label production">{versionText}</span>;
+    }
+
+    const labelText = environment;
+    const displayText = easyMode ? `${labelText} (easy) ${versionText}` : `${labelText} ${versionText}`;
     return (
       <span
         className={`env-label ${environment}`}
