@@ -1,5 +1,3 @@
-import React from "react";
-
 const BetaEndBanner = () => {
   const isBeta = 
     window.location.hostname.includes("beta") || window.location.hostname.includes("localhost");
