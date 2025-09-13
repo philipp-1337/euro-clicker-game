@@ -1,0 +1,27 @@
+.beta-end-banner {
+  position: sticky;
+  top: 0;
+  background-color: #ffc107; /* A warning color */
+  color: #000;
+  text-align: justify;
+  padding: 10px;
+  z-index: 1000;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: -8px;
+
+  p {
+    margin: 0;
+    padding-left: 56px;
+  }
+
+  a {
+    color: #2980b9; // dark-blue
+    text-decoration: underline;
+    font-weight: bold;
+
+    &:hover {
+      color: #3498db; // blue
+    }
+  }
+}
