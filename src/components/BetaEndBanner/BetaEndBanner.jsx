@@ -9,7 +9,7 @@ const BetaEndBanner = () => {
   return (
     <div className="beta-end-banner">
       <p>
-        The Beta will be shut down soon. Please use only the <a href="https://euro-clicker-game.web.app">main version</a> from now on. You can transfer your game progress using the Cloud Save feature (Settings).
+        The Beta will be shut down soon and will no longer be updated. Please use euro-clicker-game.web.app. You can transfer your progress via the Cloud Save feature in Settings.
       </p>
     </div>
   );
