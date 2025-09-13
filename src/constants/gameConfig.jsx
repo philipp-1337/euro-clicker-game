@@ -52,8 +52,6 @@ export const gameConfig = {
       icon: "Sparkles",
     },
   ],
-
-  
   
   investments: [
     { name: "Taxi Company", cost: 12750, income: 7, icon: "Car" },
@@ -72,8 +70,6 @@ export const gameConfig = {
 
   unlockCraftingCost: 100000000,
   unlockCraftingPrestige: 1,
-  // Entfernt: resourceCostIncreaseFactor global
-  // Neu: rawMaterials mit individuellem costIncreaseFactor
   rawMaterials: [
     { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
     { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
@@ -155,26 +151,26 @@ export const gameConfig = {
   premiumUpgrades: {
   floatingClickValue: {
       // NEU: Premium-Upgrade für Floating Click Wert
-      baseCost: 250,
-      costExponent: 1.2, // exponentiell steigend
+      baseCost: 300,
+      costExponent: 1.4, // exponentiell steigend
       factor: 1.25, // Wert-Verdopplung pro Level
     },
     criticalClickChance: {
       // New upgrade configuration
-      baseCost: 500,
-      costLevelMultiplier: 1.4, // Cost increases by 0.75 * baseCost for each level
+      baseCost: 600,
+      costLevelMultiplier: 1.5, // Cost increases by 0.75 * baseCost for each level
       effectPerLevel: 0.005, // 0.5% chance increase per level
       baseMultiplier: 1.0, // Startwert x1.0
       multiplierPerLevel: 0.1 // +0.5 pro Level
     },
     globalMultiplier: {
       baseCost: 2000,
-      costExponent: 1.5, // z.B. exponentiell steigend, anpassbar
+      costExponent: 1.6, // z.B. exponentiell steigend, anpassbar
       factor: 1.05, // 5% Steigerung pro Level
     },
     globalPriceDecrease: {
       baseCost: 4000,
-      costExponent: 1.6, // z.B. exponentiell steigend, anpassbar
+      costExponent: 1.7, // z.B. exponentiell steigend, anpassbar
       decreaseFactor: 0.90, // -5% pro Level (0.95^level)
     },
     offlineEarnings: {
