@@ -34,39 +34,18 @@ body.dark {
   opacity: 0.8;
 }
 
-.section-title {
-  margin: 25px 0 15px;
-  color: map.get($colors, primary);
-  text-align: center;
-}
-
-.per-second {
-  font-size: 1rem;
-  margin-left: 12px;
-  color: #2ecc71;
-}
-
 // Environment Labels
 .env-label {
-  font-size: 0.5em;
-  margin-left: 10px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 0.5em;
+  font-weight: 400;
+  margin-left: 10px;
+  opacity: 0.6;
+  padding: 2px 6px;
+  transition: all 0.2s ease;
   user-select: none;
   vertical-align: super;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 400;
-  opacity: 0.6;
-  transition: all 0.2s ease;
-
-  &:not(.production):hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  &.production {
-    cursor: default;
-  }
 
   &.beta {
     color: map.get($colors, secondary);
@@ -100,18 +79,4 @@ body.dark {
 .check-icon {
   width: 18px;
   height: 18px;
-}
-
-.version-display {
-  position: fixed;
-  left: 12px;
-  bottom: 8px;
-  font-size: 0.95rem;
-  color: #888;
-  background: rgba(255,255,255,0.7);
-  padding: 2px 10px;
-  border-radius: 8px 8px 8px 0;
-  z-index: $z-index-version-display;
-  pointer-events: none;
-  user-select: none;
 }
