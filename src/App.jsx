@@ -142,9 +142,6 @@ function App() {
         soundEffectsEnabled={soundEffectsEnabled}
         setSoundEffectsEnabled={setSoundEffectsEnabled}
       />
-      {/* <div className="version-display">
-        <VersionDisplay />
-      </div> */}
       <InstallPwaPrompt />
     </div>
   );

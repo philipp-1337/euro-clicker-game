@@ -59,9 +59,13 @@ body.dark {
   opacity: 0.6;
   transition: all 0.2s ease;
 
-  &:hover {
+  &:not(.production):hover {
     opacity: 1;
     transform: scale(1.05);
+  }
+
+  &.production {
+    cursor: default;
   }
 
   &.beta {
