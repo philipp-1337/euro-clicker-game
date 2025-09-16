@@ -10,7 +10,7 @@
 // ============================================
 
 %toast-base {
-  border-radius: 36px;
+  border-radius: 25px !important;
   font-size: 1.08rem;
   padding: 1.2em 1.6em 1.2em 1.3em;
 
@@ -41,7 +41,7 @@
     font-size: 0.98rem;
     padding: 1em 1.2em;
     min-width: 220px;
-    border-radius: 25px;
+    border-radius: 25px !important;
   }
 }
 
@@ -52,7 +52,7 @@
 %toast-button-base {
   font-size: 0.97em;
   padding: 0.6em 1.4em;
-  border-radius: 25px;
+  border-radius: 25px !important;
   position: relative;
 
   gap: 0.5em; // Für Icon-Spacing
@@ -87,7 +87,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 25px;
+    border-radius: 25px !important;
     background: linear-gradient(135deg,
         rgba(255, 255, 255, 0.15) 0%,
         rgba(255, 255, 255, 0.08) 50%,
@@ -117,7 +117,7 @@
   @media (max-width: 600px) {
     font-size: 0.91em;
     padding: 0.5em 1.1em;
-    border-radius: 20px;
+    border-radius: 20px !important;
   }
 }
 
@@ -200,14 +200,18 @@
 // CLOSE BUTTON STYLING - BOTTOM TAB MENU STYLE
 // ============================================
 
+[data-sonner-toast][data-styled=true] [data-content] {
+  max-width: calc(100% - 28px) !important; // Platz für Close Button schaffen
+}
+
 [data-close-button="true"] {
   position: absolute !important;
-  top: 0 !important;
-  left: calc(100% - 10px) !important;
   width: 32px !important;
   height: 32px !important;
   border-radius: 50% !important;
   border: none !important;
+  top: 18px !important;
+  left: calc(100% - 28px) !important;
 
   // Matching bottom tab menu glass effect
   background: rgba(255, 255, 255, 0.08) !important;
@@ -234,7 +238,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: 50%;
+    border-radius: 50% !important;
     background: linear-gradient(135deg,
         rgba(255, 255, 255, 0.15) 0%,
         rgba(255, 255, 255, 0.08) 50%,
@@ -245,18 +249,13 @@
   }
 
   &:hover {
-    // transform: scale(1.05) !important;
     color: rgba(1, 1, 1, 0.9) !important;
 
     &::before {
       opacity: 1;
     }
   }
-
-  &:active {
-    transform: scale(0.95) !important;
-  }
-
+  
   svg {
     width: 16px !important;
     height: 16px !important;
@@ -444,6 +443,7 @@ body.dark {
   }
 
   // Close Button Dark Mode - matching bottom tab menu style
+
   [data-close-button="true"] {
     background: bg(glass-dark) !important;
     backdrop-filter: blur(20px) saturate(180%) !important;

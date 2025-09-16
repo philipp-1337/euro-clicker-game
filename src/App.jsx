@@ -134,7 +134,7 @@ function App() {
           duration: Infinity,
           className: 'update-toast',
           dismissible: false,
-          closeButton: true,
+          // closeButton: true,
         }
       );
     }
@@ -150,7 +150,7 @@ function App() {
           </span>
         ) : (
           <span style={{display: 'block'}}>
-            <span style={{display: 'block', marginBottom: 8}}>If you like the game, you can choose to install it.</span>
+            <span style={{display: 'block', marginBottom: 8}}>Do you like the game?</span>
               <button
                 onClick={handleInstallClick}
                 className="pwa-toast-btn"

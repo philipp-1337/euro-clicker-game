@@ -37,29 +37,21 @@ body.dark {
 // Environment Labels
 .env-label {
   border-radius: 4px;
-  cursor: pointer;
   font-size: 0.5em;
   font-weight: 400;
   margin-left: 10px;
   opacity: 0.6;
   padding: 2px 6px;
-  transition: all 0.2s ease;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   vertical-align: super;
-
-  &.beta {
-    color: map.get($colors, secondary);
-    background-color: map.get($backgrounds, light);
-
-    &.easy {
-      color: map.get($colors, warning);
-      font-weight: bold;
-    }
-  }
-
+  
   &.localhost {
     color: map.get($colors, accent);
     background-color: map.get($backgrounds, lighter-blue);
+    cursor: pointer;
 
     &.easy {
       color: map.get($colors, warning);
