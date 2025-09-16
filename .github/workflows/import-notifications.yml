@@ -1,0 +1,36 @@
+name: Import Notifications to Firestore
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["firebase-deploy.yml"]
+    types:
+      - completed
+
+jobs:
+  import-notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install csv-parser firebase-admin
+        working-directory: ./scripts
+
+      - name: Add service account key
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$FIREBASE_SERVICE_ACCOUNT" > ./scripts/serviceAccountKey.json
+
+      - name: Import notifications to Firestore
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ./scripts/serviceAccountKey.json
+        run: node importNotifications.js
+        working-directory: ./scripts
