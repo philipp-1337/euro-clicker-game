@@ -23,14 +23,8 @@ jobs:
         run: npm install csv-parser firebase-admin
         working-directory: ./scripts
 
-      - name: Add service account key
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: |
-          echo "$FIREBASE_SERVICE_ACCOUNT" > ./scripts/serviceAccountKey.json
-
       - name: Import notifications to Firestore
         env:
-          FIREBASE_SERVICE_ACCOUNT: ./scripts/serviceAccountKey.json
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node importNotifications.js
         working-directory: ./scripts
