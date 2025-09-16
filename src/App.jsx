@@ -1,14 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ClickerGame from '@components/ClickerGame';
 // import UpdateBanner from '@components/UpdateBanner';
-import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
-import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
+// import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
+// import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
 import { Toaster, toast } from 'sonner';
+import { usePwaPrompt } from '@hooks/usePwaPrompt';
+import { ShareIcon, SquarePlusIcon } from 'lucide-react';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
+  const { showInstallPrompt, isIos, handleInstallClick, handleDismissClick } = usePwaPrompt();
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
@@ -67,8 +70,7 @@ function App() {
                            'Unknown error';
         message = `Due to a problem with your save data (${reasonText}), the game has been reset.`;
       }
-      // Hier könntest du eine schönere Benachrichtigung einbauen (Toast, Modal etc.)
-      alert(message);
+      toast.error(message, { duration: 8000, id: 'tamper-toast', className: 'tamper-toast' });
     };
     window.addEventListener('gamestateTampered', handleTampering);
     return () => {
@@ -139,6 +141,60 @@ function App() {
     };
   }, [needRefresh, handleUpdate]);
 
+  // PWA Install-Toast anzeigen, wenn showInstallPrompt true ist
+  useEffect(() => {
+    let toastId;
+    if (showInstallPrompt) {
+      toastId = toast(
+        isIos ? (
+          <span>
+            To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
+          </span>
+        ) : (
+          <span>
+            Do you like the game?&nbsp;
+            <button onClick={handleInstallClick} className="pwa-toast-btn">Install</button>
+            <button onClick={handleDismissClick} className="pwa-toast-btn">Dismiss</button>
+          </span>
+        ),
+        {
+          duration: Infinity,
+          id: 'pwa-toast',
+          className: 'pwa-toast',
+        }
+      );
+    } else {
+      toast.dismiss('pwa-toast');
+    }
+    return () => {
+      toast.dismiss('pwa-toast');
+    };
+  }, [showInstallPrompt, isIos, handleInstallClick, handleDismissClick]);
+
+  // Beta-Ende-Toast anzeigen, wenn auf Beta-Umgebung
+  useEffect(() => {
+    const isBeta = window.location.hostname.includes('beta');
+    if (isBeta) {
+      toast(
+        <span>
+          <b>Beta shutdown:</b> The Beta will be shut down soon and will no longer be updated.<br />
+          Please switch to <a href="https://euro-clicker-game.web.app" target="_blank" rel="noopener noreferrer">euro-clicker-game.web.app</a> (clear your cache if needed).<br />
+          You can transfer your progress via the Cloud Save feature in Settings.
+        </span>,
+        {
+          duration: Infinity,
+          id: 'beta-toast',
+          className: 'beta-toast',
+        }
+      );
+    } else {
+      toast.dismiss('beta-toast');
+    }
+    return () => {
+      toast.dismiss('beta-toast');
+    };
+  }, []);
+
   return (
     <>
       <Toaster
@@ -152,7 +208,7 @@ function App() {
         gap={16}
       />
       <div className="App">
-        <BetaEndBanner />
+        {/* BetaEndBanner entfernt, Toast übernimmt */}
         {/* Background music */}
         <audio
           ref={audioRef}
@@ -162,7 +218,6 @@ function App() {
         >
           <track kind="captions" label="Background music" srcLang="en" />
         </audio>
-        {/* UpdateBanner entfernt, Toast übernimmt */}
         <ClickerGame
           easyMode={easyMode}
           onEasyModeToggle={handleEasyModeToggle}
@@ -174,7 +229,6 @@ function App() {
           soundEffectsEnabled={soundEffectsEnabled}
           setSoundEffectsEnabled={setSoundEffectsEnabled}
         />
-        <InstallPwaPrompt />
       </div>
     </>
   );
