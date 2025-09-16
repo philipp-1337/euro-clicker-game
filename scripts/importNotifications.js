@@ -1,28 +1,28 @@
 // scripts/importNotifications.js
 // Liest notifications.csv ein und importiert/updatet die Notifications in Firestore
 
-const fs = require('fs');
-const path = require('path');
-const csv = require('csv-parser');
-const admin = require('firebase-admin');
+import { existsSync, createReadStream } from 'fs';
+import { join } from 'path';
+import csv from 'csv-parser';
+import { initializeApp, credential as _credential, firestore } from 'firebase-admin';
 
 // Firestore-Initialisierung (Service Account JSON muss als env oder Datei vorliegen)
-const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT || path.join(__dirname, 'serviceAccountKey.json');
-if (!fs.existsSync(serviceAccountPath)) {
+const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT || join(__dirname, 'serviceAccountKey.json');
+if (!existsSync(serviceAccountPath)) {
   console.error('Service Account JSON nicht gefunden:', serviceAccountPath);
   process.exit(1);
 }
 
-admin.initializeApp({
-  credential: admin.credential.cert(require(serviceAccountPath)),
+initializeApp({
+  credential: _credential.cert(require(serviceAccountPath)),
 });
 
-const db = admin.firestore();
-const csvFile = path.join(__dirname, 'notifications.csv');
+const db = firestore();
+const csvFile = join(__dirname, 'notifications.csv');
 
 async function importNotifications() {
   const notifications = [];
-  fs.createReadStream(csvFile)
+  createReadStream(csvFile)
     .pipe(csv())
     .on('data', (row) => notifications.push(row))
     .on('end', async () => {
@@ -32,7 +32,7 @@ async function importNotifications() {
         await db.collection('notifications').doc(notif.id).set({
           subject: notif.title,
           body: notif.message,
-          dateTime: notif.timestamp ? new Date(notif.timestamp) : admin.firestore.FieldValue.serverTimestamp(),
+          dateTime: notif.timestamp ? new Date(notif.timestamp) : firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
         console.log('Importiert/aktualisiert:', notif.id);
       }
