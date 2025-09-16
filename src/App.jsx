@@ -148,6 +148,14 @@ function App() {
         isIos ? (
           <span>
             To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
+            <button
+              onClick={() => {
+                handleDismissClick();
+                toast.dismiss('pwa-toast');
+              }}
+              className="pwa-toast-btn"
+              style={{ marginLeft: 12 }}
+            >Dismiss</button>
           </span>
         ) : (
           <span>
@@ -178,12 +186,12 @@ function App() {
 
   // Beta-Ende-Toast anzeigen, wenn auf Beta-Umgebung
   useEffect(() => {
-    const isBeta = window.location.hostname.includes('beta');
+    const isBeta = window.location.hostname.includes('beta') || window.location.hostname.includes("localhost") || window.location.hostname.includes("alpha");
     if (isBeta) {
       toast(
         <span>
           <b>Beta shutdown:</b> The Beta will be shut down soon and will no longer be updated.<br />
-          Please switch to <a href="https://euro-clicker-game.web.app" target="_blank" rel="noopener noreferrer">euro-clicker-game.web.app</a> (clear your cache if needed).<br />
+          Please switch to euro-clicker-game.web.app (clear your cache if needed).<br />
           You can transfer your progress via the Cloud Save feature in Settings.
         </span>,
         {
