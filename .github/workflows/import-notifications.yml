@@ -3,7 +3,7 @@ name: Import Notifications to Firestore
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["firebase-deploy.yml"]
+    workflows: ["Build & Deploy to Firebase Hosting (React)"]
     types:
       - completed
 
