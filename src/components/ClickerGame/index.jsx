@@ -165,9 +165,9 @@ export default function ClickerGame({
     unlockSpecificAchievementById,
   } = useAchievements(money, floatingClicks, playTime);
   const {
-    showAchievement,
-    setShowAchievement,
-    setNotificationQueue,
+    // showAchievement,
+    // setShowAchievement,
+    // setNotificationQueue,
     hasAnyAchievement,
   } = useAchievementNotifications(
     achievements,

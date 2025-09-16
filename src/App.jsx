@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ClickerGame from '@components/ClickerGame';
 // import UpdateBanner from '@components/UpdateBanner';
 import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
@@ -100,7 +100,7 @@ function App() {
   };
 
   // Funktion zum Auslösen des Updates
-  const handleUpdate = () => {
+  const handleUpdate = useCallback(() => {
     // Zuerst speichern
     if (saveGameRef.current) {
       console.log('Saving game before update...');
@@ -110,7 +110,7 @@ function App() {
     }
 
     updateServiceWorker(true);
-  };
+  }, [updateServiceWorker]);
 
   // Callback, um die saveGame Funktion von ClickerGame zu erhalten
   const registerSaveGameHandler = (saveFn) => {
@@ -119,9 +119,8 @@ function App() {
 
   // Update-Toast anzeigen, solange needRefresh true ist
   useEffect(() => {
-    let toastId;
     if (needRefresh) {
-      toastId = toast(
+      toast(
         <span>
           A new version of the game is available!
           <button style={{ marginLeft: 12 }} onClick={handleUpdate} className="update-toast-btn">Save & Refresh</button>
@@ -138,7 +137,7 @@ function App() {
     return () => {
       toast.dismiss('update-toast');
     };
-  }, [needRefresh]);
+  }, [needRefresh, handleUpdate]);
 
   return (
     <>
