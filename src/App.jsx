@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import ClickerGame from '@components/ClickerGame';
 import { Toaster, toast } from 'sonner';
 import { usePwaPrompt } from '@hooks/usePwaPrompt';
-import { ShareIcon, SquarePlusIcon } from 'lucide-react';
+import { DownloadIcon, RefreshCwIcon, ShareIcon, SquarePlusIcon } from 'lucide-react';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
 import { useRegisterSW } from 'virtual:pwa-register/react';
@@ -125,17 +125,15 @@ function App() {
           <button
             style={{ marginLeft: 12 }}
             onClick={handleUpdate}
-            className="update-toast-btn"
+            className=" "
           >
-            Save & Refresh
+            <RefreshCwIcon size={16} /> Save & Refresh
           </button>
         </span>,
         {
           duration: Infinity,
           className: 'update-toast',
-          expand: true,
           dismissible: false,
-
         }
       );
     }
@@ -152,12 +150,10 @@ function App() {
         ) : (
           <span style={{display: 'block'}}>
             <span style={{display: 'block', marginBottom: 8}}>If you like the game, you can choose to install it.</span>
-            <span className="pwa-toast-btn-row">
               <button
                 onClick={handleInstallClick}
                 className="pwa-toast-btn"
-              >Install</button>
-            </span>
+              ><DownloadIcon size={16} />Install</button>
           </span>
         ),
         {
@@ -178,7 +174,7 @@ function App() {
     <>
       <Toaster
         richColors={true}
-        position="top-center"
+        position="top-right"
         mobileOffset={32}
         offset={32}
         closeButton={false}
