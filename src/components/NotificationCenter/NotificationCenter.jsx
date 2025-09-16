@@ -31,7 +31,7 @@ const NotificationCenter = ({
                     : ""}
                 </div>
                 <div className="notification-subject">
-                  <strong>{n.subject}</strong>
+                  <strong>{n.type ? `${n.type}: ` : ""}{n.subject}</strong>
                 </div>
                 <div className="notification-body">{n.body}</div>
               </li>

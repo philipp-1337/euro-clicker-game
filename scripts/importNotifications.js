@@ -30,15 +30,17 @@ const csvFile = path.join(__dirname, 'notifications.csv');
 async function importNotifications() {
   const notifications = [];
   fs.createReadStream(csvFile)
-    .pipe(csv())
+    .pipe(csv({ separator: ';' }))
     .on('data', (row) => notifications.push(row))
     .on('end', async () => {
       for (const notif of notifications) {
         if (!notif.id) continue;
-        // Mapping: title -> subject, message -> body, timestamp -> dateTime
+        // Entferne "Feature: " oder "Fix: " am Anfang von title
+        let cleanSubject = notif.title.replace(/^(Feature|Fix):\s*/i, '');
         await db.collection('notifications').doc(notif.id).set({
-          subject: notif.title,
+          subject: cleanSubject,
           body: notif.message,
+          type: notif.type,
           dateTime: notif.timestamp ? new Date(notif.timestamp) : admin.firestore.FieldValue.serverTimestamp(),
         }, { merge: true });
         console.log('Importiert/aktualisiert:', notif.id);

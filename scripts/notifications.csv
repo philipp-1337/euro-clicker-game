@@ -1,6 +1,6 @@
 id;title;message;type;timestamp
-d08QoLavL0Iz4TGWV6im;Feature: AutoBuyer Buffer Badge (v0.3.7);The AutoBuyer button now displays a yellow badge when a Money Buffer is set, making it easy to see at a glance if a buffer is active. The badge remains green when the AutoBuyer is simply enabled.;Feature;2025-09-16T12:14:41.726Z
-qW159TpmyZIByCbpZCVT;Feature: Rebalancing & Next Share Cost Display (v0.3.6);Floating Clicker Upgrades become more expensive more quickly. Prestige Modal shows the price of the next share.;Feature;2025-09-13T20:23:21.284Z
-8dyI5qcQQAy8roTOhCkP;Fix: Persistent Leaderboard Checkpoints (v0.3.5);Checkpoints now persist across reloads, preventing unintentional double shows. Multiple reached checkpoints display sequentially.;Fix;2025-09-13T19:31:11.259Z
-zYtpJ5YmtJOu6TWCIGLJ;Fix: Cooldown percentage display (v0.3.4);Cooldown reduction now shows the correct percentage value on upgrade buttons.;Fix;2025-09-10T09:34:52.607Z
-7IKrGOoL9nTVLahwGT17;Feature: Notification Center added (v0.3.3);Here you'll find news about the game.;Feature;2025-09-09T08:51:12.160Z
+d08QoLavL0Iz4TGWV6im;AutoBuyer Buffer Badge (v0.3.7);The AutoBuyer button now displays a yellow badge when a Money Buffer is set, making it easy to see at a glance if a buffer is active. The badge remains green when the AutoBuyer is simply enabled.;Feature;2025-09-16T12:14:41.726Z
+qW159TpmyZIByCbpZCVT;Rebalancing & Next Share Cost Display (v0.3.6);Floating Clicker Upgrades become more expensive more quickly. Prestige Modal shows the price of the next share.;Feature;2025-09-13T20:23:21.284Z
+8dyI5qcQQAy8roTOhCkP;Persistent Leaderboard Checkpoints (v0.3.5);Checkpoints now persist across reloads, preventing unintentional double shows. Multiple reached checkpoints display sequentially.;Fix;2025-09-13T19:31:11.259Z
+zYtpJ5YmtJOu6TWCIGLJ;Cooldown percentage display (v0.3.4);Cooldown reduction now shows the correct percentage value on upgrade buttons.;Fix;2025-09-10T09:34:52.607Z
+7IKrGOoL9nTVLahwGT17;Notification Center added (v0.3.3);Here you'll find news about the game.;Feature;2025-09-09T08:51:12.160Z
