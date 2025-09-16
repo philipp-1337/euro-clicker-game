@@ -11,16 +11,18 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Firestore-Initialisierung (Service Account JSON muss als env oder Datei vorliegen)
-const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT || path.join(__dirname, 'serviceAccountKey.json');
-if (!fs.existsSync(serviceAccountPath)) {
-  console.error('Service Account JSON nicht gefunden:', serviceAccountPath);
+
+// Firestore-Initialisierung (Service Account JSON muss als ENV vorliegen)
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+} catch (error) {
+  console.error('[FEHLER] Firebase-Initialisierung fehlgeschlagen:', error.message);
   process.exit(1);
 }
-
-admin.initializeApp({
-  credential: admin.credential.cert(JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'))),
-});
 
 const db = admin.firestore();
 const csvFile = path.join(__dirname, 'notifications.csv');
