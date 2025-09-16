@@ -1,11 +1,10 @@
 name: Import Notifications to Firestore
 
 on:
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["Build & Deploy to Firebase Hosting (React)"]
-    types:
-      - completed
+  push:
+    paths:
+      - 'scripts/notifications.csv'
+  workflow_dispatch: # Optional: manuell auslösbar
 
 jobs:
   import-notifications:
