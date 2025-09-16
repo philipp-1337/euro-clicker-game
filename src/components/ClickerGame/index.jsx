@@ -315,7 +315,7 @@ export default function ClickerGame({
         console.error("Cloud save failed:", e);
       }
     } else if (typeof saveGame === "function") {
-      saveGame();
+      saveGame(true);
     }
     // Remove first from pendingCheckpoints and update state/storage
     let nextPending = Array.isArray(pendingCheckpoints) ? [...pendingCheckpoints] : [];

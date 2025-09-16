@@ -65,9 +65,14 @@ export default function useLocalStorage(gameState, loadGameStateHook) {
     return () => clearInterval(saveInterval);
   }, []);
 
-  const saveGame = () => {
+  // saveGame: manuell = true => game:saved, sonst autosave
+  const saveGame = (manual = false) => {
     saveGameState(STORAGE_KEY, latestGameState.current);
-    window.dispatchEvent(new Event('game:autosaved')); // Eigenes Event für manuelle Speicherung
+    if (manual) {
+      window.dispatchEvent(new Event('game:saved'));
+    } else {
+      window.dispatchEvent(new Event('game:autosaved'));
+    }
   };
 
   return { saveGame };

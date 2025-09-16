@@ -122,10 +122,20 @@ function App() {
   // Update-Toast anzeigen, solange needRefresh true ist
   useEffect(() => {
     if (needRefresh) {
+      toast.dismiss('update-toast');
       toast(
         <span>
           A new version of the game is available!
-          <button style={{ marginLeft: 12 }} onClick={handleUpdate} className="update-toast-btn">Save & Refresh</button>
+          <button
+            style={{ marginLeft: 12 }}
+            onClick={() => {
+              handleUpdate();
+              toast.dismiss('update-toast');
+            }}
+            className="update-toast-btn"
+          >
+            Save & Refresh
+          </button>
         </span>,
         {
           duration: Infinity,
@@ -143,9 +153,9 @@ function App() {
 
   // PWA Install-Toast anzeigen, wenn showInstallPrompt true ist
   useEffect(() => {
-    let toastId;
     if (showInstallPrompt) {
-      toastId = toast(
+      toast.dismiss('pwa-toast');
+      toast(
         isIos ? (
           <span>
             To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
@@ -153,8 +163,20 @@ function App() {
         ) : (
           <span>
             Do you like the game?&nbsp;
-            <button onClick={handleInstallClick} className="pwa-toast-btn">Install</button>
-            <button onClick={handleDismissClick} className="pwa-toast-btn">Dismiss</button>
+            <button
+              onClick={() => {
+                handleInstallClick();
+                toast.dismiss('pwa-toast');
+              }}
+              className="pwa-toast-btn"
+            >Install</button>
+            <button
+              onClick={() => {
+                handleDismissClick();
+                toast.dismiss('pwa-toast');
+              }}
+              className="pwa-toast-btn"
+            >Dismiss</button>
           </span>
         ),
         {
@@ -175,6 +197,7 @@ function App() {
   useEffect(() => {
     const isBeta = window.location.hostname.includes('beta');
     if (isBeta) {
+      toast.dismiss('beta-toast');
       toast(
         <span>
           <b>Beta shutdown:</b> The Beta will be shut down soon and will no longer be updated.<br />
@@ -199,11 +222,11 @@ function App() {
     <>
       <Toaster
         richColors={true}
-        position="bottom-right"
+        position="top-center"
         mobileOffset={32}
         offset={32}
-        closeButton={false}
-        expand={true}
+        closeButton={true}
+        expand={false}
         invert={false}
         gap={16}
       />
