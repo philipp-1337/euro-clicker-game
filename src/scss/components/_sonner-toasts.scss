@@ -548,3 +548,15 @@ body.dark {
   width: 100%;
   pointer-events: none;
 }
+
+.sonner-toast:hover {
+  transform: none !important;
+  transition: none !important;
+}
+
+// .pwa-toast:hover,
+// .update-toast:hover {
+//   transform: none !important;
+//   transition: none !important;
+//   pointer-events: auto !important;
+// }

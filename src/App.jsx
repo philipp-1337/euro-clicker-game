@@ -120,8 +120,8 @@ function App() {
   useEffect(() => {
     if (needRefresh) {
       toast(
-        <span>
-          A new version of the game is available!
+        <span style={{display: 'block'}}>
+          <span style={{display: 'block', marginBottom: 8}}>A new version of the game is available!</span>
           <button
             style={{ marginLeft: 12 }}
             onClick={handleUpdate}
@@ -134,6 +134,7 @@ function App() {
           duration: Infinity,
           className: 'update-toast',
           dismissible: false,
+          closeButton: true,
         }
       );
     }
@@ -161,8 +162,6 @@ function App() {
           className: 'pwa-toast',
           id: 'pwa-toast',
           closeButton: true,
-          expand: false,
-
         }
       );
     } else {
@@ -178,7 +177,7 @@ function App() {
         mobileOffset={32}
         offset={32}
         closeButton={false}
-        expand={false}
+        expand={true}
         invert={false}
         gap={16}
       />
