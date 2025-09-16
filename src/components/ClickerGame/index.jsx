@@ -552,6 +552,7 @@ export default function ClickerGame({
           autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
           autoBuyGlobalMultiplierEnabled={autoBuyGlobalMultiplierEnabled}
           autoBuyGlobalPriceDecreaseEnabled={autoBuyGlobalPriceDecreaseEnabled}
+          autoBuyerBuffer={autoBuyerBuffer}
         />
       )}
 

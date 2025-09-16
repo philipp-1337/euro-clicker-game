@@ -519,6 +519,7 @@ GameHeader.propTypes = {
   autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
   autoBuyGlobalMultiplierEnabled: PropTypes.bool.isRequired,
   autoBuyGlobalPriceDecreaseEnabled: PropTypes.bool.isRequired,
+  autoBuyerBuffer: PropTypes.number,
   musicEnabled: PropTypes.bool.isRequired,
   setMusicEnabled: PropTypes.func.isRequired,
   soundEffectsEnabled: PropTypes.bool.isRequired,
