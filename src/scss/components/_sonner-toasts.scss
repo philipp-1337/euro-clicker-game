@@ -1,0 +1,487 @@
+// Optimized Sonner Toast notifications with Liquid Glass Design
+// Uses existing mixins, variables, and color tokens from abstracts
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/mixins' as *;
+
+// ============================================
+// BASE TOAST STYLING - LIQUID GLASS
+// ============================================
+
+%toast-base {
+  border-radius: 20px;
+  font-size: 1.05rem;
+  padding: 1.2em 1.6em 1.2em 1.3em;
+  
+  // Enhanced Liquid Glass Effect for Light Mode
+  background: rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  
+  // Enhanced Shadow System with more depth
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  min-width: 280px;
+  max-width: 95vw;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  transition: all $transition-medium cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  // Subtle animation on appear
+  animation: toastSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+// ============================================
+// STANDARD SONNER TOAST STYLES
+// ============================================
+
+// Default Sonner Toast Styling
+[data-sonner-toast] {
+  @extend %toast-base;
+  
+  // Default colors for standard toasts
+  &[data-type="success"] {
+    color: color(green-dark) !important;
+    
+    [data-icon] svg {
+      color: color(green) !important;
+    }
+  }
+  
+  &[data-type="error"] {
+    color: color(dark-red) !important;
+    
+    [data-icon] svg {
+      color: color(red) !important;
+    }
+  }
+  
+  &[data-type="warning"] {
+    color: color(yellow-dark) !important;
+    
+    [data-icon] svg {
+      color: color(warning) !important;
+    }
+  }
+  
+  &[data-type="info"] {
+    color: #005a7a !important;
+    
+    [data-icon] svg {
+      color: color(blue) !important;
+    }
+  }
+  
+  // Default styling if no type specified
+  &:not([data-type]) {
+    color: color(text-dark) !important;
+  }
+}
+
+// ============================================
+// CLOSE BUTTON STYLING
+// ============================================
+
+// Close Button with Enhanced Glass Effect
+[data-close-button="true"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: calc(100% - 10px) !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50% !important;
+  border: none !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(15px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(150%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  cursor: pointer !important;
+  transition: all $transition-fast !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  // Enhanced glass shadow
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  
+//   &:hover {
+//     background: rgba(255, 255, 255, 0.3) !important;
+//     color: rgba(0, 0, 0, 0.8) !important;
+//     transform: scale(1.1) !important;
+//     box-shadow: 
+//       0 6px 20px rgba(0, 0, 0, 0.15),
+//       inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+//   }
+  
+  &:active {
+    transform: scale(0.95) !important;
+  }
+  
+  svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+%toast-button-base {
+//   margin-left: 0.8em;
+  font-size: 0.95em;
+  padding: 0.4em 1.2em;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  transition: all $transition-medium cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+// ============================================
+// TOAST VARIANTS (Light Mode) - ENHANCED GLASS
+// ============================================
+
+.achievement-toast {
+  @extend %toast-base;
+  
+  // Enhanced Golden Glass Effect
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 220, 0.4) 0%,
+    rgba(255, 245, 200, 0.3) 100%) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.2) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.2) !important;
+  color: #6b5b00;
+  border: 1px solid rgba(255, 220, 100, 0.6) !important;
+  
+  // Golden glow with more intensity
+  box-shadow: 
+    0 12px 40px rgba(255, 193, 7, 0.2),
+    0 4px 16px rgba(255, 193, 7, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 220, 100, 0.3);
+}
+
+.tamper-toast {
+  @extend %toast-base;
+  
+  // Enhanced Red Glass Effect
+  background: linear-gradient(135deg, 
+    rgba(255, 240, 240, 0.4) 0%,
+    rgba(255, 234, 234, 0.3) 100%) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  color: color(dark-red);
+  border: 1px solid rgba(255, 179, 179, 0.6) !important;
+  font-weight: 600;
+  
+  // Red glow with more intensity
+  box-shadow: 
+    0 12px 40px rgba(231, 76, 60, 0.2),
+    0 4px 16px rgba(231, 76, 60, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 179, 179, 0.3);
+}
+
+.update-toast {
+  @extend %toast-base;
+  
+  // Enhanced Blue Glass Effect
+  background: linear-gradient(135deg, 
+    rgba(230, 247, 255, 0.4) 0%,
+    rgba(194, 233, 255, 0.3) 100%) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  color: #005a7a;
+  border: 1px solid rgba(102, 207, 255, 0.6) !important;
+  font-weight: 600;
+  
+  // Blue glow with more intensity
+  box-shadow: 
+    0 12px 40px rgba(52, 152, 219, 0.2),
+    0 4px 16px rgba(52, 152, 219, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(102, 207, 255, 0.3);
+  
+  &-btn {
+    @extend %toast-button-base;
+    // @include button-base;
+    // @include color-variant(btn-color(blue, base), btn-color(blue, hover));
+    margin-left: 1em;
+    font-size: 0.98em;
+    padding: 0.4em 1.3em;
+  }
+}
+
+.pwa-toast {
+  @extend %toast-base;
+  
+  // Enhanced Purple Glass Effect
+  background: linear-gradient(135deg, 
+    rgba(240, 247, 255, 0.4) 0%,
+    rgba(230, 240, 255, 0.3) 100%) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.1) !important;
+  color: #2a3a5a;
+  border: 1px solid rgba(179, 198, 255, 0.6) !important;
+  
+  // Purple glow with more intensity
+  box-shadow: 
+    0 12px 40px rgba(155, 89, 182, 0.2),
+    0 4px 16px rgba(155, 89, 182, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(179, 198, 255, 0.3);
+  
+  &-btn {
+    @extend %toast-button-base;
+    @include button-base;
+    @include color-variant(color(gray), color(dark-hue));
+  }
+}
+
+.beta-toast {
+  @extend %toast-base;
+  
+  // Enhanced Amber Glass Effect
+  background: linear-gradient(135deg, 
+    rgba(255, 251, 230, 0.4) 0%,
+    rgba(255, 247, 194, 0.3) 100%) !important;
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.2) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.2) !important;
+  color: #7a5a00;
+  border: 1px solid rgba(255, 224, 102, 0.6) !important;
+  font-weight: 500;
+  
+  // Amber glow with more intensity
+  box-shadow: 
+    0 12px 40px rgba(241, 196, 15, 0.2),
+    0 4px 16px rgba(241, 196, 15, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 224, 102, 0.3);
+}
+
+// ============================================
+// DARK MODE VARIANTS - LIQUID GLASS
+// ============================================
+
+@mixin dark-toast-glass($bg-gradient-start, $bg-gradient-end, $text-color, $border-color, $glow-color: null) {
+  background: linear-gradient(135deg, $bg-gradient-start 0%, $bg-gradient-end 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  color: $text-color;
+  border: 1px solid rgba($border-color, 0.3);
+  
+  @if $glow-color {
+    box-shadow: 
+      0 8px 32px rgba($glow-color, 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 bg(glass-border-dark);
+  } @else {
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(glass-border-dark);
+  }
+  
+  svg {
+    color: $text-color;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+}
+
+body.dark {
+  // Default Sonner Toast Dark Mode
+  [data-sonner-toast] {
+    background: bg(glass-dark) !important;
+    backdrop-filter: blur(25px) saturate(180%) !important;
+    border: 1px solid bg(glass-border-dark) !important;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 bg(glass-border-dark);
+    
+    &[data-type="success"] {
+      color: color(green) !important;
+      
+      [data-icon] svg {
+        color: color(green) !important;
+      }
+    }
+    
+    &[data-type="error"] {
+      color: #ffb3b3 !important;
+      
+      [data-icon] svg {
+        color: color(red) !important;
+      }
+    }
+    
+    &[data-type="warning"] {
+      color: color(warning) !important;
+      
+      [data-icon] svg {
+        color: color(warning) !important;
+      }
+    }
+    
+    &[data-type="info"] {
+      color: #66cfff !important;
+      
+      [data-icon] svg {
+        color: color(blue) !important;
+      }
+    }
+    
+    &:not([data-type]) {
+      color: color(text-light) !important;
+    }
+  }
+  
+  // Close Button Dark Mode
+  [data-close-button="true"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+  }
+
+  // Achievement Toast - Golden Dark Glass
+  .achievement-toast {
+    @include dark-toast-glass(
+      rgba(45, 42, 26, 0.85),
+      rgba(58, 50, 0, 0.8),
+      color(warning),
+      color(prestige-dark),
+      color(warning)
+    );
+  }
+  
+  // Tamper Toast - Red Dark Glass
+  .tamper-toast {
+    @include dark-toast-glass(
+      rgba(58, 26, 26, 0.85),
+      rgba(74, 35, 35, 0.8),
+      #ffb3b3,
+      color(dark-red),
+      color(red)
+    );
+  }
+  
+  // Update Toast - Blue Dark Glass
+  .update-toast {
+    @include dark-toast-glass(
+      rgba(26, 45, 58, 0.85),
+      rgba(0, 51, 74, 0.8),
+      #66cfff,
+      #005a7a,
+      color(blue)
+    );
+  }
+  
+  // PWA Toast - Purple Dark Glass
+  .pwa-toast {
+    @include dark-toast-glass(
+      rgba(26, 35, 58, 0.85),
+      rgba(35, 41, 74, 0.8),
+      #b3c6ff,
+      #2a3a5a,
+      color(purple)
+    );
+  }
+  
+  // Beta Toast - Amber Dark Glass
+  .beta-toast {
+    @include dark-toast-glass(
+      rgba(45, 42, 26, 0.85),
+      rgba(58, 50, 0, 0.8),
+      color(warning),
+      color(prestige-dark),
+      color(warning)
+    );
+  }
+  
+  // Dark mode button adjustments
+  .update-toast-btn,
+  .pwa-toast-btn {
+    background: bg(glass-dark);
+    backdrop-filter: blur(10px);
+    border: 1px solid bg(glass-border-dark);
+    
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px) scale(1.02);
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE DESIGN
+// ============================================
+
+@media (max-width: 600px) {
+  %toast-base {
+    font-size: 0.98rem;
+    padding: 1em 1.2em;
+    min-width: 250px;
+    border-radius: 16px;
+    
+    // Maintain glass effect on mobile
+    backdrop-filter: blur(16px) saturate(160%);
+  }
+  
+  %toast-button-base {
+    font-size: 0.9em;
+    padding: 0.35em 1em;
+    border-radius: 10px;
+  }
+}
+
+// ============================================
+// LEGACY STYLES (if needed for fallback)
+// ============================================
+
+// Button-Row für PWA-Toast (Buttons umbrechen auf kleinen Screens)
+.pwa-toast-btn-row {
+  display: flex;
+  gap: 0.7em;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+// @media (max-width: 480px) {
+//   .pwa-toast-btn-row {
+//     flex-direction: column;
+//     align-items: stretch;
+//     gap: 0.5em;
+//   }
+// }

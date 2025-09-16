@@ -134,6 +134,8 @@ function App() {
           duration: Infinity,
           className: 'update-toast',
           expand: true,
+          dismissible: false,
+
         }
       );
     }
@@ -148,19 +150,14 @@ function App() {
             To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
           </span>
         ) : (
-          <span>
-            Do you like the game?&nbsp;
-            <button
-              onClick={handleInstallClick}
-              className="pwa-toast-btn"
-            >Install</button>
-            <button
-              onClick={() => {
-                handleDismissClick();
-                toast.dismiss('pwa-toast');
-              }}
-              className="pwa-toast-btn"
-            >Dismiss</button>
+          <span style={{display: 'block'}}>
+            <span style={{display: 'block', marginBottom: 8}}>If you like the game, you can choose to install it.</span>
+            <span className="pwa-toast-btn-row">
+              <button
+                onClick={handleInstallClick}
+                className="pwa-toast-btn"
+              >Install</button>
+            </span>
           </span>
         ),
         {
@@ -168,32 +165,14 @@ function App() {
           className: 'pwa-toast',
           id: 'pwa-toast',
           closeButton: true,
+          expand: false,
+
         }
       );
     } else {
       toast.dismiss('pwa-toast');
     }
   }, [showInstallPrompt, isIos, handleInstallClick, handleDismissClick]);
-
-  // Beta-Ende-Toast anzeigen, wenn auf Beta-Umgebung
-  useEffect(() => {
-    const isBeta = window.location.hostname.includes('beta') || window.location.hostname.includes("localhost") || window.location.hostname.includes("alpha");
-    if (isBeta) {
-      const betaToastId = 'beta-toast';
-      toast.dismiss(betaToastId); // Ensure only one instance
-      toast(
-        <span>
-           The Beta will be shut down soon and will no longer be updated. Please switch to euro-clicker-game.web.app (you may need to clear your cache). You can transfer your progress via the Cloud Save feature in Settings.
-        </span>,
-        {
-          duration: Infinity,
-          className: 'beta-toast',
-          id: betaToastId,
-          dismissible: false,
-        }
-      );
-    }
-  }, []);
 
   return (
     <>
@@ -208,7 +187,6 @@ function App() {
         gap={16}
       />
       <div className="App">
-        {/* BetaEndBanner entfernt, Toast übernimmt */}
         {/* Background music */}
         <audio
           ref={audioRef}
