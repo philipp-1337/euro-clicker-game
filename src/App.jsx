@@ -122,16 +122,12 @@ function App() {
   // Update-Toast anzeigen, solange needRefresh true ist
   useEffect(() => {
     if (needRefresh) {
-      toast.dismiss('update-toast');
       toast(
         <span>
           A new version of the game is available!
           <button
             style={{ marginLeft: 12 }}
-            onClick={() => {
-              handleUpdate();
-              toast.dismiss('update-toast');
-            }}
+            onClick={handleUpdate}
             className="update-toast-btn"
           >
             Save & Refresh
@@ -139,22 +135,15 @@ function App() {
         </span>,
         {
           duration: Infinity,
-          id: 'update-toast',
           className: 'update-toast',
         }
       );
-    } else {
-      toast.dismiss('update-toast');
     }
-    return () => {
-      toast.dismiss('update-toast');
-    };
   }, [needRefresh, handleUpdate]);
 
   // PWA Install-Toast anzeigen, wenn showInstallPrompt true ist
   useEffect(() => {
     if (showInstallPrompt) {
-      toast.dismiss('pwa-toast');
       toast(
         isIos ? (
           <span>
@@ -164,10 +153,7 @@ function App() {
           <span>
             Do you like the game?&nbsp;
             <button
-              onClick={() => {
-                handleInstallClick();
-                toast.dismiss('pwa-toast');
-              }}
+              onClick={handleInstallClick}
               className="pwa-toast-btn"
             >Install</button>
             <button
@@ -181,23 +167,19 @@ function App() {
         ),
         {
           duration: Infinity,
-          id: 'pwa-toast',
           className: 'pwa-toast',
+          id: 'pwa-toast',
         }
       );
     } else {
       toast.dismiss('pwa-toast');
     }
-    return () => {
-      toast.dismiss('pwa-toast');
-    };
   }, [showInstallPrompt, isIos, handleInstallClick, handleDismissClick]);
 
   // Beta-Ende-Toast anzeigen, wenn auf Beta-Umgebung
   useEffect(() => {
     const isBeta = window.location.hostname.includes('beta');
     if (isBeta) {
-      toast.dismiss('beta-toast');
       toast(
         <span>
           <b>Beta shutdown:</b> The Beta will be shut down soon and will no longer be updated.<br />
@@ -206,16 +188,10 @@ function App() {
         </span>,
         {
           duration: Infinity,
-          id: 'beta-toast',
           className: 'beta-toast',
         }
       );
-    } else {
-      toast.dismiss('beta-toast');
     }
-    return () => {
-      toast.dismiss('beta-toast');
-    };
   }, []);
 
   return (
@@ -225,7 +201,7 @@ function App() {
         position="top-center"
         mobileOffset={32}
         offset={32}
-        closeButton={true}
+        closeButton={false}
         expand={false}
         invert={false}
         gap={16}
