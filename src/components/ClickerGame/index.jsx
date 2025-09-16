@@ -12,7 +12,7 @@ import useGameCore from '@hooks/useGameCore';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
-import AchievementNotification from './AchievementNotification';
+
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
@@ -165,9 +165,9 @@ export default function ClickerGame({
     unlockSpecificAchievementById,
   } = useAchievements(money, floatingClicks, playTime);
   const {
-    showAchievement,
-    setShowAchievement,
-    setNotificationQueue,
+    // showAchievement,
+    // setShowAchievement,
+    // setNotificationQueue,
     hasAnyAchievement,
   } = useAchievementNotifications(
     achievements,
@@ -315,7 +315,7 @@ export default function ClickerGame({
         console.error("Cloud save failed:", e);
       }
     } else if (typeof saveGame === "function") {
-      saveGame();
+      saveGame(true);
     }
     // Remove first from pendingCheckpoints and update state/storage
     let nextPending = Array.isArray(pendingCheckpoints) ? [...pendingCheckpoints] : [];
@@ -504,15 +504,7 @@ export default function ClickerGame({
         globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
       />
 
-      {showAchievement && (
-        <AchievementNotification
-          achievement={showAchievement}
-          onClose={() => {
-            setShowAchievement(null);
-            setNotificationQueue((prev) => prev.slice(1));
-          }}
-        />
-      )}
+      {/* AchievementNotification wird jetzt als Sonner Toast angezeigt */}
       {uiProgress.gameStarted && (
         <GameHeader
           money={money}

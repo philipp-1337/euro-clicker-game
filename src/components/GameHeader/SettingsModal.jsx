@@ -1,4 +1,6 @@
 import React from "react";
+import { toast } from 'sonner';
+
 import {
   X as CloseIcon,
   Cloud as CloudIcon,
@@ -331,7 +333,7 @@ export default function SettingsModal({
                   title="Your cloud save UUID (copy & use on other device)"
                   onClick={() => {
                     navigator.clipboard?.writeText(cloudUuid);
-                    triggerSaveFeedback("UUID copied");
+                    toast.success("UUID copied");
                   }}
                   onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { navigator.clipboard?.writeText(cloudUuid); triggerSaveFeedback("UUID copied"); } }}
                   role="button"
@@ -344,7 +346,7 @@ export default function SettingsModal({
                   className="settings-button"
                   onClick={() => {
                     navigator.clipboard?.writeText(cloudUuid);
-                    triggerSaveFeedback("UUID copied");
+                    toast.success("UUID copied");
                   }}
                   title="Click to copy UUID"
                 >
@@ -515,10 +517,10 @@ export default function SettingsModal({
                         })
                       );
                       setShowCloudSaveDisableConfirm(false);
-                      triggerSaveFeedback('Cloud save disabled');
+                      toast.success('Cloud save disabled');
                     } catch (error) {
                       console.error('Error disabling cloud save:', error);
-                      triggerSaveFeedback('Error disabling cloud save');
+                      toast.error('Error disabling cloud save');
                     }
                   }}
                 >

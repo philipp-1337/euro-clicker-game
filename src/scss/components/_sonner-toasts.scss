@@ -1,0 +1,550 @@
+// Enhanced Sonner Toast notifications with Liquid Glass Design
+// Matching Bottom Tab Menu aesthetic
+
+@use '../abstracts/variables' as *;
+@use '../abstracts/colors' as *;
+@use '../abstracts/mixins' as *;
+
+// ============================================
+// BASE TOAST STYLING - LIQUID GLASS LIKE BOTTOM TAB MENU
+// ============================================
+
+%toast-base {
+  border-radius: 36px;
+  font-size: 1.08rem;
+  padding: 1.2em 1.6em 1.2em 1.3em;
+
+  // Enhanced Liquid Glass Effect (matching Bottom Tab Menu)
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+
+  // Matching shadow from Bottom Tab Menu
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  min-width: 280px;
+  max-width: 95vw;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: toastSlideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: visible;
+
+  @media (max-width: 600px) {
+    font-size: 0.98rem;
+    padding: 1em 1.2em;
+    min-width: 220px;
+    border-radius: 25px;
+  }
+}
+
+// ============================================
+// ENHANCED BUTTON STYLING - MATCHING BOTTOM TAB STYLE
+// ============================================
+
+%toast-button-base {
+  font-size: 0.97em;
+  padding: 0.6em 1.4em;
+  border-radius: 25px;
+  position: relative;
+
+  gap: 0.5em; // Für Icon-Spacing
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600; // Kräftiger
+
+  // Liquid Glass Button Background
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.02) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  backdrop-filter: blur(10px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(150%) !important;
+
+  // Shadow matching bottom tab menu
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  color: rgba(1, 1, 1, 0.8);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  outline: none;
+
+  // Enhanced hover effect like bottom tab menu
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 25px;
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    color: rgba(1, 1, 1, 0.95);
+    box-shadow:
+      0 6px 24px rgba(0, 0, 0, 0.12),
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  @media (max-width: 600px) {
+    font-size: 0.91em;
+    padding: 0.5em 1.1em;
+    border-radius: 20px;
+  }
+}
+
+// ============================================
+// STANDARD SONNER TOAST STYLES
+// ============================================
+
+[data-sonner-toast] {
+  @extend %toast-base;
+  color: rgba(1, 1, 1, 0.85) !important;
+
+  &[data-type="success"] {
+    color: #1e6b3a !important;
+    // Subtle colored glow
+    box-shadow:
+      0 8px 32px rgba(26, 171, 107, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    [data-icon] svg {
+      color: #1abc6b !important;
+      filter: drop-shadow(0 2px 8px rgba(26, 171, 107, 0.3));
+    }
+  }
+
+  &[data-type="error"] {
+    color: #b91c1c !important;
+    box-shadow:
+      0 8px 32px rgba(231, 76, 60, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    [data-icon] svg {
+      color: #e74c3c !important;
+      filter: drop-shadow(0 2px 8px rgba(231, 76, 60, 0.3));
+    }
+  }
+
+  &[data-type="warning"] {
+    color: #b38b00 !important;
+    box-shadow:
+      0 8px 32px rgba(241, 196, 15, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    [data-icon] svg {
+      color: #f1c40f !important;
+      filter: drop-shadow(0 2px 8px rgba(241, 196, 15, 0.3));
+    }
+  }
+
+  &[data-type="info"] {
+    color: #005a7a !important;
+    box-shadow:
+      0 8px 32px rgba(52, 152, 219, 0.1),
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    [data-icon] svg {
+      color: #3498db !important;
+      filter: drop-shadow(0 2px 8px rgba(52, 152, 219, 0.3));
+    }
+  }
+
+  // Prevent size jump on expand
+  &[data-expanded="true"] {
+    padding: 1.2em 1.6em 1.2em 1.3em !important;
+    min-width: 280px !important;
+    max-width: 95vw !important;
+    transition: none;
+
+    @media (max-width: 600px) {
+      padding: 1em 1.2em !important;
+      min-width: 220px !important;
+    }
+  }
+}
+
+// ============================================
+// CLOSE BUTTON STYLING - BOTTOM TAB MENU STYLE
+// ============================================
+
+[data-close-button="true"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: calc(100% - 10px) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  border: none !important;
+
+  // Matching bottom tab menu glass effect
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+
+  color: rgba(1, 1, 1, 0.7) !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative;
+
+  // Matching shadow
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+
+  // Hover overlay like bottom tab menu
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.04) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    // transform: scale(1.05) !important;
+    color: rgba(1, 1, 1, 0.9) !important;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.95) !important;
+  }
+
+  svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  @media (max-width: 600px) {
+    width: 28px !important;
+    height: 28px !important;
+
+    svg {
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS - MATCHING BOTTOM TAB MENU
+// ============================================
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+    scale: 0.9;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+// ============================================
+// TOAST VARIANTS WITH ENHANCED GLASS EFFECTS
+// ============================================
+
+.achievement-toast {
+  @extend %toast-base;
+  color: #b38b00;
+
+  // Enhanced golden glow
+  box-shadow:
+    0 8px 32px rgba(241, 196, 15, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.tamper-toast {
+  @extend %toast-base;
+  color: #b91c1c;
+  font-weight: 600;
+
+  // Enhanced red glow
+  box-shadow:
+    0 8px 32px rgba(231, 76, 60, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.update-toast {
+  @extend %toast-base;
+  color: #005a7a;
+  font-weight: 600;
+
+  // Enhanced blue glow
+  box-shadow:
+    0 8px 32px rgba(52, 152, 219, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  button {
+    @extend %toast-button-base;
+    margin-left: 0 !important;
+    color: #005a7a;
+
+    &:hover {
+      color: #0077b6;
+      // Subtle blue highlight on hover
+      box-shadow:
+        0 6px 24px rgba(52, 152, 219, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.pwa-toast {
+  @extend %toast-base;
+  color: #2a3a5a;
+
+  // Enhanced purple glow
+  box-shadow:
+    0 8px 32px rgba(155, 89, 182, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  button {
+    @extend %toast-button-base;
+    color: #2a3a5a;
+
+    &:hover {
+      color: #3a4a7a;
+      // Subtle purple highlight on hover
+      box-shadow:
+        0 6px 24px rgba(155, 89, 182, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Für noch coolere Buttons:
+.update-toast button {
+  background: linear-gradient(135deg,
+      rgba(52, 152, 219, 0.1) 0%,
+      rgba(52, 152, 219, 0.05) 100%) !important;
+  border: 1px solid rgba(52, 152, 219, 0.2) !important;
+}
+
+.pwa-toast-btn {
+  background: linear-gradient(135deg,
+      rgba(155, 89, 182, 0.1) 0%,
+      rgba(155, 89, 182, 0.05) 100%) !important;
+  border: 1px solid rgba(155, 89, 182, 0.2) !important;
+}
+
+// ============================================
+// DARK MODE VARIANTS - MATCHING BOTTOM TAB MENU
+// ============================================
+
+body.dark {
+
+  // Default Sonner Toast Dark Mode
+  [data-sonner-toast] {
+    // Using same glass background as bottom tab menu
+    background: bg(glass-dark) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid bg(glass-border-dark) !important;
+
+    // Matching shadow from bottom tab menu
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
+
+    color: rgba(180, 180, 180, 0.9) !important;
+
+    &[data-type="success"] {
+      color: color(green) !important;
+
+      [data-icon] svg {
+        color: color(green) !important;
+        filter: drop-shadow(0 2px 8px rgba(color(green), 0.4));
+      }
+    }
+
+    &[data-type="error"] {
+      color: #ffb3b3 !important;
+
+      [data-icon] svg {
+        color: color(red) !important;
+        filter: drop-shadow(0 2px 8px rgba(color(red), 0.4));
+      }
+    }
+
+    &[data-type="warning"] {
+      color: color(warning) !important;
+
+      [data-icon] svg {
+        color: color(warning) !important;
+        filter: drop-shadow(0 2px 8px rgba(color(warning), 0.4));
+      }
+    }
+
+    &[data-type="info"] {
+      color: #66cfff !important;
+
+      [data-icon] svg {
+        color: color(blue) !important;
+        filter: drop-shadow(0 2px 8px rgba(color(blue), 0.4));
+      }
+    }
+  }
+
+  // Close Button Dark Mode - matching bottom tab menu style
+  [data-close-button="true"] {
+    background: bg(glass-dark) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid bg(glass-border-dark) !important;
+    color: rgba(180, 180, 180, 0.9) !important;
+
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      0 1px 4px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10) !important;
+
+    &::before {
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.08) 0%,
+          rgba(255, 255, 255, 0.04) 50%,
+          rgba(255, 255, 255, 0.01) 100%);
+    }
+
+    &:hover {
+      color: rgba(180, 180, 180, 1) !important;
+    }
+  }
+
+  // Dark mode button adjustments
+  %toast-button-base {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.04) 50%,
+        rgba(255, 255, 255, 0.01) 100%) !important;
+    border: 1px solid bg(glass-border-dark) !important;
+    backdrop-filter: blur(10px) saturate(150%) !important;
+    color: rgba(180, 180, 180, 0.9);
+
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      0 1px 4px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 bg(transparent-white-10);
+
+    &::before {
+      background: linear-gradient(135deg,
+          rgba(255, 255, 255, 0.12) 0%,
+          rgba(255, 255, 255, 0.06) 50%,
+          rgba(255, 255, 255, 0.02) 100%);
+    }
+
+    &:hover {
+      color: rgba(180, 180, 180, 1);
+      box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.25),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 bg(transparent-white-10);
+    }
+  }
+
+  // Enhanced dark mode variants with better consistency
+  .achievement-toast,
+  .beta-toast {
+    color: color(warning);
+    box-shadow:
+      0 8px 32px rgba(color(warning), 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
+  }
+
+  .tamper-toast {
+    color: #ffb3b3;
+    box-shadow:
+      0 8px 32px rgba(color(red), 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
+  }
+
+  .update-toast {
+    color: #66cfff;
+    box-shadow:
+      0 8px 32px rgba(color(blue), 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
+  }
+
+  .pwa-toast {
+    color: #b3c6ff;
+    box-shadow:
+      0 8px 32px rgba(color(purple), 0.2),
+      0 2px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 bg(transparent-white-10);
+  }
+}
+
+// ============================================
+// SONNER PSEUDOELEMENT FIX
+// ============================================
+
+[data-sonner-toast][data-expanded="true"]::after {
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  pointer-events: none;
+}

@@ -1,17 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import ClickerGame from '@components/ClickerGame';
-import UpdateBanner from '@components/UpdateBanner';
-import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
-import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
+import { Toaster, toast } from 'sonner';
+import { usePwaPrompt } from '@hooks/usePwaPrompt';
+import { DownloadIcon, RefreshCwIcon, ShareIcon, SquarePlusIcon } from 'lucide-react';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
+  const { showInstallPrompt, isIos, handleInstallClick, handleDismissClick } = usePwaPrompt();
   const {
-    needRefresh: [
-      needRefresh
-    ],
+    needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
@@ -68,8 +67,7 @@ function App() {
                            'Unknown error';
         message = `Due to a problem with your save data (${reasonText}), the game has been reset.`;
       }
-      // Hier könntest du eine schönere Benachrichtigung einbauen (Toast, Modal etc.)
-      alert(message);
+      toast.error(message, { duration: 8000, id: 'tamper-toast', className: 'tamper-toast' });
     };
     window.addEventListener('gamestateTampered', handleTampering);
     return () => {
@@ -101,7 +99,7 @@ function App() {
   };
 
   // Funktion zum Auslösen des Updates
-  const handleUpdate = () => {
+  const handleUpdate = useCallback(() => {
     // Zuerst speichern
     if (saveGameRef.current) {
       console.log('Saving game before update...');
@@ -111,39 +109,102 @@ function App() {
     }
 
     updateServiceWorker(true);
-  };
+  }, [updateServiceWorker]);
 
   // Callback, um die saveGame Funktion von ClickerGame zu erhalten
   const registerSaveGameHandler = (saveFn) => {
     saveGameRef.current = saveFn;
   };
 
+  // Update-Toast anzeigen, solange needRefresh true ist
+  useEffect(() => {
+    if (needRefresh) {
+      toast(
+        <span>
+          A new version of the game is available!
+          <button
+            style={{ marginLeft: 12 }}
+            onClick={handleUpdate}
+            className=" "
+          >
+            <RefreshCwIcon size={16} /> Save & Refresh
+          </button>
+        </span>,
+        {
+          duration: Infinity,
+          className: 'update-toast',
+          dismissible: false,
+        }
+      );
+    }
+  }, [needRefresh, handleUpdate]);
+
+  // PWA Install-Toast anzeigen, wenn showInstallPrompt true ist
+  useEffect(() => {
+    if (showInstallPrompt) {
+      toast(
+        isIos ? (
+          <span>
+            To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
+          </span>
+        ) : (
+          <span style={{display: 'block'}}>
+            <span style={{display: 'block', marginBottom: 8}}>If you like the game, you can choose to install it.</span>
+              <button
+                onClick={handleInstallClick}
+                className="pwa-toast-btn"
+              ><DownloadIcon size={16} />Install</button>
+          </span>
+        ),
+        {
+          duration: Infinity,
+          className: 'pwa-toast',
+          id: 'pwa-toast',
+          closeButton: true,
+          expand: false,
+
+        }
+      );
+    } else {
+      toast.dismiss('pwa-toast');
+    }
+  }, [showInstallPrompt, isIos, handleInstallClick, handleDismissClick]);
+
   return (
-    <div className="App">
-      <BetaEndBanner />
-      {/* Background music */}
-      <audio
-        ref={audioRef}
-        src="/sounds/background-music-quiet.mp3"
-        loop
-        style={{ display: 'none' }}
-      >
-        <track kind="captions" label="Background music" srcLang="en" />
-      </audio>
-      {needRefresh && <UpdateBanner onUpdate={handleUpdate} />}
-      <ClickerGame
-        easyMode={easyMode}
-        onEasyModeToggle={handleEasyModeToggle}
-        registerSaveGameHandler={registerSaveGameHandler}
-        musicPlaying={musicPlaying}
-        setMusicPlaying={setMusicPlaying}
-        musicEnabled={musicEnabled}
-        setMusicEnabled={setMusicEnabled}
-        soundEffectsEnabled={soundEffectsEnabled}
-        setSoundEffectsEnabled={setSoundEffectsEnabled}
+    <>
+      <Toaster
+        richColors={true}
+        position="top-right"
+        mobileOffset={32}
+        offset={32}
+        closeButton={false}
+        expand={false}
+        invert={false}
+        gap={16}
       />
-      <InstallPwaPrompt />
-    </div>
+      <div className="App">
+        {/* Background music */}
+        <audio
+          ref={audioRef}
+          src="/sounds/background-music-quiet.mp3"
+          loop
+          style={{ display: 'none' }}
+        >
+          <track kind="captions" label="Background music" srcLang="en" />
+        </audio>
+        <ClickerGame
+          easyMode={easyMode}
+          onEasyModeToggle={handleEasyModeToggle}
+          registerSaveGameHandler={registerSaveGameHandler}
+          musicPlaying={musicPlaying}
+          setMusicPlaying={setMusicPlaying}
+          musicEnabled={musicEnabled}
+          setMusicEnabled={setMusicEnabled}
+          soundEffectsEnabled={soundEffectsEnabled}
+          setSoundEffectsEnabled={setSoundEffectsEnabled}
+        />
+      </div>
+    </>
   );
 }
 
