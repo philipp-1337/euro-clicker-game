@@ -133,6 +133,7 @@ function App() {
         {
           duration: Infinity,
           className: 'update-toast',
+          expand: true,
         }
       );
     }
@@ -145,14 +146,6 @@ function App() {
         isIos ? (
           <span>
             To install this app, tap <ShareIcon size={18} style={{verticalAlign:'middle'}} /> and then <SquarePlusIcon size={18} style={{verticalAlign:'middle'}} /> Add to Home Screen.
-            <button
-              onClick={() => {
-                handleDismissClick();
-                toast.dismiss('pwa-toast');
-              }}
-              className="pwa-toast-btn"
-              style={{ marginLeft: 12 }}
-            >Dismiss</button>
           </span>
         ) : (
           <span>
@@ -174,6 +167,7 @@ function App() {
           duration: Infinity,
           className: 'pwa-toast',
           id: 'pwa-toast',
+          closeButton: true,
         }
       );
     } else {
@@ -185,6 +179,8 @@ function App() {
   useEffect(() => {
     const isBeta = window.location.hostname.includes('beta') || window.location.hostname.includes("localhost") || window.location.hostname.includes("alpha");
     if (isBeta) {
+      const betaToastId = 'beta-toast';
+      toast.dismiss(betaToastId); // Ensure only one instance
       toast(
         <span>
            The Beta will be shut down soon and will no longer be updated. Please switch to euro-clicker-game.web.app (you may need to clear your cache). You can transfer your progress via the Cloud Save feature in Settings.
@@ -192,6 +188,8 @@ function App() {
         {
           duration: Infinity,
           className: 'beta-toast',
+          id: betaToastId,
+          dismissible: false,
         }
       );
     }
