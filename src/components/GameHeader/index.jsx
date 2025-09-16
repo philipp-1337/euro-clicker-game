@@ -205,11 +205,22 @@ export default function GameHeader(props) {
     autoBuyGlobalPriceDecreaseEnabled,
   } = props;
 
+
+  // AutoBuyer badge color logic
   const isAutoBuyerActive =
     autoBuyValueUpgradeEnabled ||
     autoBuyCooldownUpgradeEnabled ||
     autoBuyGlobalMultiplierEnabled ||
     autoBuyGlobalPriceDecreaseEnabled;
+
+  // Buffer badge: yellow if buffer > 0, else green if active
+  const showAutoBuyerBadge = isAutoBuyerActive || (props.autoBuyerBuffer && props.autoBuyerBuffer > 0);
+  let autoBuyerBadgeClass = '';
+  if (props.autoBuyerBuffer && props.autoBuyerBuffer > 0) {
+    autoBuyerBadgeClass = 'active-badge badge-yellow';
+  } else if (isAutoBuyerActive) {
+    autoBuyerBadgeClass = 'active-badge';
+  }
 
   const anyAutoBuyerUnlocked =
     autoBuyerUnlocked ||
@@ -351,7 +362,7 @@ export default function GameHeader(props) {
               ) : (
                 <BotOffIcon size={24} />
               )}
-              {isAutoBuyerActive && <span className="active-badge"></span>}
+              {showAutoBuyerBadge && <span className={autoBuyerBadgeClass}></span>}
             </button>
           )}
           <button
