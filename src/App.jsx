@@ -190,9 +190,7 @@ function App() {
     if (isBeta) {
       toast(
         <span>
-          <b>Beta shutdown:</b> The Beta will be shut down soon and will no longer be updated.<br />
-          Please switch to euro-clicker-game.web.app (clear your cache if needed).<br />
-          You can transfer your progress via the Cloud Save feature in Settings.
+           The Beta will be shut down soon and will no longer be updated. Please switch to euro-clicker-game.web.app (you may need to clear your cache). You can transfer your progress via the Cloud Save feature in Settings.
         </span>,
         {
           duration: Infinity,
