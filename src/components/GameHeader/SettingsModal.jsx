@@ -71,73 +71,15 @@ export default function SettingsModal({
   setSoundEffectsEnabled, // New
   showStatisticsHeaderButton,
   setShowStatisticsHeaderButton,
+  isDarkMode,
+  setIsDarkMode,
 }) {
   const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
-  // Dark Mode State (global und persistiert im Savegame)
-  const [isDarkMode, setIsDarkMode] = React.useState(() => {
-    try {
-      const saveRaw = localStorage.getItem('clickerSave');
-      if (saveRaw) {
-        const save = JSON.parse(saveRaw);
-        if (typeof save.darkMode === 'boolean') return save.darkMode;
-      }
-    } catch (e) {
-      console.error('Error reading darkMode from clickerSave:', e);
-    }
-    const localStorageValue = localStorage.getItem('darkMode');
-    if (localStorageValue === 'true') return true;
-    if (localStorageValue === 'false') return false;
-    // Systemwert übernehmen, falls kein Wert gesetzt ist
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
 
   const { deleteFromCloud } = useCloudSave();
-
-  // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
-  React.useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
-    }
-    localStorage.setItem('darkMode', isDarkMode);
-    // clickerSave aktualisieren
-    try {
-      const saveRaw = localStorage.getItem('clickerSave');
-      if (saveRaw) {
-        const save = JSON.parse(saveRaw);
-        if (save.darkMode !== isDarkMode) {
-          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
-        }
-      }
-    } catch {
-      console.error('Error applying darkMode from clickerSave after cloud import');
-    }
-  }, [isDarkMode]);
-
-
-  // Dark Mode nach Cloud Import anwenden (Listener)
-  React.useEffect(() => {
-    const handler = () => {
-      try {
-        // Nach Cloud Import: clickerSave prüfen
-        const saveRaw = localStorage.getItem('clickerSave');
-        if (saveRaw) {
-          const save = JSON.parse(saveRaw);
-          if (typeof save.darkMode === 'boolean') {
-            setIsDarkMode(save.darkMode);
-          }
-        }
-      } catch {
-        console.error('Error applying darkMode from clickerSave after cloud import');
-      }
-    };
-    window.addEventListener('game:cloudimported', handler);
-    return () => window.removeEventListener('game:cloudimported', handler);
-  }, []);
 
   if (!showSettings) return null;
 

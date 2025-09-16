@@ -27,45 +27,6 @@ body {
   color: #2ecc71;
 }
 
-// Environment Labels
-.env-label {
-  font-size: 0.5em;
-  margin-left: 10px;
-  cursor: pointer;
-  user-select: none;
-  vertical-align: super;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 400;
-  opacity: 0.6;
-  transition: all 0.2s ease;
-
-  &:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  &.beta {
-    color: map.get($colors, secondary);
-    background-color: map.get($backgrounds, light);
-
-    &.easy {
-      color: map.get($colors, warning);
-      font-weight: bold;
-    }
-  }
-
-  &.localhost {
-    color: map.get($colors, accent);
-    background-color: map.get($backgrounds, lighter-blue);
-
-    &.easy {
-      color: map.get($colors, warning);
-      font-weight: bold;
-    }
-  }
-}
-
 // Settings-Überschriften
 .settings-section-title {
   font-weight: 600;

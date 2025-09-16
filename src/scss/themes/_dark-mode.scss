@@ -82,10 +82,8 @@ body.dark {
   }
 
   .update-banner {
-    background: gradient-background(
-      map.get($backgrounds, off-dark),
-      map.get($backgrounds, darker)
-    ) !important;
+    background: gradient-background(map.get($backgrounds, off-dark),
+        map.get($backgrounds, darker)) !important;
     color: map.get($colors, text-light) !important;
   }
 
@@ -158,20 +156,16 @@ body.dark {
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .version-display {
-    color: map.get($colors, text-light);
-    background-color: map.get($backgrounds, dark)
+  // Raw materials list & item dark mode
+  .raw-materials-list {
+    background: none;
   }
 
-    // Raw materials list & item dark mode
-    .raw-materials-list {
-      background: none;
-    }
-    .raw-material-item {
-      // background-color: map.get($backgrounds, light) !important;
-      color: map.get($colors, text-dark) !important;
-      // border: 1px solid rgba(255,255,255,0.08) !important;
-      // box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    }
+  .raw-material-item {
+    // background-color: map.get($backgrounds, light) !important;
+    color: map.get($colors, text-dark) !important;
+    // border: 1px solid rgba(255,255,255,0.08) !important;
+    // box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  }
 
 }
