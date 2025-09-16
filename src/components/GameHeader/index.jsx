@@ -241,8 +241,7 @@ export default function GameHeader(props) {
       )}
       <div className="game-header-container">
         <h1 className="game-title">
-          Euro Clicker Game
-          {renderEnvironmentLabel()}
+          Euro&nbsp;Clicker&nbsp;Game {renderEnvironmentLabel()}
         </h1>
       </div>
       <div id="money-display" className="money-display">

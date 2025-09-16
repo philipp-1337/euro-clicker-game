@@ -7,7 +7,7 @@
 // Displays
 .money-display {
   background-color: map.get($backgrounds, off-white);
-  border-radius: 10px;
+  border-radius: 25px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: map.get($colors, primary);
   font-size: 2.5rem;
@@ -36,12 +36,12 @@ body.dark {
 
 // Environment Labels
 .env-label {
-  border-radius: 4px;
+  border-radius: 25px;
   font-size: 0.5em;
   font-weight: 400;
   margin-left: 10px;
   opacity: 0.6;
-  padding: 2px 6px;
+  padding: 4px 8px 6px 8px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
