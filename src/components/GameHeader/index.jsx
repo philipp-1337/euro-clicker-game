@@ -75,7 +75,7 @@ export default function GameHeader(props) {
     handleSave,
     cloudUuid,
     floatingClicks,
-    triggerSaveFeedback,
+  // triggerSaveFeedback,
     money,
     playTime,
     totalMoneyPerSecond,
@@ -408,7 +408,7 @@ export default function GameHeader(props) {
         showCloudSaveDisableConfirm={showCloudSaveDisableConfirm}
         setShowCloudSaveDisableConfirm={setShowCloudSaveDisableConfirm}
         cloudUuid={cloudUuid}
-        triggerSaveFeedback={triggerSaveFeedback}
+  // triggerSaveFeedback={triggerSaveFeedback}
         showImportDialog={showImportDialog}
         setShowImportDialog={setShowImportDialog}
         importUuid={importUuid}

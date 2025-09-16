@@ -12,7 +12,7 @@ import useGameCore from '@hooks/useGameCore';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
-import AchievementNotification from './AchievementNotification';
+// import AchievementNotification from './AchievementNotification';
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
@@ -504,15 +504,7 @@ export default function ClickerGame({
         globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
       />
 
-      {showAchievement && (
-        <AchievementNotification
-          achievement={showAchievement}
-          onClose={() => {
-            setShowAchievement(null);
-            setNotificationQueue((prev) => prev.slice(1));
-          }}
-        />
-      )}
+      {/* AchievementNotification wird jetzt als Sonner Toast angezeigt */}
       {uiProgress.gameStarted && (
         <GameHeader
           money={money}

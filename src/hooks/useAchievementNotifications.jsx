@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
+import { toast } from 'sonner';
+import { Trophy as TrophyIcon } from 'lucide-react';
 
 /**
  * Kapselt die gesamte Achievement-Notification-Logik.
@@ -56,11 +58,18 @@ export default function useAchievementNotifications(achievements, unlockedAchiev
     }
   }, [notificationQueue, showAchievement]);
 
-  // Wenn ein Achievement angezeigt wird, nach 3s wieder ausblenden und aus Queue entfernen
+  // Wenn ein Achievement angezeigt wird, Sonner Toast anzeigen und nach 3s ausblenden
   useEffect(() => {
     if (showAchievement) {
-      // Markiere als gesehen, sobald angezeigt
       markAchievementNotificationSeen(showAchievement.id);
+      toast(
+        showAchievement.name,
+        {
+          icon: <TrophyIcon size={22} style={{ color: '#FFD700' }} />,
+          duration: 3000,
+          className: 'achievement-toast',
+        }
+      );
       const timer = setTimeout(() => {
         setShowAchievement(null);
         setNotificationQueue(prev => prev.slice(1));

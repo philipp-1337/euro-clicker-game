@@ -1,6 +1,6 @@
 const BetaEndBanner = () => {
   const isBeta = 
-    window.location.hostname.includes("beta") || window.location.hostname.includes("localhost");
+    window.location.hostname.includes("beta");
 
   if (!isBeta) {
     return null;

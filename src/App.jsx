@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import ClickerGame from '@components/ClickerGame';
-import UpdateBanner from '@components/UpdateBanner';
+// import UpdateBanner from '@components/UpdateBanner';
 import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
 import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
+import { Toaster, toast } from 'sonner';
 import './scss/components/_money-banner.scss';
 import './scss/components/_displays.scss';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
   const {
-    needRefresh: [
-      needRefresh
-    ],
+    needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
@@ -118,32 +117,67 @@ function App() {
     saveGameRef.current = saveFn;
   };
 
+  // Update-Toast anzeigen, solange needRefresh true ist
+  useEffect(() => {
+    let toastId;
+    if (needRefresh) {
+      toastId = toast(
+        <span>
+          A new version of the game is available!
+          <button style={{ marginLeft: 12 }} onClick={handleUpdate} className="update-toast-btn">Save & Refresh</button>
+        </span>,
+        {
+          duration: Infinity,
+          id: 'update-toast',
+          className: 'update-toast',
+        }
+      );
+    } else {
+      toast.dismiss('update-toast');
+    }
+    return () => {
+      toast.dismiss('update-toast');
+    };
+  }, [needRefresh]);
+
   return (
-    <div className="App">
-      <BetaEndBanner />
-      {/* Background music */}
-      <audio
-        ref={audioRef}
-        src="/sounds/background-music-quiet.mp3"
-        loop
-        style={{ display: 'none' }}
-      >
-        <track kind="captions" label="Background music" srcLang="en" />
-      </audio>
-      {needRefresh && <UpdateBanner onUpdate={handleUpdate} />}
-      <ClickerGame
-        easyMode={easyMode}
-        onEasyModeToggle={handleEasyModeToggle}
-        registerSaveGameHandler={registerSaveGameHandler}
-        musicPlaying={musicPlaying}
-        setMusicPlaying={setMusicPlaying}
-        musicEnabled={musicEnabled}
-        setMusicEnabled={setMusicEnabled}
-        soundEffectsEnabled={soundEffectsEnabled}
-        setSoundEffectsEnabled={setSoundEffectsEnabled}
+    <>
+      <Toaster
+        richColors={true}
+        position="bottom-right"
+        mobileOffset={32}
+        offset={32}
+        closeButton={false}
+        expand={true}
+        invert={false}
+        gap={16}
       />
-      <InstallPwaPrompt />
-    </div>
+      <div className="App">
+        <BetaEndBanner />
+        {/* Background music */}
+        <audio
+          ref={audioRef}
+          src="/sounds/background-music-quiet.mp3"
+          loop
+          style={{ display: 'none' }}
+        >
+          <track kind="captions" label="Background music" srcLang="en" />
+        </audio>
+        {/* UpdateBanner entfernt, Toast übernimmt */}
+        <ClickerGame
+          easyMode={easyMode}
+          onEasyModeToggle={handleEasyModeToggle}
+          registerSaveGameHandler={registerSaveGameHandler}
+          musicPlaying={musicPlaying}
+          setMusicPlaying={setMusicPlaying}
+          musicEnabled={musicEnabled}
+          setMusicEnabled={setMusicEnabled}
+          soundEffectsEnabled={soundEffectsEnabled}
+          setSoundEffectsEnabled={setSoundEffectsEnabled}
+        />
+        <InstallPwaPrompt />
+      </div>
+    </>
   );
 }
 

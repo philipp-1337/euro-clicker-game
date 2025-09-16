@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { toast } from 'sonner';
 import useCloudSave from '@hooks/useCloudSave';
 import { formatPlaytime } from '@utils/calculators';
 import { isLocalhost } from '@utils/env';
@@ -66,8 +67,8 @@ export default function useGameHeaderLogic(props) {
     );
   }, [environment, easyMode, toggleEasyMode, canToggleEasyMode]);
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState('');
+  // const [isSaving, setIsSaving] = useState(false);
+  // const [saveMessage, setSaveMessage] = useState('');
   const [showStats, setShowStats] = useState(false);
 
   const {
@@ -81,13 +82,10 @@ export default function useGameHeaderLogic(props) {
   const [importError, setImportError] = useState('');
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] = useState(false);
 
-  const triggerSaveFeedback = useCallback((message = 'Game saved') => {
-    setSaveMessage(message);
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setSaveMessage('');
-    }, 1500);
+
+  // Toast-Feedback mit Sonner
+  const triggerSaveFeedback = useCallback((message = 'Game saved', type = 'success') => {
+    toast[type] ? toast[type](message) : toast(message);
   }, []);
 
   const cloudSaveInProgress = useRef(false);
@@ -154,7 +152,7 @@ export default function useGameHeaderLogic(props) {
       if (onSaveGame) onSaveGame();
       console.log('[useGameHeaderLogic] Attempting cloud export with gameState:', gameState); // Add this log
       await exportToCloud(gameState);
-      if (!silent) triggerSaveFeedback('Cloud saved');
+  if (!silent) triggerSaveFeedback('Cloud saved', 'success');
     } catch (error) {
       // Erweiterte Fehlerprotokollierung
       console.error("Cloud save failed. Raw error object:", error);
@@ -166,7 +164,7 @@ export default function useGameHeaderLogic(props) {
       } else if (error && typeof error.toString === 'function') {
         errorMessage = `Cloud save failed: ${error.toString()}`;
       }
-      if (!silent) triggerSaveFeedback(errorMessage);
+  if (!silent) triggerSaveFeedback(errorMessage, 'error');
     } finally {
       setTimeout(() => { cloudSaveInProgress.current = false; }, 500);
     }
@@ -178,7 +176,7 @@ export default function useGameHeaderLogic(props) {
       handleExportCloud();
     } else {
       onSaveGame();
-      triggerSaveFeedback('Saved');
+  triggerSaveFeedback('Saved', 'success');
     }
   }, [cloudSaveMode, handleExportCloud, onSaveGame, triggerSaveFeedback]);
 
@@ -189,7 +187,7 @@ export default function useGameHeaderLogic(props) {
       const data = await importFromCloud(importUuid.trim());
       if (onImportCloudSave) onImportCloudSave(data);
       setShowImportDialog(false);
-      triggerSaveFeedback('Cloud loaded');
+  triggerSaveFeedback('Cloud loaded', 'success');
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -206,9 +204,9 @@ export default function useGameHeaderLogic(props) {
       if (cloudSaveInProgress.current) return;
       if (cloudSaveMode) {
         handleExportCloud(true);
-        triggerSaveFeedback('Auto-saved');
+  triggerSaveFeedback('Auto-saved', 'success');
       } else {
-        triggerSaveFeedback('Auto-saved');
+  triggerSaveFeedback('Auto-saved', 'success');
       }
     };
     window.addEventListener('game:autosaved', handleAutoSave);
@@ -219,8 +217,8 @@ export default function useGameHeaderLogic(props) {
     environment,
     renderEnvironmentLabel,
     formatPlaytime,
-    isSaving,
-    saveMessage,
+  // isSaving,
+  // saveMessage,
     showStats,
     setShowStats,
     showImportDialog,
