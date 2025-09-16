@@ -105,23 +105,24 @@ export default function GameHeader(props) {
     setPrestigeButtonEverVisible,
   } = useUiProgress();
 
+  
   React.useEffect(() => {
     if (!showClickStats) setShowClickStats(true);
   }, [showClickStats, setShowClickStats]);
-
+  
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] =
-    useState(false);
+  useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
-
+  
   const shouldShowPrestigeButtonBasedOnMoney =
-    props.money >= props.gameConfig.prestige.minMoneyForModalButton;
+  props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader =
-    prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
-
+  prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
+  
   React.useEffect(() => {
     if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
       setPrestigeButtonEverVisible(true);
@@ -131,53 +132,52 @@ export default function GameHeader(props) {
     prestigeButtonEverVisible,
     setPrestigeButtonEverVisible,
   ]);
-
-    // Dark Mode State (global und persistiert im Savegame)
-    const [isDarkMode, setIsDarkMode] = React.useState(() => {
-      try {
-        const saveRaw = localStorage.getItem('clickerSave');
-        if (saveRaw) {
-          const save = JSON.parse(saveRaw);
-          if (typeof save.darkMode === 'boolean') return save.darkMode;
+  
+  // Dark Mode State (global und persistiert im Savegame)
+  const [isDarkMode, setIsDarkMode] = React.useState(() => {
+    try {
+      const saveRaw = localStorage.getItem('clickerSave');
+      if (saveRaw) {
+        const save = JSON.parse(saveRaw);
+        if (typeof save.darkMode === 'boolean') return save.darkMode;
+      }
+    } catch (e) {
+      console.error('Error reading darkMode from clickerSave:', e);
+    }
+    const localStorageValue = localStorage.getItem('darkMode');
+    if (localStorageValue === 'true') return true;
+    if (localStorageValue === 'false') return false;
+    // Systemwert übernehmen, falls kein Wert gesetzt ist
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+  
+  // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', isDarkMode);
+    // clickerSave aktualisieren
+    try {
+      const saveRaw = localStorage.getItem('clickerSave');
+      if (saveRaw) {
+        const save = JSON.parse(saveRaw);
+        if (save.darkMode !== isDarkMode) {
+          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
         }
-      } catch (e) {
-        console.error('Error reading darkMode from clickerSave:', e);
       }
-      const localStorageValue = localStorage.getItem('darkMode');
-      if (localStorageValue === 'true') return true;
-      if (localStorageValue === 'false') return false;
-      // Systemwert übernehmen, falls kein Wert gesetzt ist
-      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    });
+    } catch {
+      console.error('Error applying darkMode from clickerSave after cloud import');
+    }
+  }, [isDarkMode]);
   
-    // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
-    React.useEffect(() => {
-      if (isDarkMode) {
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
-      }
-      localStorage.setItem('darkMode', isDarkMode);
-      // clickerSave aktualisieren
+  // Dark Mode nach Cloud Import anwenden (Listener)
+  React.useEffect(() => {
+    const handler = () => {
       try {
-        const saveRaw = localStorage.getItem('clickerSave');
-        if (saveRaw) {
-          const save = JSON.parse(saveRaw);
-          if (save.darkMode !== isDarkMode) {
-            localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
-          }
-        }
-      } catch {
-        console.error('Error applying darkMode from clickerSave after cloud import');
-      }
-    }, [isDarkMode]);
-  
-  
-    // Dark Mode nach Cloud Import anwenden (Listener)
-    React.useEffect(() => {
-      const handler = () => {
-        try {
-          // Nach Cloud Import: clickerSave prüfen
+        // Nach Cloud Import: clickerSave prüfen
           const saveRaw = localStorage.getItem('clickerSave');
           if (saveRaw) {
             const save = JSON.parse(saveRaw);
@@ -213,13 +213,16 @@ export default function GameHeader(props) {
     autoBuyGlobalMultiplierEnabled ||
     autoBuyGlobalPriceDecreaseEnabled;
 
-  // Buffer badge: yellow if buffer > 0, else green if active
-  const showAutoBuyerBadge = isAutoBuyerActive || (props.autoBuyerBuffer && props.autoBuyerBuffer > 0);
+  // Buffer badge: yellow if buffer > 0 and active, else green if active, else no badge
+  let showAutoBuyerBadge = false;
   let autoBuyerBadgeClass = '';
-  if (props.autoBuyerBuffer && props.autoBuyerBuffer > 0) {
-    autoBuyerBadgeClass = 'active-badge badge-yellow';
-  } else if (isAutoBuyerActive) {
-    autoBuyerBadgeClass = 'active-badge';
+  if (isAutoBuyerActive) {
+    showAutoBuyerBadge = true;
+    if (props.autoBuyerBuffer && props.autoBuyerBuffer > 0) {
+      autoBuyerBadgeClass = 'active-badge badge-yellow';
+    } else {
+      autoBuyerBadgeClass = 'active-badge';
+    }
   }
 
   const anyAutoBuyerUnlocked =
@@ -362,8 +365,9 @@ export default function GameHeader(props) {
               ) : (
                 <BotOffIcon size={24} />
               )}
-              {showAutoBuyerBadge && <span className={autoBuyerBadgeClass}></span>}
-            </button>
+              {showAutoBuyerBadge && autoBuyerBadgeClass && (
+                <span className={autoBuyerBadgeClass}></span>
+              )}            </button>
           )}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
