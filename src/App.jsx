@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import ClickerGame from '@components/ClickerGame';
-// import UpdateBanner from '@components/UpdateBanner';
-// import InstallPwaPrompt from './components/InstallPwaPrompt/InstallPwaPrompt';
-// import BetaEndBanner from './components/BetaEndBanner/BetaEndBanner';
 import { Toaster, toast } from 'sonner';
 import { usePwaPrompt } from '@hooks/usePwaPrompt';
 import { ShareIcon, SquarePlusIcon } from 'lucide-react';

@@ -12,7 +12,7 @@ import useGameCore from '@hooks/useGameCore';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
-// import AchievementNotification from './AchievementNotification';
+
 import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
