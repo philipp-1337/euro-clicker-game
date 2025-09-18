@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import useNotifications from '@hooks/useNotifications';
-import useNotificationReads from '@hooks/useNotificationReads';
-import PropTypes from 'prop-types';
-import { formatNumber } from '@utils/calculators';
-import useGameHeaderLogic from '@hooks/useGameHeaderLogic';
+import React, { useState } from "react";
+import useNotifications from "@hooks/useNotifications";
+import useNotificationReads from "@hooks/useNotificationReads";
+import PropTypes from "prop-types";
+import { formatNumber } from "@utils/calculators";
+import useGameHeaderLogic from "@hooks/useGameHeaderLogic";
 import {
   Settings as SettingsIcon,
   CloudUpload as CloudUploadIcon,
@@ -23,15 +23,16 @@ import {
   MailOpenIcon,
   SunIcon,
   MoonIcon,
-} from 'lucide-react';
-import SettingsModal from './SettingsModal';
-import AchievementsModal from './AchievementsModal';
-import LeaderboardModal from './LeaderboardModal';
-import MoneyBanner from '@components/MoneyBanner/MoneyBanner';
-import PrestigeModal from '@components/PrestigeModal/PrestigeModal';
-import StatisticsModal from '@components/StatisticsModal/StatisticsModal';
-import { useUiProgress } from '@hooks/useUiProgress';
-import SideMenu from '@components/SideMenu/SideMenu';
+} from "lucide-react";
+import SettingsModal from "./SettingsModal";
+import AchievementsModal from "./AchievementsModal";
+import LeaderboardModal from "./LeaderboardModal";
+import MoneyBanner from "@components/MoneyBanner/MoneyBanner";
+import PrestigeModal from "@components/PrestigeModal/PrestigeModal";
+import StatisticsModal from "@components/StatisticsModal/StatisticsModal";
+import { useUiProgress } from "@hooks/useUiProgress";
+import SideMenu from "@components/SideMenu/SideMenu";
+import { useLongPress } from "@hooks/useEnhancedClick";
 
 export default function GameHeader(props) {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -75,7 +76,7 @@ export default function GameHeader(props) {
     handleSave,
     cloudUuid,
     floatingClicks,
-  // triggerSaveFeedback,
+    // triggerSaveFeedback,
     money,
     playTime,
     totalMoneyPerSecond,
@@ -105,24 +106,23 @@ export default function GameHeader(props) {
     setPrestigeButtonEverVisible,
   } = useUiProgress();
 
-  
   React.useEffect(() => {
     if (!showClickStats) setShowClickStats(true);
   }, [showClickStats, setShowClickStats]);
-  
+
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] =
-  useState(false);
+    useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showLeaderboardModal, setShowLeaderboardModal] = useState(false);
   const [showStatisticsModal, setShowStatisticsModal] = useState(false);
   const [showPrestigeModal, setShowPrestigeModal] = useState(false);
-  
+
   const shouldShowPrestigeButtonBasedOnMoney =
-  props.money >= props.gameConfig.prestige.minMoneyForModalButton;
+    props.money >= props.gameConfig.prestige.minMoneyForModalButton;
   const showPrestigeButtonInHeader =
-  prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
-  
+    prestigeButtonEverVisible || shouldShowPrestigeButtonBasedOnMoney;
+
   React.useEffect(() => {
     if (shouldShowPrestigeButtonBasedOnMoney && !prestigeButtonEverVisible) {
       setPrestigeButtonEverVisible(true);
@@ -132,79 +132,133 @@ export default function GameHeader(props) {
     prestigeButtonEverVisible,
     setPrestigeButtonEverVisible,
   ]);
-  
+
   // Dark Mode State (global und persistiert im Savegame)
   const [isDarkMode, setIsDarkMode] = React.useState(() => {
     try {
-      const saveRaw = localStorage.getItem('clickerSave');
+      const saveRaw = localStorage.getItem("clickerSave");
       if (saveRaw) {
         const save = JSON.parse(saveRaw);
-        if (typeof save.darkMode === 'boolean') return save.darkMode;
+        if (typeof save.darkMode === "boolean") return save.darkMode;
       }
     } catch (e) {
-      console.error('Error reading darkMode from clickerSave:', e);
+      console.error("Error reading darkMode from clickerSave:", e);
     }
-    const localStorageValue = localStorage.getItem('darkMode');
-    if (localStorageValue === 'true') return true;
-    if (localStorageValue === 'false') return false;
+    const localStorageValue = localStorage.getItem("darkMode");
+    if (localStorageValue === "true") return true;
+    if (localStorageValue === "false") return false;
     // Systemwert übernehmen, falls kein Wert gesetzt ist
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    );
   });
-  
+
   // Dark Mode Änderung: Body, LocalStorage und clickerSave (für Cloud)
   React.useEffect(() => {
     if (isDarkMode) {
-      document.body.classList.add('dark');
+      document.body.classList.add("dark");
     } else {
-      document.body.classList.remove('dark');
+      document.body.classList.remove("dark");
     }
-    localStorage.setItem('darkMode', isDarkMode);
+    localStorage.setItem("darkMode", isDarkMode);
     // clickerSave aktualisieren
     try {
-      const saveRaw = localStorage.getItem('clickerSave');
+      const saveRaw = localStorage.getItem("clickerSave");
       if (saveRaw) {
         const save = JSON.parse(saveRaw);
         if (save.darkMode !== isDarkMode) {
-          localStorage.setItem('clickerSave', JSON.stringify({ ...save, darkMode: isDarkMode }));
+          localStorage.setItem(
+            "clickerSave",
+            JSON.stringify({ ...save, darkMode: isDarkMode })
+          );
         }
       }
     } catch {
-      console.error('Error applying darkMode from clickerSave after cloud import');
+      console.error(
+        "Error applying darkMode from clickerSave after cloud import"
+      );
     }
   }, [isDarkMode]);
-  
+
   // Dark Mode nach Cloud Import anwenden (Listener)
   React.useEffect(() => {
     const handler = () => {
       try {
         // Nach Cloud Import: clickerSave prüfen
-          const saveRaw = localStorage.getItem('clickerSave');
-          if (saveRaw) {
-            const save = JSON.parse(saveRaw);
-            if (typeof save.darkMode === 'boolean') {
-              setIsDarkMode(save.darkMode);
-            }
+        const saveRaw = localStorage.getItem("clickerSave");
+        if (saveRaw) {
+          const save = JSON.parse(saveRaw);
+          if (typeof save.darkMode === "boolean") {
+            setIsDarkMode(save.darkMode);
           }
-        } catch {
-          console.error('Error applying darkMode from clickerSave after cloud import');
         }
-      };
-      window.addEventListener('game:cloudimported', handler);
-      return () => window.removeEventListener('game:cloudimported', handler);
-    }, []);
+      } catch {
+        console.error(
+          "Error applying darkMode from clickerSave after cloud import"
+        );
+      }
+    };
+    window.addEventListener("game:cloudimported", handler);
+    return () => window.removeEventListener("game:cloudimported", handler);
+  }, []);
 
   const {
-    autoBuyerUnlocked,
-    cooldownAutoBuyerUnlocked,
-    globalMultiplierAutoBuyerUnlocked,
-    globalPriceDecreaseAutoBuyerUnlocked,
-    setIsAutoBuyerModalOpen,
+  autoBuyerUnlocked,
+  cooldownAutoBuyerUnlocked,
+  globalMultiplierAutoBuyerUnlocked,
+  globalPriceDecreaseAutoBuyerUnlocked,
+  setIsAutoBuyerModalOpen,
+  autoBuyValueUpgradeEnabled,
+  autoBuyCooldownUpgradeEnabled,
+  autoBuyGlobalMultiplierEnabled,
+  autoBuyGlobalPriceDecreaseEnabled,
+} = props;
+
+  const toggleAllAutoBuyers = React.useCallback(() => {
+    // Prüfe ob mindestens einer aktiv ist
+    const anyActive =
+      autoBuyValueUpgradeEnabled ||
+      autoBuyCooldownUpgradeEnabled ||
+      autoBuyGlobalMultiplierEnabled ||
+      autoBuyGlobalPriceDecreaseEnabled;
+
+    // Wenn einer aktiv ist, alle ausschalten, sonst alle anschalten (aber nur die freigeschalteten)
+    const newState = !anyActive;
+
+    if (autoBuyerUnlocked) {
+      props.setAutoBuyValueUpgradeEnabled(newState);
+    }
+    if (cooldownAutoBuyerUnlocked) {
+      props.setAutoBuyCooldownUpgradeEnabled(newState);
+    }
+    if (globalMultiplierAutoBuyerUnlocked) {
+      props.setAutoBuyGlobalMultiplierEnabled(newState);
+    }
+    if (globalPriceDecreaseAutoBuyerUnlocked) {
+      props.setAutoBuyGlobalPriceDecreaseEnabled(newState);
+    }
+
+    // Optional: Kurzes vibrieren auf mobilen Geräten
+    if (navigator.vibrate) {
+      navigator.vibrate(100);
+    }
+  }, [
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
-  } = props;
+    autoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked,
+    globalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked,
+    props.setAutoBuyValueUpgradeEnabled,
+    props.setAutoBuyCooldownUpgradeEnabled,
+    props.setAutoBuyGlobalMultiplierEnabled,
+    props.setAutoBuyGlobalPriceDecreaseEnabled,
+  ]);
 
+  const longPressEvents = useLongPress(toggleAllAutoBuyers, 800); // 800ms für long press
 
   // AutoBuyer badge color logic
   const isAutoBuyerActive =
@@ -215,13 +269,13 @@ export default function GameHeader(props) {
 
   // Buffer badge: yellow if buffer > 0 and active, else green if active, else no badge
   let showAutoBuyerBadge = false;
-  let autoBuyerBadgeClass = '';
+  let autoBuyerBadgeClass = "";
   if (isAutoBuyerActive) {
     showAutoBuyerBadge = true;
     if (props.autoBuyerBuffer && props.autoBuyerBuffer > 0) {
-      autoBuyerBadgeClass = 'active-badge badge-yellow';
+      autoBuyerBadgeClass = "active-badge badge-yellow";
     } else {
-      autoBuyerBadgeClass = 'active-badge';
+      autoBuyerBadgeClass = "active-badge";
     }
   }
 
@@ -288,7 +342,11 @@ export default function GameHeader(props) {
             title="Notifications"
             aria-label="Notifications"
           >
-            {notificationCount === 0 ? <MailOpenIcon size={20}/> : <MailIcon size={20}/>}
+            {notificationCount === 0 ? (
+              <MailOpenIcon size={20} />
+            ) : (
+              <MailIcon size={20} />
+            )}
             {notificationCount > 0 && (
               <span className="notification-badge">
                 {/* {notificationCount} */}
@@ -296,17 +354,13 @@ export default function GameHeader(props) {
             )}
           </button>
           <button
-              className="settings-button header-icon"
-              onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
-              aria-label="Dark Mode Toggle"
-            >
-              {isDarkMode ? (
-                <SunIcon size={20} />
-              ) : (
-                <MoonIcon size={20} />
-              )}
-            </button>
+            className="settings-button header-icon"
+            onClick={() => setIsDarkMode((v) => !v)}
+            title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
+            aria-label="Dark Mode Toggle"
+          >
+            {isDarkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
+          </button>
           {uiProgress.showStatisticsHeaderButton && (
             <button
               className="settings-button header-icon"
@@ -355,9 +409,15 @@ export default function GameHeader(props) {
           {anyAutoBuyerUnlocked && (
             <button
               className="settings-button header-icon"
-              onClick={() => setIsAutoBuyerModalOpen(true)}
-              title="AutoBuyer Settings"
+              title="AutoBuyer Settings (Long-press to toggle all)"
               aria-label="AutoBuyer Settings"
+              {...longPressEvents}
+              onClick={(e) => {
+                longPressEvents.onClick(e);
+                if (!e.defaultPrevented) {
+                  setIsAutoBuyerModalOpen(true);
+                }
+              }}
             >
               {isAutoBuyerActive ? (
                 <BotIcon size={24} />
@@ -366,7 +426,8 @@ export default function GameHeader(props) {
               )}
               {showAutoBuyerBadge && autoBuyerBadgeClass && (
                 <span className={autoBuyerBadgeClass}></span>
-              )}            </button>
+              )}
+            </button>
           )}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
@@ -411,7 +472,7 @@ export default function GameHeader(props) {
         showCloudSaveDisableConfirm={showCloudSaveDisableConfirm}
         setShowCloudSaveDisableConfirm={setShowCloudSaveDisableConfirm}
         cloudUuid={cloudUuid}
-  // triggerSaveFeedback={triggerSaveFeedback}
+        // triggerSaveFeedback={triggerSaveFeedback}
         showImportDialog={showImportDialog}
         setShowImportDialog={setShowImportDialog}
         importUuid={importUuid}
@@ -527,4 +588,8 @@ GameHeader.propTypes = {
   setMusicEnabled: PropTypes.func.isRequired,
   soundEffectsEnabled: PropTypes.bool.isRequired,
   setSoundEffectsEnabled: PropTypes.func.isRequired,
+  setAutoBuyValueUpgradeEnabled: PropTypes.func.isRequired,
+  setAutoBuyCooldownUpgradeEnabled: PropTypes.func.isRequired,
+  setAutoBuyGlobalMultiplierEnabled: PropTypes.func.isRequired,
+  setAutoBuyGlobalPriceDecreaseEnabled: PropTypes.func.isRequired,
 };

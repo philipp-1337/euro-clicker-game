@@ -5,3 +5,4 @@ qW159TpmyZIByCbpZCVT;Rebalancing & Next Share Cost Display (v0.3.6);Floating Cli
 zYtpJ5YmtJOu6TWCIGLJ;Cooldown percentage display (v0.3.4);Cooldown reduction now shows the correct percentage value on upgrade buttons.;Fix;2025-09-10T09:34:52.607Z
 7IKrGOoL9nTVLahwGT17;Notification Center added (v0.3.3);Here you'll find news about the game.;Feature;2025-09-09T08:51:12.160Z
 4b0e4b0e4b0e4b0e4b0e;Unified In-App Notifications (v0.4.1);All in-app notifications are now delivered centrally and consistently, providing a unified experience for all messages and alerts.;Feature;2025-09-16T21:45:10.600Z
+rX8pLm9qN4vK2tY7wE3s;AutoBuyer Quick Toggle (v0.3.8);The AutoBuyer button now supports long-press (800ms) to quickly toggle all unlocked AutoBuyers at once, eliminating the need to open the modal for bulk enable/disable actions.;Feature;2025-09-18T14:16:21.080Z
