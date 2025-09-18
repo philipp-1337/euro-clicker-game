@@ -21,6 +21,12 @@
 
 .header-icon {
   position: relative;
+  /* Verhindert iOS-spezifische Touch-Behaviors */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 
     .notification-badge {
     position: absolute;
