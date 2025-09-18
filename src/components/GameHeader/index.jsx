@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 import useNotifications from "@hooks/useNotifications";
 import useNotificationReads from "@hooks/useNotificationReads";
 import PropTypes from "prop-types";
@@ -242,6 +243,13 @@ export default function GameHeader(props) {
     // Optional: Kurzes vibrieren auf mobilen Geräten
     if (navigator.vibrate) {
       navigator.vibrate(100);
+    }
+
+    // Sonner toast notification
+    if (newState) {
+      toast.success("All AutoBuyers enabled");
+    } else {
+      toast.info("All AutoBuyers disabled");
     }
   }, [
     autoBuyValueUpgradeEnabled,
