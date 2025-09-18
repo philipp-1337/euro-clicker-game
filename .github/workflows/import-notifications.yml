@@ -2,6 +2,8 @@ name: Import Notifications to Firestore
 
 on:
   push:
+    branches:
+      - main
     paths:
       - 'scripts/notifications.csv'
   workflow_dispatch: # Optional: manuell auslösbar
