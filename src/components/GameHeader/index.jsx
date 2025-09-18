@@ -33,7 +33,7 @@ import PrestigeModal from "@components/PrestigeModal/PrestigeModal";
 import StatisticsModal from "@components/StatisticsModal/StatisticsModal";
 import { useUiProgress } from "@hooks/useUiProgress";
 import SideMenu from "@components/SideMenu/SideMenu";
-import { useLongPress } from "@hooks/useEnhancedClick";
+import { useDoubleClick } from "@hooks/useEnhancedClick";
 
 export default function GameHeader(props) {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -205,16 +205,20 @@ export default function GameHeader(props) {
   }, []);
 
   const {
-  autoBuyerUnlocked,
-  cooldownAutoBuyerUnlocked,
-  globalMultiplierAutoBuyerUnlocked,
-  globalPriceDecreaseAutoBuyerUnlocked,
-  setIsAutoBuyerModalOpen,
-  autoBuyValueUpgradeEnabled,
-  autoBuyCooldownUpgradeEnabled,
-  autoBuyGlobalMultiplierEnabled,
-  autoBuyGlobalPriceDecreaseEnabled,
-} = props;
+    autoBuyerUnlocked,
+    cooldownAutoBuyerUnlocked,
+    globalMultiplierAutoBuyerUnlocked,
+    globalPriceDecreaseAutoBuyerUnlocked,
+    setIsAutoBuyerModalOpen,
+    autoBuyValueUpgradeEnabled,
+    autoBuyCooldownUpgradeEnabled,
+    autoBuyGlobalMultiplierEnabled,
+    autoBuyGlobalPriceDecreaseEnabled,
+    setAutoBuyValueUpgradeEnabled,
+    setAutoBuyCooldownUpgradeEnabled,
+    setAutoBuyGlobalMultiplierEnabled,
+    setAutoBuyGlobalPriceDecreaseEnabled,
+  } = props;
 
   const toggleAllAutoBuyers = React.useCallback(() => {
     // Prüfe ob mindestens einer aktiv ist
@@ -228,16 +232,16 @@ export default function GameHeader(props) {
     const newState = !anyActive;
 
     if (autoBuyerUnlocked) {
-      props.setAutoBuyValueUpgradeEnabled(newState);
+      setAutoBuyValueUpgradeEnabled(newState);
     }
     if (cooldownAutoBuyerUnlocked) {
-      props.setAutoBuyCooldownUpgradeEnabled(newState);
+      setAutoBuyCooldownUpgradeEnabled(newState);
     }
     if (globalMultiplierAutoBuyerUnlocked) {
-      props.setAutoBuyGlobalMultiplierEnabled(newState);
+      setAutoBuyGlobalMultiplierEnabled(newState);
     }
     if (globalPriceDecreaseAutoBuyerUnlocked) {
-      props.setAutoBuyGlobalPriceDecreaseEnabled(newState);
+      setAutoBuyGlobalPriceDecreaseEnabled(newState);
     }
 
     // Optional: Kurzes vibrieren auf mobilen Geräten
@@ -260,13 +264,18 @@ export default function GameHeader(props) {
     cooldownAutoBuyerUnlocked,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
-    props.setAutoBuyValueUpgradeEnabled,
-    props.setAutoBuyCooldownUpgradeEnabled,
-    props.setAutoBuyGlobalMultiplierEnabled,
-    props.setAutoBuyGlobalPriceDecreaseEnabled,
+    setAutoBuyValueUpgradeEnabled,
+    setAutoBuyCooldownUpgradeEnabled,
+    setAutoBuyGlobalMultiplierEnabled,
+    setAutoBuyGlobalPriceDecreaseEnabled,
   ]);
 
-  const longPressEvents = useLongPress(toggleAllAutoBuyers, 800); // 800ms für long press
+  // DoubleClick statt LongPress für AutoBuyer-Button
+  const handleAutoBuyerClick = useDoubleClick(
+    () => setIsAutoBuyerModalOpen(true),
+    toggleAllAutoBuyers,
+    300 // double click delay
+  );
 
   // AutoBuyer badge color logic
   const isAutoBuyerActive =
@@ -417,15 +426,9 @@ export default function GameHeader(props) {
           {anyAutoBuyerUnlocked && (
             <button
               className="settings-button header-icon"
-              title="AutoBuyer Settings (Long-press to toggle all)"
+              title="AutoBuyer Settings (Double-click to toggle all)"
               aria-label="AutoBuyer Settings"
-              {...longPressEvents}
-              onClick={(e) => {
-                longPressEvents.onClick(e);
-                if (!e.defaultPrevented) {
-                  setIsAutoBuyerModalOpen(true);
-                }
-              }}
+              onClick={handleAutoBuyerClick}
             >
               {isAutoBuyerActive ? (
                 <BotIcon size={24} />
