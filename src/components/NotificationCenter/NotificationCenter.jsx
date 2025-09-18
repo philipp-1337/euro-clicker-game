@@ -25,9 +25,9 @@ const NotificationCenter = ({
               >
                 <div className="notification-date">
                   {n.dateTime && n.dateTime.seconds
-                    ? new Date(n.dateTime.seconds * 1000).toLocaleString()
+                    ? new Date(n.dateTime.seconds * 1000).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' })
                     : typeof n.dateTime === "number"
-                    ? new Date(n.dateTime).toLocaleString()
+                    ? new Date(n.dateTime).toLocaleString(undefined, { hour: '2-digit', minute: '2-digit', year: 'numeric', month: '2-digit', day: '2-digit' })
                     : ""}
                 </div>
                 <div className="notification-subject">

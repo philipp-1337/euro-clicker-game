@@ -31,23 +31,23 @@ export default function useFloatingClick({
   // Calculate current critical hit multiplier
   const currentCriticalHitMultiplier = useMemo(() => criticalHitMultiplier, [criticalHitMultiplier]);
 
+
   // Main floating click function
   const addQuickMoney = useCallback(() => {
     ensureStartTime?.();
 
     const now = Date.now();
-    setClickHistory(prev => [...prev, now]);
-
     const isCritical = Math.random() < currentCriticalClickChance;
     let moneyToAdd = currentFloatingClickValue;
-
     if (isCritical) {
       moneyToAdd = currentFloatingClickValue * currentCriticalHitMultiplier;
     }
-
     const finalMoneyToAdd = (typeof moneyToAdd === 'number' && !isNaN(moneyToAdd) && moneyToAdd > 0)
       ? moneyToAdd
       : currentFloatingClickValue;
+
+    // Speichere Klick als Objekt mit Timestamp und Amount
+    setClickHistory(prev => [...prev, { timestamp: now, amount: finalMoneyToAdd }]);
 
     setMoney(prevMoney => {
       const currentPrevMoney = (typeof prevMoney === 'number' && !isNaN(prevMoney)) ? prevMoney : 0;
@@ -64,27 +64,33 @@ export default function useFloatingClick({
     setClickHistory
   ]);
 
-  // Effect to calculate manual money per second based on click history
+
+  // Effect to calculate manual money per second based on click history (jetzt mit amount)
   useEffect(() => {
     const windowSizeMs = 5000; // 5 second window
     const updateIntervalMs = 100; // Update every 100ms
-    
+
     const interval = setInterval(() => {
       const now = Date.now();
-      
+
       setClickHistory(prevClickHistory => {
-        const newHistory = [...prevClickHistory];
-        
-        // Remove old clicks outside the window
-        while (newHistory.length > 0 && now - newHistory[0] > windowSizeMs) {
-          newHistory.shift();
-        }
-        
-        // Calculate clicks per second and money per second
-        const clicksPerSecond = newHistory.length / (windowSizeMs / 1000);
-        const moneyPerSecond = clicksPerSecond * currentFloatingClickValue;
+        // Entferne alte Klicks außerhalb des Fensters
+        const newHistory = Array.isArray(prevClickHistory)
+          ? prevClickHistory.filter(entry => (now - (entry.timestamp ?? entry)) <= windowSizeMs)
+          : [];
+
+        // Berechne moneyPerSecond als Summe der amounts im Fenster
+        const totalAmount = newHistory.reduce((sum, entry) => {
+          if (typeof entry === 'object' && entry !== null && 'amount' in entry) {
+            return sum + entry.amount;
+          } else {
+            // Fallback für alte Einträge (nur Timestamp): zähle als currentFloatingClickValue
+            return sum + currentFloatingClickValue;
+          }
+        }, 0);
+        const moneyPerSecond = totalAmount / (windowSizeMs / 1000);
         setManualMoneyPerSecond(moneyPerSecond);
-        
+
         return newHistory;
       });
     }, updateIntervalMs);
