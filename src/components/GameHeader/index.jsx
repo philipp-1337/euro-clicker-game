@@ -107,10 +107,6 @@ export default function GameHeader(props) {
     setPrestigeButtonEverVisible,
   } = useUiProgress();
 
-  React.useEffect(() => {
-    if (!showClickStats) setShowClickStats(true);
-  }, [showClickStats, setShowClickStats]);
-
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
   const [showCloudSaveDisableConfirm, setShowCloudSaveDisableConfirm] =
     useState(false);
@@ -333,6 +329,7 @@ export default function GameHeader(props) {
       </button>
       <div className="header-actions">
         <div className="header-actions-content">
+          {/* Settings */}
           <button
             className="settings-button header-icon"
             onClick={() => setShowSettings(true)}
@@ -341,6 +338,7 @@ export default function GameHeader(props) {
           >
             <SettingsIcon size={20} />
           </button>
+          {/* Save */}
           <button
             className="settings-button header-icon"
             onClick={handleSave}
@@ -353,6 +351,7 @@ export default function GameHeader(props) {
               <SaveIcon size={20} />
             )}
           </button>
+          {/* Notifications */}
           <button
             className="settings-button header-icon"
             onClick={() => setShowNotifications(true)}
@@ -370,6 +369,7 @@ export default function GameHeader(props) {
               </span>
             )}
           </button>
+          {/* Dark Mode */}
           <button
             className="settings-button header-icon"
             onClick={() => setIsDarkMode((v) => !v)}
@@ -378,36 +378,7 @@ export default function GameHeader(props) {
           >
             {isDarkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
           </button>
-          {uiProgress.showStatisticsHeaderButton && (
-            <button
-              className="settings-button header-icon"
-              onClick={() => setShowStatisticsModal(true)}
-              title="Statistics"
-              aria-label="Statistics"
-            >
-              <BarChart2Icon size={20} />
-            </button>
-          )}
-          {uiProgress.showAchievementsHeaderButton &&
-            props.hasAnyAchievement && (
-              <button
-                className="settings-button header-icon"
-                onClick={() => setShowAchievements(true)}
-                title="Achievements"
-                aria-label="Achievements"
-              >
-                <AwardIcon size={20} />
-              </button>
-            )}
-          {uiProgress.showLeaderboard && (
-            <button
-              className="settings-button header-icon"
-              onClick={() => setShowLeaderboardModal(true)}
-              title="Show Leaderboard"
-            >
-              <CrownIcon size={22} />
-            </button>
-          )}
+          {/* Prestige */}
           {showPrestigeButtonInHeader && (
             <button
               className="settings-button header-icon prestige-header-button"
@@ -423,6 +394,7 @@ export default function GameHeader(props) {
               )}
             </button>
           )}
+          {/* AutoBuyer */}
           {anyAutoBuyerUnlocked && (
             <button
               className="settings-button header-icon"
@@ -440,6 +412,7 @@ export default function GameHeader(props) {
               )}
             </button>
           )}
+          {/* Buy Quantity */}
           <button
             className="settings-button header-icon buy-quantity-toggle-button"
             onClick={toggleBuyQuantity}
@@ -453,12 +426,47 @@ export default function GameHeader(props) {
             )}
             <span className="buy-quantity-label">x{buyQuantity}</span>
           </button>
+          {/* Statistics */}
+          {uiProgress.showStatisticsHeaderButton && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setShowStatisticsModal(true)}
+              title="Statistics"
+              aria-label="Statistics"
+            >
+              <BarChart2Icon size={20} />
+            </button>
+          )}
+          {/* Achievements */}
+          {uiProgress.showAchievementsHeaderButton &&
+            props.hasAnyAchievement && (
+              <button
+                className="settings-button header-icon"
+                onClick={() => setShowAchievements(true)}
+                title="Achievements"
+                aria-label="Achievements"
+              >
+                <AwardIcon size={20} />
+              </button>
+            )}
+          {/* Leaderboard */}
+          {uiProgress.showLeaderboard && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setShowLeaderboardModal(true)}
+              title="Show Leaderboard"
+            >
+              <CrownIcon size={22} />
+            </button>
+          )}
+          {/* Clicker Statistics */}
           {showClickStats && (
             <span className="header-clickstats">
               <MousePointerClickIcon size={20} />
               {String(floatingClicks ?? 0).padStart(5, "0")}
             </span>
           )}
+          {/* Playtime Display */}
           {showPlaytime && (
             <span className="header-playtime">
               <ClockIcon size={20} />
