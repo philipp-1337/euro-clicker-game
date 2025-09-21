@@ -367,3 +367,95 @@
 .notification-body {
   margin-bottom: 0.2em;
 }
+
+// === KORRIGIERTE ERGÄNZUNGEN FÜR CLOUD SAVE UNTERMENÜ ===
+
+// Settings Modal Container für Sliding-Effekt
+.settings-modal-container {
+  position: relative;
+  width: 100%;
+  min-height: 400px; // Mindesthöhe setzen
+  overflow: hidden;
+}
+
+.settings-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%; // Statt height: 100%
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  &.main-panel {
+    transform: translateX(0);
+    position: relative; // Hauptpanel als relative, damit es den Container-Höhe bestimmt
+
+    &.slide-left {
+      transform: translateX(-100%);
+    }
+  }
+
+  &.submenu-panel {
+    transform: translateX(100%);
+    position: absolute; // Submenu bleibt absolut
+
+    &.slide-in {
+      transform: translateX(0);
+    }
+  }
+}
+
+// Back Button Styling
+.back-button {
+  margin-right: auto !important;
+  margin-left: 0 !important;
+}
+
+// Settings Modal Header Update (nur erweitern, nicht komplett überschreiben)
+.modal-content .settings-modal-header {
+  .back-button + h3 {
+    text-align: center;
+    margin-left: -40px; // Kompensiert die Breite des Close Buttons
+  }
+
+  .settings-button {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.back-button {
+      margin-left: 0 !important;
+      margin-right: 8px;
+    }
+
+    &:not(.back-button) {
+      margin-left: auto !important;
+    }
+  }
+}
+
+// Improved UUID styling
+.settings-uuid {
+  flex: 1;
+  font-size: 0.80em;
+  background: #eee;
+  border-radius: 4px;
+  padding: 4px 8px;
+  user-select: all;
+  cursor: pointer;
+  word-break: break-all;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #ddd;
+  }
+
+  &:active {
+    background: #ccc;
+  }
+}

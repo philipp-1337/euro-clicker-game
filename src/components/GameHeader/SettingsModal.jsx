@@ -23,6 +23,7 @@ import {
   BarChart2 as BarChart2Icon,
   AwardIcon,
   ChevronRightIcon,
+  ChevronLeftIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '@hooks/useModal';
@@ -76,308 +77,360 @@ export default function SettingsModal({
   const showReloadButton = isStandaloneMobile();
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
+  const [showCloudSaveSubmenu, setShowCloudSaveSubmenu] = React.useState(false);
 
   const { deleteFromCloud } = useCloudSave();
 
   if (!showSettings) return null;
 
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+    // Reset submenu state when closing
+    setTimeout(() => setShowCloudSaveSubmenu(false), 200);
+  };
+
+  const handleBackToMain = () => {
+    setShowCloudSaveSubmenu(false);
+  };
+
   return (
     <div className="modal-backdrop">
       <div ref={modalRef} className="modal-content">
-        <div className="settings-modal-header">
-          <h3>Settings</h3>
-          <button
-            className="settings-button"
-            onClick={() => setShowSettings(false)}
-            title="Close"
-            aria-label="Close"
-          >
-            <CloseIcon size={20} />
-          </button>
-        </div>
-        <div className="settings-modal-content">
-          {/* Display options */}
-          <h4 className="settings-section-title">Display options</h4>
-          {/* Dark Mode Button Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <SunMoonIcon size={20} className="settings-icon" />
-              <span className="switch-text">Dark Mode Button</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showDarkModeButton}
-                onChange={() => setShowDarkModeButton((v) => !v)}
-                aria-label="Show Dark Mode Button"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Statistics Button Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <BarChart2Icon size={20} className="settings-icon" />
-              <span className="switch-text">Statistics Button</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showStatisticsHeaderButton}
-                onChange={() => setShowStatisticsHeaderButton((v) => !v)}
-                aria-label="Show Statistics Button"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
-          {hasAnyAchievement && (
-            <div className="settings-row">
-              <div className="settings-row-left">
-                <AwardIcon size={20} className="settings-icon" />
-                <span className="switch-text">Achievements Button</span>
-              </div>
-              <label className="switch-label">
-                <input
-                  type="checkbox"
-                  className="switch"
-                  checked={showAchievementsHeaderButton}
-                  onChange={() => setShowAchievementsHeaderButton((v) => !v)}
-                  aria-label="Show Achievements Button"
-                />
-                <span className="switch-slider" />
-              </label>
-            </div>
-          )}
-          {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <CrownIcon size={20} className="settings-icon" />
-              <span className="switch-text">Leaderboard Button</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showLeaderboard}
-                onChange={() => setShowLeaderboard((v) => !v)}
-                aria-label="Show Leaderboard Button"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Clicker Counter Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <MousePointerClickIcon size={20} className="settings-icon" />
-              <span className="switch-text">Click Counter</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showClickStats}
-                onChange={() => setShowClickStats((v) => !v)}
-                aria-label="Show Click Counter"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Spielzeit Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <ClockIcon size={20} className="settings-icon" />
-              <span className="switch-text">Playtime Counter</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showPlaytime}
-                onChange={() => setShowPlaytime((v) => !v)}
-                aria-label="Show Playtime"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Audio Settings */}
-          <h4 className="settings-section-title">Audio Settings</h4>
-          {/* Background Music Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <MusicIcon size={20} className="settings-icon" />
-              <span className="switch-text">Enable Background Music</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={musicEnabled}
-                onChange={() => setMusicEnabled((v) => !v)}
-                aria-label="Enable Background Music"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Sound Effects Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <SoundEffectsIcon size={20} className="settings-icon" />
-              <span className="switch-text">Enable Sound Effects</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={soundEffectsEnabled}
-                onChange={() => setSoundEffectsEnabled((v) => !v)}
-                aria-label="Enable Sound Effects"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Save options */}
-          <h4 className="settings-section-title">Save game options</h4>
-          {/* Cloud Save Toggle */}
-          <div className="settings-row">
-            <CloudIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => {
-                const next = !cloudSaveMode;
-                if (!cloudSaveMode && next) {
-                  setShowCloudSaveConfirm(true);
-                } else if (cloudSaveMode && !next) {
-                  setShowCloudSaveDisableConfirm(true);
-                } else {
-                  setCloudSaveMode(next);
-                  window.dispatchEvent(
-                    new CustomEvent("game:cloudsavemode", {
-                      detail: { cloudSaveMode: next },
-                    })
-                  );
-                }
-              }}
-              title={cloudSaveMode ? "Deactivate Cloud Save" : "Activate Cloud Save"}
-            >
-              {cloudSaveMode ? "Cloud Save" : "Cloud Save"}
-            </button>
-            <button
-              className={`settings-button${cloudSaveMode ? " active" : ""}`}
-              onClick={() => {
-                const next = !cloudSaveMode;
-                if (!cloudSaveMode && next) {
-                  setShowCloudSaveConfirm(true);
-                } else if (cloudSaveMode && !next) {
-                  setShowCloudSaveDisableConfirm(true);
-                } else {
-                  setCloudSaveMode(next);
-                  window.dispatchEvent(
-                    new CustomEvent("game:cloudsavemode", {
-                      detail: { cloudSaveMode: next },
-                    })
-                  );
-                }
-              }}
-              title={cloudSaveMode ? "Deactivate cloud save" : "Activate cloud save"}
-            >
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ marginRight: '4px' }}>{cloudSaveMode ? 'On' : 'Off'}</span>
-                <ChevronRightIcon size={18} />
-              </div>
-            </button>
-          </div>
-          {/* Cloud UUID Anzeige */}
-          {cloudSaveMode && cloudUuid && (
-            <div className="settings-row">
-              <IdCardIcon size={20} className="settings-icon" />
-                <span
-                  className="settings-uuid"
-                  title="Your cloud save UUID (copy & use on other device)"
-                  onClick={() => {
-                    navigator.clipboard?.writeText(cloudUuid);
-                    toast.success("UUID copied");
-                  }}
-                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { navigator.clipboard?.writeText(cloudUuid); triggerSaveFeedback("UUID copied"); } }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Copy cloud save UUID"
-                >
-                  {cloudUuid}
-                </span> 
-                <button
-                  className="settings-button"
-                  onClick={() => {
-                    navigator.clipboard?.writeText(cloudUuid);
-                    toast.success("UUID copied");
-                  }}
-                  title="Click to copy UUID"
-                >
-                  <ClipboardCopyIcon size={18} />
-                </button>
-            </div>
-          )}
-          {/* Import from Cloud */}
-          <div className="settings-row">
-            <CloudDownloadIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowImportDialog(true)}
-              title="Import from Cloud"
-            >
-              Import from Cloud
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowImportDialog(true)}
-              title="Import from Cloud"
-            >
-              <FolderOpen size={18} />
-            </button>
-          </div>
-          {/* Danger Zone */}
-          <h4 className="settings-section-title danger">Danger Zone</h4>
-          {/* App Reload Button für Standalone Mobile */}
-          {showReloadButton && (
-            <div className="settings-row">
-              <TabletSmartphoneIcon size={20} className="settings-icon" />
-              <button
-                className="settings-label btn"
-                onClick={() => setShowReloadConfirm(true)}
-                title="Reload App"
-              >
-                Reload App
-              </button>
+        <div className="settings-modal-container">
+          {/* Hauptmenü */}
+          <div className={`settings-panel main-panel ${showCloudSaveSubmenu ? 'slide-left' : ''}`}>
+            <div className="settings-modal-header">
+              <h3>Settings</h3>
               <button
                 className="settings-button"
-                onClick={() => setShowReloadConfirm(true)}
-                title="Reload App"
+                onClick={handleCloseSettings}
+                title="Close"
+                aria-label="Close"
               >
-                <RotateCwIcon size={18} />
+                <CloseIcon size={20} />
               </button>
             </div>
-          )}
-          {/* Reset Button */}
-          <div className="settings-row">
-            <TrashIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowResetConfirm(true)}
-              title="Reset Game"
-            >
-              Reset Game
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowResetConfirm(true)}
-              title="Reset Game"
-            >
-              <RefreshIcon size={18} />
-            </button>
+            <div className="settings-modal-content">
+              {/* Display options */}
+              <h4 className="settings-section-title">Display options</h4>
+              {/* Dark Mode Button Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <SunMoonIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Dark Mode Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showDarkModeButton}
+                    onChange={() => setShowDarkModeButton((v) => !v)}
+                    aria-label="Show Dark Mode Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Statistics Button Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <BarChart2Icon size={20} className="settings-icon" />
+                  <span className="switch-text">Statistics Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showStatisticsHeaderButton}
+                    onChange={() => setShowStatisticsHeaderButton((v) => !v)}
+                    aria-label="Show Statistics Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
+              {hasAnyAchievement && (
+                <div className="settings-row">
+                  <div className="settings-row-left">
+                    <AwardIcon size={20} className="settings-icon" />
+                    <span className="switch-text">Achievements Button</span>
+                  </div>
+                  <label className="switch-label">
+                    <input
+                      type="checkbox"
+                      className="switch"
+                      checked={showAchievementsHeaderButton}
+                      onChange={() => setShowAchievementsHeaderButton((v) => !v)}
+                      aria-label="Show Achievements Button"
+                    />
+                    <span className="switch-slider" />
+                  </label>
+                </div>
+              )}
+              {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <CrownIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Leaderboard Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showLeaderboard}
+                    onChange={() => setShowLeaderboard((v) => !v)}
+                    aria-label="Show Leaderboard Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Clicker Counter Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <MousePointerClickIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Click Counter</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showClickStats}
+                    onChange={() => setShowClickStats((v) => !v)}
+                    aria-label="Show Click Counter"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Spielzeit Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <ClockIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Playtime Counter</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showPlaytime}
+                    onChange={() => setShowPlaytime((v) => !v)}
+                    aria-label="Show Playtime"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Audio Settings */}
+              <h4 className="settings-section-title">Audio Settings</h4>
+              {/* Background Music Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <MusicIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Enable Background Music</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={musicEnabled}
+                    onChange={() => setMusicEnabled((v) => !v)}
+                    aria-label="Enable Background Music"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Sound Effects Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <SoundEffectsIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Enable Sound Effects</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={soundEffectsEnabled}
+                    onChange={() => setSoundEffectsEnabled((v) => !v)}
+                    aria-label="Enable Sound Effects"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Save options */}
+              <h4 className="settings-section-title">Save game options</h4>
+              {/* Cloud Save Entry - führt zum Untermenü */}
+              <div className="settings-row">
+                <CloudIcon size={20} className="settings-icon" />
+                <button
+                  className="settings-label btn"
+                  onClick={() => setShowCloudSaveSubmenu(true)}
+                  title="Cloud Save Options"
+                >
+                  Cloud Save
+                </button>
+                <button
+                  className="settings-button"
+                  onClick={() => setShowCloudSaveSubmenu(true)}
+                  title="Cloud Save Options"
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ marginRight: '4px' }}>{cloudSaveMode ? 'On' : 'Off'}</span>
+                    <ChevronRightIcon size={18} />
+                  </div>
+                </button>
+              </div>
+              {/* Danger Zone */}
+              <h4 className="settings-section-title danger">Danger Zone</h4>
+              {/* App Reload Button für Standalone Mobile */}
+              {showReloadButton && (
+                <div className="settings-row">
+                  <TabletSmartphoneIcon size={20} className="settings-icon" />
+                  <button
+                    className="settings-label btn"
+                    onClick={() => setShowReloadConfirm(true)}
+                    title="Reload App"
+                  >
+                    Reload App
+                  </button>
+                  <button
+                    className="settings-button"
+                    onClick={() => setShowReloadConfirm(true)}
+                    title="Reload App"
+                  >
+                    <RotateCwIcon size={18} />
+                  </button>
+                </div>
+              )}
+              {/* Reset Button */}
+              <div className="settings-row">
+                <TrashIcon size={20} className="settings-icon" />
+                <button
+                  className="settings-label btn"
+                  onClick={() => setShowResetConfirm(true)}
+                  title="Reset Game"
+                >
+                  Reset Game
+                </button>
+                <button
+                  className="settings-button"
+                  onClick={() => setShowResetConfirm(true)}
+                  title="Reset Game"
+                >
+                  <RefreshIcon size={18} />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Cloud Save Untermenü */}
+          <div className={`settings-panel submenu-panel ${showCloudSaveSubmenu ? 'slide-in' : ''}`}>
+            <div className="settings-modal-header">
+              <button
+                className="settings-button back-button"
+                onClick={handleBackToMain}
+                title="Back"
+                aria-label="Back to main settings"
+              >
+                <ChevronLeftIcon size={20} />
+              </button>
+              <h3>Cloud Save</h3>
+              <button
+                className="settings-button"
+                onClick={handleCloseSettings}
+                title="Close"
+                aria-label="Close"
+              >
+                <CloseIcon size={20} />
+              </button>
+            </div>
+            <div className="settings-modal-content">
+              <h4 className="settings-section-title">Cloud Save Settings</h4>
+              {/* Cloud Save Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <CloudIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Enable Cloud Save</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={cloudSaveMode}
+                    onChange={() => {
+                      const next = !cloudSaveMode;
+                      if (!cloudSaveMode && next) {
+                        setShowCloudSaveConfirm(true);
+                      } else if (cloudSaveMode && !next) {
+                        setShowCloudSaveDisableConfirm(true);
+                      } else {
+                        setCloudSaveMode(next);
+                        window.dispatchEvent(
+                          new CustomEvent("game:cloudsavemode", {
+                            detail: { cloudSaveMode: next },
+                          })
+                        );
+                      }
+                    }}
+                    aria-label="Enable Cloud Save"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              
+              {/* Cloud UUID Anzeige */}
+              {cloudSaveMode && cloudUuid && (
+                <>
+                  <h4 className="settings-section-title">Your Cloud Save ID</h4>
+                  <div className="settings-row">
+                    <IdCardIcon size={20} className="settings-icon" />
+                    <span
+                      className="settings-uuid"
+                      title="Your cloud save UUID (copy & use on other device)"
+                      onClick={() => {
+                        navigator.clipboard?.writeText(cloudUuid);
+                        toast.success("UUID copied");
+                      }}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { navigator.clipboard?.writeText(cloudUuid); triggerSaveFeedback("UUID copied"); } }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Copy cloud save UUID"
+                    >
+                      {cloudUuid}
+                    </span> 
+                    <button
+                      className="settings-button"
+                      onClick={() => {
+                        navigator.clipboard?.writeText(cloudUuid);
+                        toast.success("UUID copied");
+                      }}
+                      title="Click to copy UUID"
+                    >
+                      <ClipboardCopyIcon size={18} />
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* Import from Cloud */}
+              <h4 className="settings-section-title">Import Save Data</h4>
+              <div className="settings-row">
+                <CloudDownloadIcon size={20} className="settings-icon" />
+                <button
+                  className="settings-label btn"
+                  onClick={() => setShowImportDialog(true)}
+                  title="Import from Cloud"
+                >
+                  Import from Cloud
+                </button>
+                <button
+                  className="settings-button"
+                  onClick={() => setShowImportDialog(true)}
+                  title="Import from Cloud"
+                >
+                  <FolderOpen size={18} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+
         {/* Import Modal im Modal */}
         {showImportDialog && (
           <div className="modal-backdrop" style={{ zIndex: 10000 }}>
@@ -388,7 +441,7 @@ export default function SettingsModal({
               <input
                 type="text"
                 className="modal-input"
-                placeholder="Enter UUID"
+                placeholder="Enter your Cloud Save UUID"
                 value={importUuid}
                 onChange={(e) => setImportUuid(e.target.value)}
               />
