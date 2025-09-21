@@ -105,6 +105,8 @@ export default function GameHeader(props) {
     setShowStatisticsHeaderButton,
     prestigeButtonEverVisible,
     setPrestigeButtonEverVisible,
+    showDarkModeButton,
+    setShowDarkModeButton,
   } = useUiProgress();
 
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
@@ -370,14 +372,16 @@ export default function GameHeader(props) {
             )}
           </button>
           {/* Dark Mode */}
-          <button
-            className="settings-button header-icon"
-            onClick={() => setIsDarkMode((v) => !v)}
-            title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
-            aria-label="Dark Mode Toggle"
-          >
-            {isDarkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
-          </button>
+          {showDarkModeButton && (
+            <button
+              className="settings-button header-icon"
+              onClick={() => setIsDarkMode((v) => !v)}
+              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
+              aria-label="Dark Mode Toggle"
+            >
+              {isDarkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
+            </button>
+          )}
           {/* Prestige */}
           {showPrestigeButtonInHeader && (
             <button
@@ -510,6 +514,8 @@ export default function GameHeader(props) {
         setSoundEffectsEnabled={props.setSoundEffectsEnabled}
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
+        showDarkModeButton={showDarkModeButton}
+        setShowDarkModeButton={setShowDarkModeButton}
       />
       <AchievementsModal
         showAchievements={showAchievements}
@@ -611,4 +617,10 @@ GameHeader.propTypes = {
   setAutoBuyCooldownUpgradeEnabled: PropTypes.func.isRequired,
   setAutoBuyGlobalMultiplierEnabled: PropTypes.func.isRequired,
   setAutoBuyGlobalPriceDecreaseEnabled: PropTypes.func.isRequired,
+};
+
+GameHeader.defaultProps = {
+  manualMoneyPerSecond: 0,
+  cloudUuid: null,
+  autoBuyerBuffer: 0,
 };

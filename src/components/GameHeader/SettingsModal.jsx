@@ -73,8 +73,8 @@ export default function SettingsModal({
   setSoundEffectsEnabled, // New
   showStatisticsHeaderButton,
   setShowStatisticsHeaderButton,
-  isDarkMode,
-  setIsDarkMode,
+  showDarkModeButton,
+  setShowDarkModeButton,
 }) {
   const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
@@ -208,28 +208,24 @@ export default function SettingsModal({
               {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
-          {/* Dark Mode Toggle */}
+          {/* Dark Mode Button Toggle */}
           <div className="settings-row">
             <SunMoonIcon size={20} className="settings-icon" />
             <button
               className="settings-label btn"
-              onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
+              onClick={() => setShowDarkModeButton((v) => !v)}
+              title={showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
+              type="button"
             >
-              {isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"} 
-              {/* <span className="settings-uuid">alpha</span> */}
+              {showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
             </button>
             <button
-              className="settings-button"
-              onClick={() => setIsDarkMode((v) => !v)}
-              title={isDarkMode ? "Disable Dark Mode" : "Enable Dark Mode"}
-              aria-label="Dark Mode Toggle"
+              className={`settings-button${showDarkModeButton ? " active" : ""}`}
+              onClick={() => setShowDarkModeButton((v) => !v)}
+              title={showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
+              type="button"
             >
-              {isDarkMode ? (
-                <SunIcon size={18} />
-              ) : (
-                <MoonIcon size={18} />
-              )}
+              {showDarkModeButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
             </button>
           </div>
           {/* Audio Settings */}
