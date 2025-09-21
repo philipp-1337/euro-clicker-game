@@ -34,6 +34,7 @@ export function useUiProgress() {
       showAchievementsHeaderButton: true, // Default: Achievements button in header is visible
       showStatisticsHeaderButton: false, // Default: Statistics button in header is hidden
       prestigeButtonEverVisible: false, // New: Tracks if the prestige button has ever been visible
+      showDarkModeButton: true, // Default: Dark mode button in header is visible
     };
     try {
       const clickerSaveRaw = localStorage.getItem("clickerSave");
@@ -245,6 +246,19 @@ export function useUiProgress() {
     });
   }, []);
 
+  // Setter for showDarkModeButton
+  const setShowDarkModeButton = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showDarkModeButton === 'boolean' ? prev.showDarkModeButton : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showDarkModeButton: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   // Sync showStatisticsHeaderButton from cloud import
   useEffect(() => {
     const handler = () => {
@@ -281,8 +295,10 @@ export function useUiProgress() {
     showAchievementsHeaderButton: typeof uiProgress.showAchievementsHeaderButton === 'boolean' ? uiProgress.showAchievementsHeaderButton : true,
     setShowAchievementsHeaderButton,
     showStatisticsHeaderButton: typeof uiProgress.showStatisticsHeaderButton === 'boolean' ? uiProgress.showStatisticsHeaderButton : false,
+    setShowStatisticsHeaderButton,
     prestigeButtonEverVisible: typeof uiProgress.prestigeButtonEverVisible === 'boolean' ? uiProgress.prestigeButtonEverVisible : false,
     setPrestigeButtonEverVisible, // Export the setter
-    setShowStatisticsHeaderButton,
+    showDarkModeButton: typeof uiProgress.showDarkModeButton === 'boolean' ? uiProgress.showDarkModeButton : true,
+    setShowDarkModeButton,
   };
 }
