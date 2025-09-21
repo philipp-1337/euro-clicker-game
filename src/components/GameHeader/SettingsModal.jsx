@@ -19,8 +19,6 @@ import {
   TabletSmartphoneIcon,
   SunMoon as SunMoonIcon,
   CrownIcon,
-  MoonIcon,
-  SunIcon,
   MousePointerClickIcon,
   Music2 as MusicIcon,
   Volume2 as SoundEffectsIcon,
