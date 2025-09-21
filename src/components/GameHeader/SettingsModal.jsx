@@ -223,7 +223,7 @@ export default function SettingsModal({
               <div className="settings-row">
                 <div className="settings-row-left">
                   <MusicIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Enable Background Music</span>
+                  <span className="switch-text">Background Music</span>
                 </div>
                 <label className="switch-label">
                   <input
@@ -240,7 +240,7 @@ export default function SettingsModal({
               <div className="settings-row">
                 <div className="settings-row-left">
                   <SoundEffectsIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Enable Sound Effects</span>
+                  <span className="switch-text">Sound Effects</span>
                 </div>
                 <label className="switch-label">
                   <input
