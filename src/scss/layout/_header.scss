@@ -9,7 +9,7 @@
   color: map.get($colors, text-dark);
   font-size: 1rem;
   font-weight: 500;
-  gap: clamp(10px, 4vw, 32px);
+  // gap: clamp(10px, 4vw, 32px);
   margin-bottom: 17px;
   margin-top: -13px;
   overflow-x: auto;
@@ -20,7 +20,7 @@
 
 .header-actions-content {
   @include flex-center;
-  gap: clamp(10px, 4vw, 32px); // Behält den dynamischen Abstand bei
+  gap: clamp(10px, 3vw, 24px); // Behält den dynamischen Abstand bei
   margin: 0 auto; // Zentriert den Inhaltsblock, wenn er in den Container passt
   width: fit-content; // Wichtig, damit margin:auto funktioniert und der Block nicht die volle Breite einnimmt
   height: 40px;

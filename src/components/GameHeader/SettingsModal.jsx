@@ -22,6 +22,7 @@ import {
   Volume2 as SoundEffectsIcon,
   BarChart2 as BarChart2Icon,
   AwardIcon,
+  ChevronRightIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '@hooks/useModal';
@@ -97,11 +98,28 @@ export default function SettingsModal({
         <div className="settings-modal-content">
           {/* Display options */}
           <h4 className="settings-section-title">Display options</h4>
+          {/* Dark Mode Button Toggle */}
+          <div className="settings-row">
+            <div className="settings-row-left">
+              <SunMoonIcon size={20} className="settings-icon" />
+              <span className="switch-text">Dark Mode Button</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showDarkModeButton}
+                onChange={() => setShowDarkModeButton((v) => !v)}
+                aria-label="Show Dark Mode Button"
+              />
+              <span className="switch-slider" />
+            </label>
+          </div>
           {/* Statistics Button Toggle */}
           <div className="settings-row">
             <div className="settings-row-left">
               <BarChart2Icon size={20} className="settings-icon" />
-              <span className="switch-text">Show Statistics button</span>
+              <span className="switch-text">Statistics Button</span>
             </div>
             <label className="switch-label">
               <input
@@ -109,7 +127,7 @@ export default function SettingsModal({
                 className="switch"
                 checked={showStatisticsHeaderButton}
                 onChange={() => setShowStatisticsHeaderButton((v) => !v)}
-                aria-label="Show Statistics button"
+                aria-label="Show Statistics Button"
               />
               <span className="switch-slider" />
             </label>
@@ -119,7 +137,7 @@ export default function SettingsModal({
             <div className="settings-row">
               <div className="settings-row-left">
                 <AwardIcon size={20} className="settings-icon" />
-                <span className="switch-text">Show Achievements button</span>
+                <span className="switch-text">Achievements Button</span>
               </div>
               <label className="switch-label">
                 <input
@@ -127,7 +145,7 @@ export default function SettingsModal({
                   className="switch"
                   checked={showAchievementsHeaderButton}
                   onChange={() => setShowAchievementsHeaderButton((v) => !v)}
-                  aria-label="Show Achievements button"
+                  aria-label="Show Achievements Button"
                 />
                 <span className="switch-slider" />
               </label>
@@ -137,7 +155,7 @@ export default function SettingsModal({
           <div className="settings-row">
             <div className="settings-row-left">
               <CrownIcon size={20} className="settings-icon" />
-              <span className="switch-text">Show Leaderboard button</span>
+              <span className="switch-text">Leaderboard Button</span>
             </div>
             <label className="switch-label">
               <input
@@ -145,7 +163,7 @@ export default function SettingsModal({
                 className="switch"
                 checked={showLeaderboard}
                 onChange={() => setShowLeaderboard((v) => !v)}
-                aria-label="Show Leaderboard button"
+                aria-label="Show Leaderboard Button"
               />
               <span className="switch-slider" />
             </label>
@@ -154,7 +172,7 @@ export default function SettingsModal({
           <div className="settings-row">
             <div className="settings-row-left">
               <MousePointerClickIcon size={20} className="settings-icon" />
-              <span className="switch-text">Show Click Counter</span>
+              <span className="switch-text">Click Counter</span>
             </div>
             <label className="switch-label">
               <input
@@ -171,7 +189,7 @@ export default function SettingsModal({
           <div className="settings-row">
             <div className="settings-row-left">
               <ClockIcon size={20} className="settings-icon" />
-              <span className="switch-text">Show Playtime</span>
+              <span className="switch-text">Playtime Counter</span>
             </div>
             <label className="switch-label">
               <input
@@ -180,23 +198,6 @@ export default function SettingsModal({
                 checked={showPlaytime}
                 onChange={() => setShowPlaytime((v) => !v)}
                 aria-label="Show Playtime"
-              />
-              <span className="switch-slider" />
-            </label>
-          </div>
-          {/* Dark Mode Button Toggle */}
-          <div className="settings-row">
-            <div className="settings-row-left">
-              <SunMoonIcon size={20} className="settings-icon" />
-              <span className="switch-text">Show Dark Mode button</span>
-            </div>
-            <label className="switch-label">
-              <input
-                type="checkbox"
-                className="switch"
-                checked={showDarkModeButton}
-                onChange={() => setShowDarkModeButton((v) => !v)}
-                aria-label="Show Dark Mode button"
               />
               <span className="switch-slider" />
             </label>
@@ -261,7 +262,7 @@ export default function SettingsModal({
               }}
               title={cloudSaveMode ? "Deactivate Cloud Save" : "Activate Cloud Save"}
             >
-              {cloudSaveMode ? "Disable Cloud Save" : "Enable Cloud Save"}
+              {cloudSaveMode ? "Cloud Save" : "Cloud Save"}
             </button>
             <button
               className={`settings-button${cloudSaveMode ? " active" : ""}`}
@@ -282,11 +283,10 @@ export default function SettingsModal({
               }}
               title={cloudSaveMode ? "Deactivate cloud save" : "Activate cloud save"}
             >
-              {cloudSaveMode ? (
-                <CloudOffIcon size={18} />
-              ) : (
-                <CloudAlert size={18} />
-              )}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ marginRight: '4px' }}>{cloudSaveMode ? 'On' : 'Off'}</span>
+                <ChevronRightIcon size={18} />
+              </div>
             </button>
           </div>
           {/* Cloud UUID Anzeige */}

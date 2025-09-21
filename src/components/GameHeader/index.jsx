@@ -371,6 +371,20 @@ export default function GameHeader(props) {
               </span>
             )}
           </button>
+          {/* Buy Quantity */}
+          <button
+            className="settings-button header-icon buy-quantity-toggle-button"
+            onClick={toggleBuyQuantity}
+            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
+            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
+          >
+            {buyQuantity === 1 ? (
+              <Layers2Icon size={20} />
+            ) : (
+              <LayersIcon size={20} />
+            )}
+            <span className="buy-quantity-label">x{buyQuantity}</span>
+          </button>
           {/* Dark Mode */}
           {showDarkModeButton && (
             <button
@@ -416,20 +430,6 @@ export default function GameHeader(props) {
               )}
             </button>
           )}
-          {/* Buy Quantity */}
-          <button
-            className="settings-button header-icon buy-quantity-toggle-button"
-            onClick={toggleBuyQuantity}
-            title={`Toggle Buy Quantity (Currently: x${buyQuantity})`}
-            aria-label={`Toggle Buy Quantity, current is x${buyQuantity}`}
-          >
-            {buyQuantity === 1 ? (
-              <Layers2Icon size={20} />
-            ) : (
-              <LayersIcon size={20} />
-            )}
-            <span className="buy-quantity-label">x{buyQuantity}</span>
-          </button>
           {/* Statistics */}
           {uiProgress.showStatisticsHeaderButton && (
             <button
