@@ -375,7 +375,14 @@
   position: relative;
   width: 100%;
   min-height: 400px; // Mindesthöhe setzen
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  // .header-left {
+  //   display: flex;
+  //   gap: 8px;
+  //   // flex: 1;
+  // }
 }
 
 .settings-panel {

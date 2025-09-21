@@ -321,7 +321,7 @@ export default function SettingsModal({
 
           {/* Cloud Save Untermenü */}
           <div className={`settings-panel submenu-panel ${showCloudSaveSubmenu ? 'slide-in' : ''}`}>
-            <div className="settings-modal-header">
+            <div className="settings-modal-header header-left">
               <button
                 className="settings-button back-button"
                 onClick={handleBackToMain}
