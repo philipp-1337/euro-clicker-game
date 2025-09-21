@@ -85,11 +85,14 @@ export default function useGameEconomy({
   const prestigeGame = useCallback(() => {
     if (!canPrestige) return;
     const currentMoneyForPrestige = (typeof money === 'number' && !isNaN(money) && money > 0) ? money : 0;
-    // Berechne, wie viele Shares man sich leisten kann und wie viel Geld dafür ausgegeben wird
+    
+    // Correctly calculate how many shares can be afforded with the current money
     let sharesEarnedThisRun = 0;
     let remainingMoney = currentMoneyForPrestige;
+    const startIndex = (typeof prestigeShares === 'number' && !isNaN(prestigeShares)) ? prestigeShares : 0;
+    
     while (true) {
-      const cost = gameConfig.prestige.getShareCost(sharesEarnedThisRun);
+      const cost = gameConfig.prestige.getShareCost(startIndex + sharesEarnedThisRun);
       if (remainingMoney >= cost) {
         remainingMoney -= cost;
         sharesEarnedThisRun++;
@@ -111,15 +114,15 @@ export default function useGameEconomy({
       inactivePlayTime: gameState.inactivePlayTime,
       lastSaved: Date.now(),
 
-      // UI settings: darkMode übernimmt Systemwert, falls nicht gesetzt
-      darkMode: (() => {
-        const localStorageValue = localStorage.getItem('darkMode');
-        if (localStorageValue === 'true') return true;
-        if (localStorageValue === 'false') return false;
-        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      })(),
-      musicEnabled: (localStorage.getItem('musicEnabled') ?? 'true') === 'true',
-      soundEffectsEnabled: (localStorage.getItem('soundEffectsEnabled') ?? 'true') === 'true',
+      // Preserve UI settings from gameState
+      darkMode: gameState.darkMode,
+      musicEnabled: gameState.musicEnabled,
+      soundEffectsEnabled: gameState.soundEffectsEnabled,
+      showStatisticsHeaderButton: gameState.showStatisticsHeaderButton,
+      showAchievementsHeaderButton: gameState.showAchievementsHeaderButton,
+      showLeaderboard: gameState.showLeaderboard,
+      showClickStats: gameState.showClickStats,
+      showPlaytime: gameState.showPlaytime,
 
       // Reset progression
       investments: gameConfig.initialState.investments.map(() => 0),

@@ -54,6 +54,7 @@ export default function PrestigeModal({
         <div>
           <p>
             Reset your progress and gain permanent <span className="prestige-text">Prestige Shares</span>.<br />
+            Each share grants a permanent {gameConfig.prestige.bonusPerShare * 100}% bonus to your income per second.<br />
             Each share costs more than the last.
           </p>
           <div className="prestige-summary">

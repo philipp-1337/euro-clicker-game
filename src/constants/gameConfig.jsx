@@ -203,7 +203,7 @@ export const gameConfig = {
     getShareCost: (shareIndex) => {
       // shareIndex: 0 = erster Share, 1 = zweiter Share, ...
       const base = 1000000000; // 1 Billion
-      const exponent = 1.01; // Anfangs langsam, dann steiler
+      const exponent = 1.005; // Anfangs langsam, dann steiler
       const saturation = 1000000000000000000; // 1 Quintillion
       const cost = base * Math.pow(exponent, shareIndex);
       return cost >= saturation ? saturation : Math.floor(cost);
