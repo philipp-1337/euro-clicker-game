@@ -7,8 +7,6 @@ import {
   CloudDownload as CloudDownloadIcon,
   CloudOff as CloudOffIcon,
   Trash2 as TrashIcon,
-  Eye as EyeIcon,
-  EyeOff as EyeOffIcon,
   Clock as ClockIcon,
   RefreshCw as RefreshIcon,
   CloudAlert,
@@ -22,7 +20,6 @@ import {
   MousePointerClickIcon,
   Music2 as MusicIcon,
   Volume2 as SoundEffectsIcon,
-  VolumeX as MuteIcon,
   BarChart2 as BarChart2Icon,
   AwardIcon,
 } from "lucide-react";
@@ -102,169 +99,143 @@ export default function SettingsModal({
           <h4 className="settings-section-title">Display options</h4>
           {/* Statistics Button Toggle */}
           <div className="settings-row">
-            <BarChart2Icon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
-              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
-              type="button"
-            >
-              {showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
-            </button>
-            <button
-              className={`settings-button${showStatisticsHeaderButton ? " active" : ""}`}
-              onClick={() => setShowStatisticsHeaderButton((v) => !v)}
-              title={showStatisticsHeaderButton ? "Hide Statistics button" : "Show Statistics button"}
-              type="button"
-            >
-              {showStatisticsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
-            </button>
+            <div className="settings-row-left">
+              <BarChart2Icon size={20} className="settings-icon" />
+              <span className="switch-text">Show Statistics button</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showStatisticsHeaderButton}
+                onChange={() => setShowStatisticsHeaderButton((v) => !v)}
+                aria-label="Show Statistics button"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
           {hasAnyAchievement && (
             <div className="settings-row">
-              <AwardIcon size={20} className="settings-icon" />
-              <button
-                className="settings-label btn"
-                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
-                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
-                type="button"
-              >
-                {showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
-              </button>
-              <button
-                className={`settings-button${showAchievementsHeaderButton ? " active" : ""}`}
-                onClick={() => setShowAchievementsHeaderButton((v) => !v)}
-                title={showAchievementsHeaderButton ? "Hide Achievements button" : "Show Achievements button"}
-                type="button"
-              >
-                {showAchievementsHeaderButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
-              </button>
+              <div className="settings-row-left">
+                <AwardIcon size={20} className="settings-icon" />
+                <span className="switch-text">Show Achievements button</span>
+              </div>
+              <label className="switch-label">
+                <input
+                  type="checkbox"
+                  className="switch"
+                  checked={showAchievementsHeaderButton}
+                  onChange={() => setShowAchievementsHeaderButton((v) => !v)}
+                  aria-label="Show Achievements button"
+                />
+                <span className="switch-slider" />
+              </label>
             </div>
           )}
           {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
           <div className="settings-row">
-            <CrownIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Hide Leaderboard-Button" : "Show Leaderboard button"}
-              type="button"
-            >
-              {showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
-            </button>
-            <button
-              className={`settings-button${showLeaderboard ? " active" : ""}`}
-              onClick={() => setShowLeaderboard((v) => !v)}
-              title={showLeaderboard ? "Hide Leaderboard button" : "Show Leaderboard button"}
-              type="button"
-            >
-              {showLeaderboard ? (
-                <EyeIcon size={18} />
-              ) : (
-                <EyeOffIcon size={18} />
-              )}
-            </button>
+            <div className="settings-row-left">
+              <CrownIcon size={20} className="settings-icon" />
+              <span className="switch-text">Show Leaderboard button</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showLeaderboard}
+                onChange={() => setShowLeaderboard((v) => !v)}
+                aria-label="Show Leaderboard button"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Clicker Counter Toggle */}
           <div className="settings-row">
-            <MousePointerClickIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            >
-              {showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowClickStats((v) => !v)}
-              title={showClickStats ? "Hide Click Counter" : "Show Click Counter"}
-            >
-              {showClickStats ? (
-                <EyeIcon size={18} />
-              ) : (
-                <EyeOffIcon size={18} />
-              )}
-            </button>
+            <div className="settings-row-left">
+              <MousePointerClickIcon size={20} className="settings-icon" />
+              <span className="switch-text">Show Click Counter</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showClickStats}
+                onChange={() => setShowClickStats((v) => !v)}
+                aria-label="Show Click Counter"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Spielzeit Toggle */}
           <div className="settings-row">
-            <ClockIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            >
-              {showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setShowPlaytime((v) => !v)}
-              title={showPlaytime ? "Hide Playtime" : "Show Playtime"}
-            >
-              {showPlaytime ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
-            </button>
+            <div className="settings-row-left">
+              <ClockIcon size={20} className="settings-icon" />
+              <span className="switch-text">Show Playtime</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showPlaytime}
+                onChange={() => setShowPlaytime((v) => !v)}
+                aria-label="Show Playtime"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Dark Mode Button Toggle */}
           <div className="settings-row">
-            <SunMoonIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setShowDarkModeButton((v) => !v)}
-              title={showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
-              type="button"
-            >
-              {showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
-            </button>
-            <button
-              className={`settings-button${showDarkModeButton ? " active" : ""}`}
-              onClick={() => setShowDarkModeButton((v) => !v)}
-              title={showDarkModeButton ? "Hide Dark Mode button" : "Show Dark Mode button"}
-              type="button"
-            >
-              {showDarkModeButton ? <EyeIcon size={18} /> : <EyeOffIcon size={18} />}
-            </button>
+            <div className="settings-row-left">
+              <SunMoonIcon size={20} className="settings-icon" />
+              <span className="switch-text">Show Dark Mode button</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={showDarkModeButton}
+                onChange={() => setShowDarkModeButton((v) => !v)}
+                aria-label="Show Dark Mode button"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Audio Settings */}
           <h4 className="settings-section-title">Audio Settings</h4>
           {/* Background Music Toggle */}
           <div className="settings-row">
-            <MusicIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setMusicEnabled(v => !v)}
-              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
-            >
-              {musicEnabled ? "Disable Background Music" : "Enable Background Music"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setMusicEnabled(v => !v)}
-              title={musicEnabled ? "Disable Background Music" : "Enable Background Music"}
-              aria-label="Background Music Toggle"
-            >
-              {musicEnabled ? <MusicIcon size={18} /> : <MuteIcon size={18} />}
-            </button>
+            <div className="settings-row-left">
+              <MusicIcon size={20} className="settings-icon" />
+              <span className="switch-text">Enable Background Music</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={musicEnabled}
+                onChange={() => setMusicEnabled((v) => !v)}
+                aria-label="Enable Background Music"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Sound Effects Toggle */}
           <div className="settings-row">
-            <SoundEffectsIcon size={20} className="settings-icon" />
-            <button
-              className="settings-label btn"
-              onClick={() => setSoundEffectsEnabled(v => !v)}
-              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
-            >
-              {soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
-            </button>
-            <button
-              className="settings-button"
-              onClick={() => setSoundEffectsEnabled(v => !v)}
-              title={soundEffectsEnabled ? "Disable Sound Effects" : "Enable Sound Effects"}
-              aria-label="Sound Effects Toggle"
-            >
-              {soundEffectsEnabled ? <SoundEffectsIcon size={18} /> : <MuteIcon size={18} />}
-            </button>
+            <div className="settings-row-left">
+              <SoundEffectsIcon size={20} className="settings-icon" />
+              <span className="switch-text">Enable Sound Effects</span>
+            </div>
+            <label className="switch-label">
+              <input
+                type="checkbox"
+                className="switch"
+                checked={soundEffectsEnabled}
+                onChange={() => setSoundEffectsEnabled((v) => !v)}
+                aria-label="Enable Sound Effects"
+              />
+              <span className="switch-slider" />
+            </label>
           </div>
           {/* Save options */}
           <h4 className="settings-section-title">Save game options</h4>
