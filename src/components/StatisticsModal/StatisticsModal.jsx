@@ -1,6 +1,7 @@
 import { X as CloseIcon, ClockIcon, Activity as ActivityIcon, MousePointerClick as MousePointerClickIcon, ClockFadingIcon } from 'lucide-react';
 import { useModal } from '@hooks/useModal';
 import { formatPlaytime, formatNumber } from '@utils/calculators';
+import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 
 export default function StatisticsModal({
   show,
@@ -73,7 +74,7 @@ export default function StatisticsModal({
               </li>
               <li>
                 <span className="stats-label">Prestige Multiplier:</span>
-                <span className="stats-value">{prestigeCount !== undefined && prestigeShares !== undefined && prestigeShares > 0 ? `${formatNumber(1 + prestigeShares * 0.01)}x` : '1.00x'}</span>
+                <span className="stats-value">{prestigeCount !== undefined && prestigeShares !== undefined && prestigeShares > 0 ? `${formatNumber(1 + prestigeShares * gameConfig.prestige.bonusPerShare)}x` : '1.00x'}</span>
               </li>
             </ul>
           )}
