@@ -17,6 +17,7 @@ import { CHECKPOINTS } from '@constants/gameConfig';
 import WelcomeBackModal from '@components/WelcomeBackModal/WelcomeBackModal'; // Import the new modal
 import useCloudSave from '@hooks/useCloudSave';
 import { APP_VERSION } from '../../version';
+import { useEnvironment } from '@hooks/useEnvironment';
 import AutoBuyerModal from '@components/AutoBuyerModal/AutoBuyerModal';
 import { formatNumber } from '@utils/calculators';
 
@@ -338,14 +339,7 @@ export default function ClickerGame({
     }
   };
 
-  const [environment, setEnvironment] = useState("production");
-  useEffect(() => {
-    const hostname = window.location.hostname;
-    if (hostname.includes("alpha")) setEnvironment("alpha");
-    else if (hostname === "localhost" || hostname === "127.0.0.1")
-      setEnvironment("localhost");
-    else setEnvironment("production");
-  }, []);
+  const environment = useEnvironment();
 
   const handleLeaderboardSubmit = async () => {
     if (!leaderboardName.trim() || !currentCheckpoint) return;
@@ -533,7 +527,6 @@ export default function ClickerGame({
           buyQuantity={buyQuantity}
           toggleBuyQuantity={toggleBuyQuantity}
           gameConfig={gameConfig}
-          environment={environment}
           autoBuyerUnlocked={autoBuyerUnlocked}
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
           globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}

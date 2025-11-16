@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import useCloudSave from '@hooks/useCloudSave';
 import { formatPlaytime } from '@utils/calculators';
-import { isLocalhost } from '@utils/env';
 import { APP_VERSION } from '../version';
+import { useEnvironment } from '@hooks/useEnvironment';
 
 export default function useGameHeaderLogic(props) {
   const {
@@ -25,13 +25,7 @@ export default function useGameHeaderLogic(props) {
     prestigeBonusMultiplier,
   } = props;
 
-  const [environment, setEnvironment] = useState("production");
-  useEffect(() => {
-    const hostname = window.location.hostname;
-    if (hostname.includes("alpha")) setEnvironment("alpha");
-    else if (isLocalhost()) setEnvironment("localhost");
-    else setEnvironment("production");
-  }, []);
+  const environment = useEnvironment();
 
   // Easy Mode darf nur in localhost und alpha aktiviert werden (NICHT in production!)
   const canToggleEasyMode =
