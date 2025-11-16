@@ -76,3 +76,5 @@ The project follows a component-based architecture with a clear separation of co
     - After your first prestige, unlock **Wealth Production** to craft valuable items.
     - Unlock **Auto-Buyers** from the premium upgrades to automate your upgrade strategy.
 6. **Compete**: Submit your score to the **Leaderboard** and unlock **Achievements** as you progress.
+
+last updated 21.09.2025
