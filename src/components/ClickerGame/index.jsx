@@ -341,8 +341,7 @@ export default function ClickerGame({
   const [environment, setEnvironment] = useState("production");
   useEffect(() => {
     const hostname = window.location.hostname;
-    if (hostname.includes("beta")) setEnvironment("beta");
-    else if (hostname.includes("alpha")) setEnvironment("alpha");
+    if (hostname.includes("alpha")) setEnvironment("alpha");
     else if (hostname === "localhost" || hostname === "127.0.0.1")
       setEnvironment("localhost");
     else setEnvironment("production");

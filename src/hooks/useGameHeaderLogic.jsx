@@ -28,13 +28,12 @@ export default function useGameHeaderLogic(props) {
   const [environment, setEnvironment] = useState("production");
   useEffect(() => {
     const hostname = window.location.hostname;
-    if (hostname.includes("beta")) setEnvironment("beta");
-    else if (hostname.includes("alpha")) setEnvironment("alpha");
+    if (hostname.includes("alpha")) setEnvironment("alpha");
     else if (isLocalhost()) setEnvironment("localhost");
     else setEnvironment("production");
   }, []);
 
-  // Easy Mode darf nur in localhost und alpha aktiviert werden (NICHT in beta!)
+  // Easy Mode darf nur in localhost und alpha aktiviert werden (NICHT in production!)
   const canToggleEasyMode =
     environment === "localhost" || environment === "alpha";
 

@@ -5,9 +5,6 @@
   "targets": {
     "euro-clicker-game": {
       "hosting": {
-        "beta": [
-          "euro-clicker-game-beta"
-        ],
         "production": [
           "euro-clicker-game"
         ]
