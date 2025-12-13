@@ -10,7 +10,7 @@ export default defineConfig({
       registerType: "prompt",
       workbox: {
         // Precache nur kleine Dateien
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest}"],
+        globPatterns: [],
       },
       skipWaiting: true,
       clientsClaim: true,
