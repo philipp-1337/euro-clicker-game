@@ -8,3 +8,4 @@ d08QoLavL0Iz4TGWV6im;AutoBuyer Buffer Badge (v0.3.7);The AutoBuyer button now di
 rX8pLm9qN4vK2tY7wE3s;AutoBuyer Quick Toggle (v0.4.2);The AutoBuyer button now supports double-press to quickly toggle all unlocked AutoBuyers at once, eliminating the need to open the modal for bulk enable/disable actions.;Feature;2025-09-18T14:16:21.080Z
 J5xysTs9YhR21uR530BZ;Critical Clicks in Money/s (v0.4.3);Critical Clicks are now correctly included in the manual money per second calculation, making the stats more accurate.;Fix;2025-09-18T16:51:00.000Z
 K2L3M4N5P6Q7R8S9T0U1;Settings Refactoring & Small Prestige Rebalancing (v0.4.4);All settings buttons were converted into switches for a more modern experience, and prestige values received minor balancing adjustments.;Feature;2025-09-21T12:00:00.000Z
+V7W8X9Y0Z1A2B3C4D5E6;Third-Party Licenses (v0.4.5);The About section now includes information about the open-source libraries used in this game.;Feature;2026-01-11T12:00:00.000Z
