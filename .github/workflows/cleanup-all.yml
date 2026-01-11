@@ -1,0 +1,50 @@
+name: Monthly Cleanup (Saves, Leaderboard, NotificationReads)
+on:
+  schedule:
+    - cron: '0 2 12 * *' # Am 12. jeden Monats um 02:00 UTC
+  workflow_dispatch:
+    inputs:
+      saves_retention_days:
+        description: 'Anzahl der Tage vor dem Löschen (Saves)'
+        required: false
+        default: '7'
+      notification_retention_days:
+        description: 'Anzahl der Tage vor dem Löschen (NotificationReads)'
+        required: false
+        default: '30'
+
+env:
+  NODE_ENV: production
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run Old Saves cleanup script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          RETENTION_DAYS: ${{ github.event.inputs.saves_retention_days || '7' }}
+        run: node scripts/deleteOldSaves.js
+        
+      - name: Run Leaderboard cleanup script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/cleanupLeaderboard.js
+        
+      - name: Run NotificationReads cleanup script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          RETENTION_DAYS: ${{ github.event.inputs.notification_retention_days || '30' }}
+        run: node scripts/cleanupNotificationReads.js
