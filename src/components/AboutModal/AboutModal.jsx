@@ -81,8 +81,28 @@ export default function AboutModal({ show, onClose }) {
             <span>Created by fabiokay & philipp-1337</span>
           </div>
 
+          <h4 style={{ marginTop: '20px' }}>Third-Party Licenses</h4>
+          <div style={{ fontSize: '0.85em', color: '#666', marginTop: '8px' }}>
+            <p>
+              Icons by{' '}
+              <a
+                href="https://lucide.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', color: 'var(--color-primary)' }}
+              >
+                Lucide
+              </a>
+              {' '}— Released under the ISC License.
+            </p>
+            <p style={{ marginTop: '8px' }}>
+              Copyright (c) for portions of Lucide are held by Cole Bemis 2013-2023 as part of Feather (MIT). 
+              All other copyright (c) for Lucide are held by Lucide Contributors 2025.
+            </p>
+          </div>
+
           <div style={{ marginTop: '20px', fontSize: '0.9em', color: '#666' }}>
-            Licensed under the MIT License
+            Euro Clicker Game is licensed under the MIT License
           </div>
         </div>
       </div>
