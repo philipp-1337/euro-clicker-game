@@ -168,4 +168,37 @@ body.dark {
     // box-shadow: 0 1px 4px rgba(0,0,0,0.12);
   }
 
+  .unlock-roadmap-card {
+    border-color: rgba(91, 177, 241, 0.28);
+    background:
+      linear-gradient(135deg, rgba(23, 31, 43, 0.96), rgba(18, 52, 73, 0.94)),
+      map.get($backgrounds, dark);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+  }
+
+  .unlock-roadmap-card__eyebrow {
+    color: rgba(128, 206, 255, 0.9);
+  }
+
+  .unlock-roadmap-card__title,
+  .unlock-roadmap-card__description,
+  .unlock-roadmap-card__preview,
+  .unlock-roadmap-card__progress-copy {
+    color: map.get($colors, text-light);
+  }
+
+  .unlock-roadmap-card__status {
+    background: rgba(91, 177, 241, 0.16);
+    color: #a7ddff;
+  }
+
+  .unlock-roadmap-card__status.is-unlocked {
+    background: rgba(73, 205, 132, 0.18);
+    color: #9ee3b6;
+  }
+
+  .unlock-roadmap-card__progress-bar {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
 }
