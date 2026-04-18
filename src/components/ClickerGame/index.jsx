@@ -624,10 +624,15 @@ export default function ClickerGame({
         </div>
       )}
 
+      {uiProgress.gameStarted && nextMilestone && (
+        <div style={{ paddingBottom: upgradeTabsUnlocked ? 0 : '64px' }}>
+          <UnlockRoadmapCard milestone={nextMilestone} />
+        </div>
+      )}
+
       {uiProgress.gameStarted && upgradeTabsUnlocked && (
         <>
           <div style={{ paddingBottom: '64px' }}>
-            <UnlockRoadmapCard milestone={nextMilestone} />
             {activeTab === 'basic' && (
               <BasicUpgrades
                 money={money}
