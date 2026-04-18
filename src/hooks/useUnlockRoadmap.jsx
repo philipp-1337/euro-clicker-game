@@ -146,15 +146,15 @@ export default function useUnlockRoadmap({
   prestigeShares,
   isCraftingUnlocked,
   currentInvestmentUnlockCost,
-  investmentUnlockCost,
   prestigeThresholdMoney = gameConfig.prestige.minMoneyForModalButton,
   craftingUnlockCost = gameConfig.unlockCraftingCost,
   craftingUnlockPrestige = gameConfig.unlockCraftingPrestige,
 } = {}) {
   return useMemo(() => {
+    const configInvestmentTarget = normalizeNumber(getMilestoneMeta('investments', {}).targetValue, gameConfig.unlockInvestmentCost);
     const resolvedInvestmentUnlockCost = normalizeNumber(
       currentInvestmentUnlockCost,
-      normalizeNumber(investmentUnlockCost, normalizeNumber(getMilestoneMeta('investments', {}).targetValue, gameConfig.unlockInvestmentCost))
+      configInvestmentTarget
     );
     const milestones = [
       resolveInvestmentMilestone({ money, isInvestmentUnlocked, investmentUnlockCost: resolvedInvestmentUnlockCost }),
@@ -182,7 +182,6 @@ export default function useUnlockRoadmap({
     prestigeShares,
     isCraftingUnlocked,
     currentInvestmentUnlockCost,
-    investmentUnlockCost,
     prestigeThresholdMoney,
     craftingUnlockCost,
     craftingUnlockPrestige,
