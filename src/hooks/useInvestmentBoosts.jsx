@@ -24,6 +24,12 @@ const resolveInvestment = (identifier) => {
   return getInvestmentById(identifier, gameConfig.investments);
 };
 
+const PURCHASE_TRIGGERS = new Set([
+  'investment_purchase',
+  'manager_purchase',
+  'material_purchase',
+]);
+
 const buildCompletedState = (state, target, timestamp) => ({
   ...state,
   boosted: true,
@@ -157,8 +163,20 @@ export default function useInvestmentBoosts(
     const amount = Math.max(1, actionContext?.amount ?? 1);
     const investmentStateKey = getInvestmentBoostStateKey(investment);
     const effectiveCost = resolveEffectiveCost(investment);
+    const trigger = actionContext?.trigger ?? 'manual';
 
-    if (investment.boostRule?.type === 'reserve_challenge' && hasReserveChallengeContext(actionContext) === false) {
+    if (investment.boostRule?.type === 'manual_actions' && trigger !== 'manual') {
+      return;
+    }
+
+    if (investment.boostRule?.type === 'timed_actions' && PURCHASE_TRIGGERS.has(trigger) === false) {
+      return;
+    }
+
+    if (
+      investment.boostRule?.type === 'reserve_challenge'
+      && (PURCHASE_TRIGGERS.has(trigger) === false || hasReserveChallengeContext(actionContext) === false)
+    ) {
       return;
     }
 

@@ -1,5 +1,6 @@
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
+import InvestmentBoostMeter from './InvestmentBoostMeter';
 import { Landmark, Unlock, Car, Zap, Sunset, Sandwich, Shirt, CarFront, Cigarette, Pill, Plane, Rocket } from 'lucide-react';
 
 const InvestmentIcon = ({ iconName }) => {
@@ -34,6 +35,24 @@ export default function Investments({
   unlockInvestments,
   unlockInvestmentCost
 }) {
+  const getChallengeText = (investment, cost) => {
+    const boostRule = investment.boostRule ?? {};
+
+    switch (boostRule.type) {
+      case 'timed_actions':
+        return `Buy managers, investments, or materials ${boostRule.target} times within ${boostRule.windowSeconds}s.`;
+      case 'reserve_challenge':
+        return `Make qualifying purchases while holding at least ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € in reserve.`;
+      case 'manual_actions':
+      default:
+        return `Use the active boost action ${boostRule.target} times to lock in the permanent income upgrade.`;
+    }
+  };
+
+  const getSynergySummary = (investment) => {
+    return `${investment.roleDescription} ${investment.boostTarget}.`;
+  };
+
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Investments</h2>
@@ -74,25 +93,39 @@ export default function Investments({
             <div key={investment.id} className="premium-upgrade-card">
               <div className="premium-upgrade-header">
                 <InvestmentIcon iconName={investment.icon} />
-                <h3>
-                  {investment.name}
-                </h3>
+                <div className="investment-card__title-group">
+                  <h3>
+                    {investment.name}
+                  </h3>
+                  <span className="investment-card__role-badge">{investment.roleLabel}</span>
+                </div>
               </div>
               <p className="premium-upgrade-description">
                 Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
               </p>
-              <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
+              <p className="premium-upgrade-description investment-card__synergy-copy">
+                {getSynergySummary(investment)}
+              </p>
+              <div className="investment-card__meta-row">
+                <span className="investment-card__meta-label">Synergy</span>
+                <span className="investment-card__meta-value">{investment.synergyTag}</span>
+              </div>
+              <p className="premium-upgrade-description investment-card__hint-copy">
                 {investment.boostHint}
               </p>
-              <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
-                {progressLabel}
-              </p>
+              <InvestmentBoostMeter
+                boostState={boostState}
+                progressLabel={progressLabel}
+                challengeText={getChallengeText(investment, cost)}
+              />
               <div className="premium-upgrade-info">
-                <div className="premium-upgrade-level">
-                  Purchased: {purchased ? 'Yes' : 'No'}
-                </div>
-                <div className="premium-upgrade-level">
-                  Boost: {boostState?.boosted ? 'Completed' : 'In Progress'}
+                <div className="investment-card__status-list">
+                  <div className="premium-upgrade-level">
+                    Purchased: {purchased ? 'Yes' : 'No'}
+                  </div>
+                  <div className="premium-upgrade-level">
+                    Boost: {boostState?.boosted ? 'Completed' : 'In Progress'}
+                  </div>
                 </div>
                 <div className="investment-buttons-group">
                   <button
@@ -102,13 +135,23 @@ export default function Investments({
                   >
                     {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
                   </button>
-                  <button
-                    onClick={() => advanceInvestmentBoost(investment.id, { amount: 1, availableMoney: money })}
-                    disabled={!purchased || isCompleted}
-                    className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
-                  >
-                    {isCompleted ? "Earnings Boosted" : "Boost"}
-                  </button>
+                  {investment.boostRule?.type === 'manual_actions' ? (
+                    <button
+                      onClick={() => advanceInvestmentBoost(investment.id, {
+                        trigger: 'manual',
+                        amount: 1,
+                        availableMoney: money
+                      })}
+                      disabled={!purchased || isCompleted}
+                      className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
+                    >
+                      {isCompleted ? "Earnings Boosted" : "Boost Action"}
+                    </button>
+                  ) : (
+                    <div className="investment-card__auto-rule-note">
+                      Tracks from live game events
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
