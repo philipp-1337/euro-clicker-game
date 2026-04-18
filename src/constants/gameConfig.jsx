@@ -196,6 +196,66 @@ const investmentDefinitions = [
   },
 ];
 
+const craftingRecipeDefinitions = [
+  {
+    id: "collectors_coin",
+    name: "Issue Collectible Coin",
+    materials: [
+      { id: "metal", quantity: 5 },
+      { id: "parts", quantity: 2 },
+    ],
+    output: { money: 100000000 },
+    cooldownSeconds: 50,
+    productionModes: [
+      {
+        id: "balanced",
+        label: "Balanced Mint",
+        durationMultiplier: 1,
+        rewardMultiplier: 1,
+      },
+      {
+        id: "rush",
+        label: "Rush Mint",
+        durationMultiplier: 0.75,
+        rewardMultiplier: 0.88,
+      },
+    ],
+    qualityBonusWindowMs: 12000,
+    rareBonusChance: 0.06,
+    qualityMultiplier: 1.18,
+    rareBonusMultiplier: 1.3,
+  },
+  {
+    id: "gold_bar",
+    name: "Forge Gold Reserve",
+    materials: [
+      { id: "metal", quantity: 10 },
+      { id: "parts", quantity: 5 },
+      { id: "tech", quantity: 1 },
+    ],
+    output: { money: 500000000 },
+    cooldownSeconds: 140,
+    productionModes: [
+      {
+        id: "balanced",
+        label: "Standard Forge",
+        durationMultiplier: 1,
+        rewardMultiplier: 1,
+      },
+      {
+        id: "precision",
+        label: "Precision Forge",
+        durationMultiplier: 1.2,
+        rewardMultiplier: 1.16,
+      },
+    ],
+    qualityBonusWindowMs: 18000,
+    rareBonusChance: 0.1,
+    qualityMultiplier: 1.22,
+    rareBonusMultiplier: 1.45,
+  },
+];
+
 export function getInvestmentRuleSignature(investment) {
   const boostRule = investment?.boostRule ?? {};
 
@@ -206,6 +266,116 @@ export function getInvestmentRuleSignature(investment) {
     windowSeconds: boostRule.windowSeconds ?? null,
     reserveMultiplier: boostRule.reserveMultiplier ?? null,
   });
+}
+
+export function getCraftingRecipeById(recipeId, recipes = craftingRecipeDefinitions) {
+  return recipes.find((recipe) => recipe.id === recipeId) ?? null;
+}
+
+export function getCraftingProductionModeById(recipe, modeId) {
+  const modes = Array.isArray(recipe?.productionModes) && recipe.productionModes.length > 0
+    ? recipe.productionModes
+    : [{ id: "balanced", label: "Balanced", durationMultiplier: 1, rewardMultiplier: 1 }];
+
+  return modes.find((mode) => mode.id === modeId) ?? modes[0];
+}
+
+export function createDefaultCraftingProductionState(recipes = craftingRecipeDefinitions) {
+  return recipes.reduce((accumulator, recipe) => {
+    accumulator[recipe.id] = {
+      recipeId: recipe.id,
+      selectedModeId: getCraftingProductionModeById(recipe)?.id ?? "balanced",
+      lastCompletionAt: null,
+      pendingOutcome: null,
+    };
+    return accumulator;
+  }, {});
+}
+
+function normalizeCraftingPendingOutcome(recipe, pendingOutcome) {
+  if (!pendingOutcome || typeof pendingOutcome !== "object") {
+    return null;
+  }
+
+  const completionTime = Number.isFinite(pendingOutcome.completionTime)
+    ? pendingOutcome.completionTime
+    : null;
+
+  if (completionTime === null) {
+    return null;
+  }
+
+  return {
+    recipeId: recipe.id,
+    modeId: getCraftingProductionModeById(recipe, pendingOutcome.modeId)?.id ?? getCraftingProductionModeById(recipe)?.id,
+    completionTime,
+    qualityBonusApplied: pendingOutcome.qualityBonusApplied === true
+      ? true
+      : (pendingOutcome.qualityBonusApplied === false ? false : null),
+    rareBonusApplied: pendingOutcome.rareBonusApplied === true
+      ? true
+      : (pendingOutcome.rareBonusApplied === false ? false : null),
+    money: Number.isFinite(pendingOutcome.money) ? Math.max(0, pendingOutcome.money) : null,
+  };
+}
+
+export function normalizeCraftingProductionState(
+  state,
+  recipes = craftingRecipeDefinitions
+) {
+  const baseState = createDefaultCraftingProductionState(recipes);
+
+  if (!state || typeof state !== "object") {
+    return baseState;
+  }
+
+  return recipes.reduce((accumulator, recipe) => {
+    const candidateState = state[recipe.id];
+    const defaultState = baseState[recipe.id];
+
+    accumulator[recipe.id] = {
+      recipeId: recipe.id,
+      selectedModeId: getCraftingProductionModeById(
+        recipe,
+        candidateState?.selectedModeId
+      )?.id ?? defaultState.selectedModeId,
+      lastCompletionAt: Number.isFinite(candidateState?.lastCompletionAt)
+        ? candidateState.lastCompletionAt
+        : defaultState.lastCompletionAt,
+      pendingOutcome: normalizeCraftingPendingOutcome(recipe, candidateState?.pendingOutcome),
+    };
+
+    return accumulator;
+  }, {});
+}
+
+export function toPersistedCraftingProductionState(state) {
+  const normalizedState = normalizeCraftingProductionState(state);
+
+  return Object.fromEntries(
+    Object.entries(normalizedState).map(([recipeId, recipeState]) => [
+      recipeId,
+      {
+        recipeId,
+        selectedModeId: recipeState.selectedModeId,
+        lastCompletionAt: Number.isFinite(recipeState.lastCompletionAt)
+          ? recipeState.lastCompletionAt
+          : null,
+        pendingOutcome: recipeState.pendingOutcome
+          ? {
+            recipeId,
+            modeId: recipeState.pendingOutcome.modeId,
+            completionTime: recipeState.pendingOutcome.completionTime,
+            qualityBonusApplied: recipeState.pendingOutcome.qualityBonusApplied,
+            rareBonusApplied: recipeState.pendingOutcome.rareBonusApplied,
+            money: Number.isFinite(recipeState.pendingOutcome.money)
+              ? recipeState.pendingOutcome.money
+              : null,
+          }
+          : null,
+      },
+    ])
+  );
 }
 
 export function getInvestmentBoostStateKey(investmentOrId) {
@@ -487,29 +657,7 @@ export const gameConfig = {
     { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20,},
   ],
 
-  craftingRecipes: [
-    {
-      id: "collectors_coin",
-      name: "Issue Collectible Coin",
-      materials: [
-        { id: "metal", quantity: 5 },
-        { id: "parts", quantity: 2 },
-      ],
-      output: { money: 100000000 },
-      cooldownSeconds: 50, // Individueller Cooldown für dieses Produkt
-    },
-    {
-      id: "gold_bar",
-      name: "Forge Gold Reserve",
-      materials: [
-        { id: "metal", quantity: 10 },
-        { id: "parts", quantity: 5 },
-        { id: "tech", quantity: 1 },
-      ],
-      output: { money: 500000000 },
-      cooldownSeconds: 140, // Individueller Cooldown für dieses Produkt
-    },
-  ],
+  craftingRecipes: craftingRecipeDefinitions,
 
   // Upgrade-Multiplikatoren
   upgradeValueMultiplier: 1.1, // +10% pro Level
@@ -532,7 +680,8 @@ export const gameConfig = {
     investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
     investmentBoostStates: createInitialInvestmentBoostStates(),
     isCraftingUnlocked: false,
-    craftingItems: [0, 0, 0],
+    craftingItems: craftingRecipeDefinitions.map(() => 0),
+    craftingProductionState: createDefaultCraftingProductionState(),
     rawMaterials: { metal: 0, parts: 0, tech: 0 }, // New: Raw materials
     resourcePurchaseCounts: { metal: 0, parts: 0, tech: 0 },
     offlineEarningsLevel: 0, // Level for offline earnings

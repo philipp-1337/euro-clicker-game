@@ -1,9 +1,12 @@
 import { useState, useCallback } from 'react';
 import {
+  createDefaultCraftingProductionState,
   getInvestmentBoostStateKey,
   getBoostedInvestmentsProjection,
   gameConfig,
   normalizeInvestmentBoostState,
+  normalizeCraftingProductionState,
+  toPersistedCraftingProductionState,
   toPersistedInvestmentBoostState,
 } from '@constants/gameConfig';
 
@@ -24,6 +27,20 @@ const readBooleanFromStorage = (key) => {
     return JSON.parse(storedValue);
   } catch {
     return null;
+  }
+};
+
+const readCraftingCooldownsFromStorage = () => {
+  if (!hasBrowserStorage()) {
+    return [];
+  }
+
+  try {
+    const storedValue = localStorage.getItem('craftingCooldowns');
+    const parsedValue = JSON.parse(storedValue || '[]');
+    return Array.isArray(parsedValue) ? parsedValue : [];
+  } catch {
+    return [];
   }
 };
 
@@ -80,6 +97,40 @@ const hydrateInvestmentBoostStates = ({
   return hydratedStates;
 };
 
+const hydrateCraftingProductionState = (savedCraftingProductionState) => {
+  if (savedCraftingProductionState && typeof savedCraftingProductionState === 'object') {
+    return normalizeCraftingProductionState(savedCraftingProductionState);
+  }
+
+  const now = Date.now();
+  const legacyCooldowns = readCraftingCooldownsFromStorage();
+  const defaultState = createDefaultCraftingProductionState();
+
+  return gameConfig.craftingRecipes.reduce((accumulator, recipe, index) => {
+    const legacyCompletionTime = legacyCooldowns[index];
+    const recipeState = defaultState[recipe.id];
+
+    if (Number.isFinite(legacyCompletionTime) && legacyCompletionTime <= now) {
+      accumulator[recipe.id] = {
+        ...recipeState,
+        lastCompletionAt: legacyCompletionTime,
+        pendingOutcome: {
+          recipeId: recipe.id,
+          modeId: recipeState.selectedModeId,
+          completionTime: legacyCompletionTime,
+          qualityBonusApplied: null,
+          rareBonusApplied: null,
+          money: null,
+        },
+      };
+      return accumulator;
+    }
+
+    accumulator[recipe.id] = recipeState;
+    return accumulator;
+  }, {});
+};
+
 export default function useGameState() {
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
@@ -120,6 +171,9 @@ export default function useGameState() {
 
   const [rawMaterials, setRawMaterials] = useState(gameConfig.initialState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
   const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(gameConfig.initialState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
+  const [craftingProductionStateData, setCraftingProductionStateData] = useState(() => {
+    return hydrateCraftingProductionState(gameConfig.initialState.craftingProductionState);
+  });
 
   const [autoBuyerInterval, setAutoBuyerInterval] = useState(gameConfig.initialState.autoBuyerInterval);
   const [autoBuyerBuffer, setAutoBuyerBuffer] = useState(gameConfig.initialState.autoBuyerBuffer);
@@ -167,6 +221,7 @@ export default function useGameState() {
     craftingItems,
     rawMaterials,
     resourcePurchaseCounts,
+    craftingProductionState: toPersistedCraftingProductionState(craftingProductionStateData),
     investmentBoostStates: Object.fromEntries(
       Object.entries(investmentBoostStatesData).map(([investmentId, state]) => [
         investmentId,
@@ -235,6 +290,7 @@ export default function useGameState() {
     setCraftingItems(savedState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
     setRawMaterials(savedState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
     setResourcePurchaseCounts(savedState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
+    setCraftingProductionStateData(hydrateCraftingProductionState(savedState.craftingProductionState));
     setAutoBuyerInterval(savedState.autoBuyerInterval ?? gameConfig.initialState.autoBuyerInterval);
     setAutoBuyerBuffer(savedState.autoBuyerBuffer ?? gameConfig.initialState.autoBuyerBuffer);
     setAutoBuyerUnlocked(savedState.autoBuyerUnlocked ?? gameConfig.initialState.autoBuyerUnlocked);
@@ -284,6 +340,13 @@ export default function useGameState() {
     });
   }, []);
 
+  const setCraftingProductionState = useCallback((updater) => {
+    setCraftingProductionStateData((previousState) => {
+      const nextStateInput = typeof updater === 'function' ? updater(previousState) : updater;
+      return normalizeCraftingProductionState(nextStateInput);
+    });
+  }, []);
+
   return {
     money, setMoney,
     cooldowns, setCooldowns,
@@ -325,6 +388,8 @@ export default function useGameState() {
     craftingItems, setCraftingItems,
     rawMaterials, setRawMaterials,
     resourcePurchaseCounts, setResourcePurchaseCounts,
+    craftingProductionState: craftingProductionStateData,
+    setCraftingProductionState,
     gameState,
     loadGameState
   };

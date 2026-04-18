@@ -69,6 +69,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
     globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
+    craftingProductionState, setCraftingProductionState,
   } = gameStateHook;
 
   // UI states
@@ -124,9 +125,16 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   );
 
   // Crafting system
-  const { buyCraftingItem, buyMaterial } = useCrafting(
+  const {
+    buyCraftingItem,
+    buyMaterial,
+    getSelectedProductionMode,
+    setSelectedProductionMode,
+    resolveCraftOutcome,
+  } = useCrafting(
     money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials,
-    resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode
+    resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode,
+    craftingProductionState, setCraftingProductionState
   );
 
   // Core economy management
@@ -394,8 +402,12 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
     // Crafting system
     craftingItems,
+    craftingProductionState,
     buyCraftingItem,
     buyMaterial: wrappedBuyMaterial,
+    getSelectedProductionMode,
+    setSelectedProductionMode,
+    resolveCraftOutcome,
     rawMaterials,
     resourcePurchaseCounts,
     setMoney,
