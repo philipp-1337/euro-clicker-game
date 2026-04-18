@@ -102,7 +102,8 @@ export default function ClickerGame({
     clearLastInactiveDuration,
     calculatedOfflineEarnings,
     claimOfflineEarnings,
-    handleInvestmentBoost,
+    investmentBoostStates,
+    setInvestmentBoostStates,
     prestigeShares,
     prestigeCount,
     currentRunShares,
@@ -660,7 +661,8 @@ export default function ClickerGame({
                 investments={investments}
                 buyInvestment={buyInvestment}
                 investmentCostMultiplier={investmentCostMultiplier}
-                onInvestmentBoosted={handleInvestmentBoost}
+                investmentBoostStates={investmentBoostStates}
+                setInvestmentBoostStates={setInvestmentBoostStates}
                 isInvestmentUnlocked={isInvestmentUnlocked}
                 unlockInvestments={unlockInvestments}
                 unlockInvestmentCost={unlockInvestmentCost}
