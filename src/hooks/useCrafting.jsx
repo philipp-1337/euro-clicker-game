@@ -1,9 +1,38 @@
-import { useCallback } from 'react';
-import { gameConfig } from '@constants/gameConfig';
+import { useCallback, useRef } from 'react';
+import {
+  gameConfig,
+  getCraftingProductionModeById,
+  normalizeCraftingProductionState,
+} from '@constants/gameConfig';
+import useCraftingProductionMode from './useCraftingProductionMode';
 
 // rawMaterials: Objekt mit Rohstoff-IDs als Keys und Mengen als Values
 // setRawMaterials: Setter für rawMaterials
-export default function useCrafting(money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials, resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode) {
+export default function useCrafting(
+  money,
+  setMoney,
+  craftingItems,
+  setCraftingItems,
+  rawMaterials,
+  setRawMaterials,
+  resourcePurchaseCounts,
+  setResourcePurchaseCounts,
+  ensureStartTime,
+  easyMode,
+  craftingProductionState = gameConfig.initialState.craftingProductionState,
+  setCraftingProductionState
+) {
+  const productionModeHook = useCraftingProductionMode(
+    craftingProductionState,
+    setCraftingProductionState
+  );
+  const rawMaterialsRef = useRef(rawMaterials);
+  const productionStateRef = useRef(normalizeCraftingProductionState(craftingProductionState));
+  const startLocksRef = useRef({});
+  const claimLocksRef = useRef({});
+
+  rawMaterialsRef.current = rawMaterials;
+  productionStateRef.current = normalizeCraftingProductionState(craftingProductionState);
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
   // Ermöglicht den Kauf von mehreren Einheiten auf einmal
@@ -43,31 +72,164 @@ export default function useCrafting(money, setMoney, craftingItems, setCraftingI
     }
   }, [money, resourcePurchaseCounts, setMoney, setRawMaterials, setResourcePurchaseCounts, easyMode, ensureStartTime]);
 
-  // Crafting-Item herstellen
-  const buyCraftingItem = useCallback((index, force = false) => {
+  const getRecipeCooldownSeconds = useCallback((recipe, modeId) => {
+    const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+    const baseCooldown = typeof recipe?.cooldownSeconds === 'number'
+      ? recipe.cooldownSeconds
+      : (gameConfig.craftingCooldownSeconds || 5);
+    const mode = getCraftingProductionModeById(recipe, modeId);
+
+    return baseCooldown * costMultiplier * (mode?.durationMultiplier ?? 1);
+  }, [easyMode]);
+
+  const startCraftingProduction = useCallback((index) => {
     const recipe = gameConfig.craftingRecipes[index];
-    // Prüfe, ob alle Rohstoffe vorhanden sind
-    const hasAllMaterials = recipe.materials.every(material =>
-      rawMaterials[material.id] >= material.quantity
-    );
-    if (!hasAllMaterials && !force) return;
 
-  // Rohstoffe werden NICHT mehr hier abgezogen! (nur beim Button-Klick)
-
-    // Füge Output hinzu (hier: Geld, kann später erweitert werden)
-    if (recipe.output.money) {
-      setMoney(prev => prev + recipe.output.money);
+    if (!recipe || typeof setCraftingProductionState !== 'function') {
+      return null;
     }
 
-    // Zähle gecraftete Items
-    setCraftingItems(prev => {
-      const updated = [...prev];
-      updated[index] = (updated[index] || 0) + 1;
-      return updated;
-    });
+    if (startLocksRef.current[recipe.id]) {
+      return null;
+    }
 
-    ensureStartTime?.();
-  }, [rawMaterials, setMoney, setCraftingItems, ensureStartTime]);
+    startLocksRef.current[recipe.id] = true;
 
-  return { buyCraftingItem, buyMaterial };
+    try {
+      const currentMaterials = rawMaterialsRef.current;
+      const normalizedProductionState = productionStateRef.current;
+      const recipeProductionState = normalizedProductionState[recipe.id];
+
+      const hasAllMaterials = recipe.materials.every((material) =>
+        (currentMaterials[material.id] || 0) >= material.quantity
+      );
+
+      if (!hasAllMaterials || recipeProductionState?.pendingOutcome) {
+        return null;
+      }
+
+      const selectedMode = productionModeHook.getSelectedMode(recipe.id)
+        ?? getCraftingProductionModeById(recipe);
+      const now = Date.now();
+      const completionTime = now + (getRecipeCooldownSeconds(recipe, selectedMode?.id) * 1000);
+      const pendingOutcome = {
+        recipeId: recipe.id,
+        modeId: selectedMode?.id ?? getCraftingProductionModeById(recipe)?.id,
+        completionTime,
+        qualityBonusApplied: null,
+        rareBonusApplied: null,
+        money: null,
+      };
+      const nextMaterials = recipe.materials.reduce((accumulator, material) => ({
+        ...accumulator,
+        [material.id]: Math.max(0, (accumulator[material.id] || 0) - material.quantity),
+      }), { ...currentMaterials });
+      const nextProductionState = {
+        ...normalizedProductionState,
+        [recipe.id]: {
+          ...recipeProductionState,
+          selectedModeId: pendingOutcome.modeId,
+          pendingOutcome,
+        },
+      };
+
+      rawMaterialsRef.current = nextMaterials;
+      productionStateRef.current = nextProductionState;
+      setRawMaterials(nextMaterials);
+      setCraftingProductionState(nextProductionState);
+      ensureStartTime?.();
+
+      return {
+        recipeId: recipe.id,
+        modeId: pendingOutcome.modeId,
+        completionTime,
+        cooldownSeconds: getRecipeCooldownSeconds(recipe, pendingOutcome.modeId),
+      };
+    } finally {
+      startLocksRef.current[recipe.id] = false;
+    }
+  }, [
+    ensureStartTime,
+    getRecipeCooldownSeconds,
+    productionModeHook,
+    setRawMaterials,
+    setCraftingProductionState,
+  ]);
+
+  const claimCraftingProduction = useCallback((index) => {
+    const recipe = gameConfig.craftingRecipes[index];
+
+    if (!recipe || typeof setCraftingProductionState !== 'function') {
+      return null;
+    }
+
+    if (claimLocksRef.current[recipe.id]) {
+      return null;
+    }
+
+    claimLocksRef.current[recipe.id] = true;
+
+    try {
+      const claimTime = Date.now();
+      const normalizedProductionState = productionStateRef.current;
+      const recipeProductionState = normalizedProductionState[recipe.id];
+      const pendingOutcome = recipeProductionState?.pendingOutcome;
+
+      if (!pendingOutcome || !Number.isFinite(pendingOutcome.completionTime) || claimTime < pendingOutcome.completionTime) {
+        return null;
+      }
+
+      const resolvedOutcome = productionModeHook.resolveCraftOutcome(
+        {
+          ...recipe,
+          selectedModeId: pendingOutcome.modeId ?? recipeProductionState?.selectedModeId,
+        },
+        pendingOutcome.completionTime,
+        claimTime
+      );
+      const nextProductionState = {
+        ...normalizedProductionState,
+        [recipe.id]: {
+          ...recipeProductionState,
+          selectedModeId: resolvedOutcome?.modeId ?? recipeProductionState?.selectedModeId,
+          lastCompletionAt: pendingOutcome.completionTime,
+          pendingOutcome: null,
+        },
+      };
+
+      productionStateRef.current = nextProductionState;
+      setCraftingProductionState(nextProductionState);
+
+      if (resolvedOutcome?.money) {
+        setMoney(prev => prev + resolvedOutcome.money);
+      }
+
+      setCraftingItems(prev => {
+        const updated = [...prev];
+        updated[index] = (updated[index] || 0) + 1;
+        return updated;
+      });
+
+      ensureStartTime?.();
+      return resolvedOutcome;
+    } finally {
+      claimLocksRef.current[recipe.id] = false;
+    }
+  }, [
+    ensureStartTime,
+    productionModeHook,
+    setCraftingItems,
+    setCraftingProductionState,
+    setMoney,
+  ]);
+
+  return {
+    buyCraftingItem: claimCraftingProduction,
+    buyMaterial,
+    startCraftingProduction,
+    claimCraftingProduction,
+    getSelectedProductionMode: productionModeHook.getSelectedMode,
+    setSelectedProductionMode: productionModeHook.setSelectedMode,
+    resolveCraftOutcome: productionModeHook.resolveCraftOutcome,
+  };
 }

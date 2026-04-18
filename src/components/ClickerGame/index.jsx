@@ -4,11 +4,13 @@ import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import BottomTabMenu from './BottomTabMenu';
+import UnlockRoadmapCard from './UnlockRoadmapCard';
 import BasicUpgrades from './UpgradeTabs/BasicUpgrades';
 import Investments from './UpgradeTabs/Investments';
 import Crafting from './UpgradeTabs/Crafting';
 import PremiumUpgrades from './UpgradeTabs/PremiumUpgrades';
 import useGameCore from '@hooks/useGameCore';
+import useUnlockRoadmap from '@hooks/useUnlockRoadmap';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
@@ -100,7 +102,10 @@ export default function ClickerGame({
     clearLastInactiveDuration,
     calculatedOfflineEarnings,
     claimOfflineEarnings,
-    handleInvestmentBoost,
+    getInvestmentBoostState,
+    advanceInvestmentBoost,
+    isInvestmentBoostCompleted,
+    getInvestmentBoostProgressLabel,
     prestigeShares,
     prestigeCount,
     currentRunShares,
@@ -112,7 +117,12 @@ export default function ClickerGame({
     buyFloatingClickValue,
     currentFloatingClickValue,
     craftingItems,
-    buyCraftingItem,
+    craftingProductionState,
+    startCraftingProduction,
+    claimCraftingProduction,
+    getSelectedProductionMode,
+    setSelectedProductionMode,
+    resolveCraftOutcome,
     buyMaterial,
     rawMaterials,
     resourcePurchaseCounts,
@@ -147,6 +157,18 @@ export default function ClickerGame({
     globalPriceDecreaseAutoBuyerUnlockCost,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
+  const { nextMilestone } = useUnlockRoadmap({
+    money,
+    isInvestmentUnlocked,
+    prestigeCount,
+    prestigeShares,
+    isCraftingUnlocked,
+    unlockInvestmentCost,
+    prestigeThresholdMoney: gameConfig.prestige.minMoneyForModalButton,
+    craftingUnlockCost: gameConfig.unlockCraftingCost,
+    craftingUnlockPrestige: gameConfig.unlockCraftingPrestige,
+  });
+
   const unlockCrafting = () => {
     const unlockCost = gameConfig.unlockCraftingCost;
     if (!isCraftingUnlocked && prestigeShares >= 1 && money >= unlockCost) {
@@ -158,6 +180,18 @@ export default function ClickerGame({
       }
     }
   };
+  const hasReachedProductionPrestige = prestigeShares >= gameConfig.unlockCraftingPrestige;
+  const craftingJourneyMessage = hasReachedProductionPrestige
+    ? {
+      eyebrow: 'Post-Prestige-Route',
+      title: 'Wealth Production ist jetzt dein nächstes bewusstes System',
+      body: 'Prestige hat die Produktionsebene freigeschaltet. Finanziere den Tab, wähle zwischen schnelleren und wertvolleren Routen und hole im Qualitätsfenster für ein stärkeres Ergebnis ab.',
+    }
+    : {
+      eyebrow: 'Nächster Meilenstein',
+      title: 'Das erste Prestige öffnet Produktionsentscheidungen',
+      body: 'Wealth Production ist nicht nur ein weiterer Auszahlungsbutton. Nach Prestige kommen Routenwahl, Zeitdruck und seltene Premium-Ergebnisse hinzu.',
+    };
 
   const {
     achievements,
@@ -548,19 +582,19 @@ export default function ClickerGame({
         <div className="modal-backdrop" style={{ zIndex: 10002 }}>
           <div className="modal-content" style={{ maxWidth: 420 }}>
             <div className="settings-modal-header">
-              <h3>Congratulations!</h3>
+              <h3>Glückwunsch!</h3>
             </div>
             <p>
-              You have reached a milestone (
-              {currentCheckpoint ? currentCheckpoint.label : "a goal"})!
+              Du hast einen Meilenstein erreicht (
+              {currentCheckpoint ? currentCheckpoint.label : 'ein Ziel'})!
               <br />
-              Do you want to enter your name for the leaderboard?
+              Möchtest du deinen Namen für die Bestenliste eintragen?
             </p>
             <input
               className="modal-input"
               type="text"
               maxLength={18}
-              placeholder="Your name for the leaderboard"
+              placeholder="Dein Name für die Bestenliste"
               value={leaderboardName}
               onChange={(e) => setLeaderboardName(e.target.value)}
               style={{ marginBottom: 18, width: "100%" }}
@@ -571,13 +605,13 @@ export default function ClickerGame({
                 disabled={!leaderboardName.trim()}
                 onClick={handleLeaderboardSubmit}
               >
-                Submit
+                Eintragen
               </button>
               <button
                 className="modal-btn"
                 onClick={handleLeaderboardCongratsClose}
               >
-                Maybe later
+                Vielleicht später
               </button>
             </div>
           </div>
@@ -607,6 +641,12 @@ export default function ClickerGame({
             unlockInvestments={unlockInvestments}
             totalIncomePerSecond={totalMoneyPerSecond}
           />
+        </div>
+      )}
+
+      {uiProgress.gameStarted && nextMilestone && (
+        <div style={{ paddingBottom: upgradeTabsUnlocked ? 0 : '64px' }}>
+          <UnlockRoadmapCard milestone={nextMilestone} />
         </div>
       )}
 
@@ -640,7 +680,10 @@ export default function ClickerGame({
                 investments={investments}
                 buyInvestment={buyInvestment}
                 investmentCostMultiplier={investmentCostMultiplier}
-                onInvestmentBoosted={handleInvestmentBoost}
+                getInvestmentBoostState={getInvestmentBoostState}
+                advanceInvestmentBoost={advanceInvestmentBoost}
+                isInvestmentBoostCompleted={isInvestmentBoostCompleted}
+                getInvestmentBoostProgressLabel={getInvestmentBoostProgressLabel}
                 isInvestmentUnlocked={isInvestmentUnlocked}
                 unlockInvestments={unlockInvestments}
                 unlockInvestmentCost={unlockInvestmentCost}
@@ -651,9 +694,14 @@ export default function ClickerGame({
               <Crafting
                 money={money}
                 rawMaterials={rawMaterials}
-                buyCraftingItem={buyCraftingItem}
+                startCraftingProduction={startCraftingProduction}
+                claimCraftingProduction={claimCraftingProduction}
+                getSelectedProductionMode={getSelectedProductionMode}
+                setSelectedProductionMode={setSelectedProductionMode}
+                resolveCraftOutcome={resolveCraftOutcome}
                 buyMaterial={buyMaterial}
                 craftingItems={craftingItems}
+                craftingProductionState={craftingProductionState}
                 resourcePurchaseCounts={resourcePurchaseCounts}
                 easyMode={easyMode}
                 buyQuantity={buyQuantity}
@@ -661,6 +709,7 @@ export default function ClickerGame({
                 unlockCrafting={unlockCrafting}
                 unlockCraftingCost={gameConfig.unlockCraftingCost}
                 accumulatedPrestigeShares={prestigeShares}
+                craftingJourneyMessage={craftingJourneyMessage}
               />
             )}
             {activeTab === 'premium' && (

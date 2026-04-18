@@ -1,6 +1,6 @@
-import React from 'react';
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
+import InvestmentBoostMeter from './InvestmentBoostMeter';
 import { Landmark, Unlock, Car, Zap, Sunset, Sandwich, Shirt, CarFront, Cigarette, Pill, Plane, Rocket } from 'lucide-react';
 
 const InvestmentIcon = ({ iconName }) => {
@@ -22,73 +22,51 @@ const InvestmentIcon = ({ iconName }) => {
   return <IconComponent className="premium-icon" />;
 };
 
-export default function Investments({ money, investments, buyInvestment, investmentCostMultiplier, onInvestmentBoosted, isInvestmentUnlocked, unlockInvestments, unlockInvestmentCost }) {
-  const [boostClickStates, setBoostClickStates] = React.useState(() => {
-    // Initialize boost states from localStorage
-    return gameConfig.investments.map((investment, index) => {
-      const storedBoosted = localStorage.getItem(`boosted-${index}`);
-      const storedClicks = localStorage.getItem(`boostClicks-${index}`);
-      return {
-        clicks: storedClicks ? parseInt(storedClicks, 10) : 0,
-        boosted: storedBoosted ? JSON.parse(storedBoosted) : false,
-      };
-    });
-  });
+export default function Investments({
+  money,
+  investments,
+  buyInvestment,
+  investmentCostMultiplier,
+  advanceInvestmentBoost,
+  getInvestmentBoostProgressLabel,
+  getInvestmentBoostState,
+  isInvestmentBoostCompleted,
+  isInvestmentUnlocked,
+  unlockInvestments,
+  unlockInvestmentCost
+}) {
+  const getChallengeText = (investment, cost) => {
+    const boostRule = investment.boostRule ?? {};
 
-  // Ref to store the previous boostClickStates to compare in useEffect
-  const prevBoostClickStatesRef = React.useRef(boostClickStates);
+    switch (boostRule.type) {
+      case 'timed_actions':
+        return `Baue ${boostRule.target} Rush-Punkte in ${boostRule.windowSeconds}s durch Upgrades, Manager, Investitionen oder Materialien auf.`;
+      case 'reserve_challenge':
+        return `Führe gültige Käufe aus, während du mindestens ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € Rücklage hältst.`;
+      case 'manual_actions':
+      default:
+        return `Nutze die Boost-Aktion oder führe ${boostRule.target} gültige Käufe aus, um das permanente Einkommens-Upgrade zu sichern.`;
+    }
+  };
 
-  React.useEffect(() => {
-    // Iterate over investments to check if any became newly boosted
-    boostClickStates.forEach((currentInvestmentState, index) => {
-      const prevInvestmentState = prevBoostClickStatesRef.current[index];
-      // If the investment is now boosted and was not boosted previously
-      if (currentInvestmentState.boosted && (!prevInvestmentState || !prevInvestmentState.boosted)) {
-        if (onInvestmentBoosted) {
-          onInvestmentBoosted(index, true); // Notify parent
-        }
-      }
-    });
-    // Update the ref to the current boostClickStates for the next render cycle
-    prevBoostClickStatesRef.current = boostClickStates;
-  }, [boostClickStates, onInvestmentBoosted]); // Dependencies for the effect
-
-  const handleBoostClick = (index) => {
-    setBoostClickStates(prevClickStates => {
-      const newClickStates = [...prevClickStates];
-
-      if (newClickStates[index].boosted) return prevClickStates; // Already boosted, no change
-
-      const newClicks = newClickStates[index].clicks + 1;
-      const newBoosted = newClicks >= 100;
-
-      newClickStates[index] = {
-        clicks: newClicks,
-        boosted: newBoosted,
-      };
-
-      // Persist click counts and boosted status to localStorage
-      localStorage.setItem(`boosted-${index}`, JSON.stringify(newBoosted));
-      localStorage.setItem(`boostClicks-${index}`, newClicks.toString());
-
-      return newClickStates;
-    });
+  const getSynergySummary = (investment) => {
+    return `${investment.roleDescription} ${investment.boostTarget}.`;
   };
 
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">Investments</h2>
+      <h2 className="section-title">Investitionen</h2>
       {!isInvestmentUnlocked ? (
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
-            <Unlock className='premium-icon' /><h3>Unlock Investments</h3>
+            <Unlock className='premium-icon' /><h3>Investitionen freischalten</h3>
           </div>
           <p className="premium-upgrade-description">
-            Unlock the Investments tab to invest in companies.
+            Schalte den Investitions-Tab frei, um in Unternehmen zu investieren.
           </p>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
-              Status: Locked
+              Status: Gesperrt
             </div>
             {/* You may need to pass unlockInvestments and unlockInvestmentCost as props from parent */}
             {typeof unlockInvestments === 'function' && typeof unlockInvestmentCost === 'number' && (
@@ -106,25 +84,51 @@ export default function Investments({ money, investments, buyInvestment, investm
         gameConfig.investments.map((investment, index) => {
           const cost = investment.cost * (investmentCostMultiplier ?? 1);
           const purchased = investments[index] ? true : false;
-          const isLocallyBoosted = boostClickStates[index].boosted;
-          const displayedIncome = isLocallyBoosted ? investment.income * 2 : investment.income;
+          const boostState = getInvestmentBoostState(investment.id);
+          const isCompleted = isInvestmentBoostCompleted(investment.id);
+          const displayedIncome = isCompleted ? investment.income * 2 : investment.income;
+          const progressLabel = getInvestmentBoostProgressLabel(investment.id);
+
           return (
-            <div key={index} className="premium-upgrade-card">
+            <div key={investment.id} className="premium-upgrade-card">
               <div className="premium-upgrade-header">
                 <InvestmentIcon iconName={investment.icon} />
-                <h3>
-                  {investment.name}
-                </h3>
+                <div className="investment-card__title-group">
+                  <h3>
+                    {investment.name}
+                  </h3>
+                  <span className="investment-card__role-badge">{investment.roleLabel}</span>
+                </div>
               </div>
               <p className="premium-upgrade-description">
-                Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
+                Investiere {formatNumber(cost)} € und erhalte {formatNumber(displayedIncome)} €/s.
               </p>
-              <p className="premium-upgrade-description" style={{ fontSize: '0.9em', marginTop: '5px' }}>
-                Click the &quot;Boost&quot; button 100 times to permanently double the income from this investment!
+              <p className="premium-upgrade-description investment-card__synergy-copy">
+                {getSynergySummary(investment)}
               </p>
+              <div className="investment-card__meta-row">
+                <span className="investment-card__meta-label">Synergie</span>
+                <span className="investment-card__meta-value">{investment.synergyTag}</span>
+              </div>
+              <p className="premium-upgrade-description investment-card__hint-copy">
+                {investment.boostHint}
+              </p>
+              <InvestmentBoostMeter
+                investmentId={investment.id}
+                boostState={boostState}
+                progressLabel={progressLabel}
+                challengeText={getChallengeText(investment, cost)}
+                getBoostState={getInvestmentBoostState}
+                getBoostProgressLabel={getInvestmentBoostProgressLabel}
+              />
               <div className="premium-upgrade-info">
-                <div className="premium-upgrade-level">
-                  Purchased: {purchased ? 'Yes' : 'No'}
+                <div className="investment-card__status-list">
+                  <div className="premium-upgrade-level">
+                    Gekauft: {purchased ? 'Ja' : 'Nein'}
+                  </div>
+                  <div className="premium-upgrade-level">
+                    Boost: {boostState?.boosted ? 'Abgeschlossen' : 'Läuft'}
+                  </div>
                 </div>
                 <div className="investment-buttons-group">
                   <button
@@ -132,15 +136,25 @@ export default function Investments({ money, investments, buyInvestment, investm
                     disabled={money < cost || purchased}
                     className={`premium-upgrade-button ${money < cost || purchased ? 'disabled' : ''}`}
                   >
-                    {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
+                    {purchased ? 'Gekauft' : `${formatNumber(cost)} €`}
                   </button>
-                  <button
-                    onClick={() => handleBoostClick(index)}
-                    disabled={!purchased || boostClickStates[index].boosted}
-                    className={`premium-upgrade-button ${(!purchased || boostClickStates[index].boosted) ? 'disabled' : ''}`}
-                  >
-                    {boostClickStates[index].boosted ? "Earnings Boosted" : `Boost (${boostClickStates[index].clicks}/100)`}
-                  </button>
+                  {investment.boostRule?.type === 'manual_actions' ? (
+                    <button
+                      onClick={() => advanceInvestmentBoost(investment.id, {
+                        trigger: 'manual',
+                        amount: 1,
+                        availableMoney: money
+                      })}
+                      disabled={!purchased || isCompleted}
+                      className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
+                    >
+                      {isCompleted ? 'Ertrag geboostet' : 'Boost-Aktion'}
+                    </button>
+                  ) : (
+                    <div className="investment-card__auto-rule-note">
+                      Zählt über Live-Spielaktionen
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

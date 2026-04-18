@@ -3,6 +3,505 @@ import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 
+const INVESTMENT_UNLOCK_COST = 20000;
+const CRAFTING_UNLOCK_COST = 100000000;
+const CRAFTING_UNLOCK_PRESTIGE = 1;
+
+const investmentDefinitions = [
+  {
+    id: "taxi_company",
+    name: "Taxi Company",
+    cost: 12750,
+    income: 7,
+    icon: "Car",
+    roleLabel: "Manager Synergy",
+    roleDescription: "Supports automated income loops and later manager-focused optimization.",
+    boostType: "manager_cycle",
+    boostTarget: "Manager automation",
+    boostHint: "Future boosts can reward manager-driven actions and stable automation windows.",
+    synergyTag: "manager",
+    boostRule: {
+      type: "manual_actions",
+      target: 100,
+      progressLabel: "dispatches",
+    },
+  },
+  {
+    id: "energy_drinks",
+    name: "Energy Drinks",
+    cost: 26500,
+    income: 16,
+    icon: "Zap",
+    roleLabel: "Active Burst",
+    roleDescription: "Favours short active play spikes and rewards condensed action windows.",
+    boostType: "active_window",
+    boostTarget: "Active play",
+    boostHint: "Designed for timed challenge windows instead of flat click grinding.",
+    synergyTag: "active",
+    boostRule: {
+      type: "timed_actions",
+      target: 12,
+      windowSeconds: 20,
+      progressLabel: "rush actions",
+    },
+  },
+  {
+    id: "balcony_power_plants",
+    name: "Balcony Power Plants",
+    cost: 38200,
+    income: 23.5,
+    icon: "Sunset",
+    roleLabel: "Steady Growth",
+    roleDescription: "Represents stable utility income with room for efficiency-based boosts.",
+    boostType: "efficiency_curve",
+    boostTarget: "Passive throughput",
+    boostHint: "Can later connect to uptime or consistency challenges.",
+    synergyTag: "passive",
+    boostRule: {
+      type: "manual_actions",
+      target: 100,
+      progressLabel: "efficiency points",
+    },
+  },
+  {
+    id: "delicatessen",
+    name: "Delicatessen",
+    cost: 51500,
+    income: 32,
+    icon: "Sandwich",
+    roleLabel: "Cash Buffer",
+    roleDescription: "Rewards disciplined spending and keeping a healthy reserve before pushing growth.",
+    boostType: "reserve_bonus",
+    boostTarget: "Cash reserve",
+    boostHint: "Prepared for reserve-based challenge rules that check your money buffer on actions.",
+    synergyTag: "economy",
+    boostRule: {
+      type: "reserve_challenge",
+      target: 5,
+      reserveMultiplier: 1.5,
+      progressLabel: "reserve checks",
+    },
+  },
+  {
+    id: "fashion_label",
+    name: "Fashion Label",
+    cost: 68000,
+    income: 43,
+    icon: "Shirt",
+    roleLabel: "Momentum Brand",
+    roleDescription: "Fits purchase streaks and fast follow-up decisions in the midgame.",
+    boostType: "momentum_chain",
+    boostTarget: "Momentum actions",
+    boostHint: "Can evolve into streak-based rules once the UI exposes richer action context.",
+    synergyTag: "momentum",
+    boostRule: {
+      type: "timed_actions",
+      target: 8,
+      windowSeconds: 15,
+      progressLabel: "showcase actions",
+    },
+  },
+  {
+    id: "e_car_manufacturer",
+    name: "E-Car Manufacturer",
+    cost: 81250,
+    income: 52,
+    icon: "CarFront",
+    roleLabel: "Scaling Industry",
+    roleDescription: "Leans into larger economy steps and future milestone-based boosts.",
+    boostType: "scale_step",
+    boostTarget: "Scaling milestones",
+    boostHint: "Works as a placeholder for milestone or production-threshold rules later.",
+    synergyTag: "scaling",
+    boostRule: {
+      type: "manual_actions",
+      target: 120,
+      progressLabel: "production steps",
+    },
+  },
+  {
+    id: "e_cigarettes",
+    name: "E-Cigarettes",
+    cost: 95500,
+    income: 61,
+    icon: "Cigarette",
+    roleLabel: "Risk Window",
+    roleDescription: "Designed for shorter, riskier boost windows with resettable progress.",
+    boostType: "risk_window",
+    boostTarget: "Timed actions",
+    boostHint: "Encourages a richer time-window rule without affecting current balance yet.",
+    synergyTag: "timed",
+    boostRule: {
+      type: "timed_actions",
+      target: 10,
+      windowSeconds: 18,
+      progressLabel: "risk actions",
+    },
+  },
+  {
+    id: "pharma",
+    name: "Pharma",
+    cost: 110750,
+    income: 72,
+    icon: "Pill",
+    roleLabel: "Crafting Support",
+    roleDescription: "Sets up later synergy with wealth production and resource efficiency systems.",
+    boostType: "crafting_support",
+    boostTarget: "Crafting economy",
+    boostHint: "Intended to hook into crafting costs or rare production bonuses later.",
+    synergyTag: "crafting",
+    boostRule: {
+      type: "reserve_challenge",
+      target: 6,
+      reserveMultiplier: 2,
+      progressLabel: "lab checks",
+    },
+  },
+  {
+    id: "national_airline",
+    name: "National Airline",
+    cost: 128000,
+    income: 84,
+    icon: "Plane",
+    roleLabel: "Prestige Route",
+    roleDescription: "Reserved for prestige-facing scaling and long-run bonuses.",
+    boostType: "prestige_scale",
+    boostTarget: "Prestige progression",
+    boostHint: "Can later reward prestige shares, offline gains, or long-run planning.",
+    synergyTag: "prestige",
+    boostRule: {
+      type: "manual_actions",
+      target: 140,
+      progressLabel: "route plans",
+    },
+  },
+  {
+    id: "space_rocket_enterprises",
+    name: "Space Rocket Enterprises",
+    cost: 145500,
+    income: 97,
+    icon: "Rocket",
+    roleLabel: "Late Push",
+    roleDescription: "Targets ambitious midgame bursts and future premium-style challenge rules.",
+    boostType: "launch_window",
+    boostTarget: "Late-game burst",
+    boostHint: "Structured for more demanding timed windows once the new boost UI lands.",
+    synergyTag: "burst",
+    boostRule: {
+      type: "timed_actions",
+      target: 15,
+      windowSeconds: 25,
+      progressLabel: "launch actions",
+    },
+  },
+];
+
+const craftingRecipeDefinitions = [
+  {
+    id: "collectors_coin",
+    name: "Issue Collectible Coin",
+    materials: [
+      { id: "metal", quantity: 5 },
+      { id: "parts", quantity: 2 },
+    ],
+    output: { money: 100000000 },
+    cooldownSeconds: 50,
+    productionModes: [
+      {
+        id: "balanced",
+        label: "Balanced Mint",
+        durationMultiplier: 1,
+        rewardMultiplier: 1,
+      },
+      {
+        id: "rush",
+        label: "Rush Mint",
+        durationMultiplier: 0.75,
+        rewardMultiplier: 0.88,
+      },
+    ],
+    qualityBonusWindowMs: 12000,
+    rareBonusChance: 0.06,
+    qualityMultiplier: 1.18,
+    rareBonusMultiplier: 1.3,
+  },
+  {
+    id: "gold_bar",
+    name: "Forge Gold Reserve",
+    materials: [
+      { id: "metal", quantity: 10 },
+      { id: "parts", quantity: 5 },
+      { id: "tech", quantity: 1 },
+    ],
+    output: { money: 500000000 },
+    cooldownSeconds: 140,
+    productionModes: [
+      {
+        id: "balanced",
+        label: "Standard Forge",
+        durationMultiplier: 1,
+        rewardMultiplier: 1,
+      },
+      {
+        id: "precision",
+        label: "Precision Forge",
+        durationMultiplier: 1.2,
+        rewardMultiplier: 1.16,
+      },
+    ],
+    qualityBonusWindowMs: 18000,
+    rareBonusChance: 0.1,
+    qualityMultiplier: 1.22,
+    rareBonusMultiplier: 1.45,
+  },
+];
+
+export function getInvestmentRuleSignature(investment) {
+  const boostRule = investment?.boostRule ?? {};
+
+  return JSON.stringify({
+    version: boostRule.version ?? 1,
+    type: boostRule.type ?? "manual_actions",
+    target: boostRule.target ?? 100,
+    windowSeconds: boostRule.windowSeconds ?? null,
+    reserveMultiplier: boostRule.reserveMultiplier ?? null,
+  });
+}
+
+export function getCraftingRecipeById(recipeId, recipes = craftingRecipeDefinitions) {
+  return recipes.find((recipe) => recipe.id === recipeId) ?? null;
+}
+
+export function getCraftingProductionModeById(recipe, modeId) {
+  const modes = Array.isArray(recipe?.productionModes) && recipe.productionModes.length > 0
+    ? recipe.productionModes
+    : [{ id: "balanced", label: "Balanced", durationMultiplier: 1, rewardMultiplier: 1 }];
+
+  return modes.find((mode) => mode.id === modeId) ?? modes[0];
+}
+
+export function createDefaultCraftingProductionState(recipes = craftingRecipeDefinitions) {
+  return recipes.reduce((accumulator, recipe) => {
+    accumulator[recipe.id] = {
+      recipeId: recipe.id,
+      selectedModeId: getCraftingProductionModeById(recipe)?.id ?? "balanced",
+      lastCompletionAt: null,
+      pendingOutcome: null,
+    };
+    return accumulator;
+  }, {});
+}
+
+function normalizeCraftingPendingOutcome(recipe, pendingOutcome) {
+  if (!pendingOutcome || typeof pendingOutcome !== "object") {
+    return null;
+  }
+
+  const completionTime = Number.isFinite(pendingOutcome.completionTime)
+    ? pendingOutcome.completionTime
+    : null;
+
+  if (completionTime === null) {
+    return null;
+  }
+
+  return {
+    recipeId: recipe.id,
+    modeId: getCraftingProductionModeById(recipe, pendingOutcome.modeId)?.id ?? getCraftingProductionModeById(recipe)?.id,
+    completionTime,
+    qualityBonusApplied: pendingOutcome.qualityBonusApplied === true
+      ? true
+      : (pendingOutcome.qualityBonusApplied === false ? false : null),
+    rareBonusApplied: pendingOutcome.rareBonusApplied === true
+      ? true
+      : (pendingOutcome.rareBonusApplied === false ? false : null),
+    money: Number.isFinite(pendingOutcome.money) ? Math.max(0, pendingOutcome.money) : null,
+  };
+}
+
+export function normalizeCraftingProductionState(
+  state,
+  recipes = craftingRecipeDefinitions
+) {
+  const baseState = createDefaultCraftingProductionState(recipes);
+
+  if (!state || typeof state !== "object") {
+    return baseState;
+  }
+
+  return recipes.reduce((accumulator, recipe) => {
+    const candidateState = state[recipe.id];
+    const defaultState = baseState[recipe.id];
+
+    accumulator[recipe.id] = {
+      recipeId: recipe.id,
+      selectedModeId: getCraftingProductionModeById(
+        recipe,
+        candidateState?.selectedModeId
+      )?.id ?? defaultState.selectedModeId,
+      lastCompletionAt: Number.isFinite(candidateState?.lastCompletionAt)
+        ? candidateState.lastCompletionAt
+        : defaultState.lastCompletionAt,
+      pendingOutcome: normalizeCraftingPendingOutcome(recipe, candidateState?.pendingOutcome),
+    };
+
+    return accumulator;
+  }, {});
+}
+
+export function toPersistedCraftingProductionState(state) {
+  const normalizedState = normalizeCraftingProductionState(state);
+
+  return Object.fromEntries(
+    Object.entries(normalizedState).map(([recipeId, recipeState]) => [
+      recipeId,
+      {
+        recipeId,
+        selectedModeId: recipeState.selectedModeId,
+        lastCompletionAt: Number.isFinite(recipeState.lastCompletionAt)
+          ? recipeState.lastCompletionAt
+          : null,
+        pendingOutcome: recipeState.pendingOutcome
+          ? {
+            recipeId,
+            modeId: recipeState.pendingOutcome.modeId,
+            completionTime: recipeState.pendingOutcome.completionTime,
+            qualityBonusApplied: recipeState.pendingOutcome.qualityBonusApplied,
+            rareBonusApplied: recipeState.pendingOutcome.rareBonusApplied,
+            money: Number.isFinite(recipeState.pendingOutcome.money)
+              ? recipeState.pendingOutcome.money
+              : null,
+          }
+          : null,
+      },
+    ])
+  );
+}
+
+export function getInvestmentBoostStateKey(investmentOrId) {
+  return typeof investmentOrId === "string" ? investmentOrId : investmentOrId?.id ?? null;
+}
+
+export function getInvestmentById(investmentId, investments = investmentDefinitions) {
+  return investments.find((investment) => investment.id === investmentId) ?? null;
+}
+
+export function getEffectiveInvestmentCost(investment, costMultiplier = 1) {
+  return (investment?.cost ?? 0) * costMultiplier;
+}
+
+export function createDefaultInvestmentBoostState(investment) {
+  const target = Math.max(1, investment?.boostRule?.target ?? 100);
+
+  return {
+    investmentId: getInvestmentBoostStateKey(investment),
+    ruleSignature: getInvestmentRuleSignature(investment),
+    boosted: false,
+    ruleType: investment?.boostRule?.type ?? "manual_actions",
+    currentProgress: 0,
+    requiredProgress: target,
+    bestProgress: 0,
+    challengeWindowStartedAt: null,
+    challengeWindowEndsAt: null,
+    lastAdvancedAt: null,
+    completedAt: null,
+  };
+}
+
+export function normalizeInvestmentBoostState(investment, state, options = {}) {
+  const baseState = createDefaultInvestmentBoostState(investment);
+  const now = Number.isFinite(options.now) ? options.now : Date.now();
+
+  if (!state || typeof state !== "object") {
+    return baseState;
+  }
+
+  const hasCompatibleRule = state.ruleSignature === baseState.ruleSignature;
+  const shouldResetIncompatibleProgress = hasCompatibleRule === false && state.boosted !== true;
+
+  if (shouldResetIncompatibleProgress) {
+    return {
+      ...baseState,
+      bestProgress: 0,
+    };
+  }
+
+  const normalizedProgress = Number.isFinite(state.currentProgress)
+    ? Math.max(0, state.currentProgress)
+    : baseState.currentProgress;
+  const normalizedBest = Number.isFinite(state.bestProgress)
+    ? Math.max(0, state.bestProgress)
+    : Math.max(baseState.bestProgress, normalizedProgress);
+  const boosted = state.boosted === true || normalizedProgress >= baseState.requiredProgress;
+  const isExpiredTimedWindow = (
+    baseState.ruleType === "timed_actions"
+    && boosted === false
+    && Number.isFinite(state.challengeWindowEndsAt)
+    && state.challengeWindowEndsAt <= now
+  );
+  const currentProgress = isExpiredTimedWindow
+    ? 0
+    : (boosted ? baseState.requiredProgress : normalizedProgress);
+
+  return {
+    ...baseState,
+    investmentId: baseState.investmentId,
+    ruleSignature: baseState.ruleSignature,
+    currentProgress,
+    bestProgress: boosted ? baseState.requiredProgress : Math.max(normalizedBest, currentProgress),
+    boosted,
+    challengeWindowStartedAt: Number.isFinite(state.challengeWindowStartedAt)
+      && isExpiredTimedWindow === false
+      ? state.challengeWindowStartedAt
+      : null,
+    challengeWindowEndsAt: Number.isFinite(state.challengeWindowEndsAt)
+      && isExpiredTimedWindow === false
+      ? state.challengeWindowEndsAt
+      : null,
+    lastAdvancedAt: Number.isFinite(state.lastAdvancedAt) ? state.lastAdvancedAt : null,
+    completedAt: Number.isFinite(state.completedAt) ? state.completedAt : null,
+  };
+}
+
+export function isInvestmentBoostCompleted(investment, state) {
+  return normalizeInvestmentBoostState(investment, state).boosted === true;
+}
+
+export function getBoostedInvestmentsProjection(
+  investmentBoostStates,
+  investments = investmentDefinitions
+) {
+  return investments.map((investment) => isInvestmentBoostCompleted(
+    investment,
+    investmentBoostStates?.[getInvestmentBoostStateKey(investment)]
+  ));
+}
+
+export function toPersistedInvestmentBoostState(state) {
+  return {
+    investmentId: state?.investmentId ?? null,
+    ruleSignature: state?.ruleSignature ?? null,
+    boosted: state?.boosted === true,
+    currentProgress: Number.isFinite(state?.currentProgress) ? Math.max(0, state.currentProgress) : 0,
+    bestProgress: Number.isFinite(state?.bestProgress) ? Math.max(0, state.bestProgress) : 0,
+    challengeWindowStartedAt: Number.isFinite(state?.challengeWindowStartedAt)
+      ? state.challengeWindowStartedAt
+      : null,
+    challengeWindowEndsAt: Number.isFinite(state?.challengeWindowEndsAt)
+      ? state.challengeWindowEndsAt
+      : null,
+    lastAdvancedAt: Number.isFinite(state?.lastAdvancedAt) ? state.lastAdvancedAt : null,
+    completedAt: Number.isFinite(state?.completedAt) ? state.completedAt : null,
+  };
+}
+
+export function createInitialInvestmentBoostStates(investments = investmentDefinitions) {
+  return investments.reduce((accumulator, investment) => {
+    accumulator[getInvestmentBoostStateKey(investment)] = createDefaultInvestmentBoostState(investment);
+    return accumulator;
+  }, {});
+}
+
 export const gameConfig = {
   craftingCooldownSeconds: 5, // Standard-Cooldown für Crafting (Sekunden)
   // Basis-Kosten für Upgrades
@@ -53,52 +552,112 @@ export const gameConfig = {
     },
   ],
   
-  investments: [
-    { name: "Taxi Company", cost: 12750, income: 7, icon: "Car" },
-    { name: "Energy Drinks", cost: 26500, income: 16, icon: "Zap" },
-    { name: "Balcony Power Plants", cost: 38200, income: 23.5, icon: "Sunset" },
-    { name: "Delicatessen", cost: 51500, income: 32, icon: "Sandwich" },
-    { name: "Fashion Label", cost: 68000, income: 43, icon: "Shirt" },
-    { name: "E-Car Manufacturer", cost: 81250, income: 52, icon: "CarFront" },
-    { name: "E-Cigarettes", cost: 95500, income: 61, icon: "Cigarette" },
-    { name: "Pharma", cost: 110750, income: 72, icon: "Pill" },
-    { name: "National Airline", cost: 128000, income: 84, icon: "Plane" },
-    { name: "Space Rocket Enterprises", cost: 145500, income: 97, icon: "Rocket" },
-  ],
+  investments: investmentDefinitions,
   
-  unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+  unlockInvestmentCost: INVESTMENT_UNLOCK_COST, // Kosten für die Freischaltung des Investment-Tabs
 
-  unlockCraftingCost: 100000000,
-  unlockCraftingPrestige: 1,
+  unlockCraftingCost: CRAFTING_UNLOCK_COST,
+  unlockCraftingPrestige: CRAFTING_UNLOCK_PRESTIGE,
+  unlockRoadmap: [
+    {
+      id: "investments",
+      title: "Investments",
+      description: "Unlock passive companies and the midgame investment tab.",
+      unlockType: "money",
+      scope: "run",
+      progressStrategy: "segments",
+      targetValueOverrideKey: "unlockInvestmentCost",
+      readyWhen: { type: "threshold", key: "money", target: "targetValue" },
+      reachedWhen: { type: "flag", key: "isInvestmentUnlocked" },
+      progressSegments: [
+        { key: "money", target: "targetValue", start: 0, end: 100 },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+      ],
+      get targetValue() {
+        return gameConfig.unlockInvestmentCost;
+      },
+      ctaLabel: "Unlock Investments",
+      previewText: "Passive companies with their own boost path.",
+    },
+    {
+      id: "prestige",
+      title: "Prestige",
+      description: "Reach the first prestige threshold and open the reset loop.",
+      unlockType: "money",
+      scope: "career",
+      progressStrategy: "segments",
+      targetValueOverrideKey: "prestigeThresholdMoney",
+      readyWhen: { type: "threshold", key: "money", target: "targetValue" },
+      reachedWhen: { type: "threshold", key: "prestigeCount", value: 1 },
+      readyLabel: "Ready to prestige",
+      progressSegments: [
+        { key: "money", target: "targetValue", start: 0, end: 100 },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+      ],
+      get targetValue() {
+        return gameConfig.prestige.minMoneyForModalButton;
+      },
+      ctaLabel: "Reach Prestige",
+      previewText: "Reset into stronger runs with persistent prestige shares.",
+    },
+    {
+      id: "wealthProduction",
+      title: "Wealth Production",
+      description: "Unlock crafting after your first prestige and start producing assets.",
+      unlockType: "moneyAndPrestige",
+      scope: "run",
+      progressStrategy: "segments",
+      targetValueOverrideKey: "craftingUnlockCost",
+      targetPrestigeOverrideKey: "craftingUnlockPrestige",
+      readyWhen: [
+        { type: "threshold", key: "money", target: "targetValue" },
+        { type: "threshold", key: "prestigeShares", target: "targetPrestige" },
+      ],
+      reachedWhen: { type: "flag", key: "isCraftingUnlocked" },
+      readyLabel: "Ready to unlock",
+      progressSegments: [
+        {
+          key: "money",
+          target: "targetValue",
+          start: 0,
+          end: 25,
+          maxProgress: 0.5,
+        },
+        { key: "prestigeShares", target: "targetPrestige", start: 25, end: 60 },
+        {
+          key: "money",
+          target: "targetValue",
+          start: 60,
+          end: 100,
+          requires: { type: "threshold", key: "prestigeShares", target: "targetPrestige" },
+          minProgress: 0.5,
+        },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+        { key: "prestigeShares", target: "targetPrestige", format: "prestige" },
+      ],
+      get targetValue() {
+        return gameConfig.unlockCraftingCost;
+      },
+      get targetPrestige() {
+        return gameConfig.unlockCraftingPrestige;
+      },
+      ctaLabel: "Unlock Wealth Production",
+      previewText: "Craft assets and build a post-prestige production loop.",
+    },
+  ],
   rawMaterials: [
     { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
     { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
     { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20,},
   ],
 
-  craftingRecipes: [
-    {
-      id: "collectors_coin",
-      name: "Issue Collectible Coin",
-      materials: [
-        { id: "metal", quantity: 5 },
-        { id: "parts", quantity: 2 },
-      ],
-      output: { money: 100000000 },
-      cooldownSeconds: 50, // Individueller Cooldown für dieses Produkt
-    },
-    {
-      id: "gold_bar",
-      name: "Forge Gold Reserve",
-      materials: [
-        { id: "metal", quantity: 10 },
-        { id: "parts", quantity: 5 },
-        { id: "tech", quantity: 1 },
-      ],
-      output: { money: 500000000 },
-      cooldownSeconds: 140, // Individueller Cooldown für dieses Produkt
-    },
-  ],
+  craftingRecipes: craftingRecipeDefinitions,
 
   // Upgrade-Multiplikatoren
   upgradeValueMultiplier: 1.1, // +10% pro Level
@@ -119,8 +678,10 @@ export const gameConfig = {
     globalPriceDecrease: 1, // Multiplikator für Kosten (1 = 100%)
     isInvestmentUnlocked: false,
     investments: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // <-- update length to match investments array
+    investmentBoostStates: createInitialInvestmentBoostStates(),
     isCraftingUnlocked: false,
-    craftingItems: [0, 0, 0],
+    craftingItems: craftingRecipeDefinitions.map(() => 0),
+    craftingProductionState: createDefaultCraftingProductionState(),
     rawMaterials: { metal: 0, parts: 0, tech: 0 }, // New: Raw materials
     resourcePurchaseCounts: { metal: 0, parts: 0, tech: 0 },
     offlineEarningsLevel: 0, // Level for offline earnings

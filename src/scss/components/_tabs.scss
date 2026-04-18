@@ -111,9 +111,64 @@
   border-left: 4px solid #3498db;
 }
 
+.investment-card__title-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.investment-card__role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.14);
+  color: #1f6fb2;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.investment-card__synergy-copy {
+  margin-bottom: 8px;
+}
+
+.investment-card__meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.investment-card__meta-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(42, 57, 70, 0.7);
+}
+
+.investment-card__meta-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: map.get($colors, dark-hue);
+}
+
+.investment-card__hint-copy {
+  margin-bottom: 10px;
+}
+
+.investment-card__status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .investment-buttons-group {
   display: flex; // Oder display: grid; grid-template-columns: auto auto;
   gap: 8px; // Passe den Wert an, um den gewünschten Abstand zu erhalten
+  align-items: center;
   @media screen and (max-width: 600px) {
     // flex-direction: column; // Bei kleineren Bildschirmen unterbrechen wir die Flexbox und machen eine Spalte
     // gap: 10px; // Optional, um den Abstand zwischen den Buttons zu erhöhen
@@ -127,6 +182,16 @@
 // .investment-buttons-group .premium-upgrade-button {
 //   flex-shrink: 0;
 // }
+
+.investment-card__auto-rule-note {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(46, 204, 113, 0.12);
+  color: #1c8b4d;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 .premium-icon {
   color: map.get($colors, orange);
@@ -171,4 +236,527 @@
   background-color: #f9f9f9;
   border-radius: 8px;
   border: 1px solid #eee;
+}
+
+.crafting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.crafting-journey-card {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(241, 196, 15, 0.18), transparent 42%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.98));
+  border: 1px solid rgba(52, 152, 219, 0.18);
+  box-shadow: 0 16px 36px rgba(26, 67, 103, 0.1);
+
+  &.is-live {
+    background:
+      radial-gradient(circle at top right, rgba(46, 204, 113, 0.16), transparent 36%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(241, 249, 244, 0.98));
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    color: map.get($colors, dark-hue);
+  }
+
+  p {
+    margin: 0;
+    color: rgba(34, 52, 68, 0.82);
+    line-height: 1.5;
+  }
+}
+
+.crafting-journey-card__eyebrow {
+  display: inline-flex;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9770e;
+}
+
+.crafting-journey-card__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+
+  span {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(52, 152, 219, 0.11);
+    color: #1f6fb2;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+}
+
+.crafting-unlock-card__requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.crafting-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.crafting-material-card {
+  margin-bottom: 0;
+}
+
+.crafting-material-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.crafting-production-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.crafting-production-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.98));
+  border: 1px solid rgba(52, 73, 94, 0.12);
+  box-shadow: 0 14px 32px rgba(15, 35, 52, 0.08);
+
+  &.is-pending {
+    border-color: rgba(241, 196, 15, 0.35);
+    box-shadow: 0 16px 34px rgba(241, 196, 15, 0.16);
+  }
+
+  &.is-ready {
+    border-color: rgba(46, 204, 113, 0.42);
+    box-shadow: 0 18px 38px rgba(46, 204, 113, 0.18);
+  }
+}
+
+.crafting-production-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.crafting-production-card__identity {
+  h3 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+    color: map.get($colors, dark-hue);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(34, 52, 68, 0.72);
+  }
+}
+
+.crafting-production-card__eyebrow {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9770e;
+}
+
+.crafting-production-card__status-pill {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.12);
+  color: #1f6fb2;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.crafting-production-card__materials {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.crafting-production-card__material {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(52, 73, 94, 0.05);
+  font-size: 0.84rem;
+
+  strong {
+    font-size: 0.88rem;
+  }
+
+  &.is-satisfied {
+    color: #1c8b4d;
+    background: rgba(46, 204, 113, 0.12);
+  }
+
+  &.is-missing {
+    color: #9c3d2f;
+    background: rgba(231, 76, 60, 0.1);
+  }
+}
+
+.crafting-production-card__section-title {
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(34, 52, 68, 0.68);
+}
+
+.crafting-production-card__projection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.crafting-production-card__projection {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(34, 52, 68, 0.05);
+  color: rgba(34, 52, 68, 0.84);
+
+  svg {
+    margin-top: 2px;
+    color: #1f6fb2;
+    flex-shrink: 0;
+  }
+
+  span {
+    display: block;
+    font-size: 0.78rem;
+    color: rgba(34, 52, 68, 0.65);
+  }
+
+  strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.9rem;
+    color: map.get($colors, dark-hue);
+  }
+}
+
+.crafting-production-card__hint {
+  display: flex;
+  gap: 10px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  background: rgba(52, 152, 219, 0.09);
+  color: rgba(24, 55, 83, 0.92);
+
+  svg {
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.45;
+    font-size: 0.88rem;
+  }
+}
+
+.crafting-production-card__pending-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(241, 196, 15, 0.11);
+  color: rgba(94, 63, 3, 0.92);
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+.crafting-production-card__pending-summary,
+.crafting-production-card__claim-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+
+  span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    font-size: 1rem;
+  }
+}
+
+.crafting-production-card__progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(94, 63, 3, 0.12);
+  overflow: hidden;
+}
+
+.crafting-production-card__progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f39c12, #f1c40f);
+  transition: width 0.25s linear;
+}
+
+.crafting-production-card__claim-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+
+  div {
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.52);
+  }
+
+  span {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: rgba(94, 63, 3, 0.72);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #6e4a02;
+  }
+}
+
+.crafting-production-card__claim-copy {
+  color: rgba(34, 52, 68, 0.82);
+}
+
+.crafting-production-card__actions {
+  display: flex;
+}
+
+@media screen and (max-width: 640px) {
+  .crafting-production-card__header,
+  .crafting-production-card__claim-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .crafting-production-card__materials,
+  .crafting-production-card__projection-grid,
+  .crafting-production-card__claim-breakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
+.unlock-roadmap-card {
+  margin: 0 0 16px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(52, 152, 219, 0.2);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(236, 247, 255, 0.98)),
+    #fff;
+  box-shadow: 0 10px 30px rgba(52, 152, 219, 0.12);
+}
+
+.unlock-roadmap-card__toggle {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.unlock-roadmap-card__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0;
+
+  &.is-expanded {
+    margin-bottom: 10px;
+  }
+}
+
+.unlock-roadmap-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.unlock-roadmap-card__header-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
+.unlock-roadmap-card__eyebrow {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(52, 152, 219, 0.85);
+}
+
+.unlock-roadmap-card__title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: map.get($colors, dark-hue);
+}
+
+.unlock-roadmap-card__status {
+  display: block;
+  box-sizing: border-box;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.12);
+  color: #1f6fb2;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.unlock-roadmap-card__status.is-unlocked {
+  background: rgba(46, 204, 113, 0.14);
+  color: #1c8b4d;
+}
+
+.unlock-roadmap-card__status.is-ready {
+  background: rgba(241, 196, 15, 0.18);
+  color: #8a5a00;
+  box-shadow: inset 0 0 0 1px rgba(241, 196, 15, 0.25);
+}
+
+.unlock-roadmap-card__caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #1f6fb2;
+}
+
+.unlock-roadmap-card__description,
+.unlock-roadmap-card__preview {
+  margin: 0;
+  color: rgba(42, 57, 70, 0.86);
+  line-height: 1.45;
+}
+
+.unlock-roadmap-card__description {
+  margin-bottom: 14px;
+}
+
+.unlock-roadmap-card__progress-copy {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: map.get($colors, dark-hue);
+}
+
+.unlock-roadmap-card__progress-bar {
+  width: 100%;
+  height: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.12);
+}
+
+.unlock-roadmap-card__progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #4aa8e8, #69d2b0);
+  box-shadow: 0 0 18px rgba(105, 210, 176, 0.35);
+}
+
+@media screen and (max-width: 600px) {
+  .unlock-roadmap-card {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .unlock-roadmap-card__header,
+  .unlock-roadmap-card__progress-copy {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .unlock-roadmap-card__toggle-row {
+    align-items: flex-start;
+  }
+
+  .unlock-roadmap-card__header-actions {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .unlock-roadmap-card__status {
+    flex: 1 1 auto;
+    align-self: stretch;
+    text-align: center;
+  }
+
+  .unlock-roadmap-card__progress-copy {
+    margin-bottom: 10px;
+  }
 }

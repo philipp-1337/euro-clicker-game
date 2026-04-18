@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useEffect } from 'react';
-import { gameConfig } from '@constants/gameConfig';
+import { createInitialInvestmentBoostStates, gameConfig } from '@constants/gameConfig';
 
 /**
  * Manages the core economy of the game including:
@@ -126,6 +126,7 @@ export default function useGameEconomy({
 
       // Reset progression
       investments: gameConfig.initialState.investments.map(() => 0),
+      investmentBoostStates: createInitialInvestmentBoostStates(),
       boostedInvestments: gameConfig.investments.map(() => false),
 
       // Preserve auto-buyers on prestige

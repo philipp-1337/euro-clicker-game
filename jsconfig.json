@@ -1,19 +1,10 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
-      "@utils/*": [
-        "utils/*"
-      ],
-      "@components/*": [
-        "components/*"
-      ],
-      "@hooks/*": [
-        "hooks/*"
-      ],
-      "@constants/*": [
-        "constants/*"
-      ]
+      "@utils/*": ["./src/utils/*"],
+      "@components/*": ["./src/components/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@constants/*": ["./src/constants/*"]
     },
     "types": [
       "vite-plugin-pwa/client"
