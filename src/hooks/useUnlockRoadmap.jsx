@@ -15,10 +15,12 @@ const formatRemainingPrestige = (currentPrestigeShares, targetPrestige) =>
 
 const CONDITION_TYPES = new Set(['flag', 'threshold']);
 const PROGRESS_STRATEGIES = new Set(['segments']);
+const roadmapWarnings = new Set();
 
-const invariant = (condition, message) => {
-  if (!condition) {
-    throw new Error(message);
+const reportRoadmapIssue = (message) => {
+  if (!roadmapWarnings.has(message)) {
+    roadmapWarnings.add(message);
+    console.error(`[unlock-roadmap] ${message}`);
   }
 };
 
@@ -55,10 +57,12 @@ const resolveCondition = (condition, context, milestoneState) => {
     return false;
   }
 
-  invariant(
-    CONDITION_TYPES.has(condition.type),
-    `Unsupported roadmap condition type "${condition.type}" for milestone "${milestoneState.id}".`
-  );
+  if (!CONDITION_TYPES.has(condition.type)) {
+    reportRoadmapIssue(
+      `Unsupported roadmap condition type "${condition.type}" for milestone "${milestoneState.id}".`
+    );
+    return false;
+  }
 
   const value = getContextValue(context, condition.key);
   if (condition.type === 'flag') {
@@ -85,6 +89,7 @@ const buildMilestoneState = (milestone, values) => ({
   isReady: false,
   isCurrentlyUnlocked: false,
   isReached: false,
+  statusLabel: '',
   ...values,
 });
 
@@ -105,10 +110,12 @@ const getSegmentProgress = (segment, context, milestone) => {
 };
 
 const getSegmentsProgress = (milestone, context) => {
-  invariant(
-    Array.isArray(milestone.progressSegments) && milestone.progressSegments.length > 0,
-    `Roadmap milestone "${milestone.id}" requires at least one progress segment.`
-  );
+  if (!Array.isArray(milestone.progressSegments) || milestone.progressSegments.length === 0) {
+    reportRoadmapIssue(
+      `Roadmap milestone "${milestone.id}" requires at least one progress segment.`
+    );
+    return 0;
+  }
 
   return milestone.progressSegments.reduce((totalProgress, segment) => {
     const segmentEnabled = segment.requires
@@ -135,9 +142,10 @@ const formatRemainingRequirement = (requirement, context, milestoneState) => {
     return formatRemainingPrestige(currentValue, targetValue);
   }
 
-  throw new Error(
+  reportRoadmapIssue(
     `Unsupported roadmap requirement format "${requirement.format}" for milestone "${milestoneState.id}".`
   );
+  return `${formatNumber(Math.max(0, targetValue - currentValue))}`;
 };
 
 const formatRemainingText = (milestone, context, milestoneState) => {
@@ -147,10 +155,12 @@ const formatRemainingText = (milestone, context, milestoneState) => {
   if (milestoneState.isReady) {
     return milestone.readyLabel ?? 'Ready';
   }
-  invariant(
-    Array.isArray(milestone.remainingRequirements) && milestone.remainingRequirements.length > 0,
-    `Roadmap milestone "${milestone.id}" requires remaining requirement metadata.`
-  );
+  if (!Array.isArray(milestone.remainingRequirements) || milestone.remainingRequirements.length === 0) {
+    reportRoadmapIssue(
+      `Roadmap milestone "${milestone.id}" requires remaining requirement metadata.`
+    );
+    return 'Keep progressing';
+  }
   const remainingParts = milestone.remainingRequirements
     .filter((requirement) => {
       const currentValue = normalizeNumber(getContextValue(context, requirement.key));
@@ -167,15 +177,16 @@ const formatRemainingText = (milestone, context, milestoneState) => {
 };
 
 const resolveMilestoneState = (milestone, context, overrides) => {
-  invariant(
-    PROGRESS_STRATEGIES.has(milestone.progressStrategy),
-    `Unsupported roadmap progress strategy "${milestone.progressStrategy}" for milestone "${milestone.id}".`
-  );
   const milestoneState = buildMilestoneState(milestone, {
     targetValue: getTargetValue(milestone, overrides),
     targetPrestige: getTargetPrestige(milestone, overrides),
     canRelock: milestone.scope === 'run',
   });
+  if (!PROGRESS_STRATEGIES.has(milestone.progressStrategy)) {
+    reportRoadmapIssue(
+      `Unsupported roadmap progress strategy "${milestone.progressStrategy}" for milestone "${milestone.id}".`
+    );
+  }
   const isReady = resolveCondition(milestone.readyWhen, context, milestoneState);
   const isReached = resolveCondition(milestone.reachedWhen, context, milestoneState);
   const runtimeMilestone = {
@@ -192,6 +203,11 @@ const resolveMilestoneState = (milestone, context, overrides) => {
     isReady,
     isCurrentlyUnlocked: isReached,
     isReached,
+    statusLabel: isReached
+      ? (milestone.unlockedLabel ?? 'Unlocked')
+      : isReady
+        ? (milestone.readyStatusLabel ?? 'Ready now')
+        : `Next step: ${milestone.ctaLabel}`,
     currentProgressPercentage,
     remainingRequirementText: formatRemainingText(milestone, context, {
       ...milestoneState,
