@@ -16,7 +16,7 @@ export default function UnlockRoadmapCard({ milestone }) {
   return (
     <section
       className="unlock-roadmap-card"
-      aria-label={`${milestone.title} roadmap progress`}
+      aria-label={`${milestone.title} Freischaltfortschritt`}
     >
       <button
         type="button"
@@ -25,7 +25,7 @@ export default function UnlockRoadmapCard({ milestone }) {
         aria-expanded={isExpanded}
       >
         <div className={`unlock-roadmap-card__toggle-row${isExpanded ? ' is-expanded' : ''}`}>
-          <p className="unlock-roadmap-card__eyebrow">Next milestone</p>
+          <p className="unlock-roadmap-card__eyebrow">Nächster Meilenstein</p>
           <span className="unlock-roadmap-card__caret" aria-hidden="true">
             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
           </span>

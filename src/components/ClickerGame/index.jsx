@@ -183,14 +183,14 @@ export default function ClickerGame({
   const hasReachedProductionPrestige = prestigeShares >= gameConfig.unlockCraftingPrestige;
   const craftingJourneyMessage = hasReachedProductionPrestige
     ? {
-      eyebrow: 'Post-Prestige Route',
-      title: 'Wealth Production is now your next deliberate system',
-      body: 'Prestige unlocked the production layer. Fund the tab, choose between faster and higher-value routes, and claim inside the quality window for a stronger finish.',
+      eyebrow: 'Post-Prestige-Route',
+      title: 'Wealth Production ist jetzt dein nächstes bewusstes System',
+      body: 'Prestige hat die Produktionsebene freigeschaltet. Finanziere den Tab, wähle zwischen schnelleren und wertvolleren Routen und hole im Qualitätsfenster für ein stärkeres Ergebnis ab.',
     }
     : {
-      eyebrow: 'Next Milestone',
-      title: 'First prestige opens production decisions',
-      body: 'Wealth Production is not just another payout button. It adds route choice, timing pressure, and rare premium results after prestige.',
+      eyebrow: 'Nächster Meilenstein',
+      title: 'Das erste Prestige öffnet Produktionsentscheidungen',
+      body: 'Wealth Production ist nicht nur ein weiterer Auszahlungsbutton. Nach Prestige kommen Routenwahl, Zeitdruck und seltene Premium-Ergebnisse hinzu.',
     };
 
   const {
@@ -582,19 +582,19 @@ export default function ClickerGame({
         <div className="modal-backdrop" style={{ zIndex: 10002 }}>
           <div className="modal-content" style={{ maxWidth: 420 }}>
             <div className="settings-modal-header">
-              <h3>Congratulations!</h3>
+              <h3>Glückwunsch!</h3>
             </div>
             <p>
-              You have reached a milestone (
-              {currentCheckpoint ? currentCheckpoint.label : "a goal"})!
+              Du hast einen Meilenstein erreicht (
+              {currentCheckpoint ? currentCheckpoint.label : 'ein Ziel'})!
               <br />
-              Do you want to enter your name for the leaderboard?
+              Möchtest du deinen Namen für die Bestenliste eintragen?
             </p>
             <input
               className="modal-input"
               type="text"
               maxLength={18}
-              placeholder="Your name for the leaderboard"
+              placeholder="Dein Name für die Bestenliste"
               value={leaderboardName}
               onChange={(e) => setLeaderboardName(e.target.value)}
               style={{ marginBottom: 18, width: "100%" }}
@@ -605,13 +605,13 @@ export default function ClickerGame({
                 disabled={!leaderboardName.trim()}
                 onClick={handleLeaderboardSubmit}
               >
-                Submit
+                Eintragen
               </button>
               <button
                 className="modal-btn"
                 onClick={handleLeaderboardCongratsClose}
               >
-                Maybe later
+                Vielleicht später
               </button>
             </div>
           </div>

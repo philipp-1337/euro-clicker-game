@@ -40,12 +40,12 @@ export default function Investments({
 
     switch (boostRule.type) {
       case 'timed_actions':
-        return `Build ${boostRule.target} rush points within ${boostRule.windowSeconds}s from upgrades, managers, investments, or materials.`;
+        return `Baue ${boostRule.target} Rush-Punkte in ${boostRule.windowSeconds}s durch Upgrades, Manager, Investitionen oder Materialien auf.`;
       case 'reserve_challenge':
-        return `Make qualifying purchases while holding at least ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € in reserve.`;
+        return `Führe gültige Käufe aus, während du mindestens ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € Rücklage hältst.`;
       case 'manual_actions':
       default:
-        return `Use the boost action or make qualifying purchases ${boostRule.target} times to lock in the permanent income upgrade.`;
+        return `Nutze die Boost-Aktion oder führe ${boostRule.target} gültige Käufe aus, um das permanente Einkommens-Upgrade zu sichern.`;
     }
   };
 
@@ -55,18 +55,18 @@ export default function Investments({
 
   return (
     <div className="upgrade-section premium-section">
-      <h2 className="section-title">Investments</h2>
+      <h2 className="section-title">Investitionen</h2>
       {!isInvestmentUnlocked ? (
         <div className="premium-upgrade-card">
           <div className="premium-upgrade-header">
-            <Unlock className='premium-icon' /><h3>Unlock Investments</h3>
+            <Unlock className='premium-icon' /><h3>Investitionen freischalten</h3>
           </div>
           <p className="premium-upgrade-description">
-            Unlock the Investments tab to invest in companies.
+            Schalte den Investitions-Tab frei, um in Unternehmen zu investieren.
           </p>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
-              Status: Locked
+              Status: Gesperrt
             </div>
             {/* You may need to pass unlockInvestments and unlockInvestmentCost as props from parent */}
             {typeof unlockInvestments === 'function' && typeof unlockInvestmentCost === 'number' && (
@@ -101,13 +101,13 @@ export default function Investments({
                 </div>
               </div>
               <p className="premium-upgrade-description">
-                Invest {formatNumber(cost)} € to earn {formatNumber(displayedIncome)} €/s.
+                Investiere {formatNumber(cost)} € und erhalte {formatNumber(displayedIncome)} €/s.
               </p>
               <p className="premium-upgrade-description investment-card__synergy-copy">
                 {getSynergySummary(investment)}
               </p>
               <div className="investment-card__meta-row">
-                <span className="investment-card__meta-label">Synergy</span>
+                <span className="investment-card__meta-label">Synergie</span>
                 <span className="investment-card__meta-value">{investment.synergyTag}</span>
               </div>
               <p className="premium-upgrade-description investment-card__hint-copy">
@@ -124,10 +124,10 @@ export default function Investments({
               <div className="premium-upgrade-info">
                 <div className="investment-card__status-list">
                   <div className="premium-upgrade-level">
-                    Purchased: {purchased ? 'Yes' : 'No'}
+                    Gekauft: {purchased ? 'Ja' : 'Nein'}
                   </div>
                   <div className="premium-upgrade-level">
-                    Boost: {boostState?.boosted ? 'Completed' : 'In Progress'}
+                    Boost: {boostState?.boosted ? 'Abgeschlossen' : 'Läuft'}
                   </div>
                 </div>
                 <div className="investment-buttons-group">
@@ -136,7 +136,7 @@ export default function Investments({
                     disabled={money < cost || purchased}
                     className={`premium-upgrade-button ${money < cost || purchased ? 'disabled' : ''}`}
                   >
-                    {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
+                    {purchased ? 'Gekauft' : `${formatNumber(cost)} €`}
                   </button>
                   {investment.boostRule?.type === 'manual_actions' ? (
                     <button
@@ -148,11 +148,11 @@ export default function Investments({
                       disabled={!purchased || isCompleted}
                       className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
                     >
-                      {isCompleted ? "Earnings Boosted" : "Boost Action"}
+                      {isCompleted ? 'Ertrag geboostet' : 'Boost-Aktion'}
                     </button>
                   ) : (
                     <div className="investment-card__auto-rule-note">
-                      Tracks from live game events
+                      Zählt über Live-Spielaktionen
                     </div>
                   )}
                 </div>
