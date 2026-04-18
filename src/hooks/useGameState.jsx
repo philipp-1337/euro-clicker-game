@@ -1,16 +1,71 @@
 import { useState, useCallback } from 'react';
-import { gameConfig } from '@constants/gameConfig';
+import {
+  createInitialInvestmentBoostStates,
+  gameConfig,
+  normalizeInvestmentBoostState,
+} from '@constants/gameConfig';
+
+const hasBrowserStorage = () => typeof window !== 'undefined';
+
+const readBooleanFromStorage = (key) => {
+  if (!hasBrowserStorage()) {
+    return null;
+  }
+
+  const storedValue = localStorage.getItem(key);
+
+  if (storedValue === null) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedValue);
+  } catch {
+    return null;
+  }
+};
+
+const hydrateInvestmentBoostStates = (savedBoostStates, savedBoostedFlags) => {
+  return gameConfig.investments.map((investment, index) => {
+    if (Array.isArray(savedBoostStates) && savedBoostStates[index]) {
+      return normalizeInvestmentBoostState(investment, savedBoostStates[index]);
+    }
+
+    const legacyBoosted = Array.isArray(savedBoostedFlags) && typeof savedBoostedFlags[index] === 'boolean'
+      ? savedBoostedFlags[index]
+      : readBooleanFromStorage(`boosted-${index}`) === true;
+    const legacyClicksRaw = hasBrowserStorage() ? localStorage.getItem(`boostClicks-${index}`) : null;
+    const legacyClicks = Number.parseInt(legacyClicksRaw ?? '', 10);
+
+    return normalizeInvestmentBoostState(investment, {
+      currentProgress: Number.isFinite(legacyClicks) ? legacyClicks : 0,
+      boosted: legacyBoosted,
+      completedAt: legacyBoosted ? Date.now() : null,
+    });
+  });
+};
+
+const syncLegacyInvestmentBoostStorage = (boostStates) => {
+  if (!hasBrowserStorage()) {
+    return;
+  }
+
+  boostStates.forEach((state, index) => {
+    localStorage.setItem(`boosted-${index}`, JSON.stringify(state.boosted === true));
+    localStorage.setItem(`boostClicks-${index}`, String(Math.max(0, Math.floor(state.currentProgress ?? 0))));
+  });
+};
 
 export default function useGameState() {
   const [money, setMoney] = useState(gameConfig.initialState.money);
   const [cooldowns, setCooldowns] = useState([...gameConfig.initialState.cooldowns]);
   const [managers, setManagers] = useState([...gameConfig.initialState.managers]);
-  
+
   const [valueMultipliers, setValueMultipliers] = useState([...gameConfig.initialState.valueMultipliers]);
   const [cooldownReductions, setCooldownReductions] = useState([...gameConfig.initialState.cooldownReductions]);
   const [valueUpgradeLevels, setValueUpgradeLevels] = useState([...gameConfig.initialState.valueUpgradeLevels]);
   const [cooldownUpgradeLevels, setCooldownUpgradeLevels] = useState([...gameConfig.initialState.cooldownUpgradeLevels]);
-  
+
   const [globalMultiplier, setGlobalMultiplier] = useState(gameConfig.initialState.globalMultiplier);
   const [globalMultiplierLevel, setGlobalMultiplierLevel] = useState(gameConfig.initialState.globalMultiplierLevel);
   const [globalPriceDecrease, setGlobalPriceDecrease] = useState(gameConfig.initialState.globalPriceDecrease);
@@ -53,17 +108,19 @@ export default function useGameState() {
   const [autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled] = useState(gameConfig.initialState.autoBuyGlobalMultiplierEnabled);
   const [autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled] = useState(gameConfig.initialState.autoBuyGlobalPriceDecreaseEnabled);
 
-  const [boostedInvestmentsData, setBoostedInvestmentsData] = useState(() => {
-    return gameConfig.investments.map((_, index) => {
-      const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
-      return storedValue ? JSON.parse(storedValue) : false;
-    });
+  const [investmentBoostStatesData, setInvestmentBoostStatesData] = useState(() => {
+    return hydrateInvestmentBoostStates(
+      gameConfig.initialState.investmentBoostStates ?? createInitialInvestmentBoostStates(),
+      gameConfig.initialState.boostedInvestments
+    );
   });
 
   const [prestigeShares, setPrestigeShares] = useState(gameConfig.initialState.prestigeShares);
   const [prestigeCount, setPrestigeCount] = useState(gameConfig.initialState.prestigeCount ?? 0);
 
   const [clickHistory, setClickHistory] = useState([]);
+
+  const boostedInvestments = investmentBoostStatesData.map((state) => state.boosted === true);
 
   const gameState = {
     money,
@@ -89,7 +146,8 @@ export default function useGameState() {
     craftingItems,
     rawMaterials,
     resourcePurchaseCounts,
-    boostedInvestments: boostedInvestmentsData,
+    investmentBoostStates: investmentBoostStatesData,
+    boostedInvestments,
     prestigeShares,
     prestigeCount,
     clickHistory,
@@ -108,8 +166,9 @@ export default function useGameState() {
 
   const loadGameState = (savedState) => {
     if (!savedState) return;
+
     const loadedMoney = savedState.money;
-    setMoney(typeof loadedMoney === 'number' && !isNaN(loadedMoney)
+    setMoney(typeof loadedMoney === 'number' && !Number.isNaN(loadedMoney)
       ? loadedMoney
       : gameConfig.initialState.money);
     setCooldowns(savedState.cooldowns ?? [...gameConfig.initialState.cooldowns]);
@@ -133,11 +192,14 @@ export default function useGameState() {
     } else {
       setOfflineEarningsLevel(gameConfig.initialState.offlineEarningsLevel);
     }
+
     const loadedPrestigeShares = savedState.prestigeShares;
-    setPrestigeShares(typeof loadedPrestigeShares === 'number' && !isNaN(loadedPrestigeShares)
-      ? loadedPrestigeShares : gameConfig.initialState.prestigeShares);
-    setPrestigeCount(typeof savedState.prestigeCount === 'number' && !isNaN(savedState.prestigeCount)
-      ? savedState.prestigeCount : (gameConfig.initialState.prestigeCount ?? 0));
+    setPrestigeShares(typeof loadedPrestigeShares === 'number' && !Number.isNaN(loadedPrestigeShares)
+      ? loadedPrestigeShares
+      : gameConfig.initialState.prestigeShares);
+    setPrestigeCount(typeof savedState.prestigeCount === 'number' && !Number.isNaN(savedState.prestigeCount)
+      ? savedState.prestigeCount
+      : (gameConfig.initialState.prestigeCount ?? 0));
     setCriticalClickChanceLevel(savedState.criticalClickChanceLevel ?? gameConfig.initialState.criticalClickChanceLevel);
     setInactivePlayTime(savedState.inactivePlayTime ?? gameConfig.initialState.inactivePlayTime ?? 0);
     setFloatingClickValueLevel(savedState.floatingClickValueLevel ?? (gameConfig.initialState.floatingClickValueLevel ?? 0));
@@ -166,15 +228,13 @@ export default function useGameState() {
       console.error('Error updating localStorage for clickerSave:', e);
     }
 
-    const loadedBoosted = gameConfig.investments.map((_, index) => {
-      if (savedState.boostedInvestments && typeof savedState.boostedInvestments[index] === 'boolean') {
-        localStorage.setItem(`boosted-${index}`, JSON.stringify(savedState.boostedInvestments[index]));
-        return savedState.boostedInvestments[index];
-      }
-      const storedValue = typeof window !== 'undefined' ? localStorage.getItem(`boosted-${index}`) : null;
-      return storedValue ? JSON.parse(storedValue) : false;
-    });
-    setBoostedInvestmentsData(loadedBoosted);
+    const loadedBoostStates = hydrateInvestmentBoostStates(
+      savedState.investmentBoostStates,
+      savedState.boostedInvestments
+    );
+    syncLegacyInvestmentBoostStorage(loadedBoostStates);
+    setInvestmentBoostStatesData(loadedBoostStates);
+
     if (savedState.lastSaved) {
       const currentTime = Date.now();
       const offlineMs = currentTime - savedState.lastSaved;
@@ -183,13 +243,41 @@ export default function useGameState() {
     }
   };
 
-  const setBoostedInvestments = useCallback((updater) => {
-    setBoostedInvestmentsData(prevBoosted => {
-      const newBoostedArray = typeof updater === 'function' ? updater(prevBoosted) : updater;
-      newBoostedArray.forEach((isBoosted, index) => {
-        localStorage.setItem(`boosted-${index}`, JSON.stringify(isBoosted));
+  const setInvestmentBoostStates = useCallback((updater) => {
+    setInvestmentBoostStatesData((prevStates) => {
+      const nextStatesInput = typeof updater === 'function' ? updater(prevStates) : updater;
+      const normalizedStates = gameConfig.investments.map((investment, index) => {
+        const candidateState = nextStatesInput?.[index] ?? prevStates[index];
+        return normalizeInvestmentBoostState(investment, candidateState);
       });
-      return newBoostedArray;
+
+      syncLegacyInvestmentBoostStorage(normalizedStates);
+      return normalizedStates;
+    });
+  }, []);
+
+  const setBoostedInvestments = useCallback((updater) => {
+    setInvestmentBoostStatesData((prevStates) => {
+      const previousFlags = prevStates.map((state) => state.boosted === true);
+      const nextFlags = typeof updater === 'function' ? updater(previousFlags) : updater;
+      const normalizedStates = gameConfig.investments.map((investment, index) => {
+        const shouldBoost = Array.isArray(nextFlags) ? nextFlags[index] === true : false;
+
+        return normalizeInvestmentBoostState(investment, {
+          ...prevStates[index],
+          boosted: shouldBoost,
+          currentProgress: shouldBoost
+            ? Math.max(
+              prevStates[index]?.requiredProgress ?? 0,
+              investment?.boostRule?.target ?? 0
+            )
+            : prevStates[index]?.currentProgress ?? 0,
+          completedAt: shouldBoost ? (prevStates[index]?.completedAt ?? Date.now()) : null,
+        });
+      });
+
+      syncLegacyInvestmentBoostStorage(normalizedStates);
+      return normalizedStates;
     });
   }, []);
 
@@ -223,7 +311,9 @@ export default function useGameState() {
     globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
     autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
-    boostedInvestments: boostedInvestmentsData,
+    investmentBoostStates: investmentBoostStatesData,
+    setInvestmentBoostStates,
+    boostedInvestments,
     setBoostedInvestments,
     prestigeShares, setPrestigeShares,
     prestigeCount, setPrestigeCount,
