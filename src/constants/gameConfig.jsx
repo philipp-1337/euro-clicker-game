@@ -70,6 +70,36 @@ export const gameConfig = {
 
   unlockCraftingCost: 100000000,
   unlockCraftingPrestige: 1,
+  unlockRoadmap: [
+    {
+      id: "investments",
+      title: "Investments",
+      description: "Unlock passive companies and the midgame investment tab.",
+      unlockType: "money",
+      targetValue: 20000,
+      ctaLabel: "Unlock Investments",
+      previewText: "Passive companies with their own boost path.",
+    },
+    {
+      id: "prestige",
+      title: "Prestige",
+      description: "Reach the first prestige threshold and open the reset loop.",
+      unlockType: "money",
+      targetValue: 1000000000,
+      ctaLabel: "Reach Prestige",
+      previewText: "Reset into stronger runs with persistent prestige shares.",
+    },
+    {
+      id: "wealthProduction",
+      title: "Wealth Production",
+      description: "Unlock crafting after your first prestige and start producing assets.",
+      unlockType: "moneyAndPrestige",
+      targetValue: 100000000,
+      targetPrestige: 1,
+      ctaLabel: "Unlock Wealth Production",
+      previewText: "Craft assets and build a post-prestige production loop.",
+    },
+  ],
   rawMaterials: [
     { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
     { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
