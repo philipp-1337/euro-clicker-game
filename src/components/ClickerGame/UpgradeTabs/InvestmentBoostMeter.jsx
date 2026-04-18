@@ -51,14 +51,14 @@ export default function InvestmentBoostMeter({
     <div className={`investment-boost-meter ${meterStateClass}`}>
       <div className="investment-boost-meter__header">
         <span className="investment-boost-meter__label">
-          {liveBoostState?.boosted ? 'Permanenter Boost aktiv' : liveProgressLabel}
+          {liveBoostState?.boosted ? 'Permanent Boost Active' : liveProgressLabel}
         </span>
         {liveBoostState?.boosted && (
-          <span className="investment-boost-meter__badge is-complete">Abgeschlossen</span>
+          <span className="investment-boost-meter__badge is-complete">Completed</span>
         )}
         {!liveBoostState?.boosted && hasActiveWindow && (
           <span className="investment-boost-meter__badge is-active">
-            Noch {remainingWindowSeconds}s
+            {remainingWindowSeconds}s left
           </span>
         )}
       </div>
@@ -71,7 +71,7 @@ export default function InvestmentBoostMeter({
       </div>
 
       <p className="investment-boost-meter__challenge">
-        {liveBoostState?.boosted ? 'Der Ertrag dieser Investition bleibt dauerhaft verdoppelt.' : challengeText}
+        {liveBoostState?.boosted ? 'This investment now keeps its doubled income permanently.' : challengeText}
       </p>
     </div>
   );

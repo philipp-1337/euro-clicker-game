@@ -111,14 +111,14 @@ export default function CraftingProductionCard({
     <article className={`crafting-production-card${isReady ? ' is-ready' : ''}${isPending && !isReady ? ' is-pending' : ''}`}>
       <div className="crafting-production-card__header">
         <div className="crafting-production-card__identity">
-          <span className="crafting-production-card__eyebrow">Produktionsroute</span>
+          <span className="crafting-production-card__eyebrow">Production Route</span>
           <h3>{recipe.name}</h3>
           <p>
-            <strong>{craftedCount}</strong> Mal hergestellt
+            Crafted <strong>{craftedCount}</strong> times
           </p>
         </div>
         <div className="crafting-production-card__status-pill">
-          {isReady ? 'Abholbereit' : isPending ? `In Produktion · ${secondsUntilClaim}s` : 'Leerlauf'}
+          {isReady ? 'Ready to Claim' : isPending ? `In Production · ${secondsUntilClaim}s` : 'Idle'}
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function CraftingProductionCard({
       </div>
 
       <div className="crafting-production-card__modes">
-        <div className="crafting-production-card__section-title">Produktionsmodus</div>
+        <div className="crafting-production-card__section-title">Production Mode</div>
         <div className="crafting-mode-selector">
           {(recipe.productionModes || []).map((mode) => (
             <button
@@ -175,22 +175,22 @@ export default function CraftingProductionCard({
         <div className="crafting-production-card__projection">
           <Sparkles size={16} />
           <div>
-            <span>Zeitbonus-Fenster</span>
+            <span>Timing Bonus Window</span>
             <strong>
               {qualityWindowMs > 0
-                ? `${formatDurationLabel(qualityWindowMs / 1000)} für ${formatNumber(Math.round(standardReward * (recipe?.qualityMultiplier ?? 1)))} €`
-                : 'Kein Zeitbonus'}
+                ? `${formatDurationLabel(qualityWindowMs / 1000)} for ${formatNumber(Math.round(standardReward * (recipe?.qualityMultiplier ?? 1)))} €`
+                : 'No timing bonus'}
             </strong>
           </div>
         </div>
         <div className="crafting-production-card__projection">
           <Gem size={16} />
           <div>
-            <span>Seltenes Ergebnis</span>
+            <span>Rare Result</span>
             <strong>
               {recipe?.rareBonusChance > 0
-                ? `${Math.round(recipe.rareBonusChance * 100)}% Chance auf bis zu ${formatNumber(rarePreviewMoney)} €`
-                : 'Kein seltenes Ergebnis'}
+                ? `${Math.round(recipe.rareBonusChance * 100)}% chance for up to ${formatNumber(rarePreviewMoney)} €`
+                : 'No rare result'}
             </strong>
           </div>
         </div>
@@ -201,8 +201,8 @@ export default function CraftingProductionCard({
           <ShieldCheck size={16} />
           <p>
             {qualityWindowMs > 0
-              ? `Hole den Ertrag direkt nach Abschluss ab, um den Zeitbonus zu sichern. ${activeMode?.label} tauscht ${activeMode?.durationMultiplier < 1 ? 'Tempo gegen Ertrag' : 'mehr Ertrag gegen eine längere Laufzeit'}.`
-              : `${activeMode?.label} läuft auf einer festen Route ohne Zeitfenster.`}
+              ? `Claim right after completion to lock in the timing bonus. ${activeMode?.label} trades ${activeMode?.durationMultiplier < 1 ? 'speed for reward' : 'higher reward for a longer run time'}.`
+              : `${activeMode?.label} runs on a fixed route without a timing window.`}
           </p>
         </div>
       )}
@@ -212,7 +212,7 @@ export default function CraftingProductionCard({
           {!isReady ? (
             <>
               <div className="crafting-production-card__pending-summary">
-                <span>Aktuelle Charge</span>
+                <span>Current Batch</span>
                 <strong>{activeMode?.label}</strong>
               </div>
               <div className="crafting-production-card__progress-track" aria-hidden="true">
@@ -222,13 +222,13 @@ export default function CraftingProductionCard({
                 />
               </div>
               <p>
-                Abholung in <strong>{formatDurationLabel(secondsUntilClaim)}</strong>. Das Zeitbonus-Fenster startet direkt nach dem Abschluss.
+                Claim in <strong>{formatDurationLabel(secondsUntilClaim)}</strong>. The timing bonus window starts immediately after completion.
               </p>
             </>
           ) : (
             <>
               <div className="crafting-production-card__claim-banner">
-                <span>Abholergebnis</span>
+                <span>Claim Result</span>
                 <strong>{formatNumber(liveOutcome?.money ?? standardReward)} €</strong>
               </div>
               <div className="crafting-production-card__claim-breakdown">
@@ -237,26 +237,26 @@ export default function CraftingProductionCard({
                   <strong>{formatNumber(standardReward)} €</strong>
                 </div>
                 <div>
-                  <span>Zeitbonus</span>
+                  <span>Timing Bonus</span>
                   <strong>
                     {liveOutcome?.qualityBonusApplied
-                      ? `Aktiv · noch ${qualitySecondsLeft}s`
-                      : (qualityWindowMs > 0 ? 'Abgelaufen' : 'Nicht verfügbar')}
+                      ? `Active · ${qualitySecondsLeft}s left`
+                      : (qualityWindowMs > 0 ? 'Expired' : 'Unavailable')}
                   </strong>
                 </div>
                 <div>
-                  <span>Seltenes Ergebnis</span>
+                  <span>Rare Result</span>
                   <strong>
                     {liveOutcome?.rareBonusApplied
-                      ? `Enthalten · insgesamt ${formatNumber(liveOutcome.money)} €`
-                      : (recipe?.rareBonusChance > 0 ? 'Diesmal nicht ausgelöst' : 'Kein seltenes Ergebnis')}
+                      ? `Included · total ${formatNumber(liveOutcome.money)} €`
+                      : (recipe?.rareBonusChance > 0 ? 'Not triggered this time' : 'No rare result')}
                   </strong>
                 </div>
               </div>
               <p className="crafting-production-card__claim-copy">
                 {liveOutcome?.qualityBonusApplied
-                  ? 'Jetzt abholen, um den Zeitbonus vor dem Ende des Qualitätsfensters zu sichern.'
-                  : 'Die Charge ist noch abholbar, aber das Zeitfenster ist bereits abgelaufen.'}
+                  ? 'Claim now to secure the timing bonus before the quality window closes.'
+                  : 'The batch can still be claimed, but the timing window has already expired.'}
               </p>
             </>
           )}
@@ -271,10 +271,10 @@ export default function CraftingProductionCard({
             onClick={() => claimCraftingProduction?.(index)}
           >
             {liveOutcome?.rareBonusApplied
-              ? `Seltenes Finish abholen · ${formatNumber(liveOutcome.money)} €`
+              ? `Claim Rare Finish · ${formatNumber(liveOutcome.money)} €`
               : liveOutcome?.qualityBonusApplied
-                ? `Qualitäts-Finish abholen · ${formatNumber(liveOutcome.money)} €`
-                : `Standardcharge abholen · ${formatNumber(liveOutcome?.money ?? standardReward)} €`}
+                ? `Claim Quality Finish · ${formatNumber(liveOutcome.money)} €`
+                : `Claim Standard Batch · ${formatNumber(liveOutcome?.money ?? standardReward)} €`}
           </button>
         ) : (
           <button
@@ -284,8 +284,8 @@ export default function CraftingProductionCard({
             onClick={() => startCraftingProduction?.(index)}
           >
             {isPending
-              ? `In Produktion · ${secondsUntilClaim}s`
-              : `${activeMode?.label} starten`}
+              ? `In Production · ${secondsUntilClaim}s`
+              : `Start ${activeMode?.label}`}
           </button>
         )}
       </div>

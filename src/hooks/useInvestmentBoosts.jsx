@@ -107,21 +107,21 @@ const getProgressLabelForState = (investment, state, effectiveCost) => {
   const current = Math.min(state.currentProgress ?? 0, target);
 
   if (state.boosted) {
-    return 'Boost abgeschlossen';
+    return 'Boost completed';
   }
 
   switch (state.ruleType) {
     case 'timed_actions': {
       const windowSeconds = investment?.boostRule?.windowSeconds ?? 20;
-      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'Aktionen'} in ${windowSeconds}s`;
+      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'actions'} in ${windowSeconds}s`;
     }
     case 'reserve_challenge': {
       const reserveAmount = Math.round(effectiveCost * (investment?.boostRule?.reserveMultiplier ?? 1));
-      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'Prüfungen'} mit ${reserveAmount} € Rücklage`;
+      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'checks'} with ${reserveAmount} € reserve`;
     }
     case 'manual_actions':
     default:
-      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'Aktionen'}`;
+      return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'actions'}`;
   }
 };
 

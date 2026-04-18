@@ -150,16 +150,16 @@ const formatRemainingRequirement = (requirement, context, milestoneState) => {
 
 const formatRemainingText = (milestone, context, milestoneState) => {
   if (milestoneState.isReached) {
-    return 'Freigeschaltet';
+    return 'Unlocked';
   }
   if (milestoneState.isReady) {
-    return milestone.readyLabel ?? 'Bereit';
+    return milestone.readyLabel ?? 'Ready';
   }
   if (!Array.isArray(milestone.remainingRequirements) || milestone.remainingRequirements.length === 0) {
     reportRoadmapIssue(
       `Roadmap milestone "${milestone.id}" requires remaining requirement metadata.`
     );
-    return 'Einfach weiterspielen';
+    return 'Keep playing';
   }
   const remainingParts = milestone.remainingRequirements
     .filter((requirement) => {
@@ -172,8 +172,8 @@ const formatRemainingText = (milestone, context, milestoneState) => {
     .map((requirement) => formatRemainingRequirement(requirement, context, milestoneState));
 
   return remainingParts.length > 0
-    ? `Benötigt ${remainingParts.join(' und ')}`
-    : 'Bereit';
+    ? `Needs ${remainingParts.join(' and ')}`
+    : 'Ready';
 };
 
 const resolveMilestoneState = (milestone, context, overrides) => {
@@ -204,10 +204,10 @@ const resolveMilestoneState = (milestone, context, overrides) => {
     isCurrentlyUnlocked: isReached,
     isReached,
     statusLabel: isReached
-      ? (milestone.unlockedLabel ?? 'Freigeschaltet')
+      ? (milestone.unlockedLabel ?? 'Unlocked')
       : isReady
-        ? (milestone.readyStatusLabel ?? 'Jetzt bereit')
-        : `Nächster Schritt: ${milestone.ctaLabel}`,
+        ? (milestone.readyStatusLabel ?? 'Ready now')
+        : `Next step: ${milestone.ctaLabel}`,
     currentProgressPercentage,
     remainingRequirementText: formatRemainingText(milestone, context, {
       ...milestoneState,
