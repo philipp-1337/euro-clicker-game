@@ -22,39 +22,43 @@ const getMilestoneMeta = (id, fallback) =>
   gameConfig.unlockRoadmap.find((milestone) => milestone.id === id) ?? fallback;
 
 const resolveInvestmentMilestone = ({ money, isInvestmentUnlocked, investmentUnlockCost }) => {
+  const configInvestmentMeta = getMilestoneMeta('investments', {});
+  const targetValue = normalizeNumber(investmentUnlockCost, normalizeNumber(configInvestmentMeta.targetValue, gameConfig.unlockInvestmentCost));
   const isCurrentlyUnlocked = Boolean(isInvestmentUnlocked);
   const isReached = isCurrentlyUnlocked;
   const progressPercent = isCurrentlyUnlocked
     ? 100
-    : clampPercentage((normalizeNumber(money) / Math.max(1, investmentUnlockCost)) * 100);
+    : clampPercentage((normalizeNumber(money) / Math.max(1, targetValue)) * 100);
 
   return {
     id: 'investments',
-    title: getMilestoneMeta('investments', { title: 'Investments' }).title,
-    description: getMilestoneMeta('investments', { description: '' }).description,
-    ctaLabel: getMilestoneMeta('investments', { ctaLabel: 'Unlock Investments' }).ctaLabel,
-    previewText: getMilestoneMeta('investments', { previewText: '' }).previewText,
+    title: configInvestmentMeta.title ?? 'Investments',
+    description: configInvestmentMeta.description ?? '',
+    ctaLabel: configInvestmentMeta.ctaLabel ?? 'Unlock Investments',
+    previewText: configInvestmentMeta.previewText ?? '',
     unlockType: 'money',
     scope: 'run',
     currentProgressPercentage: progressPercent,
     remainingRequirementText: isCurrentlyUnlocked
       ? 'Unlocked'
-      : formatRemainingMoney(money, investmentUnlockCost),
+      : formatRemainingMoney(money, targetValue),
     isCurrentlyUnlocked,
     isReached,
     canRelock: true,
-    targetMoney: investmentUnlockCost,
+    targetValue,
   };
 };
 
 const resolvePrestigeMilestone = ({ money, prestigeCount, prestigeThresholdMoney }) => {
   const currentMoney = normalizeNumber(money);
+  const configPrestigeMeta = getMilestoneMeta('prestige', {});
+  const targetValue = normalizeNumber(prestigeThresholdMoney, normalizeNumber(configPrestigeMeta.targetValue, gameConfig.prestige.minMoneyForModalButton));
   const hasPrestiged = normalizeNumber(prestigeCount) > 0;
-  const isCurrentlyUnlocked = currentMoney >= prestigeThresholdMoney;
+  const isCurrentlyUnlocked = currentMoney >= targetValue;
   const isReached = hasPrestiged;
   const progressPercent = hasPrestiged
     ? 100
-    : clampPercentage((currentMoney / Math.max(1, prestigeThresholdMoney)) * 100);
+    : clampPercentage((currentMoney / Math.max(1, targetValue)) * 100);
 
   let remainingRequirementText;
   if (hasPrestiged) {
@@ -62,15 +66,15 @@ const resolvePrestigeMilestone = ({ money, prestigeCount, prestigeThresholdMoney
   } else if (isCurrentlyUnlocked) {
     remainingRequirementText = 'Ready to prestige';
   } else {
-    remainingRequirementText = formatRemainingMoney(currentMoney, prestigeThresholdMoney);
+    remainingRequirementText = formatRemainingMoney(currentMoney, targetValue);
   }
 
   return {
     id: 'prestige',
-    title: getMilestoneMeta('prestige', { title: 'Prestige' }).title,
-    description: getMilestoneMeta('prestige', { description: '' }).description,
-    ctaLabel: getMilestoneMeta('prestige', { ctaLabel: 'Reach Prestige' }).ctaLabel,
-    previewText: getMilestoneMeta('prestige', { previewText: '' }).previewText,
+    title: configPrestigeMeta.title ?? 'Prestige',
+    description: configPrestigeMeta.description ?? '',
+    ctaLabel: configPrestigeMeta.ctaLabel ?? 'Reach Prestige',
+    previewText: configPrestigeMeta.previewText ?? '',
     unlockType: 'money',
     scope: 'career',
     currentProgressPercentage: progressPercent,
@@ -78,7 +82,7 @@ const resolvePrestigeMilestone = ({ money, prestigeCount, prestigeThresholdMoney
     isCurrentlyUnlocked,
     isReached,
     canRelock: false,
-    targetMoney: prestigeThresholdMoney,
+    targetValue,
   };
 };
 
@@ -89,13 +93,16 @@ const resolveCraftingMilestone = ({
   craftingUnlockCost,
   craftingUnlockPrestige,
 }) => {
+  const configCraftingMeta = getMilestoneMeta('wealthProduction', {});
   const currentMoney = normalizeNumber(money);
   const currentPrestigeShares = normalizeNumber(prestigeShares);
+  const targetValue = normalizeNumber(craftingUnlockCost, normalizeNumber(configCraftingMeta.targetValue, gameConfig.unlockCraftingCost));
+  const targetPrestige = normalizeNumber(craftingUnlockPrestige, normalizeNumber(configCraftingMeta.targetPrestige, gameConfig.unlockCraftingPrestige));
   const isCurrentlyUnlocked = Boolean(isCraftingUnlocked);
   const isReached = isCurrentlyUnlocked;
 
-  const moneyProgress = clampPercentage((currentMoney / Math.max(1, craftingUnlockCost)) * 100);
-  const prestigeProgress = clampPercentage((currentPrestigeShares / Math.max(1, craftingUnlockPrestige)) * 100);
+  const moneyProgress = clampPercentage((currentMoney / Math.max(1, targetValue)) * 100);
+  const prestigeProgress = clampPercentage((currentPrestigeShares / Math.max(1, targetPrestige)) * 100);
   const progressPercent = isCurrentlyUnlocked ? 100 : Math.min(moneyProgress, prestigeProgress);
 
   let remainingRequirementText;
@@ -103,11 +110,11 @@ const resolveCraftingMilestone = ({
     remainingRequirementText = 'Unlocked';
   } else {
     const remainingParts = [];
-    if (currentMoney < craftingUnlockCost) {
-      remainingParts.push(formatRemainingMoneyAmount(currentMoney, craftingUnlockCost));
+    if (currentMoney < targetValue) {
+      remainingParts.push(formatRemainingMoneyAmount(currentMoney, targetValue));
     }
-    if (currentPrestigeShares < craftingUnlockPrestige) {
-      remainingParts.push(formatRemainingPrestige(currentPrestigeShares, craftingUnlockPrestige));
+    if (currentPrestigeShares < targetPrestige) {
+      remainingParts.push(formatRemainingPrestige(currentPrestigeShares, targetPrestige));
     }
     remainingRequirementText = remainingParts.length > 0
       ? `Need ${remainingParts.join(' and ')}`
@@ -116,10 +123,10 @@ const resolveCraftingMilestone = ({
 
   return {
     id: 'wealthProduction',
-    title: getMilestoneMeta('wealthProduction', { title: 'Wealth Production' }).title,
-    description: getMilestoneMeta('wealthProduction', { description: '' }).description,
-    ctaLabel: getMilestoneMeta('wealthProduction', { ctaLabel: 'Unlock Wealth Production' }).ctaLabel,
-    previewText: getMilestoneMeta('wealthProduction', { previewText: '' }).previewText,
+    title: configCraftingMeta.title ?? 'Wealth Production',
+    description: configCraftingMeta.description ?? '',
+    ctaLabel: configCraftingMeta.ctaLabel ?? 'Unlock Wealth Production',
+    previewText: configCraftingMeta.previewText ?? '',
     unlockType: 'moneyAndPrestige',
     scope: 'run',
     currentProgressPercentage: progressPercent,
@@ -127,8 +134,8 @@ const resolveCraftingMilestone = ({
     isCurrentlyUnlocked,
     isReached,
     canRelock: true,
-    targetMoney: craftingUnlockCost,
-    targetPrestige: craftingUnlockPrestige,
+    targetValue,
+    targetPrestige,
   };
 };
 
@@ -138,14 +145,19 @@ export default function useUnlockRoadmap({
   prestigeCount,
   prestigeShares,
   isCraftingUnlocked,
-  investmentUnlockCost = gameConfig.unlockInvestmentCost,
+  currentInvestmentUnlockCost,
+  investmentUnlockCost,
   prestigeThresholdMoney = gameConfig.prestige.minMoneyForModalButton,
   craftingUnlockCost = gameConfig.unlockCraftingCost,
   craftingUnlockPrestige = gameConfig.unlockCraftingPrestige,
 } = {}) {
   return useMemo(() => {
+    const resolvedInvestmentUnlockCost = normalizeNumber(
+      currentInvestmentUnlockCost,
+      normalizeNumber(investmentUnlockCost, normalizeNumber(getMilestoneMeta('investments', {}).targetValue, gameConfig.unlockInvestmentCost))
+    );
     const milestones = [
-      resolveInvestmentMilestone({ money, isInvestmentUnlocked, investmentUnlockCost }),
+      resolveInvestmentMilestone({ money, isInvestmentUnlocked, investmentUnlockCost: resolvedInvestmentUnlockCost }),
       resolvePrestigeMilestone({ money, prestigeCount, prestigeThresholdMoney }),
       resolveCraftingMilestone({
         money,
@@ -169,6 +181,7 @@ export default function useUnlockRoadmap({
     prestigeCount,
     prestigeShares,
     isCraftingUnlocked,
+    currentInvestmentUnlockCost,
     investmentUnlockCost,
     prestigeThresholdMoney,
     craftingUnlockCost,
