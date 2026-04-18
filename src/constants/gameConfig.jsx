@@ -229,8 +229,19 @@ export function normalizeInvestmentBoostState(investment, state) {
       ? state.challengeWindowEndsAt
       : null,
     lastAdvancedAt: Number.isFinite(state.lastAdvancedAt) ? state.lastAdvancedAt : null,
-    completedAt: Number.isFinite(state.completedAt) ? state.completedAt : (boosted ? Date.now() : null),
+    completedAt: Number.isFinite(state.completedAt) ? state.completedAt : null,
   };
+}
+
+export function isInvestmentBoostCompleted(investment, state) {
+  return normalizeInvestmentBoostState(investment, state).boosted === true;
+}
+
+export function getBoostedInvestmentsProjection(
+  investmentBoostStates,
+  investments = investmentDefinitions
+) {
+  return investments.map((investment, index) => isInvestmentBoostCompleted(investment, investmentBoostStates?.[index]));
 }
 
 export function toPersistedInvestmentBoostState(state) {

@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
+  getBoostedInvestmentsProjection,
   gameConfig,
   normalizeInvestmentBoostState,
   toPersistedInvestmentBoostState,
@@ -49,7 +50,7 @@ const hydrateInvestmentBoostStates = ({
         )
         : (Number.isFinite(legacyClicks) ? legacyClicks : 0),
       boosted: legacyBoosted,
-      completedAt: legacyBoosted ? Date.now() : null,
+      completedAt: null,
     });
   });
 };
@@ -126,7 +127,7 @@ export default function useGameState() {
 
   const [clickHistory, setClickHistory] = useState([]);
 
-  const boostedInvestments = investmentBoostStatesData.map((state) => state.boosted === true);
+  const boostedInvestments = getBoostedInvestmentsProjection(investmentBoostStatesData, gameConfig.investments);
 
   const gameState = {
     money,

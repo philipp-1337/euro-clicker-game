@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { gameConfig, normalizeInvestmentBoostState } from '@constants/gameConfig';
+import { gameConfig, isInvestmentBoostCompleted, normalizeInvestmentBoostState } from '@constants/gameConfig';
 
 const getRuleTarget = (investment) => Math.max(1, investment?.boostRule?.target ?? 100);
 
@@ -114,34 +114,33 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
     const investment = gameConfig.investments[index];
 
     if (!investment || typeof setInvestmentBoostStates !== 'function') {
-      return null;
+      return;
     }
 
     const timestamp = Number.isFinite(actionContext?.timestamp)
       ? actionContext.timestamp
       : Date.now();
     const amount = Math.max(1, actionContext?.amount ?? 1);
-    let resolvedState = null;
 
     setInvestmentBoostStates((previousStates) => {
       const nextStates = [...previousStates];
       const currentState = normalizeInvestmentBoostState(investment, previousStates[index]);
 
       if (currentState.boosted) {
-        resolvedState = currentState;
         return previousStates;
       }
 
+      let nextState;
       switch (currentState.ruleType) {
         case 'timed_actions':
-          resolvedState = advanceTimedActions(currentState, investment, amount, timestamp);
+          nextState = advanceTimedActions(currentState, investment, amount, timestamp);
           break;
         case 'reserve_challenge':
-          resolvedState = advanceReserveChallenge(currentState, investment, amount, actionContext, timestamp);
+          nextState = advanceReserveChallenge(currentState, investment, amount, actionContext, timestamp);
           break;
         case 'manual_actions':
         default:
-          resolvedState = advanceManualActions(
+          nextState = advanceManualActions(
             currentState,
             getRuleTarget(investment),
             amount,
@@ -150,17 +149,20 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
           break;
       }
 
-      nextStates[index] = resolvedState;
+      nextStates[index] = nextState;
       return nextStates;
     });
-
-    return resolvedState;
   }, [setInvestmentBoostStates]);
 
   const isBoostCompleted = useCallback((index) => {
-    const state = getBoostState(index);
-    return state?.boosted === true;
-  }, [getBoostState]);
+    const investment = gameConfig.investments[index];
+
+    if (!investment) {
+      return false;
+    }
+
+    return isInvestmentBoostCompleted(investment, investmentBoostStates[index]);
+  }, [investmentBoostStates]);
 
   const getBoostProgressLabel = useCallback((index) => {
     const investment = gameConfig.investments[index];

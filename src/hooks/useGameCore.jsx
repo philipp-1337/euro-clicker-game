@@ -16,6 +16,7 @@ import useAutoBuyers from './useAutoBuyers';
 import useOfflineEarnings from './useOfflineEarnings';
 import useFloatingClick from './useFloatingClick';
 import usePremiumUpgrades from './usePremiumUpgrades';
+import useInvestmentBoosts from './useInvestmentBoosts';
 
 /**
  * Main game orchestrator hook that coordinates all game systems.
@@ -109,9 +110,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
+  const investmentBoostsHook = useInvestmentBoosts(
+    investmentBoostStates,
+    setInvestmentBoostStates
+  );
+
   // Investment system
   const { buyInvestment, totalIncomePerSecond: investmentIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
-    money, setMoney, investments, setInvestments, ensureStartTime, easyMode, boostedInvestments
+    money, setMoney, investments, setInvestments, ensureStartTime, easyMode, investmentBoostStates
   );
 
   // Crafting system
@@ -296,7 +302,10 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
     // Boosted investments
     investmentBoostStates,
-    setInvestmentBoostStates,
+    getInvestmentBoostState: investmentBoostsHook.getBoostState,
+    advanceInvestmentBoost: investmentBoostsHook.advanceBoost,
+    isInvestmentBoostCompleted: investmentBoostsHook.isBoostCompleted,
+    getInvestmentBoostProgressLabel: investmentBoostsHook.getBoostProgressLabel,
     boostedInvestments,
 
     // Crafting system

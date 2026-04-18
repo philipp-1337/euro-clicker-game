@@ -1,6 +1,5 @@
 import { formatNumber } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
-import useInvestmentBoosts from '@hooks/useInvestmentBoosts';
 import { Landmark, Unlock, Car, Zap, Sunset, Sandwich, Shirt, CarFront, Cigarette, Pill, Plane, Rocket } from 'lucide-react';
 
 const InvestmentIcon = ({ iconName }) => {
@@ -27,19 +26,14 @@ export default function Investments({
   investments,
   buyInvestment,
   investmentCostMultiplier,
-  investmentBoostStates,
-  setInvestmentBoostStates,
+  advanceInvestmentBoost,
+  getInvestmentBoostProgressLabel,
+  getInvestmentBoostState,
+  isInvestmentBoostCompleted,
   isInvestmentUnlocked,
   unlockInvestments,
   unlockInvestmentCost
 }) {
-  const {
-    advanceBoost,
-    getBoostProgressLabel,
-    getBoostState,
-    isBoostCompleted,
-  } = useInvestmentBoosts(investmentBoostStates, setInvestmentBoostStates);
-
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Investments</h2>
@@ -71,10 +65,10 @@ export default function Investments({
         gameConfig.investments.map((investment, index) => {
           const cost = investment.cost * (investmentCostMultiplier ?? 1);
           const purchased = investments[index] ? true : false;
-          const boostState = getBoostState(index);
-          const isCompleted = isBoostCompleted(index);
+          const boostState = getInvestmentBoostState(index);
+          const isCompleted = isInvestmentBoostCompleted(index);
           const displayedIncome = isCompleted ? investment.income * 2 : investment.income;
-          const progressLabel = getBoostProgressLabel(index);
+          const progressLabel = getInvestmentBoostProgressLabel(index);
 
           return (
             <div key={index} className="premium-upgrade-card">
@@ -109,7 +103,7 @@ export default function Investments({
                     {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
                   </button>
                   <button
-                    onClick={() => advanceBoost(index, { amount: 1, money })}
+                    onClick={() => advanceInvestmentBoost(index, { amount: 1, money })}
                     disabled={!purchased || isCompleted}
                     className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
                   >
