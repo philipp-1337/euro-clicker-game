@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
+  getInvestmentBoostStateKey,
   getBoostedInvestmentsProjection,
   gameConfig,
   normalizeInvestmentBoostState,
@@ -31,9 +32,20 @@ const hydrateInvestmentBoostStates = ({
   savedBoostedFlags,
   preferSavedStates = false,
 } = {}) => {
-  return gameConfig.investments.map((investment, index) => {
-    if (preferSavedStates && Array.isArray(savedBoostStates) && savedBoostStates[index]) {
-      return normalizeInvestmentBoostState(investment, savedBoostStates[index]);
+  const hydratedStates = {};
+
+  gameConfig.investments.forEach((investment, index) => {
+    const investmentId = getInvestmentBoostStateKey(investment);
+    const savedStateForInvestment = preferSavedStates
+      ? (
+        savedBoostStates?.[investmentId]
+        ?? (Array.isArray(savedBoostStates) ? savedBoostStates[index] : null)
+      )
+      : null;
+
+    if (savedStateForInvestment) {
+      hydratedStates[investmentId] = normalizeInvestmentBoostState(investment, savedStateForInvestment);
+      return;
     }
 
     const legacyBoosted = Array.isArray(savedBoostedFlags) && typeof savedBoostedFlags[index] === 'boolean'
@@ -42,7 +54,7 @@ const hydrateInvestmentBoostStates = ({
     const legacyClicksRaw = hasBrowserStorage() ? localStorage.getItem(`boostClicks-${index}`) : null;
     const legacyClicks = Number.parseInt(legacyClicksRaw ?? '', 10);
 
-    return normalizeInvestmentBoostState(investment, {
+    hydratedStates[investmentId] = normalizeInvestmentBoostState(investment, {
       currentProgress: legacyBoosted
         ? Math.max(
           Number.isFinite(legacyClicks) ? legacyClicks : 0,
@@ -53,6 +65,8 @@ const hydrateInvestmentBoostStates = ({
       completedAt: null,
     });
   });
+
+  return hydratedStates;
 };
 
 const syncLegacyInvestmentBoostStorage = (boostStates) => {
@@ -60,7 +74,8 @@ const syncLegacyInvestmentBoostStorage = (boostStates) => {
     return;
   }
 
-  boostStates.forEach((state, index) => {
+  gameConfig.investments.forEach((investment, index) => {
+    const state = boostStates?.[getInvestmentBoostStateKey(investment)] ?? normalizeInvestmentBoostState(investment);
     localStorage.setItem(`boosted-${index}`, JSON.stringify(state.boosted === true));
     localStorage.setItem(`boostClicks-${index}`, String(Math.max(0, Math.floor(state.currentProgress ?? 0))));
   });
@@ -153,7 +168,12 @@ export default function useGameState() {
     craftingItems,
     rawMaterials,
     resourcePurchaseCounts,
-    investmentBoostStates: investmentBoostStatesData.map((state) => toPersistedInvestmentBoostState(state)),
+    investmentBoostStates: Object.fromEntries(
+      Object.entries(investmentBoostStatesData).map(([investmentId, state]) => [
+        investmentId,
+        toPersistedInvestmentBoostState(state),
+      ])
+    ),
     boostedInvestments,
     prestigeShares,
     prestigeCount,
@@ -254,10 +274,14 @@ export default function useGameState() {
   const setInvestmentBoostStates = useCallback((updater) => {
     setInvestmentBoostStatesData((prevStates) => {
       const nextStatesInput = typeof updater === 'function' ? updater(prevStates) : updater;
-      const normalizedStates = gameConfig.investments.map((investment, index) => {
-        const candidateState = nextStatesInput?.[index] ?? prevStates[index];
-        return normalizeInvestmentBoostState(investment, candidateState);
-      });
+      const normalizedStates = gameConfig.investments.reduce((accumulator, investment, index) => {
+        const investmentId = getInvestmentBoostStateKey(investment);
+        const candidateState = nextStatesInput?.[investmentId]
+          ?? (Array.isArray(nextStatesInput) ? nextStatesInput[index] : null)
+          ?? prevStates[investmentId];
+        accumulator[investmentId] = normalizeInvestmentBoostState(investment, candidateState);
+        return accumulator;
+      }, {});
 
       syncLegacyInvestmentBoostStorage(normalizedStates);
       return normalizedStates;

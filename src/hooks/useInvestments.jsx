@@ -1,4 +1,8 @@
-import { gameConfig, isInvestmentBoostCompleted } from '@constants/gameConfig';
+import {
+  gameConfig,
+  getInvestmentBoostStateKey,
+  isInvestmentBoostCompleted,
+} from '@constants/gameConfig';
 
 export default function useInvestments(
   money,
@@ -7,7 +11,7 @@ export default function useInvestments(
   setInvestments,
   ensureStartTime,
   easyMode = false,
-  investmentBoostStates = []
+  investmentBoostStates = {}
 ) {
   // Kostenmultiplikator für easyMode berücksichtigen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -15,8 +19,9 @@ export default function useInvestments(
   const totalIncomePerSecond = investments.reduce(
     (total, count, index) => {
       if (count > 0) { // Investments are marked with 1 if purchased
-        let income = gameConfig.investments[index].income;
-        if (isInvestmentBoostCompleted(gameConfig.investments[index], investmentBoostStates[index])) {
+        const investment = gameConfig.investments[index];
+        let income = investment.income;
+        if (isInvestmentBoostCompleted(investment, investmentBoostStates[getInvestmentBoostStateKey(investment)])) {
           income *= 2; // Double the income if boosted
         }
         return total + income;

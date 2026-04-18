@@ -9,6 +9,7 @@ const CRAFTING_UNLOCK_PRESTIGE = 1;
 
 const investmentDefinitions = [
   {
+    id: "taxi_company",
     name: "Taxi Company",
     cost: 12750,
     income: 7,
@@ -26,6 +27,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "energy_drinks",
     name: "Energy Drinks",
     cost: 26500,
     income: 16,
@@ -44,6 +46,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "balcony_power_plants",
     name: "Balcony Power Plants",
     cost: 38200,
     income: 23.5,
@@ -61,6 +64,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "delicatessen",
     name: "Delicatessen",
     cost: 51500,
     income: 32,
@@ -79,6 +83,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "fashion_label",
     name: "Fashion Label",
     cost: 68000,
     income: 43,
@@ -97,6 +102,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "e_car_manufacturer",
     name: "E-Car Manufacturer",
     cost: 81250,
     income: 52,
@@ -114,6 +120,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "e_cigarettes",
     name: "E-Cigarettes",
     cost: 95500,
     income: 61,
@@ -132,6 +139,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "pharma",
     name: "Pharma",
     cost: 110750,
     income: 72,
@@ -150,6 +158,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "national_airline",
     name: "National Airline",
     cost: 128000,
     income: 84,
@@ -167,6 +176,7 @@ const investmentDefinitions = [
     },
   },
   {
+    id: "space_rocket_enterprises",
     name: "Space Rocket Enterprises",
     cost: 145500,
     income: 97,
@@ -186,10 +196,28 @@ const investmentDefinitions = [
   },
 ];
 
+export function getInvestmentRuleSignature(investment) {
+  const boostRule = investment?.boostRule ?? {};
+
+  return JSON.stringify({
+    version: boostRule.version ?? 1,
+    type: boostRule.type ?? "manual_actions",
+    target: boostRule.target ?? 100,
+    windowSeconds: boostRule.windowSeconds ?? null,
+    reserveMultiplier: boostRule.reserveMultiplier ?? null,
+  });
+}
+
+export function getInvestmentBoostStateKey(investmentOrId) {
+  return typeof investmentOrId === "string" ? investmentOrId : investmentOrId?.id ?? null;
+}
+
 export function createDefaultInvestmentBoostState(investment) {
   const target = Math.max(1, investment?.boostRule?.target ?? 100);
 
   return {
+    investmentId: getInvestmentBoostStateKey(investment),
+    ruleSignature: getInvestmentRuleSignature(investment),
     boosted: false,
     ruleType: investment?.boostRule?.type ?? "manual_actions",
     currentProgress: 0,
@@ -202,11 +230,22 @@ export function createDefaultInvestmentBoostState(investment) {
   };
 }
 
-export function normalizeInvestmentBoostState(investment, state) {
+export function normalizeInvestmentBoostState(investment, state, options = {}) {
   const baseState = createDefaultInvestmentBoostState(investment);
+  const now = Number.isFinite(options.now) ? options.now : Date.now();
 
   if (!state || typeof state !== "object") {
     return baseState;
+  }
+
+  const hasCompatibleRule = state.ruleSignature === baseState.ruleSignature;
+  const shouldResetIncompatibleProgress = hasCompatibleRule === false && state.boosted !== true;
+
+  if (shouldResetIncompatibleProgress) {
+    return {
+      ...baseState,
+      bestProgress: 0,
+    };
   }
 
   const normalizedProgress = Number.isFinite(state.currentProgress)
@@ -216,16 +255,29 @@ export function normalizeInvestmentBoostState(investment, state) {
     ? Math.max(0, state.bestProgress)
     : Math.max(baseState.bestProgress, normalizedProgress);
   const boosted = state.boosted === true || normalizedProgress >= baseState.requiredProgress;
+  const isExpiredTimedWindow = (
+    baseState.ruleType === "timed_actions"
+    && boosted === false
+    && Number.isFinite(state.challengeWindowEndsAt)
+    && state.challengeWindowEndsAt <= now
+  );
+  const currentProgress = isExpiredTimedWindow
+    ? 0
+    : (boosted ? baseState.requiredProgress : normalizedProgress);
 
   return {
     ...baseState,
-    currentProgress: boosted ? baseState.requiredProgress : normalizedProgress,
-    bestProgress: boosted ? baseState.requiredProgress : Math.max(normalizedBest, normalizedProgress),
+    investmentId: baseState.investmentId,
+    ruleSignature: baseState.ruleSignature,
+    currentProgress,
+    bestProgress: boosted ? baseState.requiredProgress : Math.max(normalizedBest, currentProgress),
     boosted,
     challengeWindowStartedAt: Number.isFinite(state.challengeWindowStartedAt)
+      && isExpiredTimedWindow === false
       ? state.challengeWindowStartedAt
       : null,
     challengeWindowEndsAt: Number.isFinite(state.challengeWindowEndsAt)
+      && isExpiredTimedWindow === false
       ? state.challengeWindowEndsAt
       : null,
     lastAdvancedAt: Number.isFinite(state.lastAdvancedAt) ? state.lastAdvancedAt : null,
@@ -241,11 +293,16 @@ export function getBoostedInvestmentsProjection(
   investmentBoostStates,
   investments = investmentDefinitions
 ) {
-  return investments.map((investment, index) => isInvestmentBoostCompleted(investment, investmentBoostStates?.[index]));
+  return investments.map((investment) => isInvestmentBoostCompleted(
+    investment,
+    investmentBoostStates?.[getInvestmentBoostStateKey(investment)]
+  ));
 }
 
 export function toPersistedInvestmentBoostState(state) {
   return {
+    investmentId: state?.investmentId ?? null,
+    ruleSignature: state?.ruleSignature ?? null,
     boosted: state?.boosted === true,
     currentProgress: Number.isFinite(state?.currentProgress) ? Math.max(0, state.currentProgress) : 0,
     bestProgress: Number.isFinite(state?.bestProgress) ? Math.max(0, state.bestProgress) : 0,
@@ -261,7 +318,10 @@ export function toPersistedInvestmentBoostState(state) {
 }
 
 export function createInitialInvestmentBoostStates(investments = investmentDefinitions) {
-  return investments.map((investment) => createDefaultInvestmentBoostState(investment));
+  return investments.reduce((accumulator, investment) => {
+    accumulator[getInvestmentBoostStateKey(investment)] = createDefaultInvestmentBoostState(investment);
+    return accumulator;
+  }, {});
 }
 
 export const gameConfig = {

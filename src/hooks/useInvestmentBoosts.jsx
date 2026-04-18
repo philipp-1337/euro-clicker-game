@@ -1,9 +1,18 @@
 import { useCallback } from 'react';
-import { gameConfig, isInvestmentBoostCompleted, normalizeInvestmentBoostState } from '@constants/gameConfig';
+import {
+  gameConfig,
+  getInvestmentBoostStateKey,
+  isInvestmentBoostCompleted,
+  normalizeInvestmentBoostState,
+} from '@constants/gameConfig';
 
 const getRuleTarget = (investment) => Math.max(1, investment?.boostRule?.target ?? 100);
 
 const clampProgress = (value, target) => Math.min(target, Math.max(0, value));
+
+const hasReserveChallengeContext = (actionContext) => {
+  return Number.isFinite(actionContext?.money) || Number.isFinite(actionContext?.currentMoney);
+};
 
 const buildCompletedState = (state, target, timestamp) => ({
   ...state,
@@ -99,7 +108,7 @@ const getProgressLabelForState = (investment, state) => {
   }
 };
 
-export default function useInvestmentBoosts(investmentBoostStates = [], setInvestmentBoostStates) {
+export default function useInvestmentBoosts(investmentBoostStates = {}, setInvestmentBoostStates) {
   const getBoostState = useCallback((index) => {
     const investment = gameConfig.investments[index];
 
@@ -107,7 +116,10 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
       return null;
     }
 
-    return normalizeInvestmentBoostState(investment, investmentBoostStates[index]);
+    return normalizeInvestmentBoostState(
+      investment,
+      investmentBoostStates[getInvestmentBoostStateKey(investment)]
+    );
   }, [investmentBoostStates]);
 
   const advanceBoost = useCallback((index, actionContext = {}) => {
@@ -121,10 +133,14 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
       ? actionContext.timestamp
       : Date.now();
     const amount = Math.max(1, actionContext?.amount ?? 1);
+    const investmentId = getInvestmentBoostStateKey(investment);
+
+    if (investment.boostRule?.type === 'reserve_challenge' && hasReserveChallengeContext(actionContext) === false) {
+      return;
+    }
 
     setInvestmentBoostStates((previousStates) => {
-      const nextStates = [...previousStates];
-      const currentState = normalizeInvestmentBoostState(investment, previousStates[index]);
+      const currentState = normalizeInvestmentBoostState(investment, previousStates[investmentId]);
 
       if (currentState.boosted) {
         return previousStates;
@@ -149,8 +165,10 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
           break;
       }
 
-      nextStates[index] = nextState;
-      return nextStates;
+      return {
+        ...previousStates,
+        [investmentId]: nextState,
+      };
     });
   }, [setInvestmentBoostStates]);
 
@@ -161,7 +179,10 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
       return false;
     }
 
-    return isInvestmentBoostCompleted(investment, investmentBoostStates[index]);
+    return isInvestmentBoostCompleted(
+      investment,
+      investmentBoostStates[getInvestmentBoostStateKey(investment)]
+    );
   }, [investmentBoostStates]);
 
   const getBoostProgressLabel = useCallback((index) => {
@@ -171,7 +192,10 @@ export default function useInvestmentBoosts(investmentBoostStates = [], setInves
       return '';
     }
 
-    const state = normalizeInvestmentBoostState(investment, investmentBoostStates[index]);
+    const state = normalizeInvestmentBoostState(
+      investment,
+      investmentBoostStates[getInvestmentBoostStateKey(investment)]
+    );
     return getProgressLabelForState(investment, state);
   }, [investmentBoostStates]);
 

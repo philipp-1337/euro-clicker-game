@@ -71,7 +71,7 @@ export default function Investments({
           const progressLabel = getInvestmentBoostProgressLabel(index);
 
           return (
-            <div key={index} className="premium-upgrade-card">
+            <div key={investment.id} className="premium-upgrade-card">
               <div className="premium-upgrade-header">
                 <InvestmentIcon iconName={investment.icon} />
                 <h3>
