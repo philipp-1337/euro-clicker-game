@@ -4,7 +4,6 @@ import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 
 const INVESTMENT_UNLOCK_COST = 20000;
-const PRESTIGE_UNLOCK_MONEY = 1000000000;
 const CRAFTING_UNLOCK_COST = 100000000;
 const CRAFTING_UNLOCK_PRESTIGE = 1;
 
@@ -84,7 +83,9 @@ export const gameConfig = {
       scope: "run",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isInvestmentUnlocked",
-      targetValue: INVESTMENT_UNLOCK_COST,
+      get targetValue() {
+        return gameConfig.unlockInvestmentCost;
+      },
       ctaLabel: "Unlock Investments",
       previewText: "Passive companies with their own boost path.",
     },
@@ -95,7 +96,9 @@ export const gameConfig = {
       unlockType: "money",
       scope: "career",
       availabilityStrategy: "moneyThreshold",
-      targetValue: PRESTIGE_UNLOCK_MONEY,
+      get targetValue() {
+        return gameConfig.prestige.minMoneyForModalButton;
+      },
       ctaLabel: "Reach Prestige",
       previewText: "Reset into stronger runs with persistent prestige shares.",
     },
@@ -107,8 +110,12 @@ export const gameConfig = {
       scope: "run",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isCraftingUnlocked",
-      targetValue: CRAFTING_UNLOCK_COST,
-      targetPrestige: CRAFTING_UNLOCK_PRESTIGE,
+      get targetValue() {
+        return gameConfig.unlockCraftingCost;
+      },
+      get targetPrestige() {
+        return gameConfig.unlockCraftingPrestige;
+      },
       ctaLabel: "Unlock Wealth Production",
       previewText: "Craft assets and build a post-prestige production loop.",
     },
