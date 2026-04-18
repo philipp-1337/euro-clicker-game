@@ -102,7 +102,6 @@ const hydrateCraftingProductionState = (savedCraftingProductionState) => {
     return normalizeCraftingProductionState(savedCraftingProductionState);
   }
 
-  const now = Date.now();
   const legacyCooldowns = readCraftingCooldownsFromStorage();
   const defaultState = createDefaultCraftingProductionState();
 
@@ -110,10 +109,10 @@ const hydrateCraftingProductionState = (savedCraftingProductionState) => {
     const legacyCompletionTime = legacyCooldowns[index];
     const recipeState = defaultState[recipe.id];
 
-    if (Number.isFinite(legacyCompletionTime) && legacyCompletionTime <= now) {
+    if (Number.isFinite(legacyCompletionTime)) {
       accumulator[recipe.id] = {
         ...recipeState,
-        lastCompletionAt: legacyCompletionTime,
+        lastCompletionAt: null,
         pendingOutcome: {
           recipeId: recipe.id,
           modeId: recipeState.selectedModeId,

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import {
   gameConfig,
   getCraftingProductionModeById,
@@ -26,6 +26,13 @@ export default function useCrafting(
     craftingProductionState,
     setCraftingProductionState
   );
+  const rawMaterialsRef = useRef(rawMaterials);
+  const productionStateRef = useRef(normalizeCraftingProductionState(craftingProductionState));
+  const startLocksRef = useRef({});
+  const claimLocksRef = useRef({});
+
+  rawMaterialsRef.current = rawMaterials;
+  productionStateRef.current = normalizeCraftingProductionState(craftingProductionState);
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
   // Ermöglicht den Kauf von mehreren Einheiten auf einmal
@@ -82,61 +89,70 @@ export default function useCrafting(
       return null;
     }
 
-    const hasAllMaterials = recipe.materials.every((material) =>
-      rawMaterials[material.id] >= material.quantity
-    );
-
-    if (!hasAllMaterials) {
+    if (startLocksRef.current[recipe.id]) {
       return null;
     }
 
-    const normalizedProductionState = normalizeCraftingProductionState(craftingProductionState);
-    const recipeProductionState = normalizedProductionState[recipe.id];
+    startLocksRef.current[recipe.id] = true;
 
-    if (recipeProductionState?.pendingOutcome) {
-      return null;
-    }
+    try {
+      const currentMaterials = rawMaterialsRef.current;
+      const normalizedProductionState = productionStateRef.current;
+      const recipeProductionState = normalizedProductionState[recipe.id];
 
-    const selectedMode = productionModeHook.getSelectedMode(recipe.id)
-      ?? getCraftingProductionModeById(recipe);
-    const now = Date.now();
-    const completionTime = now + (getRecipeCooldownSeconds(recipe, selectedMode?.id) * 1000);
-    const pendingOutcome = {
-      recipeId: recipe.id,
-      modeId: selectedMode?.id ?? getCraftingProductionModeById(recipe)?.id,
-      completionTime,
-      qualityBonusApplied: null,
-      rareBonusApplied: null,
-      money: null,
-    };
+      const hasAllMaterials = recipe.materials.every((material) =>
+        (currentMaterials[material.id] || 0) >= material.quantity
+      );
 
-    setCraftingProductionState((previousState) => {
-      const currentState = normalizeCraftingProductionState(previousState);
+      if (!hasAllMaterials || recipeProductionState?.pendingOutcome) {
+        return null;
+      }
 
-      return {
-        ...currentState,
+      const selectedMode = productionModeHook.getSelectedMode(recipe.id)
+        ?? getCraftingProductionModeById(recipe);
+      const now = Date.now();
+      const completionTime = now + (getRecipeCooldownSeconds(recipe, selectedMode?.id) * 1000);
+      const pendingOutcome = {
+        recipeId: recipe.id,
+        modeId: selectedMode?.id ?? getCraftingProductionModeById(recipe)?.id,
+        completionTime,
+        qualityBonusApplied: null,
+        rareBonusApplied: null,
+        money: null,
+      };
+      const nextMaterials = recipe.materials.reduce((accumulator, material) => ({
+        ...accumulator,
+        [material.id]: Math.max(0, (accumulator[material.id] || 0) - material.quantity),
+      }), { ...currentMaterials });
+      const nextProductionState = {
+        ...normalizedProductionState,
         [recipe.id]: {
-          ...currentState[recipe.id],
+          ...recipeProductionState,
           selectedModeId: pendingOutcome.modeId,
           pendingOutcome,
         },
       };
-    });
 
-    ensureStartTime?.();
+      rawMaterialsRef.current = nextMaterials;
+      productionStateRef.current = nextProductionState;
+      setRawMaterials(nextMaterials);
+      setCraftingProductionState(nextProductionState);
+      ensureStartTime?.();
 
-    return {
-      recipeId: recipe.id,
-      modeId: pendingOutcome.modeId,
-      completionTime,
-      cooldownSeconds: getRecipeCooldownSeconds(recipe, pendingOutcome.modeId),
-    };
+      return {
+        recipeId: recipe.id,
+        modeId: pendingOutcome.modeId,
+        completionTime,
+        cooldownSeconds: getRecipeCooldownSeconds(recipe, pendingOutcome.modeId),
+      };
+    } finally {
+      startLocksRef.current[recipe.id] = false;
+    }
   }, [
-    craftingProductionState,
     ensureStartTime,
     getRecipeCooldownSeconds,
     productionModeHook,
-    rawMaterials,
+    setRawMaterials,
     setCraftingProductionState,
   ]);
 
@@ -147,55 +163,59 @@ export default function useCrafting(
       return null;
     }
 
-    const claimTime = Date.now();
-    const normalizedProductionState = normalizeCraftingProductionState(craftingProductionState);
-    const recipeProductionState = normalizedProductionState[recipe.id];
-    const pendingOutcome = recipeProductionState?.pendingOutcome;
-
-    if (!pendingOutcome || !Number.isFinite(pendingOutcome.completionTime) || claimTime < pendingOutcome.completionTime) {
+    if (claimLocksRef.current[recipe.id]) {
       return null;
     }
 
-    const resolvedOutcome = productionModeHook.resolveCraftOutcome(
-      {
-        ...recipe,
-        selectedModeId: pendingOutcome.modeId ?? recipeProductionState?.selectedModeId,
-      },
-      pendingOutcome.completionTime,
-      claimTime
-    );
+    claimLocksRef.current[recipe.id] = true;
 
-    if (resolvedOutcome?.money) {
-      setMoney(prev => prev + resolvedOutcome.money);
-    }
+    try {
+      const claimTime = Date.now();
+      const normalizedProductionState = productionStateRef.current;
+      const recipeProductionState = normalizedProductionState[recipe.id];
+      const pendingOutcome = recipeProductionState?.pendingOutcome;
 
-    // Zähle gecraftete Items
-    setCraftingItems(prev => {
-      const updated = [...prev];
-      updated[index] = (updated[index] || 0) + 1;
-      return updated;
-    });
+      if (!pendingOutcome || !Number.isFinite(pendingOutcome.completionTime) || claimTime < pendingOutcome.completionTime) {
+        return null;
+      }
 
-    if (typeof setCraftingProductionState === 'function') {
-      setCraftingProductionState((previousState) => {
-        const currentState = normalizeCraftingProductionState(previousState);
+      const resolvedOutcome = productionModeHook.resolveCraftOutcome(
+        {
+          ...recipe,
+          selectedModeId: pendingOutcome.modeId ?? recipeProductionState?.selectedModeId,
+        },
+        pendingOutcome.completionTime,
+        claimTime
+      );
+      const nextProductionState = {
+        ...normalizedProductionState,
+        [recipe.id]: {
+          ...recipeProductionState,
+          selectedModeId: resolvedOutcome?.modeId ?? recipeProductionState?.selectedModeId,
+          lastCompletionAt: pendingOutcome.completionTime,
+          pendingOutcome: null,
+        },
+      };
 
-        return {
-          ...currentState,
-          [recipe.id]: {
-            ...currentState[recipe.id],
-            selectedModeId: resolvedOutcome?.modeId ?? currentState[recipe.id]?.selectedModeId,
-            lastCompletionAt: pendingOutcome.completionTime,
-            pendingOutcome: null,
-          },
-        };
+      productionStateRef.current = nextProductionState;
+      setCraftingProductionState(nextProductionState);
+
+      if (resolvedOutcome?.money) {
+        setMoney(prev => prev + resolvedOutcome.money);
+      }
+
+      setCraftingItems(prev => {
+        const updated = [...prev];
+        updated[index] = (updated[index] || 0) + 1;
+        return updated;
       });
-    }
 
-    ensureStartTime?.();
-    return resolvedOutcome;
+      ensureStartTime?.();
+      return resolvedOutcome;
+    } finally {
+      claimLocksRef.current[recipe.id] = false;
+    }
   }, [
-    craftingProductionState,
     ensureStartTime,
     productionModeHook,
     setCraftingItems,

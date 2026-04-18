@@ -235,14 +235,6 @@ export default function Crafting({
                 ) : (
                   <button
                     onClick={() => {
-                      // Rohstoffe nur hier abziehen!
-                      if (recipe && recipe.materials) {
-                        recipe.materials.forEach(material => {
-                          if (typeof rawMaterials[material.id] === 'number') {
-                            buyMaterial(material.id, -material.quantity);
-                          }
-                        });
-                      }
                       startCraftingProduction?.(index);
                     }}
                     disabled={!canCraft || isOnCooldown}
