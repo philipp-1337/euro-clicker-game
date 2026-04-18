@@ -118,9 +118,11 @@ export default function ClickerGame({
     currentFloatingClickValue,
     craftingItems,
     craftingProductionState,
-    buyCraftingItem,
     startCraftingProduction,
     claimCraftingProduction,
+    getSelectedProductionMode,
+    setSelectedProductionMode,
+    resolveCraftOutcome,
     buyMaterial,
     rawMaterials,
     resourcePurchaseCounts,
@@ -178,6 +180,18 @@ export default function ClickerGame({
       }
     }
   };
+  const hasReachedProductionPrestige = prestigeShares >= gameConfig.unlockCraftingPrestige;
+  const craftingJourneyMessage = hasReachedProductionPrestige
+    ? {
+      eyebrow: 'Post-Prestige Route',
+      title: 'Wealth Production is now your next deliberate system',
+      body: 'Prestige unlocked the production layer. Fund the tab, choose between faster and higher-value routes, and claim inside the quality window for a stronger finish.',
+    }
+    : {
+      eyebrow: 'Next Milestone',
+      title: 'First prestige opens production decisions',
+      body: 'Wealth Production is not just another payout button. It adds route choice, timing pressure, and rare premium results after prestige.',
+    };
 
   const {
     achievements,
@@ -680,9 +694,11 @@ export default function ClickerGame({
               <Crafting
                 money={money}
                 rawMaterials={rawMaterials}
-                buyCraftingItem={buyCraftingItem}
                 startCraftingProduction={startCraftingProduction}
                 claimCraftingProduction={claimCraftingProduction}
+                getSelectedProductionMode={getSelectedProductionMode}
+                setSelectedProductionMode={setSelectedProductionMode}
+                resolveCraftOutcome={resolveCraftOutcome}
                 buyMaterial={buyMaterial}
                 craftingItems={craftingItems}
                 craftingProductionState={craftingProductionState}
@@ -693,6 +709,7 @@ export default function ClickerGame({
                 unlockCrafting={unlockCrafting}
                 unlockCraftingCost={gameConfig.unlockCraftingCost}
                 accumulatedPrestigeShares={prestigeShares}
+                craftingJourneyMessage={craftingJourneyMessage}
               />
             )}
             {activeTab === 'premium' && (

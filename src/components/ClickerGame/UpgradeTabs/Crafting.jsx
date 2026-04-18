@@ -1,125 +1,96 @@
-import { useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
-import { Factory, Warehouse, Anvil, Hammer, Cpu, Unlock } from 'lucide-react';
-import { setLocalStorage } from '@utils/localStorage';
+import { Anvil, Cpu, Hammer, Unlock, Warehouse } from 'lucide-react';
+import CraftingProductionCard from './CraftingProductionCard';
 
-const COOLDOWN_KEY = 'craftingCooldowns';
-
-const getCooldownsFromProductionState = (craftingProductionState = {}) => {
-  return gameConfig.craftingRecipes.map((recipe) => {
-    const completionTime = craftingProductionState?.[recipe.id]?.pendingOutcome?.completionTime;
-    return Number.isFinite(completionTime) ? completionTime : null;
-  });
+const getMaterialIcon = (materialId) => {
+  if (materialId === 'metal') return Anvil;
+  if (materialId === 'parts') return Hammer;
+  if (materialId === 'tech') return Cpu;
+  return Warehouse;
 };
 
 export default function Crafting({
   money,
   rawMaterials,
-  buyCraftingItem,
-  startCraftingProduction,
-  claimCraftingProduction,
   buyMaterial,
+  buyQuantity = 1,
   craftingItems,
   craftingProductionState,
   resourcePurchaseCounts,
   easyMode = false,
-  buyQuantity = 1,
   isCraftingUnlocked = false,
   unlockCrafting,
   unlockCraftingCost,
   accumulatedPrestigeShares,
+  getSelectedProductionMode,
+  setSelectedProductionMode,
+  resolveCraftOutcome,
+  startCraftingProduction,
+  claimCraftingProduction,
+  craftingJourneyMessage,
 }) {
-  const [cooldowns, setCooldowns] = useState(() => getCooldownsFromProductionState(craftingProductionState));
-  const [pendingCrafts, setPendingCrafts] = useState(() => cooldowns.map(endTime => !!endTime));
-  const DEFAULT_COOLDOWN_SECONDS = gameConfig.craftingCooldownSeconds || 5;
-  const [rewardAvailable, setRewardAvailable] = useState(() => cooldowns.map((endTime) => {
-    const now = Date.now();
-    return endTime && now >= endTime;
-  }));
-
-  useEffect(() => {
-    const nextCooldowns = getCooldownsFromProductionState(craftingProductionState);
-    const now = Date.now();
-    setCooldowns(nextCooldowns);
-    setPendingCrafts(nextCooldowns.map((endTime) => Boolean(endTime)));
-    setRewardAvailable(nextCooldowns.map((endTime) => endTime && now >= endTime));
-    setLocalStorage(COOLDOWN_KEY, nextCooldowns);
-  }, [craftingProductionState]);
-
-  // Cooldown-Logik: prüft bei jedem Render, ob ein Cooldown abgelaufen ist und setzt pendingCrafts
-  useEffect(() => {
-    const now = Date.now();
-    cooldowns.forEach((endTime, index) => {
-      if (endTime && now >= endTime && pendingCrafts[index]) {
-        setPendingCrafts(prev => {
-          const next = [...prev];
-          next[index] = false;
-          return next;
-        });
-      }
-    });
-    setRewardAvailable(cooldowns.map((endTime) => endTime && now >= endTime));
-    // Intervall für Progressbar/Status
-    const interval = setInterval(() => {
-      setCooldowns(prev => [...prev]);
-    }, 250);
-    return () => clearInterval(interval);
-  }, [cooldowns, pendingCrafts]);
-
-  // Use the same cost calculation wie in useCrafting.js, inklusive easyMode
-  // Angepasst: Nutze individuellen costIncreaseFactor pro Material
   const calculateTotalCost = (material) => {
     let total = 0;
     const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
     let purchaseCount = resourcePurchaseCounts[material.id] || 0;
     const costIncreaseFactor = material.costIncreaseFactor || 1.07;
-    for (let i = 0; i < buyQuantity; i++) {
+
+    for (let index = 0; index < buyQuantity; index += 1) {
       total += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
-      purchaseCount++;
+      purchaseCount += 1;
     }
+
     return total;
   };
 
-  const availablePrestige = gameConfig.prestige.minMoneyForModalButton;
-
   if (!isCraftingUnlocked) {
     return (
-      <div className="upgrade-section premium-section">
+      <div className="upgrade-section premium-section crafting-section">
         <h2 className="section-title">Wealth Production</h2>
-        <div style={{
-          backgroundColor: '#ffc107',
-          color: '#000',
-          padding: '10px',
-          textAlign: 'center',
-          borderRadius: '5px',
-          marginBottom: '15px',
-          border: '1px solid #e0a800'
-        }}>
-          <strong>Alpha Feature:</strong> The crafting system is currently in an early alpha stage. Features may be incomplete or subject to change.
+        <div className="crafting-journey-card">
+          <span className="crafting-journey-card__eyebrow">
+            {craftingJourneyMessage?.eyebrow ?? 'Prestige Roadmap'}
+          </span>
+          <h3>{craftingJourneyMessage?.title ?? 'Turn prestige into production choices'}</h3>
+          <p>{craftingJourneyMessage?.body ?? 'Your first prestige unlocks a second layer of economy: production modes, quality timing, and stronger claim moments.'}</p>
+          <div className="crafting-journey-card__highlights">
+            <span>Choose a production route</span>
+            <span>Claim during quality windows</span>
+            <span>Hunt rare premium finishes</span>
+          </div>
         </div>
-        <div className="premium-upgrade-card">
+
+        <div className="premium-upgrade-card crafting-unlock-card">
           <div className="premium-upgrade-header">
             <Unlock className="premium-icon" />
             <h3>Unlock Wealth Production</h3>
           </div>
           <p className="premium-upgrade-description">
-            Unlock the Wealth Production tab to craft assets and earn money. Requires at least {gameConfig.unlockCraftingPrestige} Prestige. Prestige is available from {formatNumber(availablePrestige)} €.
+            Wealth Production starts after prestige and adds deliberate production choices instead of flat payouts.
+            Pick faster or higher-value routes, then claim at the right time for stronger finishes.
           </p>
+          <div className="crafting-unlock-card__requirements">
+            <div className="premium-upgrade-level">
+              Prestige required: <strong>{gameConfig.unlockCraftingPrestige}</strong> / {accumulatedPrestigeShares}
+            </div>
+            <div className="premium-upgrade-level">
+              Unlock cost: <strong>{formatNumber(unlockCraftingCost)} €</strong>
+            </div>
+          </div>
           <div className="premium-upgrade-info">
             <div className="premium-upgrade-level">
-              Status: Locked
+              Status: {accumulatedPrestigeShares >= gameConfig.unlockCraftingPrestige ? 'Ready to fund' : 'Reach prestige first'}
             </div>
-            {typeof unlockCrafting === 'function' && typeof unlockCraftingCost === 'number' && (accumulatedPrestigeShares >= gameConfig.unlockCraftingPrestige) && (
+            {typeof unlockCrafting === 'function' && typeof unlockCraftingCost === 'number' && accumulatedPrestigeShares >= gameConfig.unlockCraftingPrestige && (
               <button
                 onClick={unlockCrafting}
                 disabled={money < unlockCraftingCost}
                 className={`premium-upgrade-button ${money < unlockCraftingCost ? 'disabled' : ''}`}
               >
-                {`${formatNumber(unlockCraftingCost)} €`}
+                Unlock production routes
               </button>
             )}
-            {/* <button onClick={() => console.log(typeof accumulatedPrestigeShares === 'number')}>Log</button> */}
           </div>
         </div>
       </div>
@@ -127,145 +98,66 @@ export default function Crafting({
   }
 
   return (
-    <div className="upgrade-section premium-section">
-      <div style={{
-        backgroundColor: '#ffc107',
-        color: '#000',
-        padding: '10px',
-        textAlign: 'center',
-        borderRadius: '5px',
-        marginBottom: '15px',
-        border: '1px solid #e0a800'
-      }}>
-        <strong>Alpha Feature:</strong> The crafting system is currently in an early alpha stage. Features may be incomplete or subject to change.
-      </div>
+    <div className="upgrade-section premium-section crafting-section">
       <h2 className="section-title">Wealth Production</h2>
 
-      {/* Assets Section */}
-      <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Assets</h3>
-      <div className="assets-list">
-        {gameConfig.rawMaterials.map((mat) => {
-          const totalCost = calculateTotalCost(mat);
-          const purchaseCount = resourcePurchaseCounts[mat.id] || 0;
-          // Map material id to Lucide icon
-          const MaterialIcon =
-            mat.id === 'metal' ? Anvil :
-            mat.id === 'parts' ? Hammer :
-            mat.id === 'tech' ? Cpu :
-            Warehouse;
+      <div className="crafting-journey-card is-live">
+        <span className="crafting-journey-card__eyebrow">Production Loop</span>
+        <h3>Choose the route, then own the claim moment</h3>
+        <p>
+          Each run asks two questions: which mode fits your economy right now, and can you claim inside the quality window for a stronger finish?
+        </p>
+      </div>
+
+      <div className="crafting-materials-grid">
+        {gameConfig.rawMaterials.map((material) => {
+          const totalCost = calculateTotalCost(material);
+          const purchaseCount = resourcePurchaseCounts[material.id] || 0;
+          const MaterialIcon = getMaterialIcon(material.id);
+
           return (
-            <div key={mat.id} className="premium-upgrade-card" style={{minWidth:260, flex:'1 1 260px'}}>
+            <div key={material.id} className="premium-upgrade-card crafting-material-card">
               <div className="premium-upgrade-header">
                 <MaterialIcon className="premium-icon" />
-                <h3>{mat.name}</h3>
+                <h3>{material.name}</h3>
               </div>
-              <div className="premium-upgrade-info">
+              <div className="crafting-material-card__stats">
                 <div className="premium-upgrade-level">
-                  Owned: <strong>{rawMaterials[mat.id] || 0}</strong>
+                  Owned: <strong>{rawMaterials[material.id] || 0}</strong>
                 </div>
-                <div className="premium-upgrade-level" style={{color:'#888', fontSize:'0.95em'}}>
-                  Total purchased: {purchaseCount}
+                <div className="premium-upgrade-level">
+                  Bought so far: {purchaseCount}
                 </div>
-                <button
-                  className={`premium-upgrade-button ${money < totalCost ? 'disabled' : ''}`}
-                  disabled={money < totalCost}
-                  onClick={() => buyMaterial(mat.id, buyQuantity)}
-                >
-                  Buy {buyQuantity} for {formatNumber(totalCost)} €
-                </button>
               </div>
+              <button
+                className={`premium-upgrade-button ${money < totalCost ? 'disabled' : ''}`}
+                disabled={money < totalCost}
+                onClick={() => buyMaterial(material.id, buyQuantity)}
+              >
+                Buy {buyQuantity} for {formatNumber(totalCost)} €
+              </button>
             </div>
           );
         })}
       </div>
 
-      {/* Production Section */}
-      <h3 className="section-subtitle" style={{marginTop:32, marginBottom:12}}>Production</h3>
-      <div className="production-list">
-        {gameConfig.craftingRecipes.map((recipe, index) => {
-          const canCraft = recipe.materials.every(material => 
-            (rawMaterials[material.id] || 0) >= material.quantity
-          );
-          const materialsList = recipe.materials.map(material => 
-            `${material.quantity}x ${gameConfig.rawMaterials.find(rm => rm.id === material.id)?.name || material.id}`
-          ).join(', ');
-          const now = Date.now();
-          const cooldownEnd = cooldowns[index];
-          const costMultiplier = gameConfig.getCostMultiplier?.(easyMode) ?? 1;
-          const baseCooldown = typeof recipe.cooldownSeconds === 'number' ? recipe.cooldownSeconds : DEFAULT_COOLDOWN_SECONDS;
-          const recipeCooldown = baseCooldown * costMultiplier;
-          const isOnCooldown = cooldownEnd && now < cooldownEnd;
-          const secondsLeft = isOnCooldown ? Math.ceil((cooldownEnd - now) / 1000) : 0;
-          const isRewardReady = rewardAvailable[index];
-
-          // Progressbar-Berechnung
-          let progressPercent = 0;
-          if (isOnCooldown && cooldownEnd) {
-            const total = recipeCooldown * 1000;
-            const elapsed = total - (cooldownEnd - now);
-            progressPercent = Math.max(0, Math.min(100, (elapsed / total) * 100));
-          }
-
-          return (
-            <div key={index} className="premium-upgrade-card" style={{position:'relative', overflow:'hidden', minWidth:260, flex:'1 1 260px'}}>
-              <div className="premium-upgrade-header">
-                <Factory className="premium-icon" />
-                <h3>{recipe.name}</h3>
-              </div>
-              <p className="premium-upgrade-description">
-                <strong>Requires:</strong> {materialsList}
-              </p>
-              <p className="premium-upgrade-description">
-                <strong>Return:</strong> {formatNumber(recipe.output.money)} €
-              </p>
-              <div className="premium-upgrade-info">
-                <div className="premium-upgrade-level">
-                  Crafted: {(craftingItems && craftingItems[index]) || 0}
-                  {isOnCooldown && <span style={{marginLeft:8, color:'#888'}}>(in Produktion)</span>}
-                </div>
-                {isRewardReady ? (
-                  <button
-                    onClick={() => {
-                      claimCraftingProduction?.(index) ?? buyCraftingItem?.(index);
-                    }}
-                    className="premium-upgrade-button"
-                  >
-                    Request your Return
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      startCraftingProduction?.(index);
-                    }}
-                    disabled={!canCraft || isOnCooldown}
-                    className={`premium-upgrade-button ${(!canCraft || isOnCooldown) ? 'disabled' : ''}`}
-                  >
-                    {isOnCooldown ? `Processing (${secondsLeft}s)` : `Process${formatNumber(recipeCooldown, {decimals: 0}) !== formatNumber(DEFAULT_COOLDOWN_SECONDS, {decimals: 0}) ? ` (${formatNumber(recipeCooldown, {decimals: 0})}s)` : ''}`}
-                  </button>
-                )}
-              </div>
-              {/* Progressbar am unteren Rand der Card */}
-              {isOnCooldown && (
-                <div style={{
-                  position: 'absolute',
-                  left: 0,
-                  bottom: 0,
-                  width: '100%',
-                  height: '6px',
-                  background: '#eee',
-                  zIndex: 1
-                }}>
-                  <div style={{
-                    width: `${progressPercent}%`,
-                    height: '100%',
-                    background: 'linear-gradient(90deg, #4caf50 0%, #81c784 100%)',
-                    transition: 'width 0.25s linear'
-                  }} />
-                </div>
-              )}
-            </div>
-          );
-        })}
+      <div className="crafting-production-list">
+        {gameConfig.craftingRecipes.map((recipe, index) => (
+          <CraftingProductionCard
+            key={recipe.id}
+            index={index}
+            recipe={recipe}
+            rawMaterials={rawMaterials}
+            craftedCount={craftingItems?.[index] || 0}
+            recipeState={craftingProductionState?.[recipe.id]}
+            easyMode={easyMode}
+            getSelectedProductionMode={getSelectedProductionMode}
+            setSelectedProductionMode={setSelectedProductionMode}
+            resolveCraftOutcome={resolveCraftOutcome}
+            startCraftingProduction={startCraftingProduction}
+            claimCraftingProduction={claimCraftingProduction}
+          />
+        ))}
       </div>
     </div>
   );

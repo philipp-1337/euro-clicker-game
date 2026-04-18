@@ -238,6 +238,353 @@
   border: 1px solid #eee;
 }
 
+.crafting-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.crafting-journey-card {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(241, 196, 15, 0.18), transparent 42%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.98));
+  border: 1px solid rgba(52, 152, 219, 0.18);
+  box-shadow: 0 16px 36px rgba(26, 67, 103, 0.1);
+
+  &.is-live {
+    background:
+      radial-gradient(circle at top right, rgba(46, 204, 113, 0.16), transparent 36%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(241, 249, 244, 0.98));
+  }
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    color: map.get($colors, dark-hue);
+  }
+
+  p {
+    margin: 0;
+    color: rgba(34, 52, 68, 0.82);
+    line-height: 1.5;
+  }
+}
+
+.crafting-journey-card__eyebrow {
+  display: inline-flex;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9770e;
+}
+
+.crafting-journey-card__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+
+  span {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(52, 152, 219, 0.11);
+    color: #1f6fb2;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+}
+
+.crafting-unlock-card__requirements {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.crafting-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.crafting-material-card {
+  margin-bottom: 0;
+}
+
+.crafting-material-card__stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.crafting-production-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.crafting-production-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.98));
+  border: 1px solid rgba(52, 73, 94, 0.12);
+  box-shadow: 0 14px 32px rgba(15, 35, 52, 0.08);
+
+  &.is-pending {
+    border-color: rgba(241, 196, 15, 0.35);
+    box-shadow: 0 16px 34px rgba(241, 196, 15, 0.16);
+  }
+
+  &.is-ready {
+    border-color: rgba(46, 204, 113, 0.42);
+    box-shadow: 0 18px 38px rgba(46, 204, 113, 0.18);
+  }
+}
+
+.crafting-production-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.crafting-production-card__identity {
+  h3 {
+    margin: 0 0 6px;
+    font-size: 1.15rem;
+    color: map.get($colors, dark-hue);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(34, 52, 68, 0.72);
+  }
+}
+
+.crafting-production-card__eyebrow {
+  display: inline-flex;
+  margin-bottom: 8px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b9770e;
+}
+
+.crafting-production-card__status-pill {
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.12);
+  color: #1f6fb2;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.crafting-production-card__materials {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.crafting-production-card__material {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(52, 73, 94, 0.05);
+  font-size: 0.84rem;
+
+  strong {
+    font-size: 0.88rem;
+  }
+
+  &.is-satisfied {
+    color: #1c8b4d;
+    background: rgba(46, 204, 113, 0.12);
+  }
+
+  &.is-missing {
+    color: #9c3d2f;
+    background: rgba(231, 76, 60, 0.1);
+  }
+}
+
+.crafting-production-card__section-title {
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(34, 52, 68, 0.68);
+}
+
+.crafting-production-card__projection-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.crafting-production-card__projection {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(34, 52, 68, 0.05);
+  color: rgba(34, 52, 68, 0.84);
+
+  svg {
+    margin-top: 2px;
+    color: #1f6fb2;
+    flex-shrink: 0;
+  }
+
+  span {
+    display: block;
+    font-size: 0.78rem;
+    color: rgba(34, 52, 68, 0.65);
+  }
+
+  strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.9rem;
+    color: map.get($colors, dark-hue);
+  }
+}
+
+.crafting-production-card__hint {
+  display: flex;
+  gap: 10px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  background: rgba(52, 152, 219, 0.09);
+  color: rgba(24, 55, 83, 0.92);
+
+  svg {
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.45;
+    font-size: 0.88rem;
+  }
+}
+
+.crafting-production-card__pending-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(241, 196, 15, 0.11);
+  color: rgba(94, 63, 3, 0.92);
+
+  p {
+    margin: 0;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+}
+
+.crafting-production-card__pending-summary,
+.crafting-production-card__claim-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+
+  span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    font-size: 1rem;
+  }
+}
+
+.crafting-production-card__progress-track {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(94, 63, 3, 0.12);
+  overflow: hidden;
+}
+
+.crafting-production-card__progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #f39c12, #f1c40f);
+  transition: width 0.25s linear;
+}
+
+.crafting-production-card__claim-breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+
+  div {
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.52);
+  }
+
+  span {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: rgba(94, 63, 3, 0.72);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #6e4a02;
+  }
+}
+
+.crafting-production-card__claim-copy {
+  color: rgba(34, 52, 68, 0.82);
+}
+
+.crafting-production-card__actions {
+  display: flex;
+}
+
+@media screen and (max-width: 640px) {
+  .crafting-production-card__header,
+  .crafting-production-card__claim-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .crafting-production-card__materials,
+  .crafting-production-card__projection-grid,
+  .crafting-production-card__claim-breakdown {
+    grid-template-columns: 1fr;
+  }
+}
+
 .unlock-roadmap-card {
   margin: 0 0 16px;
   padding: 18px;

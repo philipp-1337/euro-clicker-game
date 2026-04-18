@@ -245,6 +245,84 @@
   }
 }
 
+.crafting-mode-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.crafting-mode-button {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(52, 152, 219, 0.22);
+  background: rgba(255, 255, 255, 0.92);
+  color: map.get($colors, dark-hue);
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+
+  span {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  small {
+    font-size: 0.78rem;
+    color: rgba(34, 52, 68, 0.64);
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(52, 152, 219, 0.5);
+    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.12);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(52, 152, 219, 0.2));
+    border-color: rgba(52, 152, 219, 0.58);
+    box-shadow: 0 10px 22px rgba(52, 152, 219, 0.15);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.crafting-start-button,
+.crafting-claim-button {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 14px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.crafting-start-button {
+  background: linear-gradient(135deg, #2471a3, #3498db);
+}
+
+.crafting-claim-button {
+  background: linear-gradient(135deg, #1f8f4a, #2ecc71);
+  box-shadow: 0 10px 24px rgba(46, 204, 113, 0.2);
+
+  &.is-quality {
+    background: linear-gradient(135deg, #d68910, #f1c40f);
+    color: #473100;
+    box-shadow: 0 12px 26px rgba(241, 196, 15, 0.24);
+  }
+
+  &.is-rare {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    color: map.get($colors, white);
+    box-shadow: 0 12px 26px rgba(231, 76, 60, 0.24);
+  }
+}
+
 // Modal buttons
 .modal-btn {
   @include button-base;
