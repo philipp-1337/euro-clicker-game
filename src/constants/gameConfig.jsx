@@ -3,6 +3,11 @@ import PremiumUpgrades from '@components/ClickerGame/UpgradeTabs/PremiumUpgrades
 import Investments from '@components/ClickerGame/UpgradeTabs/Investments';
 import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 
+const INVESTMENT_UNLOCK_COST = 20000;
+const PRESTIGE_UNLOCK_MONEY = 1000000000;
+const CRAFTING_UNLOCK_COST = 100000000;
+const CRAFTING_UNLOCK_PRESTIGE = 1;
+
 export const gameConfig = {
   craftingCooldownSeconds: 5, // Standard-Cooldown für Crafting (Sekunden)
   // Basis-Kosten für Upgrades
@@ -66,10 +71,48 @@ export const gameConfig = {
     { name: "Space Rocket Enterprises", cost: 145500, income: 97, icon: "Rocket" },
   ],
   
-  unlockInvestmentCost: 20000, // Kosten für die Freischaltung des Investment-Tabs
+  unlockInvestmentCost: INVESTMENT_UNLOCK_COST, // Kosten für die Freischaltung des Investment-Tabs
 
-  unlockCraftingCost: 100000000,
-  unlockCraftingPrestige: 1,
+  unlockCraftingCost: CRAFTING_UNLOCK_COST,
+  unlockCraftingPrestige: CRAFTING_UNLOCK_PRESTIGE,
+  unlockRoadmap: [
+    {
+      id: "investments",
+      title: "Investments",
+      description: "Unlock passive companies and the midgame investment tab.",
+      unlockType: "money",
+      scope: "run",
+      availabilityStrategy: "stateFlag",
+      unlockStateKey: "isInvestmentUnlocked",
+      targetValue: INVESTMENT_UNLOCK_COST,
+      ctaLabel: "Unlock Investments",
+      previewText: "Passive companies with their own boost path.",
+    },
+    {
+      id: "prestige",
+      title: "Prestige",
+      description: "Reach the first prestige threshold and open the reset loop.",
+      unlockType: "money",
+      scope: "career",
+      availabilityStrategy: "moneyThreshold",
+      targetValue: PRESTIGE_UNLOCK_MONEY,
+      ctaLabel: "Reach Prestige",
+      previewText: "Reset into stronger runs with persistent prestige shares.",
+    },
+    {
+      id: "wealthProduction",
+      title: "Wealth Production",
+      description: "Unlock crafting after your first prestige and start producing assets.",
+      unlockType: "moneyAndPrestige",
+      scope: "run",
+      availabilityStrategy: "stateFlag",
+      unlockStateKey: "isCraftingUnlocked",
+      targetValue: CRAFTING_UNLOCK_COST,
+      targetPrestige: CRAFTING_UNLOCK_PRESTIGE,
+      ctaLabel: "Unlock Wealth Production",
+      previewText: "Craft assets and build a post-prestige production loop.",
+    },
+  ],
   rawMaterials: [
     { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
     { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
@@ -289,43 +332,4 @@ export const CHECKPOINTS = [
   { value: 10000000000000, id: '10T', label: '10 Trillion €', firestoreCollection: 'leaderboard_10T' },
   { value: 100000000000000000, id: '100Q', label: '100 Quadrillion €', firestoreCollection: 'leaderboard_100Q' },
   { value: 1000000000000000000, id: '1Qi', label: '1 Quintillion €', firestoreCollection: 'leaderboard_1Qi' }
-];
-
-gameConfig.unlockRoadmap = [
-  {
-    id: "investments",
-    title: "Investments",
-    description: "Unlock passive companies and the midgame investment tab.",
-    unlockType: "money",
-    scope: "run",
-    availabilityStrategy: "stateFlag",
-    unlockStateKey: "isInvestmentUnlocked",
-    targetValue: gameConfig.unlockInvestmentCost,
-    ctaLabel: "Unlock Investments",
-    previewText: "Passive companies with their own boost path.",
-  },
-  {
-    id: "prestige",
-    title: "Prestige",
-    description: "Reach the first prestige threshold and open the reset loop.",
-    unlockType: "money",
-    scope: "career",
-    availabilityStrategy: "moneyThreshold",
-    targetValue: gameConfig.prestige.minMoneyForModalButton,
-    ctaLabel: "Reach Prestige",
-    previewText: "Reset into stronger runs with persistent prestige shares.",
-  },
-  {
-    id: "wealthProduction",
-    title: "Wealth Production",
-    description: "Unlock crafting after your first prestige and start producing assets.",
-    unlockType: "moneyAndPrestige",
-    scope: "run",
-    availabilityStrategy: "stateFlag",
-    unlockStateKey: "isCraftingUnlocked",
-    targetValue: gameConfig.unlockCraftingCost,
-    targetPrestige: gameConfig.unlockCraftingPrestige,
-    ctaLabel: "Unlock Wealth Production",
-    previewText: "Craft assets and build a post-prestige production loop.",
-  },
 ];
