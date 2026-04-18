@@ -24,7 +24,7 @@ export default function UnlockRoadmapCard({ milestone }) {
           <h3 className="unlock-roadmap-card__title">{milestone.title}</h3>
         </div>
         <span
-          className={`unlock-roadmap-card__status${milestone.status === 'unlocked' ? ' is-unlocked' : ''}`}
+          className={`unlock-roadmap-card__status${milestone.status === 'unlocked' ? ' is-unlocked' : ''}${milestone.status === 'ready' ? ' is-ready' : ''}`}
         >
           {statusLabel}
         </span>

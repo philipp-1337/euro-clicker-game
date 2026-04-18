@@ -81,12 +81,18 @@ export const gameConfig = {
       description: "Unlock passive companies and the midgame investment tab.",
       unlockType: "money",
       scope: "run",
-      progressStrategy: "singleRequirement",
+      progressStrategy: "segments",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isInvestmentUnlocked",
       targetValueOverrideKey: "unlockInvestmentCost",
       readyWhen: { type: "threshold", key: "money", target: "targetValue" },
       reachedWhen: { type: "flag", key: "isInvestmentUnlocked" },
+      progressSegments: [
+        { key: "money", target: "targetValue", start: 0, end: 100 },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+      ],
       get targetValue() {
         return gameConfig.unlockInvestmentCost;
       },
@@ -99,12 +105,18 @@ export const gameConfig = {
       description: "Reach the first prestige threshold and open the reset loop.",
       unlockType: "money",
       scope: "career",
-      progressStrategy: "singleRequirement",
+      progressStrategy: "segments",
       availabilityStrategy: "moneyThreshold",
       targetValueOverrideKey: "prestigeThresholdMoney",
       readyWhen: { type: "threshold", key: "money", target: "targetValue" },
       reachedWhen: { type: "threshold", key: "prestigeCount", value: 1 },
       readyLabel: "Ready to prestige",
+      progressSegments: [
+        { key: "money", target: "targetValue", start: 0, end: 100 },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+      ],
       get targetValue() {
         return gameConfig.prestige.minMoneyForModalButton;
       },
@@ -117,7 +129,7 @@ export const gameConfig = {
       description: "Unlock crafting after your first prestige and start producing assets.",
       unlockType: "moneyAndPrestige",
       scope: "run",
-      progressStrategy: "stagedDualRequirement",
+      progressStrategy: "segments",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isCraftingUnlocked",
       targetValueOverrideKey: "craftingUnlockCost",
@@ -127,6 +139,22 @@ export const gameConfig = {
         { type: "threshold", key: "prestigeShares", target: "targetPrestige" },
       ],
       reachedWhen: { type: "flag", key: "isCraftingUnlocked" },
+      readyLabel: "Ready to unlock",
+      progressSegments: [
+        { key: "prestigeShares", target: "targetPrestige", start: 0, end: 50 },
+        { key: "money", target: "targetValue", start: 0, end: 20 },
+        {
+          key: "money",
+          target: "targetValue",
+          start: 50,
+          end: 100,
+          requires: { type: "threshold", key: "prestigeShares", target: "targetPrestige" },
+        },
+      ],
+      remainingRequirements: [
+        { key: "money", target: "targetValue", format: "money" },
+        { key: "prestigeShares", target: "targetPrestige", format: "prestige" },
+      ],
       get targetValue() {
         return gameConfig.unlockCraftingCost;
       },

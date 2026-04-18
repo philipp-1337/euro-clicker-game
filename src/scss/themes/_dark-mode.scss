@@ -197,6 +197,12 @@ body.dark {
     color: #9ee3b6;
   }
 
+  .unlock-roadmap-card__status.is-ready {
+    background: rgba(255, 200, 87, 0.2);
+    color: #ffd989;
+    box-shadow: inset 0 0 0 1px rgba(255, 200, 87, 0.28);
+  }
+
   .unlock-roadmap-card__progress-bar {
     background: rgba(255, 255, 255, 0.12);
   }

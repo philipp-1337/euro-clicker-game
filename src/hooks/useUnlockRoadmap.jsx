@@ -7,16 +7,20 @@ const clampPercentage = (value) => Math.max(0, Math.min(100, value));
 const normalizeNumber = (value, fallback = 0) =>
   (typeof value === 'number' && Number.isFinite(value)) ? value : fallback;
 
-const formatRemainingMoney = (currentValue, targetValue) => {
-  const remaining = Math.max(0, targetValue - currentValue);
-  return remaining > 0 ? `Need ${formatNumber(remaining)} € more` : 'Ready';
-};
-
 const formatRemainingMoneyAmount = (currentValue, targetValue) =>
   `${formatNumber(Math.max(0, targetValue - currentValue))} €`;
 
 const formatRemainingPrestige = (currentPrestigeShares, targetPrestige) =>
   `${formatNumber(Math.max(0, targetPrestige - currentPrestigeShares), { decimals: 0 })} Prestige`;
+
+const CONDITION_TYPES = new Set(['flag', 'threshold']);
+const PROGRESS_STRATEGIES = new Set(['segments']);
+
+const invariant = (condition, message) => {
+  if (!condition) {
+    throw new Error(message);
+  }
+};
 
 const getTargetValue = (milestone, overrides) => {
   const overrideKey = milestone.targetValueOverrideKey;
@@ -51,6 +55,11 @@ const resolveCondition = (condition, context, milestoneState) => {
     return false;
   }
 
+  invariant(
+    CONDITION_TYPES.has(condition.type),
+    `Unsupported roadmap condition type "${condition.type}" for milestone "${milestoneState.id}".`
+  );
+
   const value = getContextValue(context, condition.key);
   if (condition.type === 'flag') {
     return Boolean(value);
@@ -62,8 +71,6 @@ const resolveCondition = (condition, context, milestoneState) => {
       : normalizeNumber(condition.value);
     return normalizeNumber(value) >= Math.max(1, target);
   }
-
-  return false;
 };
 
 const buildMilestoneState = (milestone, values) => ({
@@ -81,26 +88,50 @@ const buildMilestoneState = (milestone, values) => ({
   ...values,
 });
 
-const getSingleRequirementProgress = (context, milestone) => {
-  const thresholdCondition = Array.isArray(milestone.readyWhen)
-    ? milestone.readyWhen.find((condition) => condition.type === 'threshold')
-    : milestone.readyWhen;
-  const progressKey = thresholdCondition?.key ?? 'money';
-  const targetKey = thresholdCondition?.target ?? 'targetValue';
-  return clampPercentage(
-    (normalizeNumber(getContextValue(context, progressKey)) / Math.max(1, normalizeNumber(milestone[targetKey]))) * 100
-  );
+const getSegmentProgress = (segment, context, milestone) => {
+  const targetValue = segment.target
+    ? normalizeNumber(milestone[segment.target])
+    : normalizeNumber(segment.value);
+  const currentValue = normalizeNumber(getContextValue(context, segment.key));
+  const span = normalizeNumber(segment.end) - normalizeNumber(segment.start);
+  const normalizedProgress = clampPercentage((currentValue / Math.max(1, targetValue)) * 100) / 100;
+  return normalizedProgress * span;
 };
 
-const getStagedDualRequirementProgress = (context, milestone) => {
-  const moneyProgress = clampPercentage((normalizeNumber(getContextValue(context, 'money')) / Math.max(1, normalizeNumber(milestone.targetValue))) * 100);
-  const prestigeProgress = clampPercentage((normalizeNumber(getContextValue(context, 'prestigeShares')) / Math.max(1, normalizeNumber(milestone.targetPrestige))) * 100);
+const getSegmentsProgress = (milestone, context) => {
+  invariant(
+    Array.isArray(milestone.progressSegments) && milestone.progressSegments.length > 0,
+    `Roadmap milestone "${milestone.id}" requires at least one progress segment.`
+  );
 
-  if (prestigeProgress >= 100) {
-    return 50 + (moneyProgress * 0.5);
+  return milestone.progressSegments.reduce((totalProgress, segment) => {
+    const segmentEnabled = segment.requires
+      ? resolveCondition(segment.requires, context, milestone)
+      : true;
+    if (!segmentEnabled) {
+      return totalProgress;
+    }
+    return totalProgress + getSegmentProgress(segment, context, milestone);
+  }, 0);
+};
+
+const formatRemainingRequirement = (requirement, context, milestoneState) => {
+  const currentValue = normalizeNumber(getContextValue(context, requirement.key));
+  const targetValue = requirement.target
+    ? normalizeNumber(milestoneState[requirement.target])
+    : normalizeNumber(requirement.value);
+
+  if (requirement.format === 'money') {
+    return formatRemainingMoneyAmount(currentValue, targetValue);
   }
 
-  return (prestigeProgress * 0.5) + (moneyProgress * 0.2);
+  if (requirement.format === 'prestige') {
+    return formatRemainingPrestige(currentValue, targetValue);
+  }
+
+  throw new Error(
+    `Unsupported roadmap requirement format "${requirement.format}" for milestone "${milestoneState.id}".`
+  );
 };
 
 const formatRemainingText = (milestone, context, milestoneState) => {
@@ -110,25 +141,30 @@ const formatRemainingText = (milestone, context, milestoneState) => {
   if (milestoneState.isReady) {
     return milestone.readyLabel ?? 'Ready';
   }
-  if (milestone.unlockType === 'moneyAndPrestige') {
-    const remainingParts = [];
-    const currentMoney = normalizeNumber(getContextValue(context, 'money'));
-    const currentPrestigeShares = normalizeNumber(getContextValue(context, 'prestigeShares'));
-    if (currentMoney < milestoneState.targetValue) {
-      remainingParts.push(formatRemainingMoneyAmount(currentMoney, milestoneState.targetValue));
-    }
-    if (currentPrestigeShares < milestoneState.targetPrestige) {
-      remainingParts.push(formatRemainingPrestige(currentPrestigeShares, milestoneState.targetPrestige));
-    }
-    return remainingParts.length > 0
-      ? `Need ${remainingParts.join(' and ')}`
-      : 'Ready to unlock';
-  }
+  invariant(
+    Array.isArray(milestone.remainingRequirements) && milestone.remainingRequirements.length > 0,
+    `Roadmap milestone "${milestone.id}" requires remaining requirement metadata.`
+  );
+  const remainingParts = milestone.remainingRequirements
+    .filter((requirement) => {
+      const currentValue = normalizeNumber(getContextValue(context, requirement.key));
+      const targetValue = requirement.target
+        ? normalizeNumber(milestoneState[requirement.target])
+        : normalizeNumber(requirement.value);
+      return currentValue < targetValue;
+    })
+    .map((requirement) => formatRemainingRequirement(requirement, context, milestoneState));
 
-  return formatRemainingMoney(normalizeNumber(getContextValue(context, 'money')), milestoneState.targetValue);
+  return remainingParts.length > 0
+    ? `Need ${remainingParts.join(' and ')}`
+    : 'Ready';
 };
 
 const resolveMilestoneState = (milestone, context, overrides) => {
+  invariant(
+    PROGRESS_STRATEGIES.has(milestone.progressStrategy),
+    `Unsupported roadmap progress strategy "${milestone.progressStrategy}" for milestone "${milestone.id}".`
+  );
   const milestoneState = buildMilestoneState(milestone, {
     targetValue: getTargetValue(milestone, overrides),
     targetPrestige: getTargetPrestige(milestone, overrides),
@@ -138,9 +174,7 @@ const resolveMilestoneState = (milestone, context, overrides) => {
   const isReached = resolveCondition(milestone.reachedWhen, context, milestoneState);
   const currentProgressPercentage = isReached
     ? 100
-    : milestone.progressStrategy === 'stagedDualRequirement'
-      ? getStagedDualRequirementProgress(context, milestoneState)
-      : getSingleRequirementProgress(context, milestoneState);
+    : getSegmentsProgress(milestoneState, context);
 
   return {
     ...milestoneState,
@@ -155,28 +189,6 @@ const resolveMilestoneState = (milestone, context, overrides) => {
       isReached,
     }),
   };
-};
-
-const resolveCraftingMilestone = (milestone, context, overrides) => {
-  const resolvedMilestone = resolveMilestoneState(milestone, context, overrides);
-  let remainingRequirementText;
-  if (resolvedMilestone.isReached) {
-    remainingRequirementText = 'Unlocked';
-  } else if (resolvedMilestone.isReady) {
-    remainingRequirementText = 'Ready to unlock';
-  } else {
-    remainingRequirementText = resolvedMilestone.remainingRequirementText;
-  }
-
-  return {
-    ...resolvedMilestone,
-    remainingRequirementText,
-  };
-};
-
-const progressStrategyResolvers = {
-  stagedDualRequirement: resolveCraftingMilestone,
-  singleRequirement: resolveMilestoneState,
 };
 
 export default function useUnlockRoadmap({
@@ -205,18 +217,7 @@ export default function useUnlockRoadmap({
       craftingUnlockPrestige,
     };
     const milestones = gameConfig.unlockRoadmap.map((milestone) => {
-      const resolveMilestone = progressStrategyResolvers[milestone.progressStrategy];
-      if (!resolveMilestone) {
-        return buildMilestoneState(milestone, {
-          currentProgressPercentage: 0,
-          remainingRequirementText: '',
-          isCurrentlyUnlocked: false,
-          isReached: false,
-          canRelock: false,
-        });
-      }
-
-      return resolveMilestone(milestone, milestoneContext, milestoneOverrides);
+      return resolveMilestoneState(milestone, milestoneContext, milestoneOverrides);
     });
 
     const nextMilestone = milestones.find((milestone) => !milestone.isReached) ?? null;

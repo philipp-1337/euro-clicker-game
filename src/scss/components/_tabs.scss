@@ -222,6 +222,12 @@
   color: #1c8b4d;
 }
 
+.unlock-roadmap-card__status.is-ready {
+  background: rgba(241, 196, 15, 0.18);
+  color: #8a5a00;
+  box-shadow: inset 0 0 0 1px rgba(241, 196, 15, 0.25);
+}
+
 .unlock-roadmap-card__description,
 .unlock-roadmap-card__preview {
   margin: 0;
