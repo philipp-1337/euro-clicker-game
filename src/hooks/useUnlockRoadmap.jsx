@@ -94,7 +94,13 @@ const getSegmentProgress = (segment, context, milestone) => {
     : normalizeNumber(segment.value);
   const currentValue = normalizeNumber(getContextValue(context, segment.key));
   const span = normalizeNumber(segment.end) - normalizeNumber(segment.start);
-  const normalizedProgress = clampPercentage((currentValue / Math.max(1, targetValue)) * 100) / 100;
+  const rawProgress = clampPercentage((currentValue / Math.max(1, targetValue)) * 100) / 100;
+  const minProgress = normalizeNumber(segment.minProgress, 0);
+  const maxProgress = normalizeNumber(segment.maxProgress, 1);
+  const normalizedProgress = Math.max(
+    0,
+    Math.min(1, (rawProgress - minProgress) / Math.max(0.0001, maxProgress - minProgress))
+  );
   return normalizedProgress * span;
 };
 
@@ -172,9 +178,13 @@ const resolveMilestoneState = (milestone, context, overrides) => {
   });
   const isReady = resolveCondition(milestone.readyWhen, context, milestoneState);
   const isReached = resolveCondition(milestone.reachedWhen, context, milestoneState);
+  const runtimeMilestone = {
+    ...milestone,
+    ...milestoneState,
+  };
   const currentProgressPercentage = isReached
     ? 100
-    : getSegmentsProgress(milestoneState, context);
+    : getSegmentsProgress(runtimeMilestone, context);
 
   return {
     ...milestoneState,
