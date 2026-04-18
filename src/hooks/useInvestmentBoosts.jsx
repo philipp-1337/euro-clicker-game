@@ -9,7 +9,6 @@ const buildCompletedState = (state, target, timestamp) => ({
   ...state,
   boosted: true,
   currentProgress: target,
-  requiredProgress: target,
   bestProgress: Math.max(state.bestProgress ?? 0, target),
   completedAt: state.completedAt ?? timestamp,
   lastAdvancedAt: timestamp,
@@ -20,7 +19,6 @@ const advanceManualActions = (state, target, amount, timestamp) => {
   const nextState = {
     ...state,
     currentProgress: nextProgress,
-    requiredProgress: target,
     bestProgress: Math.max(state.bestProgress ?? 0, nextProgress),
     lastAdvancedAt: timestamp,
   };
@@ -44,7 +42,6 @@ const advanceTimedActions = (state, investment, amount, timestamp) => {
   const nextState = {
     ...state,
     currentProgress: nextProgress,
-    requiredProgress: target,
     bestProgress: Math.max(state.bestProgress ?? 0, nextProgress),
     challengeWindowStartedAt: windowStartedAt,
     challengeWindowEndsAt: windowStartedAt + windowMs,
@@ -68,7 +65,6 @@ const advanceReserveChallenge = (state, investment, amount, actionContext, times
   const nextState = {
     ...state,
     currentProgress: nextProgress,
-    requiredProgress: target,
     bestProgress: Math.max(state.bestProgress ?? 0, nextProgress),
     challengeWindowStartedAt: qualifies ? (state.challengeWindowStartedAt ?? timestamp) : null,
     challengeWindowEndsAt: null,

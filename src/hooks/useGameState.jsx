@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
 import {
-  createInitialInvestmentBoostStates,
   gameConfig,
   normalizeInvestmentBoostState,
+  toPersistedInvestmentBoostState,
 } from '@constants/gameConfig';
 
 const hasBrowserStorage = () => typeof window !== 'undefined';
@@ -25,9 +25,13 @@ const readBooleanFromStorage = (key) => {
   }
 };
 
-const hydrateInvestmentBoostStates = (savedBoostStates, savedBoostedFlags) => {
+const hydrateInvestmentBoostStates = ({
+  savedBoostStates,
+  savedBoostedFlags,
+  preferSavedStates = false,
+} = {}) => {
   return gameConfig.investments.map((investment, index) => {
-    if (Array.isArray(savedBoostStates) && savedBoostStates[index]) {
+    if (preferSavedStates && Array.isArray(savedBoostStates) && savedBoostStates[index]) {
       return normalizeInvestmentBoostState(investment, savedBoostStates[index]);
     }
 
@@ -38,7 +42,12 @@ const hydrateInvestmentBoostStates = (savedBoostStates, savedBoostedFlags) => {
     const legacyClicks = Number.parseInt(legacyClicksRaw ?? '', 10);
 
     return normalizeInvestmentBoostState(investment, {
-      currentProgress: Number.isFinite(legacyClicks) ? legacyClicks : 0,
+      currentProgress: legacyBoosted
+        ? Math.max(
+          Number.isFinite(legacyClicks) ? legacyClicks : 0,
+          investment?.boostRule?.target ?? 0
+        )
+        : (Number.isFinite(legacyClicks) ? legacyClicks : 0),
       boosted: legacyBoosted,
       completedAt: legacyBoosted ? Date.now() : null,
     });
@@ -109,10 +118,7 @@ export default function useGameState() {
   const [autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled] = useState(gameConfig.initialState.autoBuyGlobalPriceDecreaseEnabled);
 
   const [investmentBoostStatesData, setInvestmentBoostStatesData] = useState(() => {
-    return hydrateInvestmentBoostStates(
-      gameConfig.initialState.investmentBoostStates ?? createInitialInvestmentBoostStates(),
-      gameConfig.initialState.boostedInvestments
-    );
+    return hydrateInvestmentBoostStates();
   });
 
   const [prestigeShares, setPrestigeShares] = useState(gameConfig.initialState.prestigeShares);
@@ -146,7 +152,7 @@ export default function useGameState() {
     craftingItems,
     rawMaterials,
     resourcePurchaseCounts,
-    investmentBoostStates: investmentBoostStatesData,
+    investmentBoostStates: investmentBoostStatesData.map((state) => toPersistedInvestmentBoostState(state)),
     boostedInvestments,
     prestigeShares,
     prestigeCount,
@@ -228,10 +234,11 @@ export default function useGameState() {
       console.error('Error updating localStorage for clickerSave:', e);
     }
 
-    const loadedBoostStates = hydrateInvestmentBoostStates(
-      savedState.investmentBoostStates,
-      savedState.boostedInvestments
-    );
+    const loadedBoostStates = hydrateInvestmentBoostStates({
+      savedBoostStates: savedState.investmentBoostStates,
+      savedBoostedFlags: savedState.boostedInvestments,
+      preferSavedStates: Object.prototype.hasOwnProperty.call(savedState, 'investmentBoostStates'),
+    });
     syncLegacyInvestmentBoostStorage(loadedBoostStates);
     setInvestmentBoostStatesData(loadedBoostStates);
 
@@ -249,31 +256,6 @@ export default function useGameState() {
       const normalizedStates = gameConfig.investments.map((investment, index) => {
         const candidateState = nextStatesInput?.[index] ?? prevStates[index];
         return normalizeInvestmentBoostState(investment, candidateState);
-      });
-
-      syncLegacyInvestmentBoostStorage(normalizedStates);
-      return normalizedStates;
-    });
-  }, []);
-
-  const setBoostedInvestments = useCallback((updater) => {
-    setInvestmentBoostStatesData((prevStates) => {
-      const previousFlags = prevStates.map((state) => state.boosted === true);
-      const nextFlags = typeof updater === 'function' ? updater(previousFlags) : updater;
-      const normalizedStates = gameConfig.investments.map((investment, index) => {
-        const shouldBoost = Array.isArray(nextFlags) ? nextFlags[index] === true : false;
-
-        return normalizeInvestmentBoostState(investment, {
-          ...prevStates[index],
-          boosted: shouldBoost,
-          currentProgress: shouldBoost
-            ? Math.max(
-              prevStates[index]?.requiredProgress ?? 0,
-              investment?.boostRule?.target ?? 0
-            )
-            : prevStates[index]?.currentProgress ?? 0,
-          completedAt: shouldBoost ? (prevStates[index]?.completedAt ?? Date.now()) : null,
-        });
       });
 
       syncLegacyInvestmentBoostStorage(normalizedStates);
@@ -314,7 +296,6 @@ export default function useGameState() {
     investmentBoostStates: investmentBoostStatesData,
     setInvestmentBoostStates,
     boostedInvestments,
-    setBoostedInvestments,
     prestigeShares, setPrestigeShares,
     prestigeCount, setPrestigeCount,
     clickHistory, setClickHistory,

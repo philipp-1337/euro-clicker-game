@@ -212,21 +212,15 @@ export function normalizeInvestmentBoostState(investment, state) {
   const normalizedProgress = Number.isFinite(state.currentProgress)
     ? Math.max(0, state.currentProgress)
     : baseState.currentProgress;
-  const normalizedRequired = Number.isFinite(state.requiredProgress)
-    ? Math.max(1, state.requiredProgress)
-    : baseState.requiredProgress;
   const normalizedBest = Number.isFinite(state.bestProgress)
     ? Math.max(0, state.bestProgress)
     : Math.max(baseState.bestProgress, normalizedProgress);
-  const boosted = state.boosted === true || normalizedProgress >= normalizedRequired;
+  const boosted = state.boosted === true || normalizedProgress >= baseState.requiredProgress;
 
   return {
     ...baseState,
-    ...state,
-    ruleType: state.ruleType ?? baseState.ruleType,
-    currentProgress: boosted ? normalizedRequired : normalizedProgress,
-    requiredProgress: normalizedRequired,
-    bestProgress: boosted ? normalizedRequired : Math.max(normalizedBest, normalizedProgress),
+    currentProgress: boosted ? baseState.requiredProgress : normalizedProgress,
+    bestProgress: boosted ? baseState.requiredProgress : Math.max(normalizedBest, normalizedProgress),
     boosted,
     challengeWindowStartedAt: Number.isFinite(state.challengeWindowStartedAt)
       ? state.challengeWindowStartedAt
@@ -236,6 +230,22 @@ export function normalizeInvestmentBoostState(investment, state) {
       : null,
     lastAdvancedAt: Number.isFinite(state.lastAdvancedAt) ? state.lastAdvancedAt : null,
     completedAt: Number.isFinite(state.completedAt) ? state.completedAt : (boosted ? Date.now() : null),
+  };
+}
+
+export function toPersistedInvestmentBoostState(state) {
+  return {
+    boosted: state?.boosted === true,
+    currentProgress: Number.isFinite(state?.currentProgress) ? Math.max(0, state.currentProgress) : 0,
+    bestProgress: Number.isFinite(state?.bestProgress) ? Math.max(0, state.bestProgress) : 0,
+    challengeWindowStartedAt: Number.isFinite(state?.challengeWindowStartedAt)
+      ? state.challengeWindowStartedAt
+      : null,
+    challengeWindowEndsAt: Number.isFinite(state?.challengeWindowEndsAt)
+      ? state.challengeWindowEndsAt
+      : null,
+    lastAdvancedAt: Number.isFinite(state?.lastAdvancedAt) ? state.lastAdvancedAt : null,
+    completedAt: Number.isFinite(state?.completedAt) ? state.completedAt : null,
   };
 }
 

@@ -48,7 +48,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     offlineEarningsLevel, setOfflineEarningsLevel,
     criticalClickChanceLevel, setCriticalClickChanceLevel,
     initialOfflineDuration,
-    boostedInvestments, setBoostedInvestments,
+    setInvestmentBoostStates, boostedInvestments,
     prestigeShares, setPrestigeShares,
     prestigeCount, setPrestigeCount,
     setClickHistory,
@@ -205,12 +205,24 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Investment boost handler
   const handleInvestmentBoost = useCallback((investmentIndex, isBoosted) => {
-    setBoostedInvestments(prevBoosted => {
-      const newBoosted = [...(prevBoosted || Array(gameConfig.investments.length).fill(false))];
-      newBoosted[investmentIndex] = isBoosted;
-      return newBoosted;
+    setInvestmentBoostStates((previousStates) => {
+      const nextStates = [...previousStates];
+      const currentState = previousStates[investmentIndex];
+      const requiredProgress = gameConfig.investments[investmentIndex]?.boostRule?.target ?? 100;
+
+      nextStates[investmentIndex] = {
+        ...currentState,
+        boosted: isBoosted === true,
+        currentProgress: isBoosted === true
+          ? Math.max(currentState?.currentProgress ?? 0, requiredProgress)
+          : (currentState?.currentProgress ?? 0),
+        completedAt: isBoosted === true ? (currentState?.completedAt ?? Date.now()) : null,
+        lastAdvancedAt: Date.now(),
+      };
+
+      return nextStates;
     });
-  }, [setBoostedInvestments]);
+  }, [setInvestmentBoostStates]);
 
   // Save game functionality
   const { saveGame } = useLocalStorage(gameState, loadGameState);
