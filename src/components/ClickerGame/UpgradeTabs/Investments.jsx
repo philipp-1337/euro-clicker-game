@@ -114,9 +114,12 @@ export default function Investments({
                 {investment.boostHint}
               </p>
               <InvestmentBoostMeter
+                investmentId={investment.id}
                 boostState={boostState}
                 progressLabel={progressLabel}
                 challengeText={getChallengeText(investment, cost)}
+                getBoostState={getInvestmentBoostState}
+                getBoostProgressLabel={getInvestmentBoostProgressLabel}
               />
               <div className="premium-upgrade-info">
                 <div className="investment-card__status-list">

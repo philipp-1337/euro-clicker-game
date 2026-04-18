@@ -9,14 +9,23 @@ function getRemainingWindowSeconds(boostState, now) {
 }
 
 export default function InvestmentBoostMeter({
+  investmentId,
   boostState,
   progressLabel,
   challengeText,
+  getBoostState,
+  getBoostProgressLabel,
 }) {
   const [now, setNow] = useState(() => Date.now());
+  const liveBoostState = typeof getBoostState === 'function'
+    ? getBoostState(investmentId)
+    : boostState;
+  const liveProgressLabel = typeof getBoostProgressLabel === 'function'
+    ? getBoostProgressLabel(investmentId)
+    : progressLabel;
 
   useEffect(() => {
-    if (!boostState?.challengeWindowEndsAt || boostState?.boosted) {
+    if (!liveBoostState?.challengeWindowEndsAt || liveBoostState?.boosted) {
       return undefined;
     }
 
@@ -25,14 +34,14 @@ export default function InvestmentBoostMeter({
     }, 250);
 
     return () => clearInterval(intervalId);
-  }, [boostState?.boosted, boostState?.challengeWindowEndsAt]);
+  }, [liveBoostState?.boosted, liveBoostState?.challengeWindowEndsAt]);
 
-  const progress = boostState?.requiredProgress
-    ? Math.min(100, Math.max(0, (boostState.currentProgress / boostState.requiredProgress) * 100))
+  const progress = liveBoostState?.requiredProgress
+    ? Math.min(100, Math.max(0, (liveBoostState.currentProgress / liveBoostState.requiredProgress) * 100))
     : 0;
-  const remainingWindowSeconds = getRemainingWindowSeconds(boostState, now);
+  const remainingWindowSeconds = getRemainingWindowSeconds(liveBoostState, now);
   const hasActiveWindow = remainingWindowSeconds > 0;
-  const meterStateClass = boostState?.boosted
+  const meterStateClass = liveBoostState?.boosted
     ? 'is-complete'
     : hasActiveWindow
       ? 'is-active-window'
@@ -42,12 +51,12 @@ export default function InvestmentBoostMeter({
     <div className={`investment-boost-meter ${meterStateClass}`}>
       <div className="investment-boost-meter__header">
         <span className="investment-boost-meter__label">
-          {boostState?.boosted ? 'Permanent boost active' : progressLabel}
+          {liveBoostState?.boosted ? 'Permanent boost active' : liveProgressLabel}
         </span>
-        {boostState?.boosted && (
+        {liveBoostState?.boosted && (
           <span className="investment-boost-meter__badge is-complete">Completed</span>
         )}
-        {!boostState?.boosted && hasActiveWindow && (
+        {!liveBoostState?.boosted && hasActiveWindow && (
           <span className="investment-boost-meter__badge is-active">
             {remainingWindowSeconds}s left
           </span>
@@ -62,7 +71,7 @@ export default function InvestmentBoostMeter({
       </div>
 
       <p className="investment-boost-meter__challenge">
-        {boostState?.boosted ? 'Income stays permanently doubled for this investment.' : challengeText}
+        {liveBoostState?.boosted ? 'Income stays permanently doubled for this investment.' : challengeText}
       </p>
     </div>
   );
