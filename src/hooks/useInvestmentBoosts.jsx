@@ -16,6 +16,14 @@ const hasReserveChallengeContext = (actionContext) => {
   return Number.isFinite(actionContext?.availableMoney);
 };
 
+const resolveInvestment = (identifier) => {
+  if (typeof identifier === 'number') {
+    return gameConfig.investments[identifier] ?? null;
+  }
+
+  return getInvestmentById(identifier, gameConfig.investments);
+};
+
 const buildCompletedState = (state, target, timestamp) => ({
   ...state,
   boosted: true,
@@ -123,8 +131,8 @@ export default function useInvestmentBoosts(
     return getEffectiveInvestmentCost(investment);
   }, [options]);
 
-  const getBoostState = useCallback((investmentId) => {
-    const investment = getInvestmentById(investmentId, gameConfig.investments);
+  const getBoostState = useCallback((identifier) => {
+    const investment = resolveInvestment(identifier);
 
     if (!investment) {
       return null;
@@ -136,8 +144,8 @@ export default function useInvestmentBoosts(
     );
   }, [investmentBoostStates]);
 
-  const advanceBoost = useCallback((investmentId, actionContext = {}) => {
-    const investment = getInvestmentById(investmentId, gameConfig.investments);
+  const advanceBoost = useCallback((identifier, actionContext = {}) => {
+    const investment = resolveInvestment(identifier);
 
     if (!investment || typeof setInvestmentBoostStates !== 'function') {
       return;
@@ -194,8 +202,8 @@ export default function useInvestmentBoosts(
     });
   }, [resolveEffectiveCost, setInvestmentBoostStates]);
 
-  const isBoostCompleted = useCallback((investmentId) => {
-    const investment = getInvestmentById(investmentId, gameConfig.investments);
+  const isBoostCompleted = useCallback((identifier) => {
+    const investment = resolveInvestment(identifier);
 
     if (!investment) {
       return false;
@@ -207,8 +215,8 @@ export default function useInvestmentBoosts(
     );
   }, [investmentBoostStates]);
 
-  const getBoostProgressLabel = useCallback((investmentId) => {
-    const investment = getInvestmentById(investmentId, gameConfig.investments);
+  const getBoostProgressLabel = useCallback((identifier) => {
+    const investment = resolveInvestment(identifier);
 
     if (!investment) {
       return '';

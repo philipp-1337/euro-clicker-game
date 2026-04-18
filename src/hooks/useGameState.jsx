@@ -45,6 +45,15 @@ const hydrateInvestmentBoostStates = ({
       )
       : null;
 
+    if (preferSavedStates) {
+      if (savedStateForInvestment) {
+        hydratedStates[investmentId] = normalizeInvestmentBoostState(investment, savedStateForInvestment);
+      } else {
+        hydratedStates[investmentId] = normalizeInvestmentBoostState(investment);
+      }
+      return;
+    }
+
     if (savedStateForInvestment) {
       hydratedStates[investmentId] = normalizeInvestmentBoostState(investment, savedStateForInvestment);
       return;
