@@ -110,14 +110,17 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
-  const investmentBoostsHook = useInvestmentBoosts(
-    investmentBoostStates,
-    setInvestmentBoostStates
-  );
-
   // Investment system
   const { buyInvestment, totalIncomePerSecond: investmentIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
     money, setMoney, investments, setInvestments, ensureStartTime, easyMode, investmentBoostStates
+  );
+
+  const investmentBoostsHook = useInvestmentBoosts(
+    investmentBoostStates,
+    setInvestmentBoostStates,
+    {
+      getEffectiveInvestmentCost: (investment) => investment.cost * investmentCostMultiplier,
+    }
   );
 
   // Crafting system

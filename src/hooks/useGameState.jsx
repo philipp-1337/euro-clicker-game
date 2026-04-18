@@ -33,13 +33,15 @@ const hydrateInvestmentBoostStates = ({
   preferSavedStates = false,
 } = {}) => {
   const hydratedStates = {};
+  const savedStatesAreLegacyArray = Array.isArray(savedBoostStates);
 
   gameConfig.investments.forEach((investment, index) => {
     const investmentId = getInvestmentBoostStateKey(investment);
     const savedStateForInvestment = preferSavedStates
       ? (
-        savedBoostStates?.[investmentId]
-        ?? (Array.isArray(savedBoostStates) ? savedBoostStates[index] : null)
+        savedStatesAreLegacyArray
+          ? savedBoostStates[index]
+          : savedBoostStates?.[investmentId]
       )
       : null;
 
@@ -67,18 +69,6 @@ const hydrateInvestmentBoostStates = ({
   });
 
   return hydratedStates;
-};
-
-const syncLegacyInvestmentBoostStorage = (boostStates) => {
-  if (!hasBrowserStorage()) {
-    return;
-  }
-
-  gameConfig.investments.forEach((investment, index) => {
-    const state = boostStates?.[getInvestmentBoostStateKey(investment)] ?? normalizeInvestmentBoostState(investment);
-    localStorage.setItem(`boosted-${index}`, JSON.stringify(state.boosted === true));
-    localStorage.setItem(`boostClicks-${index}`, String(Math.max(0, Math.floor(state.currentProgress ?? 0))));
-  });
 };
 
 export default function useGameState() {
@@ -260,7 +250,6 @@ export default function useGameState() {
       savedBoostedFlags: savedState.boostedInvestments,
       preferSavedStates: Object.prototype.hasOwnProperty.call(savedState, 'investmentBoostStates'),
     });
-    syncLegacyInvestmentBoostStorage(loadedBoostStates);
     setInvestmentBoostStatesData(loadedBoostStates);
 
     if (savedState.lastSaved) {
@@ -282,8 +271,6 @@ export default function useGameState() {
         accumulator[investmentId] = normalizeInvestmentBoostState(investment, candidateState);
         return accumulator;
       }, {});
-
-      syncLegacyInvestmentBoostStorage(normalizedStates);
       return normalizedStates;
     });
   }, []);

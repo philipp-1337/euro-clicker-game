@@ -65,10 +65,10 @@ export default function Investments({
         gameConfig.investments.map((investment, index) => {
           const cost = investment.cost * (investmentCostMultiplier ?? 1);
           const purchased = investments[index] ? true : false;
-          const boostState = getInvestmentBoostState(index);
-          const isCompleted = isInvestmentBoostCompleted(index);
+          const boostState = getInvestmentBoostState(investment.id);
+          const isCompleted = isInvestmentBoostCompleted(investment.id);
           const displayedIncome = isCompleted ? investment.income * 2 : investment.income;
-          const progressLabel = getInvestmentBoostProgressLabel(index);
+          const progressLabel = getInvestmentBoostProgressLabel(investment.id);
 
           return (
             <div key={investment.id} className="premium-upgrade-card">
@@ -103,7 +103,7 @@ export default function Investments({
                     {purchased ? 'Purchased' : `${formatNumber(cost)} €`}
                   </button>
                   <button
-                    onClick={() => advanceInvestmentBoost(index, { amount: 1, money })}
+                    onClick={() => advanceInvestmentBoost(investment.id, { amount: 1, availableMoney: money })}
                     disabled={!purchased || isCompleted}
                     className={`premium-upgrade-button ${(!purchased || isCompleted) ? 'disabled' : ''}`}
                   >

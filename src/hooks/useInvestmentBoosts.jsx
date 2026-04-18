@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import {
   gameConfig,
+  getEffectiveInvestmentCost,
+  getInvestmentById,
   getInvestmentBoostStateKey,
   isInvestmentBoostCompleted,
   normalizeInvestmentBoostState,
@@ -11,7 +13,7 @@ const getRuleTarget = (investment) => Math.max(1, investment?.boostRule?.target 
 const clampProgress = (value, target) => Math.min(target, Math.max(0, value));
 
 const hasReserveChallengeContext = (actionContext) => {
-  return Number.isFinite(actionContext?.money) || Number.isFinite(actionContext?.currentMoney);
+  return Number.isFinite(actionContext?.availableMoney);
 };
 
 const buildCompletedState = (state, target, timestamp) => ({
@@ -62,10 +64,10 @@ const advanceTimedActions = (state, investment, amount, timestamp) => {
     : nextState;
 };
 
-const advanceReserveChallenge = (state, investment, amount, actionContext, timestamp) => {
+const advanceReserveChallenge = (state, investment, amount, actionContext, timestamp, effectiveCost) => {
   const target = getRuleTarget(investment);
-  const requiredReserve = (investment?.cost ?? 0) * (investment?.boostRule?.reserveMultiplier ?? 1);
-  const availableMoney = Number(actionContext?.money ?? actionContext?.currentMoney ?? 0);
+  const requiredReserve = effectiveCost * (investment?.boostRule?.reserveMultiplier ?? 1);
+  const availableMoney = Number(actionContext?.availableMoney ?? 0);
   const qualifies = availableMoney >= requiredReserve;
   const nextProgress = qualifies
     ? clampProgress((state.currentProgress ?? 0) + amount, target)
@@ -85,7 +87,7 @@ const advanceReserveChallenge = (state, investment, amount, actionContext, times
     : nextState;
 };
 
-const getProgressLabelForState = (investment, state) => {
+const getProgressLabelForState = (investment, state, effectiveCost) => {
   const target = state.requiredProgress ?? getRuleTarget(investment);
   const current = Math.min(state.currentProgress ?? 0, target);
 
@@ -99,7 +101,7 @@ const getProgressLabelForState = (investment, state) => {
       return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'actions'} in ${windowSeconds}s`;
     }
     case 'reserve_challenge': {
-      const reserveAmount = Math.round((investment?.cost ?? 0) * (investment?.boostRule?.reserveMultiplier ?? 1));
+      const reserveAmount = Math.round(effectiveCost * (investment?.boostRule?.reserveMultiplier ?? 1));
       return `${current}/${target} ${investment?.boostRule?.progressLabel ?? 'checks'} with ${reserveAmount} € reserve`;
     }
     case 'manual_actions':
@@ -108,9 +110,21 @@ const getProgressLabelForState = (investment, state) => {
   }
 };
 
-export default function useInvestmentBoosts(investmentBoostStates = {}, setInvestmentBoostStates) {
-  const getBoostState = useCallback((index) => {
-    const investment = gameConfig.investments[index];
+export default function useInvestmentBoosts(
+  investmentBoostStates = {},
+  setInvestmentBoostStates,
+  options = {}
+) {
+  const resolveEffectiveCost = useCallback((investment) => {
+    if (typeof options.getEffectiveInvestmentCost === 'function') {
+      return options.getEffectiveInvestmentCost(investment);
+    }
+
+    return getEffectiveInvestmentCost(investment);
+  }, [options]);
+
+  const getBoostState = useCallback((investmentId) => {
+    const investment = getInvestmentById(investmentId, gameConfig.investments);
 
     if (!investment) {
       return null;
@@ -122,8 +136,8 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
     );
   }, [investmentBoostStates]);
 
-  const advanceBoost = useCallback((index, actionContext = {}) => {
-    const investment = gameConfig.investments[index];
+  const advanceBoost = useCallback((investmentId, actionContext = {}) => {
+    const investment = getInvestmentById(investmentId, gameConfig.investments);
 
     if (!investment || typeof setInvestmentBoostStates !== 'function') {
       return;
@@ -133,14 +147,15 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
       ? actionContext.timestamp
       : Date.now();
     const amount = Math.max(1, actionContext?.amount ?? 1);
-    const investmentId = getInvestmentBoostStateKey(investment);
+    const investmentStateKey = getInvestmentBoostStateKey(investment);
+    const effectiveCost = resolveEffectiveCost(investment);
 
     if (investment.boostRule?.type === 'reserve_challenge' && hasReserveChallengeContext(actionContext) === false) {
       return;
     }
 
     setInvestmentBoostStates((previousStates) => {
-      const currentState = normalizeInvestmentBoostState(investment, previousStates[investmentId]);
+      const currentState = normalizeInvestmentBoostState(investment, previousStates[investmentStateKey]);
 
       if (currentState.boosted) {
         return previousStates;
@@ -152,7 +167,14 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
           nextState = advanceTimedActions(currentState, investment, amount, timestamp);
           break;
         case 'reserve_challenge':
-          nextState = advanceReserveChallenge(currentState, investment, amount, actionContext, timestamp);
+          nextState = advanceReserveChallenge(
+            currentState,
+            investment,
+            amount,
+            actionContext,
+            timestamp,
+            effectiveCost
+          );
           break;
         case 'manual_actions':
         default:
@@ -167,13 +189,13 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
 
       return {
         ...previousStates,
-        [investmentId]: nextState,
+        [investmentStateKey]: nextState,
       };
     });
-  }, [setInvestmentBoostStates]);
+  }, [resolveEffectiveCost, setInvestmentBoostStates]);
 
-  const isBoostCompleted = useCallback((index) => {
-    const investment = gameConfig.investments[index];
+  const isBoostCompleted = useCallback((investmentId) => {
+    const investment = getInvestmentById(investmentId, gameConfig.investments);
 
     if (!investment) {
       return false;
@@ -185,8 +207,8 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
     );
   }, [investmentBoostStates]);
 
-  const getBoostProgressLabel = useCallback((index) => {
-    const investment = gameConfig.investments[index];
+  const getBoostProgressLabel = useCallback((investmentId) => {
+    const investment = getInvestmentById(investmentId, gameConfig.investments);
 
     if (!investment) {
       return '';
@@ -196,8 +218,8 @@ export default function useInvestmentBoosts(investmentBoostStates = {}, setInves
       investment,
       investmentBoostStates[getInvestmentBoostStateKey(investment)]
     );
-    return getProgressLabelForState(investment, state);
-  }, [investmentBoostStates]);
+    return getProgressLabelForState(investment, state, resolveEffectiveCost(investment));
+  }, [investmentBoostStates, resolveEffectiveCost]);
 
   return {
     getBoostState,

@@ -212,6 +212,14 @@ export function getInvestmentBoostStateKey(investmentOrId) {
   return typeof investmentOrId === "string" ? investmentOrId : investmentOrId?.id ?? null;
 }
 
+export function getInvestmentById(investmentId, investments = investmentDefinitions) {
+  return investments.find((investment) => investment.id === investmentId) ?? null;
+}
+
+export function getEffectiveInvestmentCost(investment, costMultiplier = 1) {
+  return (investment?.cost ?? 0) * costMultiplier;
+}
+
 export function createDefaultInvestmentBoostState(investment) {
   const target = Math.max(1, investment?.boostRule?.target ?? 100);
 
