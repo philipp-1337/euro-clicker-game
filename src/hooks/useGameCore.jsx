@@ -128,6 +128,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   const {
     buyCraftingItem,
     buyMaterial,
+    startCraftingProduction,
+    claimCraftingProduction,
     getSelectedProductionMode,
     setSelectedProductionMode,
     resolveCraftOutcome,
@@ -404,6 +406,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     craftingItems,
     craftingProductionState,
     buyCraftingItem,
+    startCraftingProduction,
+    claimCraftingProduction,
     buyMaterial: wrappedBuyMaterial,
     getSelectedProductionMode,
     setSelectedProductionMode,

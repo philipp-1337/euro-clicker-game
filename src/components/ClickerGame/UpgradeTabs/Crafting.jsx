@@ -2,15 +2,35 @@ import { useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import { formatNumber } from '@utils/calculators';
 import { Factory, Warehouse, Anvil, Hammer, Cpu, Unlock } from 'lucide-react';
-import { getLocalStorage, setLocalStorage } from '@utils/localStorage';
+import { setLocalStorage } from '@utils/localStorage';
 
-export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMaterial, craftingItems, resourcePurchaseCounts, easyMode = false, buyQuantity = 1, isCraftingUnlocked = false, unlockCrafting, unlockCraftingCost, accumulatedPrestigeShares }) {
-  const COOLDOWN_KEY = 'craftingCooldowns';
-  const [cooldowns, setCooldowns] = useState(() => {
-    const loaded = getLocalStorage(COOLDOWN_KEY, []);
-    setLocalStorage(COOLDOWN_KEY, loaded);
-    return loaded;
+const COOLDOWN_KEY = 'craftingCooldowns';
+
+const getCooldownsFromProductionState = (craftingProductionState = {}) => {
+  return gameConfig.craftingRecipes.map((recipe) => {
+    const completionTime = craftingProductionState?.[recipe.id]?.pendingOutcome?.completionTime;
+    return Number.isFinite(completionTime) ? completionTime : null;
   });
+};
+
+export default function Crafting({
+  money,
+  rawMaterials,
+  buyCraftingItem,
+  startCraftingProduction,
+  claimCraftingProduction,
+  buyMaterial,
+  craftingItems,
+  craftingProductionState,
+  resourcePurchaseCounts,
+  easyMode = false,
+  buyQuantity = 1,
+  isCraftingUnlocked = false,
+  unlockCrafting,
+  unlockCraftingCost,
+  accumulatedPrestigeShares,
+}) {
+  const [cooldowns, setCooldowns] = useState(() => getCooldownsFromProductionState(craftingProductionState));
   const [pendingCrafts, setPendingCrafts] = useState(() => cooldowns.map(endTime => !!endTime));
   const DEFAULT_COOLDOWN_SECONDS = gameConfig.craftingCooldownSeconds || 5;
   const [rewardAvailable, setRewardAvailable] = useState(() => cooldowns.map((endTime) => {
@@ -18,36 +38,14 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
     return endTime && now >= endTime;
   }));
 
-  // Synchronisiere rewardAvailable bei jedem Render
   useEffect(() => {
-    const loaded = getLocalStorage(COOLDOWN_KEY, []);
+    const nextCooldowns = getCooldownsFromProductionState(craftingProductionState);
     const now = Date.now();
-    setRewardAvailable(loaded.map((endTime) => endTime && now >= endTime));
-  }, [cooldowns]);
-
-  // Synchronisiere rewardAvailable nach jedem Tab-Wechsel (Visibility API)
-  useEffect(() => {
-    const syncRewardAvailable = () => {
-      const loaded = getLocalStorage(COOLDOWN_KEY, []);
-      const now = Date.now();
-      setRewardAvailable(loaded.map((endTime) => endTime && now >= endTime));
-    };
-    document.addEventListener('visibilitychange', syncRewardAvailable);
-    return () => document.removeEventListener('visibilitychange', syncRewardAvailable);
-  }, []);
-
-  // Synchronisiere rewardAvailable nach Cloud-Import
-  useEffect(() => {
-    const onCloudImported = () => {
-      const loadedCooldowns = getLocalStorage(COOLDOWN_KEY, []);
-      const now = Date.now();
-      setRewardAvailable(loadedCooldowns.map((endTime) => endTime && now >= endTime));
-      setCooldowns(loadedCooldowns);
-      setPendingCrafts(loadedCooldowns.map(endTime => !!endTime));
-    };
-    window.addEventListener('game:cloudimported', onCloudImported);
-    return () => window.removeEventListener('game:cloudimported', onCloudImported);
-  }, [buyCraftingItem]);
+    setCooldowns(nextCooldowns);
+    setPendingCrafts(nextCooldowns.map((endTime) => Boolean(endTime)));
+    setRewardAvailable(nextCooldowns.map((endTime) => endTime && now >= endTime));
+    setLocalStorage(COOLDOWN_KEY, nextCooldowns);
+  }, [craftingProductionState]);
 
   // Cooldown-Logik: prüft bei jedem Render, ob ein Cooldown abgelaufen ist und setzt pendingCrafts
   useEffect(() => {
@@ -61,28 +59,13 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
         });
       }
     });
+    setRewardAvailable(cooldowns.map((endTime) => endTime && now >= endTime));
     // Intervall für Progressbar/Status
     const interval = setInterval(() => {
       setCooldowns(prev => [...prev]);
     }, 250);
     return () => clearInterval(interval);
   }, [cooldowns, pendingCrafts]);
-
-  // Hilfsfunktion: Startet Cooldown für Rezept-Index mit individueller Dauer und speichert im LocalStorage
-  const startCooldown = (index, seconds) => {
-    const endTime = Date.now() + seconds * 1000;
-    setCooldowns(prev => {
-      const next = [...prev];
-      next[index] = endTime;
-      setLocalStorage(COOLDOWN_KEY, next);
-      return next;
-    });
-    setPendingCrafts(prev => {
-      const next = [...prev];
-      next[index] = true;
-      return next;
-    });
-  };
 
   // Use the same cost calculation wie in useCrafting.js, inklusive easyMode
   // Angepasst: Nutze individuellen costIncreaseFactor pro Material
@@ -243,23 +226,7 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
                 {isRewardReady ? (
                   <button
                     onClick={() => {
-                      buyCraftingItem(index, true); // Reward und Counter erhöhen
-                      setCooldowns(prev => {
-                        const next = [...prev];
-                        next[index] = null;
-                        setLocalStorage(COOLDOWN_KEY, next);
-                        return next;
-                      });
-                      setPendingCrafts(prev => {
-                        const next = [...prev];
-                        next[index] = false;
-                        return next;
-                      });
-                      setRewardAvailable(prev => {
-                        const next = [...prev];
-                        next[index] = false;
-                        return next;
-                      });
+                      claimCraftingProduction?.(index) ?? buyCraftingItem?.(index);
                     }}
                     className="premium-upgrade-button"
                   >
@@ -276,7 +243,7 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
                           }
                         });
                       }
-                      startCooldown(index, recipeCooldown);
+                      startCraftingProduction?.(index);
                     }}
                     disabled={!canCraft || isOnCooldown}
                     className={`premium-upgrade-button ${(!canCraft || isOnCooldown) ? 'disabled' : ''}`}
@@ -311,4 +278,3 @@ export default function Crafting({ money, rawMaterials, buyCraftingItem, buyMate
     </div>
   );
 }
-

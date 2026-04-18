@@ -117,7 +117,10 @@ export default function ClickerGame({
     buyFloatingClickValue,
     currentFloatingClickValue,
     craftingItems,
+    craftingProductionState,
     buyCraftingItem,
+    startCraftingProduction,
+    claimCraftingProduction,
     buyMaterial,
     rawMaterials,
     resourcePurchaseCounts,
@@ -678,8 +681,11 @@ export default function ClickerGame({
                 money={money}
                 rawMaterials={rawMaterials}
                 buyCraftingItem={buyCraftingItem}
+                startCraftingProduction={startCraftingProduction}
+                claimCraftingProduction={claimCraftingProduction}
                 buyMaterial={buyMaterial}
                 craftingItems={craftingItems}
+                craftingProductionState={craftingProductionState}
                 resourcePurchaseCounts={resourcePurchaseCounts}
                 easyMode={easyMode}
                 buyQuantity={buyQuantity}

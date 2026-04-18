@@ -53,7 +53,10 @@ export default function UpgradeTabs({
   autoBuyCooldownUpgradeEnabled,
   setAutoBuyCooldownUpgradeEnabled,
   craftingItems,
+  craftingProductionState,
   buyCraftingItem,
+  startCraftingProduction,
+  claimCraftingProduction,
   rawMaterials,
   setRawMaterials,
   buyMaterial,
@@ -173,7 +176,10 @@ export default function UpgradeTabs({
           unlockCraftingCost={tab.id === 'crafting' ? gameConfig.unlockCraftingCost : undefined}
           accumulatedPrestigeShares={tab.id === 'crafting' ? accumulatedPrestigeShares : undefined}
           craftingItems={tab.id === 'crafting' ? craftingItems : undefined}
+          craftingProductionState={tab.id === 'crafting' ? craftingProductionState : undefined}
           buyCraftingItem={tab.id === 'crafting' ? buyCraftingItem : undefined}
+          startCraftingProduction={tab.id === 'crafting' ? startCraftingProduction : undefined}
+          claimCraftingProduction={tab.id === 'crafting' ? claimCraftingProduction : undefined}
           rawMaterials={tab.id === 'crafting' ? rawMaterials : undefined}
           setRawMaterials={tab.id === 'crafting' ? setRawMaterials : undefined}
           resourcePurchaseCounts={tab.id === 'crafting' ? resourcePurchaseCounts : undefined}
