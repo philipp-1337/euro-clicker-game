@@ -165,7 +165,11 @@ export default function useInvestmentBoosts(
     const effectiveCost = resolveEffectiveCost(investment);
     const trigger = actionContext?.trigger ?? 'manual';
 
-    if (investment.boostRule?.type === 'manual_actions' && trigger !== 'manual') {
+    if (
+      investment.boostRule?.type === 'manual_actions'
+      && trigger !== 'manual'
+      && PURCHASE_TRIGGERS.has(trigger) === false
+    ) {
       return;
     }
 

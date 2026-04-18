@@ -200,11 +200,20 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     handleClick(index);
   }, [ensureStartTime, handleClick]);
 
-  const propagateInvestmentBoostEvent = useCallback((eventContext) => {
-    gameConfig.investments.forEach((investment) => {
+  const propagateInvestmentBoostEvent = useCallback((eventContext, options = {}) => {
+    const includedInvestmentId = options.includeInvestmentId ?? null;
+
+    gameConfig.investments.forEach((investment, index) => {
+      const isOwned = investments[index] > 0;
+      const isIncludedForEvent = investment.id === includedInvestmentId;
+
+      if (!isOwned && !isIncludedForEvent) {
+        return;
+      }
+
       investmentBoostsHook.advanceBoost(investment.id, eventContext);
     });
-  }, [investmentBoostsHook]);
+  }, [investmentBoostsHook, investments]);
 
   const wrappedBuyInvestment = useCallback((index) => {
     const investment = gameConfig.investments[index];
@@ -212,11 +221,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
     if (money >= investmentCost && investments[index] === 0) {
       buyInvestment(index);
-      propagateInvestmentBoostEvent({
-        trigger: 'investment_purchase',
-        amount: 1,
-        availableMoney: money,
-      });
+      propagateInvestmentBoostEvent(
+        {
+          trigger: 'investment_purchase',
+          amount: 1,
+          availableMoney: money,
+        },
+        { includeInvestmentId: investment.id }
+      );
     }
   }, [buyInvestment, investmentCostMultiplier, investments, money, propagateInvestmentBoostEvent]);
 
@@ -263,7 +275,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
       buyMaterial(materialId, quantity);
       propagateInvestmentBoostEvent({
         trigger: 'material_purchase',
-        amount: quantity,
+        amount: 1,
         availableMoney: money,
       });
     }

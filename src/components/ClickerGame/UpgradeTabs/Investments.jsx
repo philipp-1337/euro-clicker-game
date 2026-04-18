@@ -45,7 +45,7 @@ export default function Investments({
         return `Make qualifying purchases while holding at least ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € in reserve.`;
       case 'manual_actions':
       default:
-        return `Use the active boost action ${boostRule.target} times to lock in the permanent income upgrade.`;
+        return `Use the boost action or make qualifying purchases ${boostRule.target} times to lock in the permanent income upgrade.`;
     }
   };
 
