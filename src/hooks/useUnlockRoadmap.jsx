@@ -7,11 +7,10 @@ const clampPercentage = (value) => Math.max(0, Math.min(100, value));
 const normalizeNumber = (value, fallback = 0) =>
   (typeof value === 'number' && Number.isFinite(value)) ? value : fallback;
 
-const getRequirementValue = (requirements, requirementKey) =>
-  normalizeNumber(requirements?.[requirementKey], 0);
-
-const formatRemainingMoney = (currentValue, targetValue) =>
-  `Need ${formatNumber(Math.max(0, targetValue - currentValue))} € more`;
+const formatRemainingMoney = (currentValue, targetValue) => {
+  const remaining = Math.max(0, targetValue - currentValue);
+  return remaining > 0 ? `Need ${formatNumber(remaining)} € more` : 'Ready';
+};
 
 const formatRemainingMoneyAmount = (currentValue, targetValue) =>
   `${formatNumber(Math.max(0, targetValue - currentValue))} €`;
@@ -19,66 +18,96 @@ const formatRemainingMoneyAmount = (currentValue, targetValue) =>
 const formatRemainingPrestige = (currentPrestigeShares, targetPrestige) =>
   `${formatNumber(Math.max(0, targetPrestige - currentPrestigeShares), { decimals: 0 })} Prestige`;
 
-const resolveMoneyMilestone = (milestone, runtimeState, requirements) => {
-  const targetMoney = getRequirementValue(requirements, milestone.requirementKey);
-  const currentMoney = normalizeNumber(runtimeState.money);
-  const isAvailableNow = milestone.availabilityStrategy === 'prestigeThreshold'
-    ? (currentMoney >= targetMoney || runtimeState.prestigeCount > 0)
-    : Boolean(runtimeState[milestone.unlockStateKey]);
+const getMilestoneMeta = (id, fallback) =>
+  gameConfig.unlockRoadmap.find((milestone) => milestone.id === id) ?? fallback;
 
-  const isReached = milestone.scope === 'career'
-    ? runtimeState.prestigeCount > 0
-    : isAvailableNow;
-
-  const progressPercent = isReached
+const resolveInvestmentMilestone = ({ money, isInvestmentUnlocked, investmentUnlockCost }) => {
+  const isCurrentlyUnlocked = Boolean(isInvestmentUnlocked);
+  const isReached = isCurrentlyUnlocked;
+  const progressPercent = isCurrentlyUnlocked
     ? 100
-    : clampPercentage((currentMoney / Math.max(1, targetMoney)) * 100);
-
-  const remainingRequirementText = isReached
-    ? (milestone.scope === 'career' && milestone.availabilityStrategy === 'prestigeThreshold' && runtimeState.prestigeCount === 0 && currentMoney >= targetMoney
-      ? 'Ready to prestige'
-      : 'Unlocked')
-    : formatRemainingMoney(currentMoney, targetMoney);
+    : clampPercentage((normalizeNumber(money) / Math.max(1, investmentUnlockCost)) * 100);
 
   return {
-    ...milestone,
-    targetMoney,
-    progressPercent,
+    id: 'investments',
+    title: getMilestoneMeta('investments', { title: 'Investments' }).title,
+    description: getMilestoneMeta('investments', { description: '' }).description,
+    ctaLabel: getMilestoneMeta('investments', { ctaLabel: 'Unlock Investments' }).ctaLabel,
+    previewText: getMilestoneMeta('investments', { previewText: '' }).previewText,
+    unlockType: 'money',
+    scope: 'run',
     currentProgressPercentage: progressPercent,
-    remainingRequirementText,
-    isCurrentlyUnlocked: isAvailableNow,
-    isAvailableNow,
+    remainingRequirementText: isCurrentlyUnlocked
+      ? 'Unlocked'
+      : formatRemainingMoney(money, investmentUnlockCost),
+    isCurrentlyUnlocked,
     isReached,
-    canRelock: milestone.scope === 'run',
+    canRelock: true,
+    targetMoney: investmentUnlockCost,
   };
 };
 
-const resolveMoneyAndPrestigeMilestone = (milestone, runtimeState, requirements) => {
-  const targetMoney = getRequirementValue(requirements, milestone.requirementKey);
-  const targetPrestige = getRequirementValue(requirements, milestone.secondaryRequirementKey);
-  const currentMoney = normalizeNumber(runtimeState.money);
-  const currentPrestigeShares = normalizeNumber(runtimeState.prestigeShares);
-  const isAvailableNow = milestone.availabilityStrategy === 'runtimeBoolean'
-    ? Boolean(runtimeState[milestone.unlockStateKey])
-    : false;
-  const isReached = isAvailableNow;
-
-  const moneyProgress = clampPercentage((currentMoney / Math.max(1, targetMoney)) * 100);
-  const prestigeProgress = clampPercentage((currentPrestigeShares / Math.max(1, targetPrestige)) * 100);
-  const progressPercent = isAvailableNow
+const resolvePrestigeMilestone = ({ money, prestigeCount, prestigeThresholdMoney }) => {
+  const currentMoney = normalizeNumber(money);
+  const hasPrestiged = normalizeNumber(prestigeCount) > 0;
+  const isCurrentlyUnlocked = currentMoney >= prestigeThresholdMoney;
+  const isReached = hasPrestiged;
+  const progressPercent = hasPrestiged
     ? 100
-    : Math.min(moneyProgress, prestigeProgress);
+    : clampPercentage((currentMoney / Math.max(1, prestigeThresholdMoney)) * 100);
 
   let remainingRequirementText;
-  if (isAvailableNow) {
+  if (hasPrestiged) {
+    remainingRequirementText = 'Unlocked';
+  } else if (isCurrentlyUnlocked) {
+    remainingRequirementText = 'Ready to prestige';
+  } else {
+    remainingRequirementText = formatRemainingMoney(currentMoney, prestigeThresholdMoney);
+  }
+
+  return {
+    id: 'prestige',
+    title: getMilestoneMeta('prestige', { title: 'Prestige' }).title,
+    description: getMilestoneMeta('prestige', { description: '' }).description,
+    ctaLabel: getMilestoneMeta('prestige', { ctaLabel: 'Reach Prestige' }).ctaLabel,
+    previewText: getMilestoneMeta('prestige', { previewText: '' }).previewText,
+    unlockType: 'money',
+    scope: 'career',
+    currentProgressPercentage: progressPercent,
+    remainingRequirementText,
+    isCurrentlyUnlocked,
+    isReached,
+    canRelock: false,
+    targetMoney: prestigeThresholdMoney,
+  };
+};
+
+const resolveCraftingMilestone = ({
+  money,
+  prestigeShares,
+  isCraftingUnlocked,
+  craftingUnlockCost,
+  craftingUnlockPrestige,
+}) => {
+  const currentMoney = normalizeNumber(money);
+  const currentPrestigeShares = normalizeNumber(prestigeShares);
+  const isCurrentlyUnlocked = Boolean(isCraftingUnlocked);
+  const isReached = isCurrentlyUnlocked;
+
+  const moneyProgress = clampPercentage((currentMoney / Math.max(1, craftingUnlockCost)) * 100);
+  const prestigeProgress = clampPercentage((currentPrestigeShares / Math.max(1, craftingUnlockPrestige)) * 100);
+  const progressPercent = isCurrentlyUnlocked ? 100 : Math.min(moneyProgress, prestigeProgress);
+
+  let remainingRequirementText;
+  if (isCurrentlyUnlocked) {
     remainingRequirementText = 'Unlocked';
   } else {
     const remainingParts = [];
-    if (currentMoney < targetMoney) {
-      remainingParts.push(formatRemainingMoneyAmount(currentMoney, targetMoney));
+    if (currentMoney < craftingUnlockCost) {
+      remainingParts.push(formatRemainingMoneyAmount(currentMoney, craftingUnlockCost));
     }
-    if (currentPrestigeShares < targetPrestige) {
-      remainingParts.push(formatRemainingPrestige(currentPrestigeShares, targetPrestige));
+    if (currentPrestigeShares < craftingUnlockPrestige) {
+      remainingParts.push(formatRemainingPrestige(currentPrestigeShares, craftingUnlockPrestige));
     }
     remainingRequirementText = remainingParts.length > 0
       ? `Need ${remainingParts.join(' and ')}`
@@ -86,40 +115,21 @@ const resolveMoneyAndPrestigeMilestone = (milestone, runtimeState, requirements)
   }
 
   return {
-    ...milestone,
-    targetMoney,
-    targetPrestige,
-    progressPercent,
+    id: 'wealthProduction',
+    title: getMilestoneMeta('wealthProduction', { title: 'Wealth Production' }).title,
+    description: getMilestoneMeta('wealthProduction', { description: '' }).description,
+    ctaLabel: getMilestoneMeta('wealthProduction', { ctaLabel: 'Unlock Wealth Production' }).ctaLabel,
+    previewText: getMilestoneMeta('wealthProduction', { previewText: '' }).previewText,
+    unlockType: 'moneyAndPrestige',
+    scope: 'run',
     currentProgressPercentage: progressPercent,
     remainingRequirementText,
-    isCurrentlyUnlocked: isAvailableNow,
-    isAvailableNow,
+    isCurrentlyUnlocked,
     isReached,
-    canRelock: milestone.scope === 'run',
+    canRelock: true,
+    targetMoney: craftingUnlockCost,
+    targetPrestige: craftingUnlockPrestige,
   };
-};
-
-const resolverByUnlockType = {
-  money: resolveMoneyMilestone,
-  moneyAndPrestige: resolveMoneyAndPrestigeMilestone,
-};
-
-const resolveMilestone = (milestone, runtimeState, requirements) => {
-  const resolver = resolverByUnlockType[milestone.unlockType];
-  if (!resolver) {
-    return {
-      ...milestone,
-      progressPercent: 0,
-      currentProgressPercentage: 0,
-      remainingRequirementText: 'Unavailable',
-      isCurrentlyUnlocked: false,
-      isAvailableNow: false,
-      isReached: false,
-      canRelock: milestone.scope === 'run',
-    };
-  }
-
-  return resolver(milestone, runtimeState, requirements);
 };
 
 export default function useUnlockRoadmap({
@@ -128,24 +138,27 @@ export default function useUnlockRoadmap({
   prestigeCount,
   prestigeShares,
   isCraftingUnlocked,
-  requirements = {},
+  investmentUnlockCost = gameConfig.unlockInvestmentCost,
+  prestigeThresholdMoney = gameConfig.prestige.minMoneyForModalButton,
+  craftingUnlockCost = gameConfig.unlockCraftingCost,
+  craftingUnlockPrestige = gameConfig.unlockCraftingPrestige,
 } = {}) {
   return useMemo(() => {
-    const roadmap = Array.isArray(gameConfig.unlockRoadmap) ? gameConfig.unlockRoadmap : [];
-    const runtimeState = {
-      money,
-      isInvestmentUnlocked: Boolean(isInvestmentUnlocked),
-      prestigeCount: normalizeNumber(prestigeCount),
-      prestigeShares: normalizeNumber(prestigeShares),
-      isCraftingUnlocked: Boolean(isCraftingUnlocked),
-    };
+    const milestones = [
+      resolveInvestmentMilestone({ money, isInvestmentUnlocked, investmentUnlockCost }),
+      resolvePrestigeMilestone({ money, prestigeCount, prestigeThresholdMoney }),
+      resolveCraftingMilestone({
+        money,
+        prestigeShares,
+        isCraftingUnlocked,
+        craftingUnlockCost,
+        craftingUnlockPrestige,
+      }),
+    ];
 
-    const resolvedMilestones = roadmap.map((milestone) => resolveMilestone(milestone, runtimeState, requirements));
-    const nextMilestone = resolvedMilestones.find((milestone) => !milestone.isReached) ?? null;
+    const nextMilestone = milestones.find((milestone) => !milestone.isReached) ?? null;
 
     return {
-      milestones: resolvedMilestones,
-      resolvedMilestones,
       nextMilestone,
       hasNextMilestone: Boolean(nextMilestone),
       roadmapComplete: !nextMilestone,
@@ -156,6 +169,9 @@ export default function useUnlockRoadmap({
     prestigeCount,
     prestigeShares,
     isCraftingUnlocked,
-    requirements,
+    investmentUnlockCost,
+    prestigeThresholdMoney,
+    craftingUnlockCost,
+    craftingUnlockPrestige,
   ]);
 }
