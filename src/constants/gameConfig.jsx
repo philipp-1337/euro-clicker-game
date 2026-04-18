@@ -81,8 +81,12 @@ export const gameConfig = {
       description: "Unlock passive companies and the midgame investment tab.",
       unlockType: "money",
       scope: "run",
+      progressStrategy: "singleRequirement",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isInvestmentUnlocked",
+      targetValueOverrideKey: "unlockInvestmentCost",
+      readyWhen: { type: "threshold", key: "money", target: "targetValue" },
+      reachedWhen: { type: "flag", key: "isInvestmentUnlocked" },
       get targetValue() {
         return gameConfig.unlockInvestmentCost;
       },
@@ -95,7 +99,12 @@ export const gameConfig = {
       description: "Reach the first prestige threshold and open the reset loop.",
       unlockType: "money",
       scope: "career",
+      progressStrategy: "singleRequirement",
       availabilityStrategy: "moneyThreshold",
+      targetValueOverrideKey: "prestigeThresholdMoney",
+      readyWhen: { type: "threshold", key: "money", target: "targetValue" },
+      reachedWhen: { type: "threshold", key: "prestigeCount", value: 1 },
+      readyLabel: "Ready to prestige",
       get targetValue() {
         return gameConfig.prestige.minMoneyForModalButton;
       },
@@ -108,8 +117,16 @@ export const gameConfig = {
       description: "Unlock crafting after your first prestige and start producing assets.",
       unlockType: "moneyAndPrestige",
       scope: "run",
+      progressStrategy: "stagedDualRequirement",
       availabilityStrategy: "stateFlag",
       unlockStateKey: "isCraftingUnlocked",
+      targetValueOverrideKey: "craftingUnlockCost",
+      targetPrestigeOverrideKey: "craftingUnlockPrestige",
+      readyWhen: [
+        { type: "threshold", key: "money", target: "targetValue" },
+        { type: "threshold", key: "prestigeShares", target: "targetPrestige" },
+      ],
+      reachedWhen: { type: "flag", key: "isCraftingUnlocked" },
       get targetValue() {
         return gameConfig.unlockCraftingCost;
       },

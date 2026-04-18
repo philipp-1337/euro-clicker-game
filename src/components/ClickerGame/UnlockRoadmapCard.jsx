@@ -7,8 +7,10 @@ export default function UnlockRoadmapCard({ milestone }) {
     0,
     Math.min(100, Math.round(milestone.currentProgressPercentage ?? 0))
   );
-  const statusLabel = milestone.isCurrentlyUnlocked
+  const statusLabel = milestone.status === 'unlocked'
     ? 'Unlocked'
+    : milestone.status === 'ready'
+      ? 'Ready now'
     : `Next step: ${milestone.ctaLabel}`;
 
   return (
@@ -22,7 +24,7 @@ export default function UnlockRoadmapCard({ milestone }) {
           <h3 className="unlock-roadmap-card__title">{milestone.title}</h3>
         </div>
         <span
-          className={`unlock-roadmap-card__status${milestone.isCurrentlyUnlocked ? ' is-unlocked' : ''}`}
+          className={`unlock-roadmap-card__status${milestone.status === 'unlocked' ? ' is-unlocked' : ''}`}
         >
           {statusLabel}
         </span>
