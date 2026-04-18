@@ -17,6 +17,7 @@ import useOfflineEarnings from './useOfflineEarnings';
 import useFloatingClick from './useFloatingClick';
 import usePremiumUpgrades from './usePremiumUpgrades';
 import useInvestmentBoosts from './useInvestmentBoosts';
+import { calculateCostWithDifficulty } from '@utils/calculators';
 
 /**
  * Main game orchestrator hook that coordinates all game systems.
@@ -253,6 +254,89 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     }
   }, [buyManager, managers, money, propagateInvestmentBoostEvent]);
 
+  const getTotalValueUpgradeCost = useCallback((index, quantity = 1) => {
+    let totalCalculatedCost = 0;
+    const normalizedQuantity = Math.max(1, quantity);
+    const currentLevel = valueUpgradeLevels[index] ?? 0;
+
+    for (let step = 0; step < normalizedQuantity; step += 1) {
+      totalCalculatedCost += calculateCostWithDifficulty(
+        gameConfig.baseValueUpgradeCosts[index],
+        currentLevel + step,
+        gameConfig.upgrades.costIncreaseFactor,
+        easyMode,
+        gameConfig.getCostMultiplier
+      ) * globalPriceDecrease;
+    }
+
+    return totalCalculatedCost;
+  }, [easyMode, globalPriceDecrease, valueUpgradeLevels]);
+
+  const getTotalCooldownUpgradeCost = useCallback((index, quantity = 1) => {
+    let totalCalculatedCost = 0;
+    const normalizedQuantity = Math.max(1, quantity);
+    const currentLevel = cooldownUpgradeLevels[index] ?? 0;
+
+    for (let step = 0; step < normalizedQuantity; step += 1) {
+      totalCalculatedCost += calculateCostWithDifficulty(
+        gameConfig.baseCooldownUpgradeCosts[index],
+        currentLevel + step,
+        gameConfig.upgrades.costIncreaseFactor,
+        easyMode,
+        gameConfig.getCostMultiplier
+      ) * globalPriceDecrease;
+    }
+
+    return totalCalculatedCost;
+  }, [cooldownUpgradeLevels, easyMode, globalPriceDecrease]);
+
+  const wrappedBuyValueUpgrade = useCallback((index, quantity = 1) => {
+    const normalizedQuantity = Math.max(1, quantity);
+    const totalCost = getTotalValueUpgradeCost(index, normalizedQuantity);
+
+    if (money < totalCost) {
+      return;
+    }
+
+    buyValueUpgrade(index, normalizedQuantity);
+    propagateInvestmentBoostEvent({
+      trigger: 'upgrade_purchase',
+      amount: normalizedQuantity,
+      availableMoney: money,
+    });
+  }, [buyValueUpgrade, getTotalValueUpgradeCost, money, propagateInvestmentBoostEvent]);
+
+  const wrappedBuyCooldownUpgrade = useCallback((index, quantity = 1) => {
+    const normalizedQuantity = Math.max(1, quantity);
+    const totalCost = getTotalCooldownUpgradeCost(index, normalizedQuantity);
+
+    if (money < totalCost) {
+      return;
+    }
+
+    buyCooldownUpgrade(index, normalizedQuantity);
+    propagateInvestmentBoostEvent({
+      trigger: 'upgrade_purchase',
+      amount: normalizedQuantity,
+      availableMoney: money,
+    });
+  }, [buyCooldownUpgrade, getTotalCooldownUpgradeCost, money, propagateInvestmentBoostEvent]);
+
+  const wrappedPremiumUpgradePurchase = useCallback((buyFn, totalCost, quantity = 1) => {
+    const normalizedQuantity = Math.max(1, quantity);
+
+    if (!(money >= totalCost)) {
+      return;
+    }
+
+    buyFn(normalizedQuantity);
+    propagateInvestmentBoostEvent({
+      trigger: 'upgrade_purchase',
+      amount: normalizedQuantity,
+      availableMoney: money,
+    });
+  }, [money, propagateInvestmentBoostEvent]);
+
   const getMaterialPurchaseCost = useCallback((materialId, quantity) => {
     const material = gameConfig.rawMaterials.find((entry) => entry.id === materialId);
 
@@ -339,8 +423,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     // Core functions
     handleClick: wrappedHandleClick,
     buyManager: wrappedBuyManager,
-    buyValueUpgrade,
-    buyCooldownUpgrade,
+    buyValueUpgrade: wrappedBuyValueUpgrade,
+    buyCooldownUpgrade: wrappedBuyCooldownUpgrade,
     unlockInvestments,
     buyInvestment: wrappedBuyInvestment,
     saveGame,
@@ -348,6 +432,56 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
     // Premium upgrades
     ...premiumUpgradesHook,
+    buyGlobalMultiplier: (quantity = 1) => wrappedPremiumUpgradePurchase(
+      premiumUpgradesHook.buyGlobalMultiplier,
+      premiumUpgradesHook.calculateGlobalMultiplierCost(
+        globalMultiplierLevel,
+        Math.max(1, quantity),
+        gameConfig,
+        costMultiplier
+      ),
+      quantity
+    ),
+    buyGlobalPriceDecrease: (quantity = 1) => wrappedPremiumUpgradePurchase(
+      premiumUpgradesHook.buyGlobalPriceDecrease,
+      premiumUpgradesHook.calculateGlobalPriceDecreaseCost(
+        globalPriceDecreaseLevel,
+        Math.max(1, quantity),
+        gameConfig,
+        costMultiplier
+      ),
+      quantity
+    ),
+    buyOfflineEarningsLevel: (quantity = 1) => wrappedPremiumUpgradePurchase(
+      premiumUpgradesHook.buyOfflineEarningsLevel,
+      premiumUpgradesHook.calculateOfflineEarningsCost(
+        offlineEarningsLevel,
+        Math.max(1, quantity),
+        gameConfig,
+        costMultiplier
+      ),
+      quantity
+    ),
+    buyCriticalClickChanceLevel: (quantity = 1) => wrappedPremiumUpgradePurchase(
+      premiumUpgradesHook.buyCriticalClickChanceLevel,
+      premiumUpgradesHook.calculateCriticalClickChanceCost(
+        criticalClickChanceLevel,
+        Math.max(1, quantity),
+        gameConfig,
+        costMultiplier
+      ),
+      quantity
+    ),
+    buyFloatingClickValue: (quantity = 1) => wrappedPremiumUpgradePurchase(
+      premiumUpgradesHook.buyFloatingClickValue,
+      premiumUpgradesHook.calculateFloatingClickValueCost(
+        floatingClickValueLevel ?? 0,
+        Math.max(1, quantity),
+        gameConfig,
+        costMultiplier
+      ),
+      quantity
+    ),
 
     // Auto-buyers
     ...autoBuyersHook,

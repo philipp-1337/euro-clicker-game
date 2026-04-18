@@ -28,6 +28,7 @@ const PURCHASE_TRIGGERS = new Set([
   'investment_purchase',
   'manager_purchase',
   'material_purchase',
+  'upgrade_purchase',
 ]);
 
 const buildCompletedState = (state, target, timestamp) => ({

@@ -40,7 +40,7 @@ export default function Investments({
 
     switch (boostRule.type) {
       case 'timed_actions':
-        return `Buy managers, investments, or materials ${boostRule.target} times within ${boostRule.windowSeconds}s.`;
+        return `Build ${boostRule.target} rush points within ${boostRule.windowSeconds}s from upgrades, managers, investments, or materials.`;
       case 'reserve_challenge':
         return `Make qualifying purchases while holding at least ${formatNumber(cost * (boostRule.reserveMultiplier ?? 1))} € in reserve.`;
       case 'manual_actions':

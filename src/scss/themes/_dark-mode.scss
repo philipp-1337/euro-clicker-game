@@ -207,4 +207,48 @@ body.dark {
     background: rgba(255, 255, 255, 0.12);
   }
 
+  .crafting-unlock-card {
+    background:
+      linear-gradient(180deg, rgba(24, 31, 41, 0.96), rgba(18, 45, 63, 0.94)),
+      map.get($backgrounds, dark);
+    border-color: rgba(91, 177, 241, 0.24);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  }
+
+  .crafting-unlock-card__requirements {
+    .premium-upgrade-level {
+      color: map.get($colors, text-light);
+    }
+  }
+
+  .crafting-journey-card {
+    background:
+      radial-gradient(circle at top right, rgba(255, 200, 87, 0.16), transparent 42%),
+      linear-gradient(135deg, rgba(24, 31, 41, 0.96), rgba(18, 45, 63, 0.94));
+    border-color: rgba(91, 177, 241, 0.22);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+
+    &.is-live {
+      background:
+        radial-gradient(circle at top right, rgba(73, 205, 132, 0.16), transparent 36%),
+        linear-gradient(135deg, rgba(22, 34, 42, 0.96), rgba(18, 58, 49, 0.94));
+    }
+
+    h3,
+    p {
+      color: map.get($colors, text-light);
+    }
+  }
+
+  .crafting-journey-card__eyebrow {
+    color: #ffd989;
+  }
+
+  .crafting-journey-card__highlights {
+    span {
+      background: rgba(91, 177, 241, 0.16);
+      color: #a7ddff;
+    }
+  }
+
 }

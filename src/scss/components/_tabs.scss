@@ -596,6 +596,28 @@
   box-shadow: 0 10px 30px rgba(52, 152, 219, 0.12);
 }
 
+.unlock-roadmap-card__toggle {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.unlock-roadmap-card__toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 0;
+
+  &.is-expanded {
+    margin-bottom: 10px;
+  }
+}
+
 .unlock-roadmap-card__header {
   display: flex;
   justify-content: space-between;
@@ -604,8 +626,16 @@
   margin-bottom: 10px;
 }
 
+.unlock-roadmap-card__header-actions {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
 .unlock-roadmap-card__eyebrow {
-  margin: 0 0 4px;
+  margin: 0;
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -620,13 +650,21 @@
 }
 
 .unlock-roadmap-card__status {
-  flex-shrink: 0;
+  display: block;
+  box-sizing: border-box;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
   padding: 7px 12px;
   border-radius: 999px;
   background: rgba(52, 152, 219, 0.12);
   color: #1f6fb2;
   font-size: 0.82rem;
   font-weight: 600;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .unlock-roadmap-card__status.is-unlocked {
@@ -638,6 +676,18 @@
   background: rgba(241, 196, 15, 0.18);
   color: #8a5a00;
   box-shadow: inset 0 0 0 1px rgba(241, 196, 15, 0.25);
+}
+
+.unlock-roadmap-card__caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(52, 152, 219, 0.1);
+  color: #1f6fb2;
 }
 
 .unlock-roadmap-card__description,
@@ -691,8 +741,18 @@
     align-items: flex-start;
   }
 
-  .unlock-roadmap-card__status {
+  .unlock-roadmap-card__toggle-row {
+    align-items: flex-start;
+  }
+
+  .unlock-roadmap-card__header-actions {
     width: 100%;
+    align-items: stretch;
+  }
+
+  .unlock-roadmap-card__status {
+    flex: 1 1 auto;
+    align-self: stretch;
     text-align: center;
   }
 
