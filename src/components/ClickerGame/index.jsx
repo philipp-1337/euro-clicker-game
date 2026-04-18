@@ -4,11 +4,13 @@ import GameHeader from '@components/GameHeader';
 import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import BottomTabMenu from './BottomTabMenu';
+import UnlockRoadmapCard from './UnlockRoadmapCard';
 import BasicUpgrades from './UpgradeTabs/BasicUpgrades';
 import Investments from './UpgradeTabs/Investments';
 import Crafting from './UpgradeTabs/Crafting';
 import PremiumUpgrades from './UpgradeTabs/PremiumUpgrades';
 import useGameCore from '@hooks/useGameCore';
+import useUnlockRoadmap from '@hooks/useUnlockRoadmap';
 import { useAchievements } from '@hooks/useAchievements';
 import useAchievementNotifications from '@hooks/useAchievementNotifications';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
@@ -146,6 +148,18 @@ export default function ClickerGame({
     buyGlobalPriceDecreaseAutoBuyerUnlock,
     globalPriceDecreaseAutoBuyerUnlockCost,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
+
+  const { nextMilestone } = useUnlockRoadmap({
+    money,
+    isInvestmentUnlocked,
+    prestigeCount,
+    prestigeShares,
+    isCraftingUnlocked,
+    unlockInvestmentCost,
+    prestigeThresholdMoney: gameConfig.prestige.minMoneyForModalButton,
+    craftingUnlockCost: gameConfig.unlockCraftingCost,
+    craftingUnlockPrestige: gameConfig.unlockCraftingPrestige,
+  });
 
   const unlockCrafting = () => {
     const unlockCost = gameConfig.unlockCraftingCost;
@@ -613,6 +627,7 @@ export default function ClickerGame({
       {uiProgress.gameStarted && upgradeTabsUnlocked && (
         <>
           <div style={{ paddingBottom: '64px' }}>
+            <UnlockRoadmapCard milestone={nextMilestone} />
             {activeTab === 'basic' && (
               <BasicUpgrades
                 money={money}
