@@ -93,7 +93,7 @@ export const saveGameState = (key, dataFromHook) => {
       const isNewFormat = parsedData && typeof parsedData.payload !== 'undefined' && typeof parsedData.chk !== 'undefined';
 
       if (isLocalhost()) {
-        console.log('[AntiCheat] Skipping checksum validation on localhost.');
+        console.log('[AntiCheat] Skipping checksum validation on localhost. Hostname:', window?.location?.hostname);
         // Auf localhost: Falls neues Format, payload zurückgeben, sonst die gesamten Daten (altes Format/rohe Daten)
         return { 
           type: isNewFormat ? 'success' : 'success_old_format', 
