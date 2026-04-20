@@ -70,6 +70,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
     globalMultiplierAutoBuyerUnlocked, setGlobalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
+    floatingClickValueAutobuyerUnlocked, setFloatingClickValueAutobuyerUnlocked,
+    floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled,
     craftingProductionState, setCraftingProductionState,
   } = gameStateHook;
 
@@ -179,6 +181,13 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel,
     setGlobalMultiplier,
     setGlobalPriceDecrease,
+
+    floatingClickValueAutobuyerUnlocked,
+    setFloatingClickValueAutobuyerUnlocked,
+    floatingClickValueAutobuyerEnabled,
+    floatingClickValueLevel,
+    setFloatingClickValueLevel,
+    setFloatingClickValueMultiplier,
   });
 
   // Offline earnings system
@@ -501,6 +510,9 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
+    floatingClickValueAutobuyerUnlocked,
+    floatingClickValueAutobuyerEnabled,
+    setFloatingClickValueAutobuyerEnabled,
 
     // Offline earnings
     ...offlineEarningsHook,

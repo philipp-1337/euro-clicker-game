@@ -185,6 +185,9 @@ export default function useGameState() {
   const [autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled] = useState(gameConfig.initialState.autoBuyGlobalMultiplierEnabled);
   const [autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled] = useState(gameConfig.initialState.autoBuyGlobalPriceDecreaseEnabled);
 
+  const [floatingClickValueAutobuyerUnlocked, setFloatingClickValueAutobuyerUnlocked] = useState(gameConfig.initialState.floatingClickValueAutobuyerUnlocked);
+  const [floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled] = useState(gameConfig.initialState.floatingClickValueAutobuyerEnabled);
+
   const [investmentBoostStatesData, setInvestmentBoostStatesData] = useState(() => {
     return hydrateInvestmentBoostStates();
   });
@@ -241,6 +244,8 @@ export default function useGameState() {
     globalPriceDecreaseAutoBuyerUnlocked,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
+    floatingClickValueAutobuyerUnlocked,
+    floatingClickValueAutobuyerEnabled,
     lastSaved: new Date().getTime(),
   };
 
@@ -300,6 +305,8 @@ export default function useGameState() {
     setGlobalPriceDecreaseAutoBuyerUnlocked(savedState.globalPriceDecreaseAutoBuyerUnlocked ?? false);
     setAutoBuyGlobalMultiplierEnabled(savedState.autoBuyGlobalMultiplierEnabled ?? false);
     setAutoBuyGlobalPriceDecreaseEnabled(savedState.autoBuyGlobalPriceDecreaseEnabled ?? false);
+    setFloatingClickValueAutobuyerUnlocked(savedState.floatingClickValueAutobuyerUnlocked ?? false);
+    setFloatingClickValueAutobuyerEnabled(savedState.floatingClickValueAutobuyerEnabled ?? false);
 
     try {
       const save = JSON.parse(localStorage.getItem('clickerSave') || '{}');
@@ -376,6 +383,8 @@ export default function useGameState() {
     globalPriceDecreaseAutoBuyerUnlocked, setGlobalPriceDecreaseAutoBuyerUnlocked,
     autoBuyGlobalMultiplierEnabled, setAutoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled, setAutoBuyGlobalPriceDecreaseEnabled,
+    floatingClickValueAutobuyerUnlocked, setFloatingClickValueAutobuyerUnlocked,
+    floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled,
     investmentBoostStates: investmentBoostStatesData,
     setInvestmentBoostStates,
     boostedInvestments,

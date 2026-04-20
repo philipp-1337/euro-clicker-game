@@ -155,6 +155,11 @@ export default function ClickerGame({
     globalPriceDecreaseAutoBuyerUnlocked,
     buyGlobalPriceDecreaseAutoBuyerUnlock,
     globalPriceDecreaseAutoBuyerUnlockCost,
+    floatingClickValueAutobuyerUnlocked,
+    buyFloatingClickValueAutobuyerUnlock,
+    floatingClickValueAutobuyerUnlockCost,
+    floatingClickValueAutobuyerEnabled,
+    setFloatingClickValueAutobuyerEnabled,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   const { nextMilestone } = useUnlockRoadmap({
@@ -529,6 +534,9 @@ export default function ClickerGame({
         autoBuyGlobalPriceDecreaseEnabled={autoBuyGlobalPriceDecreaseEnabled}
         setAutoBuyGlobalPriceDecreaseEnabled={setAutoBuyGlobalPriceDecreaseEnabled}
         globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
+        floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
+        floatingClickValueAutobuyerEnabled={floatingClickValueAutobuyerEnabled}
+        setFloatingClickValueAutobuyerEnabled={setFloatingClickValueAutobuyerEnabled}
       />
 
       {/* AchievementNotification wird jetzt als Sonner Toast angezeigt */}
@@ -565,11 +573,13 @@ export default function ClickerGame({
           cooldownAutoBuyerUnlocked={cooldownAutoBuyerUnlocked}
           globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
           globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
+          floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
           setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
           autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
           autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
           autoBuyGlobalMultiplierEnabled={autoBuyGlobalMultiplierEnabled}
           autoBuyGlobalPriceDecreaseEnabled={autoBuyGlobalPriceDecreaseEnabled}
+          floatingClickValueAutobuyerEnabled={floatingClickValueAutobuyerEnabled}
           autoBuyerBuffer={autoBuyerBuffer}
           setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
           setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
@@ -745,6 +755,9 @@ export default function ClickerGame({
                 globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
                 buyGlobalPriceDecreaseAutoBuyerUnlock={buyGlobalPriceDecreaseAutoBuyerUnlock}
                 globalPriceDecreaseAutoBuyerUnlockCost={globalPriceDecreaseAutoBuyerUnlockCost}
+                floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
+                buyFloatingClickValueAutobuyerUnlock={buyFloatingClickValueAutobuyerUnlock}
+                floatingClickValueAutobuyerUnlockCost={floatingClickValueAutobuyerUnlockCost}
               />
             )}
           </div>

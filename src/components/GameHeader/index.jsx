@@ -207,15 +207,18 @@ export default function GameHeader(props) {
     cooldownAutoBuyerUnlocked,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
+    floatingClickValueAutobuyerUnlocked,
     setIsAutoBuyerModalOpen,
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
+    floatingClickValueAutobuyerEnabled,
     setAutoBuyValueUpgradeEnabled,
     setAutoBuyCooldownUpgradeEnabled,
     setAutoBuyGlobalMultiplierEnabled,
     setAutoBuyGlobalPriceDecreaseEnabled,
+    setFloatingClickValueAutobuyerEnabled,
   } = props;
 
   const toggleAllAutoBuyers = React.useCallback(() => {
@@ -224,7 +227,8 @@ export default function GameHeader(props) {
       autoBuyValueUpgradeEnabled ||
       autoBuyCooldownUpgradeEnabled ||
       autoBuyGlobalMultiplierEnabled ||
-      autoBuyGlobalPriceDecreaseEnabled;
+      autoBuyGlobalPriceDecreaseEnabled ||
+      floatingClickValueAutobuyerEnabled;
 
     // Wenn einer aktiv ist, alle ausschalten, sonst alle anschalten (aber nur die freigeschalteten)
     const newState = !anyActive;
@@ -240,6 +244,9 @@ export default function GameHeader(props) {
     }
     if (globalPriceDecreaseAutoBuyerUnlocked) {
       setAutoBuyGlobalPriceDecreaseEnabled(newState);
+    }
+    if (floatingClickValueAutobuyerUnlocked) {
+      setFloatingClickValueAutobuyerEnabled(newState);
     }
 
     // Optional: Kurzes vibrieren auf mobilen Geräten
@@ -258,14 +265,17 @@ export default function GameHeader(props) {
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
+    floatingClickValueAutobuyerEnabled,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
+    floatingClickValueAutobuyerUnlocked,
     setAutoBuyValueUpgradeEnabled,
     setAutoBuyCooldownUpgradeEnabled,
     setAutoBuyGlobalMultiplierEnabled,
     setAutoBuyGlobalPriceDecreaseEnabled,
+    setFloatingClickValueAutobuyerEnabled,
   ]);
 
   // DoubleClick statt LongPress für AutoBuyer-Button
@@ -280,7 +290,8 @@ export default function GameHeader(props) {
     autoBuyValueUpgradeEnabled ||
     autoBuyCooldownUpgradeEnabled ||
     autoBuyGlobalMultiplierEnabled ||
-    autoBuyGlobalPriceDecreaseEnabled;
+    autoBuyGlobalPriceDecreaseEnabled ||
+    floatingClickValueAutobuyerEnabled;
 
   // Buffer badge: yellow if buffer > 0 and active, else green if active, else no badge
   let showAutoBuyerBadge = false;
@@ -298,7 +309,8 @@ export default function GameHeader(props) {
     autoBuyerUnlocked ||
     cooldownAutoBuyerUnlocked ||
     globalMultiplierAutoBuyerUnlocked ||
-    globalPriceDecreaseAutoBuyerUnlocked;
+    globalPriceDecreaseAutoBuyerUnlocked ||
+    floatingClickValueAutobuyerUnlocked;
 
   const displayTotalMoneyPerSecond =
     totalMoneyPerSecond + (manualMoneyPerSecond || 0);

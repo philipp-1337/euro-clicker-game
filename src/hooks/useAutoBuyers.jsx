@@ -39,6 +39,14 @@ export default function useAutoBuyers({
   setGlobalPriceDecreaseLevel,
   setGlobalMultiplier,
   setGlobalPriceDecrease: setGlobalPriceDecreaseState,
+
+  floatingClickValueAutobuyerUnlocked,
+  setFloatingClickValueAutobuyerUnlocked,
+  floatingClickValueAutobuyerEnabled,
+  
+  floatingClickValueLevel,
+  setFloatingClickValueLevel,
+  setFloatingClickValueMultiplier,
 }) {
   
   const moneyRef = useRef(money);
@@ -55,6 +63,9 @@ export default function useAutoBuyers({
 
   const cooldownUpgradeLevelsRef = useRef(cooldownUpgradeLevels);
   useEffect(() => { cooldownUpgradeLevelsRef.current = cooldownUpgradeLevels; }, [cooldownUpgradeLevels]);
+
+  const floatingClickValueLevelRef = useRef(floatingClickValueLevel);
+  useEffect(() => { floatingClickValueLevelRef.current = floatingClickValueLevel; }, [floatingClickValueLevel]);
 
   const autoBuyerUnlockCost = useMemo(() =>
     gameConfig.premiumUpgrades.autoBuyerUnlock.baseCost *
@@ -76,6 +87,12 @@ export default function useAutoBuyers({
 
   const globalPriceDecreaseAutoBuyerUnlockCost = useMemo(() =>
     gameConfig.premiumUpgrades.globalPriceDecreaseAutoBuyerUnlock.baseCost *
+    gameConfig.getCostMultiplier(easyMode),
+    [easyMode]
+  );
+
+  const floatingClickValueAutobuyerUnlockCost = useMemo(() =>
+    gameConfig.premiumUpgrades.floatingClickValueAutobuyerUnlock.baseCost *
     gameConfig.getCostMultiplier(easyMode),
     [easyMode]
   );
@@ -111,6 +128,23 @@ export default function useAutoBuyers({
       setGlobalPriceDecreaseAutoBuyerUnlocked(true);
     }
   }, [globalPriceDecreaseAutoBuyerUnlocked, money, globalPriceDecreaseAutoBuyerUnlockCost, setMoney, setGlobalPriceDecreaseAutoBuyerUnlocked, ensureStartTime]);
+
+  const buyFloatingClickValueAutobuyerUnlock = useCallback(() => {
+    if (!floatingClickValueAutobuyerUnlocked && money >= floatingClickValueAutobuyerUnlockCost) {
+      ensureStartTime?.();
+      setMoney(prev => prev - floatingClickValueAutobuyerUnlockCost);
+      setFloatingClickValueAutobuyerUnlocked(true);
+    }
+  }, [floatingClickValueAutobuyerUnlocked, money, floatingClickValueAutobuyerUnlockCost, setMoney, setFloatingClickValueAutobuyerUnlocked, ensureStartTime]);
+
+  const fibonacci = (n) => {
+    if (n <= 1) return 1;
+    let a = 1, b = 1;
+    for (let i = 2; i <= n; i++) {
+      [a, b] = [b, a + b];
+    }
+    return b;
+  };
 
   useEffect(() => {
     const autoBuyerLoop = () => {
@@ -258,6 +292,28 @@ export default function useAutoBuyers({
         });
       }
 
+      if (floatingClickValueAutobuyerEnabled) {
+        const costMultiplier = gameConfig.getCostMultiplier(easyMode);
+        let totalCost = 0;
+        let currentLevel = floatingClickValueLevelRef.current;
+        for (let i = 0; i < buyQuantity; i++) {
+          const nextLevel = currentLevel + i;
+          const nextValue = fibonacci(nextLevel + 1);
+          totalCost += nextValue * gameConfig.premiumUpgrades.floatingClickValue.costMultiplier * costMultiplier;
+        }
+
+        purchases.push({
+          cost: totalCost,
+          action: () => {
+            setMoney(prev => prev - totalCost);
+            const newLevel = floatingClickValueLevelRef.current + buyQuantity;
+            const newValue = fibonacci(newLevel);
+            setFloatingClickValueLevel(newLevel);
+            setFloatingClickValueMultiplier(newValue);
+          }
+        });
+      }
+
       if (purchases.length > 0) {
         purchases.sort((a, b) => a.cost - b.cost);
         const cheapestPurchase = purchases[0];
@@ -275,6 +331,7 @@ export default function useAutoBuyers({
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
+    floatingClickValueAutobuyerEnabled,
     easyMode,
     globalPriceDecrease,
     buyQuantity,
@@ -289,6 +346,8 @@ export default function useAutoBuyers({
     setGlobalMultiplierLevel,
     setGlobalPriceDecreaseState,
     setGlobalPriceDecreaseLevel,
+    setFloatingClickValueLevel,
+    setFloatingClickValueMultiplier,
   ]);
 
   return {
@@ -300,5 +359,7 @@ export default function useAutoBuyers({
     buyGlobalMultiplierAutoBuyerUnlock,
     globalPriceDecreaseAutoBuyerUnlockCost,
     buyGlobalPriceDecreaseAutoBuyerUnlock,
+    floatingClickValueAutobuyerUnlockCost,
+    buyFloatingClickValueAutobuyerUnlock,
   };
 }

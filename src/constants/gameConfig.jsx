@@ -699,6 +699,8 @@ export const gameConfig = {
     autoBuyGlobalPriceDecreaseEnabled: false,
     globalMultiplierAutoBuyerUnlocked: false,
     globalPriceDecreaseAutoBuyerUnlocked: false,
+    floatingClickValueAutobuyerUnlocked: false,
+    floatingClickValueAutobuyerEnabled: false,
   },
   activePlayTime: 0, // Initial aktive Spielzeit
   prestigeShares: 0, // Initial prestige shares
@@ -750,7 +752,10 @@ export const gameConfig = {
     },
     globalPriceDecreaseAutoBuyerUnlock: {
       baseCost: 75000,
-    }
+    },
+    floatingClickValueAutobuyerUnlock: {
+      baseCost: 100000,
+    },
   },
 
   // Prestige-Konfiguration

@@ -8,7 +8,8 @@ import {
   PiggyBank as PiggyBankIcon,
   TimerReset,
   TrendingUp,
-  Percent
+  Percent,
+  MousePointerClick,
 } from 'lucide-react';
 
 const AutoBuyerModal = ({
@@ -31,6 +32,9 @@ const AutoBuyerModal = ({
   autoBuyGlobalPriceDecreaseEnabled,
   setAutoBuyGlobalPriceDecreaseEnabled,
   globalPriceDecreaseAutoBuyerUnlocked,
+  floatingClickValueAutobuyerUnlocked,
+  floatingClickValueAutobuyerEnabled,
+  setFloatingClickValueAutobuyerEnabled,
 }) => {
   const modalRef = useModal(show, onClose);
 
@@ -77,6 +81,24 @@ const AutoBuyerModal = ({
           </button>
         </div>
         <div className="settings-modal-content">
+          {floatingClickValueAutobuyerUnlocked && (
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <MousePointerClick size={20} className="settings-icon" />
+                  <span className="switch-text">Clicker Value Auto-Buyer</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={floatingClickValueAutobuyerEnabled}
+                    onChange={() => setFloatingClickValueAutobuyerEnabled((v) => !v)}
+                    aria-label="Clicker Value Auto-Buyer"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+          )}
           {autoBuyerUnlocked && (
               <div className="settings-row">
                 <div className="settings-row-left">
