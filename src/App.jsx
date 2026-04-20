@@ -37,7 +37,12 @@ function App() {
             try {
               const saveRaw = localStorage.getItem('clickerSave');
               if (saveRaw) {
-                const save = JSON.parse(saveRaw);
+                let save;
+                try {
+                  save = JSON.parse(saveRaw);
+                } catch {
+                  return null;
+                }
                 if (typeof save.darkMode === 'boolean') return save.darkMode;
               }
             } catch (e) {

@@ -137,7 +137,12 @@ export default function GameHeader(props) {
     try {
       const saveRaw = localStorage.getItem("clickerSave");
       if (saveRaw) {
-        const save = JSON.parse(saveRaw);
+        let save;
+        try {
+          save = JSON.parse(saveRaw);
+        } catch {
+          return null;
+        }
         if (typeof save.darkMode === "boolean") return save.darkMode;
       }
     } catch (e) {
@@ -165,7 +170,12 @@ export default function GameHeader(props) {
     try {
       const saveRaw = localStorage.getItem("clickerSave");
       if (saveRaw) {
-        const save = JSON.parse(saveRaw);
+        let save;
+        try {
+          save = JSON.parse(saveRaw);
+        } catch {
+          return;
+        }
         if (save.darkMode !== isDarkMode) {
           localStorage.setItem(
             "clickerSave",
@@ -187,7 +197,12 @@ export default function GameHeader(props) {
         // Nach Cloud Import: clickerSave prüfen
         const saveRaw = localStorage.getItem("clickerSave");
         if (saveRaw) {
-          const save = JSON.parse(saveRaw);
+          let save;
+          try {
+            save = JSON.parse(saveRaw);
+          } catch {
+            return;
+          }
           if (typeof save.darkMode === "boolean") {
             setIsDarkMode(save.darkMode);
           }

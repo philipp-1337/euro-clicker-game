@@ -309,7 +309,15 @@ export default function useGameState() {
     setFloatingClickValueAutobuyerEnabled(savedState.floatingClickValueAutobuyerEnabled ?? false);
 
     try {
-      const save = JSON.parse(localStorage.getItem('clickerSave') || '{}');
+      const clickerSaveRaw = localStorage.getItem('clickerSave');
+      let save = {};
+      if (clickerSaveRaw) {
+        try {
+          save = JSON.parse(clickerSaveRaw);
+        } catch {
+          save = {};
+        }
+      }
       save.isCraftingUnlocked = savedState.isCraftingUnlocked ?? false;
       localStorage.setItem('clickerSave', JSON.stringify(save));
     } catch (e) {

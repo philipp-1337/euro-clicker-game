@@ -39,7 +39,14 @@ export function useUiProgress() {
     try {
       const clickerSaveRaw = localStorage.getItem("clickerSave");
       if (clickerSaveRaw) {
-        const clickerSave = JSON.parse(clickerSaveRaw);
+        let clickerSave;
+        try {
+          clickerSave = JSON.parse(clickerSaveRaw);
+        } catch {
+          // If JSON is malformed (e.g. during manual editing on localhost)
+          clickerSave = {};
+        }
+        
         if (
           typeof clickerSave.cloudSaveMode === "boolean" &&
           typeof progress.cloudSaveMode !== "boolean"
@@ -74,7 +81,13 @@ export function useUiProgress() {
     try {
       const clickerSaveRaw = localStorage.getItem("clickerSave");
       if (clickerSaveRaw) {
-        const clickerSave = JSON.parse(clickerSaveRaw);
+        let clickerSave;
+        try {
+          clickerSave = JSON.parse(clickerSaveRaw);
+        } catch {
+          return; // Skip update if JSON is invalid
+        }
+        
         const updatedSave = { ...clickerSave };
         let saveUpdated = false;
 
@@ -145,7 +158,12 @@ export function useUiProgress() {
       try {
         const clickerSaveRaw = localStorage.getItem('clickerSave');
         if (clickerSaveRaw) {
-          const clickerSave = JSON.parse(clickerSaveRaw);
+          let clickerSave;
+          try {
+            clickerSave = JSON.parse(clickerSaveRaw);
+          } catch {
+            return;
+          }
           if (clickerSave.cloudSaveMode !== nextValue) {
             localStorage.setItem('clickerSave', JSON.stringify({ ...clickerSave, cloudSaveMode: nextValue }));
           }
@@ -265,7 +283,12 @@ export function useUiProgress() {
       try {
         const saveRaw = localStorage.getItem('clickerSave');
         if (saveRaw) {
-          const save = JSON.parse(saveRaw);
+          let save;
+          try {
+            save = JSON.parse(saveRaw);
+          } catch {
+            return;
+          }
           if (typeof save.showStatisticsHeaderButton === 'boolean') {
             setShowStatisticsHeaderButton(save.showStatisticsHeaderButton);
           }

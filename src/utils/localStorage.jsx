@@ -85,6 +85,10 @@ export const saveGameState = (key, dataFromHook) => {
         parsedData = JSON.parse(rawData);
       } catch (e) {
         console.error('Error parsing saved data from localStorage:', e);
+        if (isLocalhost()) {
+          console.warn('[AntiCheat] JSON parse error on localhost. Returning defaultState without resetting localStorage to allow manual fix.');
+          return { type: 'success', payload: defaultState };
+        }
         localStorage.removeItem(key); // Beschädigte Daten entfernen
         return { type: 'error', reason: 'parse_error', message: 'Saved data is corrupt and could not be read.' };
       }
