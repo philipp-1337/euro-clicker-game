@@ -92,14 +92,17 @@ export const saveGameState = (key, dataFromHook) => {
       // Prüfen, ob es das neue Format mit Payload und Checksum ist
       const isNewFormat = parsedData && typeof parsedData.payload !== 'undefined' && typeof parsedData.chk !== 'undefined';
 
+      if (isLocalhost()) {
+        console.log('[AntiCheat] Skipping checksum validation on localhost.');
+        // Auf localhost: Falls neues Format, payload zurückgeben, sonst die gesamten Daten (altes Format/rohe Daten)
+        return { 
+          type: isNewFormat ? 'success' : 'success_old_format', 
+          payload: isNewFormat ? parsedData.payload : parsedData 
+        };
+      }
+
       if (isNewFormat) {
         const { payload, chk } = parsedData;
-
-        // Auf localhost die Prüfung überspringen
-        if (isLocalhost()) {
-          console.log('[AntiCheat] Skipping checksum validation on localhost.');
-          return { type: 'success', payload: payload };
-        }
 
         const calculatedChecksum = simpleHash(JSON.stringify(payload) + ANTI_CHEAT_SECRET);
 
@@ -110,10 +113,6 @@ export const saveGameState = (key, dataFromHook) => {
         return { type: 'success', payload: payload }; // Daten sind valide
       } else {
         // Altes Format ohne Prüfsumme
-        if (isLocalhost()) {
-          console.log('[AntiCheat] Loading old format data on localhost.');
-          return { type: 'success_old_format', payload: parsedData }; // parsedData ist hier der gameState direkt
-        }
         console.warn('[AntiCheat] Old save format without checksum detected on non-localhost. Treating as potentially tampered for key:', key);
         // Für bestehende Nutzer auf Produktion: Daten einmalig laden. Der nächste Speicherversuch wird das neue Format verwenden.
         // Alternativ könnte man hier `null` zurückgeben, um einen Reset zu erzwingen.
