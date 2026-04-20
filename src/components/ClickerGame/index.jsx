@@ -23,6 +23,9 @@ import { useEnvironment } from '@hooks/useEnvironment';
 import AutoBuyerModal from '@components/AutoBuyerModal/AutoBuyerModal';
 import { formatNumber } from '@utils/calculators';
 
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../../firebase";
+
 export default function ClickerGame({
   easyMode = false,
   onEasyModeToggle,
@@ -383,8 +386,6 @@ export default function ClickerGame({
   const handleLeaderboardSubmit = async () => {
     if (!leaderboardName.trim() || !currentCheckpoint) return;
 
-    const { addDoc, collection } = await import("firebase/firestore");
-    const { db } = await import("../../firebase");
     const isTestOrAlpha =
       environment === "localhost" || environment === "alpha";
 

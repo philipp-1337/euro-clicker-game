@@ -51,23 +51,10 @@ export default defineConfig({
     outDir: "build",
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("sonner")) {
-              return "sonner";
-            }
-            if (id.includes("firebase")) {
-              return "firebase";
-            }
-            if (id.includes("lucide-react")) {
-              return "lucide";
-            }
-            if (id.includes("react")) {
-              return "react";
-            }
-            return "vendor";
-          }
-        },
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'sonner', 'lucide-react'],
+          'firebase': ['firebase/app', 'firebase/firestore']
+        }
       },
     },
   },

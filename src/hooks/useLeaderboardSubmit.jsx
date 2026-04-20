@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 /**
  * Custom Hook für Leaderboard-Submission.
@@ -38,20 +40,16 @@ export default function useLeaderboardSubmit({
       typeof playTime === 'number'
     ) {
       leaderboardSubmittedRef.current = true;
-      import('../firebase').then(({ db }) => {
-        import('firebase/firestore').then(({ collection, addDoc }) => {
-          addDoc(collection(db, 'leaderboard'), {
-            name: leaderboardName,
-            playtime: playTime,
-            clicks: floatingClicks,
-            prestigeCount: prestigeCount,
-            timestamp: Date.now(),
-          }).finally(() => {
-            setLeaderboardSubmitted(true);
-            setShowLeaderboard(true);
-            if (localKey) localStorage.setItem(localKey, 'true');
-          });
-        });
+      addDoc(collection(db, 'leaderboard'), {
+        name: leaderboardName,
+        playtime: playTime,
+        clicks: floatingClicks,
+        prestigeCount: prestigeCount,
+        timestamp: Date.now(),
+      }).finally(() => {
+        setLeaderboardSubmitted(true);
+        setShowLeaderboard(true);
+        if (localKey) localStorage.setItem(localKey, 'true');
       });
     }
   }, [leaderboardMode, money, leaderboardName, floatingClicks, playTime, alreadySubmitted, localKey, prestigeCount]);
