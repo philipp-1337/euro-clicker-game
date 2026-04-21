@@ -5,6 +5,7 @@
   gap: 1rem;
   cursor: pointer;
   margin-left: 0;
+  padding: 0.5rem 0; // Increased touch target vertically
 }
 // Linker Bereich für Icon und Label
 .settings-row-left {
@@ -18,7 +19,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.25rem; // Increased gap for mobile usability
 }
 
 .switch-text {

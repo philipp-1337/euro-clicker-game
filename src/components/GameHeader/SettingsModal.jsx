@@ -22,6 +22,7 @@ import {
   AwardIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
+  Monitor as MonitorIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '@hooks/useModal';
@@ -76,6 +77,7 @@ export default function SettingsModal({
   const [showReloadConfirm, setShowReloadConfirm] = React.useState(false);
   const [showResetConfirm, setShowResetConfirm] = React.useState(false);
   const [showCloudSaveSubmenu, setShowCloudSaveSubmenu] = React.useState(false);
+  const [showDisplaySubmenu, setShowDisplaySubmenu] = React.useState(false);
 
   const { deleteFromCloud } = useCloudSave();
 
@@ -84,11 +86,15 @@ export default function SettingsModal({
   const handleCloseSettings = () => {
     setShowSettings(false);
     // Reset submenu state when closing
-    setTimeout(() => setShowCloudSaveSubmenu(false), 200);
+    setTimeout(() => {
+      setShowCloudSaveSubmenu(false);
+      setShowDisplaySubmenu(false);
+    }, 200);
   };
 
   const handleBackToMain = () => {
     setShowCloudSaveSubmenu(false);
+    setShowDisplaySubmenu(false);
   };
 
   return (
@@ -96,7 +102,7 @@ export default function SettingsModal({
       <div ref={modalRef} className="modal-content">
         <div className="settings-modal-container">
           {/* Hauptmenü */}
-          <div className={`settings-panel main-panel ${showCloudSaveSubmenu ? 'slide-left' : ''}`}>
+          <div className={`settings-panel main-panel ${(showCloudSaveSubmenu || showDisplaySubmenu) ? 'slide-left' : ''}`}>
             <div className="settings-modal-header">
               <h3>Settings</h3>
               <button
@@ -111,109 +117,22 @@ export default function SettingsModal({
             <div className="settings-modal-content">
               {/* Display options */}
               <h4 className="settings-section-title">Display options</h4>
-              {/* Dark Mode Button Toggle */}
               <div className="settings-row">
-                <div className="settings-row-left">
-                  <SunMoonIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Dark Mode Button</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={showDarkModeButton}
-                    onChange={() => setShowDarkModeButton((v) => !v)}
-                    aria-label="Show Dark Mode Button"
-                  />
-                  <span className="switch-slider" />
-                </label>
-              </div>
-              {/* Statistics Button Toggle */}
-              <div className="settings-row">
-                <div className="settings-row-left">
-                  <BarChart2Icon size={20} className="settings-icon" />
-                  <span className="switch-text">Statistics Button</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={showStatisticsHeaderButton}
-                    onChange={() => setShowStatisticsHeaderButton((v) => !v)}
-                    aria-label="Show Statistics Button"
-                  />
-                  <span className="switch-slider" />
-                </label>
-              </div>
-              {/* Achievements Button Toggle (nur anzeigen, wenn Achievements vorhanden sind) */}
-              {hasAnyAchievement && (
-                <div className="settings-row">
-                  <div className="settings-row-left">
-                    <AwardIcon size={20} className="settings-icon" />
-                    <span className="switch-text">Achievements Button</span>
-                  </div>
-                  <label className="switch-label">
-                    <input
-                      type="checkbox"
-                      className="switch"
-                      checked={showAchievementsHeaderButton}
-                      onChange={() => setShowAchievementsHeaderButton((v) => !v)}
-                      aria-label="Show Achievements Button"
-                    />
-                    <span className="switch-slider" />
-                  </label>
-                </div>
-              )}
-              {/* Leaderboard Toggle (blendet NUR den Button ein/aus, öffnet NICHT das Modal) */}
-              <div className="settings-row">
-                <div className="settings-row-left">
-                  <CrownIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Leaderboard Button</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={showLeaderboard}
-                    onChange={() => setShowLeaderboard((v) => !v)}
-                    aria-label="Show Leaderboard Button"
-                  />
-                  <span className="switch-slider" />
-                </label>
-              </div>
-              {/* Clicker Counter Toggle */}
-              <div className="settings-row">
-                <div className="settings-row-left">
-                  <MousePointerClickIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Click Counter</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={showClickStats}
-                    onChange={() => setShowClickStats((v) => !v)}
-                    aria-label="Show Click Counter"
-                  />
-                  <span className="switch-slider" />
-                </label>
-              </div>
-              {/* Spielzeit Toggle */}
-              <div className="settings-row">
-                <div className="settings-row-left">
-                  <ClockIcon size={20} className="settings-icon" />
-                  <span className="switch-text">Playtime Counter</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={showPlaytime}
-                    onChange={() => setShowPlaytime((v) => !v)}
-                    aria-label="Show Playtime"
-                  />
-                  <span className="switch-slider" />
-                </label>
+                <MonitorIcon size={20} className="settings-icon" />
+                <button
+                  className="settings-label btn"
+                  onClick={() => setShowDisplaySubmenu(true)}
+                  title="Display Options"
+                >
+                  Display Options
+                </button>
+                <button
+                  className="settings-button"
+                  onClick={() => setShowDisplaySubmenu(true)}
+                  title="Display Options"
+                >
+                  <ChevronRightIcon size={18} />
+                </button>
               </div>
               {/* Audio Settings */}
               <h4 className="settings-section-title">Audio Settings</h4>
@@ -424,6 +343,135 @@ export default function SettingsModal({
                 >
                   <FolderOpen size={18} />
                 </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Display Options Untermenü */}
+          <div className={`settings-panel submenu-panel ${showDisplaySubmenu ? 'slide-in' : ''}`}>
+            <div className="settings-modal-header header-left">
+              <button
+                className="settings-button back-button"
+                onClick={handleBackToMain}
+                title="Back"
+                aria-label="Back to main settings"
+              >
+                <ChevronLeftIcon size={20} />
+              </button>
+              <h3>Display Options</h3>
+              <button
+                className="settings-button"
+                onClick={handleCloseSettings}
+                title="Close"
+                aria-label="Close"
+              >
+                <CloseIcon size={20} />
+              </button>
+            </div>
+            <div className="settings-modal-content">
+              {/* Dark Mode Button Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <SunMoonIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Dark Mode Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showDarkModeButton}
+                    onChange={() => setShowDarkModeButton((v) => !v)}
+                    aria-label="Show Dark Mode Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Statistics Button Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <BarChart2Icon size={20} className="settings-icon" />
+                  <span className="switch-text">Statistics Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showStatisticsHeaderButton}
+                    onChange={() => setShowStatisticsHeaderButton((v) => !v)}
+                    aria-label="Show Statistics Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Achievements Button Toggle */}
+              {hasAnyAchievement && (
+                <div className="settings-row">
+                  <div className="settings-row-left">
+                    <AwardIcon size={20} className="settings-icon" />
+                    <span className="switch-text">Achievements Button</span>
+                  </div>
+                  <label className="switch-label">
+                    <input
+                      type="checkbox"
+                      className="switch"
+                      checked={showAchievementsHeaderButton}
+                      onChange={() => setShowAchievementsHeaderButton((v) => !v)}
+                      aria-label="Show Achievements Button"
+                    />
+                    <span className="switch-slider" />
+                  </label>
+                </div>
+              )}
+              {/* Leaderboard Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <CrownIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Leaderboard Button</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showLeaderboard}
+                    onChange={() => setShowLeaderboard((v) => !v)}
+                    aria-label="Show Leaderboard Button"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Clicker Counter Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <MousePointerClickIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Click Counter</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showClickStats}
+                    onChange={() => setShowClickStats((v) => !v)}
+                    aria-label="Show Click Counter"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+              {/* Spielzeit Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <ClockIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Playtime Counter</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showPlaytime}
+                    onChange={() => setShowPlaytime((v) => !v)}
+                    aria-label="Show Playtime"
+                  />
+                  <span className="switch-slider" />
+                </label>
               </div>
             </div>
           </div>
