@@ -232,7 +232,6 @@ export default function useGameState() {
     ),
     boostedInvestments,
     prestigeShares,
-    setPrestigeShares,
     prestigeCount,
     clickHistory,
     autoBuyerInterval,
