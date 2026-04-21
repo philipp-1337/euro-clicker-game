@@ -24,6 +24,10 @@
     height: 16px;
     margin-bottom: 2px;
   }
+
+  .spinner-icon {
+    animation: spin 1s linear infinite;
+  }
   
   // UpgradeTabs Fade-In Animation
   .upgrade-tabs-fade {

@@ -214,9 +214,13 @@ export default function useGameHeaderLogic(props) {
     }
   }, [cloudSaveMode, handleExportCloud, onSaveGame]);
 
+  const [isImporting, setIsImporting] = useState(false);
+
   // Cloud Save Import Handler
   const handleImportCloud = useCallback(async () => {
+    if (!importUuid.trim()) return;
     setImportError("");
+    setIsImporting(true);
     try {
       const data = await importFromCloud(importUuid.trim());
       if (onImportCloudSave) onImportCloudSave(data);
@@ -227,6 +231,8 @@ export default function useGameHeaderLogic(props) {
       }, 500);
     } catch {
       setImportError("Not found or error");
+    } finally {
+      setIsImporting(false);
     }
   }, [importFromCloud, importUuid, onImportCloudSave, triggerSaveFeedback]);
 
@@ -267,6 +273,7 @@ export default function useGameHeaderLogic(props) {
     importUuid,
     setImportUuid,
     importError,
+    isImporting,
     handleImportCloud,
     cloudSaveMode,
     setCloudSaveMode,

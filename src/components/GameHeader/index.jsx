@@ -71,6 +71,7 @@ export default function GameHeader(props) {
     importUuid,
     setImportUuid,
     importError,
+    isImporting,
     handleImportCloud,
     cloudSaveMode,
     setCloudSaveMode,
@@ -528,6 +529,7 @@ export default function GameHeader(props) {
         importUuid={importUuid}
         setImportUuid={setImportUuid}
         importError={importError}
+        isImporting={isImporting}
         handleImportCloud={handleImportCloud}
         handleSave={handleSave}
         hasAnyAchievement={props.hasAnyAchievement}

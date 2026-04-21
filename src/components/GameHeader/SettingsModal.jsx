@@ -23,6 +23,7 @@ import {
   ChevronRightIcon,
   ChevronLeftIcon,
   Monitor as MonitorIcon,
+  Loader2 as SpinnerIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '@hooks/useModal';
@@ -58,6 +59,7 @@ export default function SettingsModal({
   importUuid,
   setImportUuid,
   importError,
+  isImporting,
   handleImportCloud,
   handleSave,
   hasAnyAchievement, // Neue Prop
@@ -490,19 +492,29 @@ export default function SettingsModal({
                 placeholder="Enter your Cloud Save UUID"
                 value={importUuid}
                 onChange={(e) => setImportUuid(e.target.value)}
+                disabled={isImporting}
               />
               {importError && <div className="modal-error">{importError}</div>}
               <div className="modal-actions">
                 <button
                   className="modal-btn"
                   onClick={handleImportCloud}
-                  style={{ marginRight: 0 }}
+                  style={{ marginRight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  disabled={isImporting || !importUuid.trim()}
                 >
-                  Import
+                  {isImporting ? (
+                    <>
+                      <SpinnerIcon size={18} className="spinner-icon" style={{ marginRight: '8px' }} />
+                      Importing...
+                    </>
+                  ) : (
+                    "Import"
+                  )}
                 </button>
                 <button
                   className="modal-btn"
                   onClick={() => setShowImportDialog(false)}
+                  disabled={isImporting}
                 >
                   Cancel
                 </button>
