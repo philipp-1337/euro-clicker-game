@@ -389,6 +389,13 @@ export default function ClickerGame({
   // Expose state for debugging on localhost
   useEffect(() => {
     if (environment === 'localhost') {
+      console.log('--- Development Mode: window.game exposed ---');
+      console.log('You can use window.game.setMoney(1000000) to set money.');
+    }
+  }, [environment]);
+
+  useEffect(() => {
+    if (environment === 'localhost') {
       window.game = {
         setMoney,
         setPrestigeShares,
@@ -399,12 +406,9 @@ export default function ClickerGame({
         saveGame: () => {
           if (registerSaveGameHandler && typeof registerSaveGameHandler === 'function') {
             // Need to find a way to trigger save, usually via the ref but we don't have direct access here.
-            // But we can at least expose the data.
           }
         }
       };
-      console.log('--- Development Mode: window.game exposed ---');
-      console.log('You can use window.game.setMoney(1000000) to set money.');
     }
   }, [environment, setMoney, setPrestigeShares, setPrestigeCount, setRawMaterials, incrementFloatingClicks, gameState, registerSaveGameHandler]);
 
