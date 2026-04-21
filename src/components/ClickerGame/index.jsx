@@ -163,6 +163,9 @@ export default function ClickerGame({
     floatingClickValueAutobuyerUnlockCost,
     floatingClickValueAutobuyerEnabled,
     setFloatingClickValueAutobuyerEnabled,
+    setPrestigeShares,
+    setPrestigeCount,
+    setRawMaterials,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   const { nextMilestone } = useUnlockRoadmap({
