@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { formatNumber } from '@utils/calculators';
 
-const MoneyBanner = ({ money, showFloatingMoney }) => {
+const MoneyBanner = ({ money, showFloatingMoney, totalMoneyPerSecond }) => {
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
 
@@ -35,6 +36,11 @@ const MoneyBanner = ({ money, showFloatingMoney }) => {
     isVisible && showFloatingMoney && (
       <div className="money-banner">
         {money}
+        {totalMoneyPerSecond > 0 && (
+          <span className="per-second-floating">
+            +{formatNumber(totalMoneyPerSecond)} €/s
+          </span>
+        )}
       </div>
     )
   );

@@ -571,7 +571,11 @@ export default function GameHeader(props) {
           canPrestige={canPrestige}
         />
       )}
-      <MoneyBanner money={formatNumber(money)} showFloatingMoney={showFloatingMoney} />
+      <MoneyBanner
+        money={formatNumber(money)}
+        showFloatingMoney={showFloatingMoney}
+        totalMoneyPerSecond={displayTotalMoneyPerSecond}
+      />
       {showLeaderboardModal && (
         <LeaderboardModal
           show={showLeaderboardModal}

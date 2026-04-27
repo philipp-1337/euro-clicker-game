@@ -33,6 +33,12 @@ body {
   color: #2ecc71;
 }
 
+.per-second-floating {
+  font-size: 0.75rem;
+  margin-left: 6px;
+  color: #288841;
+}
+
 // Settings-Überschriften
 .settings-section-title {
   font-weight: 600;
@@ -44,7 +50,7 @@ body {
     margin-top: 0;
   }
 
-  &.danger{
+  &.danger {
     font-weight: 700;
     color: map.get($colors, red);
     margin-top: 22px;
