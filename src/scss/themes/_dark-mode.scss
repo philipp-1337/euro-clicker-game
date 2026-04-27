@@ -251,4 +251,130 @@ body.dark {
     }
   }
 
+  .premium-upgrade-card {
+    &.crafting-material-card {
+      background:
+        linear-gradient(180deg, rgba(28, 36, 48, 0.96), rgba(22, 42, 58, 0.94)),
+        map.get($backgrounds, dark);
+      border-color: rgba(91, 177, 241, 0.24);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+
+      .premium-upgrade-description,
+      .premium-upgrade-level,
+      h3 {
+        color: map.get($colors, text-light);
+      }
+    }
+  }
+
+  .crafting-production-card {
+    background:
+      linear-gradient(180deg, rgba(28, 36, 48, 0.96), rgba(22, 42, 58, 0.94));
+    border-color: rgba(91, 177, 241, 0.24);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
+
+    &.is-pending {
+      border-color: rgba(255, 200, 87, 0.4);
+      box-shadow: 0 16px 34px rgba(255, 200, 87, 0.18);
+    }
+
+    &.is-ready {
+      border-color: rgba(73, 205, 132, 0.45);
+      box-shadow: 0 18px 38px rgba(73, 205, 132, 0.2);
+    }
+  }
+
+  .crafting-production-card__identity {
+
+    h3,
+    p {
+      color: map.get($colors, text-light);
+    }
+  }
+
+  .crafting-production-card__eyebrow {
+    color: #ffd989;
+  }
+
+  .crafting-production-card__status-pill {
+    background: rgba(91, 177, 241, 0.16);
+    color: #a7ddff;
+  }
+
+  .crafting-production-card__material {
+    background: rgba(91, 177, 241, 0.1);
+    color: map.get($colors, text-light);
+
+    &.is-satisfied {
+      background: rgba(73, 205, 132, 0.14);
+      color: #9ee3b6;
+    }
+
+    &.is-missing {
+      background: rgba(231, 76, 60, 0.12);
+      color: #f5a89d;
+    }
+  }
+
+  .crafting-production-card__section-title {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .crafting-mode-button {
+    color: map.get($colors, text-light);
+
+    &:not(.active) {
+      opacity: 0.7;
+    }
+  }
+
+  .crafting-production-card__projection {
+    background: rgba(91, 177, 241, 0.1);
+
+    svg {
+      color: #a7ddff;
+    }
+
+    span,
+    strong {
+      color: map.get($colors, text-light);
+    }
+  }
+
+  .crafting-production-card__hint {
+    background: rgba(91, 177, 241, 0.14);
+    color: #cce6f9;
+
+    svg {
+      color: #a7ddff;
+    }
+  }
+
+  .crafting-production-card__pending-panel {
+    background: rgba(255, 200, 87, 0.15);
+    color: #ffe4a7;
+  }
+
+  .crafting-production-card__progress-track {
+    background: rgba(94, 63, 3, 0.2);
+  }
+
+  .crafting-production-card__claim-breakdown {
+    div {
+      background: rgba(24, 31, 41, 0.96);
+    }
+
+    span {
+      color: rgba(255, 200, 87, 0.7);
+    }
+
+    strong {
+      color: #fce1a8;
+    }
+  }
+
+  .crafting-production-card__claim-copy {
+    color: #e2c589;
+  }
+
 }
