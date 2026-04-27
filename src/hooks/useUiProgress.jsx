@@ -35,6 +35,7 @@ export function useUiProgress() {
       showStatisticsHeaderButton: false, // Default: Statistics button in header is hidden
       prestigeButtonEverVisible: false, // New: Tracks if the prestige button has ever been visible
       showDarkModeButton: true, // Default: Dark mode button in header is visible
+      showFloatingMoney: true, // Default: Floating money banner is visible
     };
     try {
       const clickerSaveRaw = localStorage.getItem("clickerSave");
@@ -277,6 +278,19 @@ export function useUiProgress() {
     });
   }, []);
 
+  // Setter for showFloatingMoney
+  const setShowFloatingMoney = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showFloatingMoney === 'boolean' ? prev.showFloatingMoney : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showFloatingMoney: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   // Sync showStatisticsHeaderButton from cloud import
   useEffect(() => {
     const handler = () => {
@@ -323,5 +337,7 @@ export function useUiProgress() {
     setPrestigeButtonEverVisible, // Export the setter
     showDarkModeButton: typeof uiProgress.showDarkModeButton === 'boolean' ? uiProgress.showDarkModeButton : true,
     setShowDarkModeButton,
+    showFloatingMoney: typeof uiProgress.showFloatingMoney === 'boolean' ? uiProgress.showFloatingMoney : true,
+    setShowFloatingMoney,
   };
 }

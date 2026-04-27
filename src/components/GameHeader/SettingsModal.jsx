@@ -24,6 +24,7 @@ import {
   ChevronLeftIcon,
   Monitor as MonitorIcon,
   Loader2 as SpinnerIcon,
+  WalletIcon,
 } from "lucide-react";
 import useCloudSave from '@hooks/useCloudSave';
 import { useModal } from '@hooks/useModal';
@@ -73,6 +74,8 @@ export default function SettingsModal({
   setShowStatisticsHeaderButton,
   showDarkModeButton,
   setShowDarkModeButton,
+  showFloatingMoney,
+  setShowFloatingMoney,
 }) {
   const modalRef = useModal(showSettings, () => setShowSettings(false));
   const showReloadButton = isStandaloneMobile();
@@ -475,6 +478,23 @@ export default function SettingsModal({
                   <span className="switch-slider" />
                 </label>
               </div>
+              {/* Floating Money Toggle */}
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <WalletIcon size={20} className="settings-icon" />
+                  <span className="switch-text">Floating Money</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={showFloatingMoney}
+                    onChange={() => setShowFloatingMoney((v) => !v)}
+                    aria-label="Show Floating Money"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -684,3 +704,4 @@ export default function SettingsModal({
     </div>
   );
 }
+

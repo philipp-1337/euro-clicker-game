@@ -108,6 +108,8 @@ export default function GameHeader(props) {
     setPrestigeButtonEverVisible,
     showDarkModeButton,
     setShowDarkModeButton,
+    showFloatingMoney,
+    setShowFloatingMoney,
   } = useUiProgress();
 
   const [showCloudSaveConfirm, setShowCloudSaveConfirm] = useState(false);
@@ -545,6 +547,8 @@ export default function GameHeader(props) {
         setIsDarkMode={setIsDarkMode}
         showDarkModeButton={showDarkModeButton}
         setShowDarkModeButton={setShowDarkModeButton}
+        showFloatingMoney={showFloatingMoney}
+        setShowFloatingMoney={setShowFloatingMoney}
       />
       <AchievementsModal
         showAchievements={showAchievements}
@@ -567,7 +571,7 @@ export default function GameHeader(props) {
           canPrestige={canPrestige}
         />
       )}
-      <MoneyBanner money={formatNumber(money)} />
+      <MoneyBanner money={formatNumber(money)} showFloatingMoney={showFloatingMoney} />
       {showLeaderboardModal && (
         <LeaderboardModal
           show={showLeaderboardModal}

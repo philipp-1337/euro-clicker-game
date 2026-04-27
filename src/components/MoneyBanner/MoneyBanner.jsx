@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const MoneyBanner = ({ money }) => {
+const MoneyBanner = ({ money, showFloatingMoney }) => {
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
 
@@ -32,7 +32,7 @@ const MoneyBanner = ({ money }) => {
   }, []);
 
   return (
-    isVisible && (
+    isVisible && showFloatingMoney && (
       <div className="money-banner">
         {money}
       </div>
