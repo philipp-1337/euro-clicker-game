@@ -144,3 +144,34 @@ body.dark {
   line-height: 1.4;
   color: rgba(42, 57, 70, 0.84);
 }
+
+body.dark {
+  .investment-boost-meter {
+    background: map.get($backgrounds, off-dark);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .investment-boost-meter__label {
+    color: map.get($colors, light);
+  }
+
+  .investment-boost-meter__challenge {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .investment-boost-meter__track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .investment-boost-meter__badge {
+    &.is-active {
+      color: #ffd700;
+      background: rgba(241, 196, 15, 0.15);
+    }
+    
+    &.is-complete {
+      color: #4ade80;
+      background: rgba(46, 204, 113, 0.15);
+    }
+  }
+}

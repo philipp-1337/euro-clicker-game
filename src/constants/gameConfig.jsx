@@ -7,12 +7,15 @@ const INVESTMENT_UNLOCK_COST = 20000;
 const CRAFTING_UNLOCK_COST = 100000000;
 const CRAFTING_UNLOCK_PRESTIGE = 1;
 
-const investmentDefinitions = [
+export const INVESTMENT_BASE_COST = 75000;
+export const INVESTMENT_BASE_INCOME = 250;
+export const INVESTMENT_COST_MULTIPLIER = 5;
+export const INVESTMENT_INCOME_MULTIPLIER = 2.3;
+
+const baseInvestmentDefinitions = [
   {
     id: "taxi_company",
     name: "Taxi Company",
-    cost: 12750,
-    income: 7,
     icon: "Car",
     roleLabel: "Manager Synergy",
     roleDescription: "Supports automated income loops and later manager-focused optimization.",
@@ -29,8 +32,6 @@ const investmentDefinitions = [
   {
     id: "energy_drinks",
     name: "Energy Drinks",
-    cost: 26500,
-    income: 16,
     icon: "Zap",
     roleLabel: "Active Burst",
     roleDescription: "Favours short active play spikes and rewards condensed action windows.",
@@ -48,8 +49,6 @@ const investmentDefinitions = [
   {
     id: "balcony_power_plants",
     name: "Balcony Power Plants",
-    cost: 38200,
-    income: 23.5,
     icon: "Sunset",
     roleLabel: "Steady Growth",
     roleDescription: "Represents stable utility income with room for efficiency-based boosts.",
@@ -66,8 +65,6 @@ const investmentDefinitions = [
   {
     id: "delicatessen",
     name: "Delicatessen",
-    cost: 51500,
-    income: 32,
     icon: "Sandwich",
     roleLabel: "Cash Buffer",
     roleDescription: "Rewards disciplined spending and keeping a healthy reserve before pushing growth.",
@@ -85,8 +82,6 @@ const investmentDefinitions = [
   {
     id: "fashion_label",
     name: "Fashion Label",
-    cost: 68000,
-    income: 43,
     icon: "Shirt",
     roleLabel: "Momentum Brand",
     roleDescription: "Fits purchase streaks and fast follow-up decisions in the midgame.",
@@ -104,8 +99,6 @@ const investmentDefinitions = [
   {
     id: "e_car_manufacturer",
     name: "E-Car Manufacturer",
-    cost: 81250,
-    income: 52,
     icon: "CarFront",
     roleLabel: "Scaling Industry",
     roleDescription: "Leans into larger economy steps and future milestone-based boosts.",
@@ -122,8 +115,6 @@ const investmentDefinitions = [
   {
     id: "e_cigarettes",
     name: "E-Cigarettes",
-    cost: 95500,
-    income: 61,
     icon: "Cigarette",
     roleLabel: "Risk Window",
     roleDescription: "Designed for shorter, riskier boost windows with resettable progress.",
@@ -141,8 +132,6 @@ const investmentDefinitions = [
   {
     id: "pharma",
     name: "Pharma",
-    cost: 110750,
-    income: 72,
     icon: "Pill",
     roleLabel: "Crafting Support",
     roleDescription: "Sets up later synergy with wealth production and resource efficiency systems.",
@@ -160,8 +149,6 @@ const investmentDefinitions = [
   {
     id: "national_airline",
     name: "National Airline",
-    cost: 128000,
-    income: 84,
     icon: "Plane",
     roleLabel: "Prestige Route",
     roleDescription: "Reserved for prestige-facing scaling and long-run bonuses.",
@@ -178,8 +165,6 @@ const investmentDefinitions = [
   {
     id: "space_rocket_enterprises",
     name: "Space Rocket Enterprises",
-    cost: 145500,
-    income: 97,
     icon: "Rocket",
     roleLabel: "Late Push",
     roleDescription: "Targets ambitious midgame bursts and future premium-style challenge rules.",
@@ -195,6 +180,12 @@ const investmentDefinitions = [
     },
   },
 ];
+
+const investmentDefinitions = baseInvestmentDefinitions.map((investment, index) => ({
+  ...investment,
+  cost: Math.floor(INVESTMENT_BASE_COST * Math.pow(INVESTMENT_COST_MULTIPLIER, index)),
+  income: Number((INVESTMENT_BASE_INCOME * Math.pow(INVESTMENT_INCOME_MULTIPLIER, index)).toFixed(1))
+}));
 
 const craftingRecipeDefinitions = [
   {
@@ -551,9 +542,9 @@ export const gameConfig = {
       icon: "Sparkles",
     },
   ],
-  
+
   investments: investmentDefinitions,
-  
+
   unlockInvestmentCost: INVESTMENT_UNLOCK_COST, // Kosten für die Freischaltung des Investment-Tabs
 
   unlockCraftingCost: CRAFTING_UNLOCK_COST,
@@ -652,9 +643,9 @@ export const gameConfig = {
     },
   ],
   rawMaterials: [
-    { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14,},
-    { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30,},
-    { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20,},
+    { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14, },
+    { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30, },
+    { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20, },
   ],
 
   craftingRecipes: craftingRecipeDefinitions,
