@@ -10,7 +10,7 @@ const CRAFTING_UNLOCK_PRESTIGE = 1;
 export const INVESTMENT_BASE_COST = 75000;
 export const INVESTMENT_BASE_INCOME = 250;
 export const INVESTMENT_COST_MULTIPLIER = 5;
-export const INVESTMENT_INCOME_MULTIPLIER = 2.3;
+export const INVESTMENT_INCOME_MULTIPLIER = 3.8;
 
 const baseInvestmentDefinitions = [
   {
