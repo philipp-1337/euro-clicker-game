@@ -321,10 +321,29 @@ body.dark {
   }
 
   .crafting-mode-button {
+    border-color: rgba(91, 177, 241, 0.28);
+    background: rgba(91, 177, 241, 0.12);
     color: map.get($colors, text-light);
 
+    small {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    &.active {
+      border-color: rgba(91, 177, 241, 0.6);
+      background: rgba(91, 177, 241, 0.25);
+      box-shadow: 0 8px 22px rgba(91, 177, 241, 0.18);
+    }
+
     &:not(.active) {
-      opacity: 0.7;
+      opacity: 0.8;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 1;
+      transform: translateY(-1px);
+      border-color: rgba(91, 177, 241, 0.45);
+      box-shadow: 0 8px-20p rgba(91, 177, 241, 0.15);
     }
   }
 
