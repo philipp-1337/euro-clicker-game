@@ -9,17 +9,37 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 
 function App() {
   const { showInstallPrompt, isIos, handleInstallClick, handleDismissClick } = usePwaPrompt();
+  const updateIntervalId = useRef(undefined);
   const {
     needRefresh: [needRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
       console.log('SW Registered:', r);
+      if (r) {
+        if (updateIntervalId.current !== undefined) {
+          clearInterval(updateIntervalId.current);
+        }
+        // Check for updates every 60 seconds
+        updateIntervalId.current = window.setInterval(() => {
+          console.log('Checking for SW update...');
+          r.update();
+        }, 60 * 1000);
+      }
     },
     onRegisterError(error) {
       console.log('SW registration error:', error);
     },
   });
+
+  // Cleanup the update interval on component unmount
+  useEffect(() => {
+    return () => {
+      if (updateIntervalId.current !== undefined) {
+        clearInterval(updateIntervalId.current);
+      }
+    };
+  }, []);
 
   // Initialisiere easyMode basierend auf localStorage
   const [easyMode, setEasyMode] = useState(localStorage.getItem('easyMode') === 'true');
