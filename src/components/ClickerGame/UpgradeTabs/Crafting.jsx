@@ -29,6 +29,9 @@ export default function Crafting({
   startCraftingProduction,
   claimCraftingProduction,
   craftingJourneyMessage,
+  productionHqMaterialCostMultiplier = 1,
+  productionHqValueMultiplier = 1,
+  productionHqSpeedMultiplier = 1,
 }) {
   const calculateTotalCost = (material) => {
     let total = 0;
@@ -37,7 +40,7 @@ export default function Crafting({
     const costIncreaseFactor = material.costIncreaseFactor || 1.07;
 
     for (let index = 0; index < buyQuantity; index += 1) {
-      total += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
+      total += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier * productionHqMaterialCostMultiplier);
       purchaseCount += 1;
     }
 
@@ -156,6 +159,8 @@ export default function Crafting({
             resolveCraftOutcome={resolveCraftOutcome}
             startCraftingProduction={startCraftingProduction}
             claimCraftingProduction={claimCraftingProduction}
+            productionHqValueMultiplier={productionHqValueMultiplier}
+            productionHqSpeedMultiplier={productionHqSpeedMultiplier}
           />
         ))}
       </div>

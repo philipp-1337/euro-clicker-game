@@ -9,6 +9,7 @@ import BasicUpgrades from './UpgradeTabs/BasicUpgrades';
 import Investments from './UpgradeTabs/Investments';
 import Crafting from './UpgradeTabs/Crafting';
 import PremiumUpgrades from './UpgradeTabs/PremiumUpgrades';
+import ProductionHQ from './UpgradeTabs/ProductionHQ'; // Import ProductionHQ
 import useGameCore from '@hooks/useGameCore';
 import useUnlockRoadmap from '@hooks/useUnlockRoadmap';
 import { useAchievements } from '@hooks/useAchievements';
@@ -166,6 +167,16 @@ export default function ClickerGame({
     setPrestigeShares,
     setPrestigeCount,
     setRawMaterials,
+    productionHqUpgrades,
+    buyProductionHqUpgrade,
+    isProductionHqUnlocked,
+    autoBuyMaterialsEnabled,
+    setAutoBuyMaterialsEnabled,
+    autoCraftEnabled,
+    setAutoCraftEnabled,
+    productionHqMaterialCostMultiplier,
+    productionHqValueMultiplier,
+    productionHqSpeedMultiplier,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   const { nextMilestone } = useUnlockRoadmap({
@@ -174,6 +185,8 @@ export default function ClickerGame({
     prestigeCount,
     prestigeShares,
     isCraftingUnlocked,
+    craftingItems,
+    isProductionHqUnlocked,
     unlockInvestmentCost,
     prestigeThresholdMoney: gameConfig.prestige.minMoneyForModalButton,
     craftingUnlockCost: gameConfig.unlockCraftingCost,
@@ -747,11 +760,13 @@ export default function ClickerGame({
                 buyQuantity={buyQuantity}
                 isCraftingUnlocked={isCraftingUnlocked}
                 unlockCrafting={unlockCrafting}
-                unlockCraftingCost={gameConfig.unlockCraftingCost}
+                craftingUnlockCost={gameConfig.unlockCraftingCost}
                 accumulatedPrestigeShares={prestigeShares}
                 craftingJourneyMessage={craftingJourneyMessage}
-              />
-            )}
+                productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
+                productionHqValueMultiplier={productionHqValueMultiplier}
+                productionHqSpeedMultiplier={productionHqSpeedMultiplier}
+                />            )}
             {activeTab === 'premium' && (
               <PremiumUpgrades
                 money={money}
@@ -790,8 +805,20 @@ export default function ClickerGame({
                 floatingClickValueAutobuyerUnlockCost={floatingClickValueAutobuyerUnlockCost}
               />
             )}
+            {activeTab === 'production_hq' && (
+              <ProductionHQ
+                productionHqUpgrades={productionHqUpgrades}
+                buyProductionHqUpgrade={buyProductionHqUpgrade}
+                craftingItems={craftingItems}
+                isUnlocked={isProductionHqUnlocked}
+                autoBuyMaterialsEnabled={autoBuyMaterialsEnabled}
+                setAutoBuyMaterialsEnabled={setAutoBuyMaterialsEnabled}
+                autoCraftEnabled={autoCraftEnabled}
+                setAutoCraftEnabled={setAutoCraftEnabled}
+              />
+            )}
           </div>
-          <BottomTabMenu activeTab={activeTab} setActiveTab={setActiveTab} />
+          <BottomTabMenu activeTab={activeTab} setActiveTab={setActiveTab} prestigeCount={prestigeCount} />
         </>
       )}
 
