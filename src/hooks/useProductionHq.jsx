@@ -1,5 +1,9 @@
 import { useCallback, useMemo } from 'react';
 import { gameConfig } from '@constants/gameConfig';
+import {
+  getProductionHqMaterialCostMultiplier,
+  subtractProductionHqUpgradeCosts,
+} from './useProductionHq.helpers';
 
 export default function useProductionHq({
   craftingItems,
@@ -21,11 +25,7 @@ export default function useProductionHq({
 
     if (canAfford) {
       // Deduct costs
-      const newCraftingItems = [...craftingItems];
-      costs.forEach(cost => {
-        newCraftingItems[cost.item] -= Math.ceil(cost.quantity);
-      });
-      setCraftingItems(newCraftingItems);
+      setCraftingItems(prev => subtractProductionHqUpgradeCosts(prev, costs));
 
       // Increment upgrade level
       setProductionHqUpgrades(prev => ({
@@ -50,7 +50,10 @@ export default function useProductionHq({
   const productionHqMaterialCostMultiplier = useMemo(() => {
     const upgrade = gameConfig.productionHqUpgrades.find(u => u.id === 'material_cost');
     const level = productionHqUpgrades?.material_cost || 0;
-    return 1 - (upgrade?.effectPerLevel * level || 0);
+    return getProductionHqMaterialCostMultiplier({
+      effectPerLevel: upgrade?.effectPerLevel,
+      level,
+    });
   }, [productionHqUpgrades]);
 
   const productionHqRareChanceBonus = useMemo(() => {
