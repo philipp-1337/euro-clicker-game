@@ -47,6 +47,7 @@ export default function useAutoBuyers({
   floatingClickValueLevel,
   setFloatingClickValueLevel,
   setFloatingClickValueMultiplier,
+  spendMoney,
 }) {
   
   const moneyRef = useRef(money);
@@ -182,7 +183,9 @@ export default function useAutoBuyers({
           purchases.push({
             cost: totalCost,
             action: () => {
-              setMoney(prev => prev - totalCost);
+              if (!spendMoney(totalCost)) {
+                return;
+              }
               setValueUpgradeLevels(prev => {
                 const updated = [...prev];
                 updated[minIndex] += buyQuantity;
@@ -232,7 +235,9 @@ export default function useAutoBuyers({
           purchases.push({
             cost: totalCost,
             action: () => {
-              setMoney(prev => prev - totalCost);
+              if (!spendMoney(totalCost)) {
+                return;
+              }
               setCooldownUpgradeLevels(prev => {
                 const updated = [...prev];
                 updated[minIndex] += buyQuantity;
@@ -262,7 +267,9 @@ export default function useAutoBuyers({
         purchases.push({
           cost: totalCost,
           action: () => {
-            setMoney(prev => prev - totalCost);
+            if (!spendMoney(totalCost)) {
+              return;
+            }
             setGlobalMultiplierLevel(prev => prev + buyQuantity);
             for (let i = 0; i < buyQuantity; i++) {
               setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
@@ -283,7 +290,9 @@ export default function useAutoBuyers({
         purchases.push({
           cost: totalCost,
           action: () => {
-            setMoney(prev => prev - totalCost);
+            if (!spendMoney(totalCost)) {
+              return;
+            }
             setGlobalPriceDecreaseLevel(prev => prev + buyQuantity);
             for (let i = 0; i < buyQuantity; i++) {
               setGlobalPriceDecreaseState(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
@@ -305,7 +314,9 @@ export default function useAutoBuyers({
         purchases.push({
           cost: totalCost,
           action: () => {
-            setMoney(prev => prev - totalCost);
+            if (!spendMoney(totalCost)) {
+              return;
+            }
             const newLevel = floatingClickValueLevelRef.current + buyQuantity;
             const newValue = fibonacci(newLevel);
             setFloatingClickValueLevel(newLevel);
@@ -337,7 +348,7 @@ export default function useAutoBuyers({
     buyQuantity,
     autoBuyerBuffer,
     autoBuyerInterval,
-    setMoney,
+    spendMoney,
     setValueUpgradeLevels,
     setValueMultipliers,
     setCooldownUpgradeLevels,

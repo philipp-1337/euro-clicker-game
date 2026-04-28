@@ -580,6 +580,12 @@ export default function ClickerGame({
         floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
         floatingClickValueAutobuyerEnabled={floatingClickValueAutobuyerEnabled}
         setFloatingClickValueAutobuyerEnabled={setFloatingClickValueAutobuyerEnabled}
+        logisticsManagerUnlocked={(productionHqUpgrades?.auto_buy_materials || 0) > 0}
+        autoBuyMaterialsEnabled={autoBuyMaterialsEnabled}
+        setAutoBuyMaterialsEnabled={setAutoBuyMaterialsEnabled}
+        productionManagerUnlocked={(productionHqUpgrades?.auto_craft || 0) > 0}
+        autoCraftEnabled={autoCraftEnabled}
+        setAutoCraftEnabled={setAutoCraftEnabled}
       />
 
       {/* AchievementNotification wird jetzt als Sonner Toast angezeigt */}
@@ -617,17 +623,24 @@ export default function ClickerGame({
           globalMultiplierAutoBuyerUnlocked={globalMultiplierAutoBuyerUnlocked}
           globalPriceDecreaseAutoBuyerUnlocked={globalPriceDecreaseAutoBuyerUnlocked}
           floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
+          logisticsManagerUnlocked={(productionHqUpgrades?.auto_buy_materials || 0) > 0}
+          productionManagerUnlocked={(productionHqUpgrades?.auto_craft || 0) > 0}
           setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
           autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
           autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
           autoBuyGlobalMultiplierEnabled={autoBuyGlobalMultiplierEnabled}
           autoBuyGlobalPriceDecreaseEnabled={autoBuyGlobalPriceDecreaseEnabled}
           floatingClickValueAutobuyerEnabled={floatingClickValueAutobuyerEnabled}
+          autoBuyMaterialsEnabled={autoBuyMaterialsEnabled}
+          autoCraftEnabled={autoCraftEnabled}
           autoBuyerBuffer={autoBuyerBuffer}
           setAutoBuyValueUpgradeEnabled={setAutoBuyValueUpgradeEnabled}
           setAutoBuyCooldownUpgradeEnabled={setAutoBuyCooldownUpgradeEnabled}
           setAutoBuyGlobalMultiplierEnabled={setAutoBuyGlobalMultiplierEnabled}
           setAutoBuyGlobalPriceDecreaseEnabled={setAutoBuyGlobalPriceDecreaseEnabled}
+          setFloatingClickValueAutobuyerEnabled={setFloatingClickValueAutobuyerEnabled}
+          setAutoBuyMaterialsEnabled={setAutoBuyMaterialsEnabled}
+          setAutoCraftEnabled={setAutoCraftEnabled}
         />
       )}
 
@@ -760,7 +773,7 @@ export default function ClickerGame({
                 buyQuantity={buyQuantity}
                 isCraftingUnlocked={isCraftingUnlocked}
                 unlockCrafting={unlockCrafting}
-                craftingUnlockCost={gameConfig.unlockCraftingCost}
+                unlockCraftingCost={gameConfig.unlockCraftingCost}
                 accumulatedPrestigeShares={prestigeShares}
                 craftingJourneyMessage={craftingJourneyMessage}
                 productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
@@ -815,6 +828,9 @@ export default function ClickerGame({
                 setAutoBuyMaterialsEnabled={setAutoBuyMaterialsEnabled}
                 autoCraftEnabled={autoCraftEnabled}
                 setAutoCraftEnabled={setAutoCraftEnabled}
+                productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
+                productionHqValueMultiplier={productionHqValueMultiplier}
+                productionHqSpeedMultiplier={productionHqSpeedMultiplier}
               />
             )}
           </div>

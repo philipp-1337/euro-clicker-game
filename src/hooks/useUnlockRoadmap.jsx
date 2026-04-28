@@ -46,9 +46,14 @@ const getTargetPrestige = (milestone, overrides) => {
 const getContextValue = (context, key) => {
   if (typeof key !== 'string') return key;
 
-  // Handle nested keys like 'craftingItems.0'
   if (key.includes('.')) {
-    return key.split('.').reduce((obj, part) => (obj && obj[part] !== 'undefined') ? obj[part] : undefined, context);
+    return key.split('.').reduce((currentValue, part) => {
+      if (currentValue === null || currentValue === undefined) {
+        return undefined;
+      }
+
+      return currentValue[part];
+    }, context);
   }
 
   const value = context[key];
@@ -56,6 +61,18 @@ const getContextValue = (context, key) => {
     return value;
   }
   return normalizeNumber(value);
+};
+
+const resolveTargetReference = (targetReference, milestoneState, fallbackValue = 0) => {
+  if (typeof targetReference === 'string') {
+    return normalizeNumber(milestoneState[targetReference], normalizeNumber(fallbackValue));
+  }
+
+  if (typeof targetReference === 'number') {
+    return normalizeNumber(targetReference, normalizeNumber(fallbackValue));
+  }
+
+  return normalizeNumber(fallbackValue);
 };
 
 const resolveCondition = (condition, context, milestoneState) => {
@@ -81,7 +98,7 @@ const resolveCondition = (condition, context, milestoneState) => {
 
   if (condition.type === 'threshold') {
     const target = condition.target
-      ? normalizeNumber(milestoneState[condition.target])
+      ? resolveTargetReference(condition.target, milestoneState)
       : normalizeNumber(condition.value);
     return normalizeNumber(value) >= Math.max(1, target);
   }
@@ -105,7 +122,7 @@ const buildMilestoneState = (milestone, values) => ({
 
 const getSegmentProgress = (segment, context, milestone) => {
   const targetValue = segment.target
-    ? normalizeNumber(milestone[segment.target])
+    ? resolveTargetReference(segment.target, milestone, segment.value)
     : normalizeNumber(segment.value);
   const currentValue = normalizeNumber(getContextValue(context, segment.key));
   const span = normalizeNumber(segment.end) - normalizeNumber(segment.start);
@@ -141,7 +158,7 @@ const getSegmentsProgress = (milestone, context) => {
 const formatRemainingRequirement = (requirement, context, milestoneState) => {
   const currentValue = normalizeNumber(getContextValue(context, requirement.key));
   const targetValue = requirement.target
-    ? normalizeNumber(milestoneState[requirement.target])
+    ? resolveTargetReference(requirement.target, milestoneState, requirement.value)
     : normalizeNumber(requirement.value);
 
   if (requirement.format === 'money') {
@@ -179,7 +196,7 @@ const formatRemainingText = (milestone, context, milestoneState) => {
     .filter((requirement) => {
       const currentValue = normalizeNumber(getContextValue(context, requirement.key));
       const targetValue = requirement.target
-        ? normalizeNumber(milestoneState[requirement.target])
+        ? resolveTargetReference(requirement.target, milestoneState, requirement.value)
         : normalizeNumber(requirement.value);
       return currentValue < targetValue;
     })

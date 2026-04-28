@@ -315,26 +315,6 @@ export default function PremiumUpgrades(props) {
         </div>
       </div>
       <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Automation Upgrades</h3>
-      {/* Premium Upgrade: Floating Click Value AutoBuyer Unlock */}
-      <div className="premium-upgrade-card">
-        <div className="premium-upgrade-header">
-          <MousePointerClick className="premium-icon" />
-          <h3>Auto-Buyer: Clicker Value</h3>
-        </div>
-        <p className="premium-upgrade-description">
-          Unlocks the Clicker Value Auto-Buyer. Automatically purchases the clicker value boost premium upgrade when enabled via the <Bot size={12}/> icon in the header.
-        </p>
-        <div className="premium-upgrade-info auto-buyer-info">
-          <button
-            onClick={buyFloatingClickValueAutobuyerUnlock}
-            disabled={floatingClickValueAutobuyerUnlocked || money < floatingClickValueAutobuyerUnlockCost}
-            className={`premium-upgrade-button ${floatingClickValueAutobuyerUnlocked || money < floatingClickValueAutobuyerUnlockCost ? 'disabled' : ''}`}
-            title={floatingClickValueAutobuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Clicker Value'}
-          >
-            {floatingClickValueAutobuyerUnlocked ? 'Unlocked' : `${formatNumber(floatingClickValueAutobuyerUnlockCost)} €`}
-          </button>
-        </div>
-      </div>
       {/* Premium Upgrade: AutoBuyer Unlock */}
       <div className="premium-upgrade-card">
         <div className="premium-upgrade-header">
@@ -415,6 +395,26 @@ export default function PremiumUpgrades(props) {
             title={globalPriceDecreaseAutoBuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Discount'}
           >
             {globalPriceDecreaseAutoBuyerUnlocked ? 'Unlocked' : `${formatNumber(globalPriceDecreaseAutoBuyerUnlockCost)} €`}
+          </button>
+        </div>
+      </div>
+      {/* Premium Upgrade: Floating Click Value AutoBuyer Unlock */}
+      <div className="premium-upgrade-card">
+        <div className="premium-upgrade-header">
+          <MousePointerClick className="premium-icon" />
+          <h3>Auto-Buyer: Clicker Value</h3>
+        </div>
+        <p className="premium-upgrade-description">
+          Unlocks the Clicker Value Auto-Buyer. Automatically purchases the clicker value boost premium upgrade when enabled via the <Bot size={12}/> icon in the header.
+        </p>
+        <div className="premium-upgrade-info auto-buyer-info">
+          <button
+            onClick={buyFloatingClickValueAutobuyerUnlock}
+            disabled={floatingClickValueAutobuyerUnlocked || money < floatingClickValueAutobuyerUnlockCost}
+            className={`premium-upgrade-button ${floatingClickValueAutobuyerUnlocked || money < floatingClickValueAutobuyerUnlockCost ? 'disabled' : ''}`}
+            title={floatingClickValueAutobuyerUnlocked ? 'Already unlocked' : 'Unlock Auto-Buyer: Clicker Value'}
+          >
+            {floatingClickValueAutobuyerUnlocked ? 'Unlocked' : `${formatNumber(floatingClickValueAutobuyerUnlockCost)} €`}
           </button>
         </div>
       </div>

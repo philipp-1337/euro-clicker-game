@@ -11,7 +11,8 @@ export default function useInvestments(
   setInvestments,
   ensureStartTime,
   easyMode = false,
-  investmentBoostStates = {}
+  investmentBoostStates = {},
+  spendMoney
 ) {
   // Kostenmultiplikator für easyMode berücksichtigen
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -34,15 +35,32 @@ export default function useInvestments(
   const buyInvestment = (index) => {
     const investment = gameConfig.investments[index];
     const investmentCost = investment.cost * costMultiplier;
-    if (money >= investmentCost && investments[index] === 0) { // Nur kaufen, wenn noch nicht gekauft
-      ensureStartTime?.();
-      setMoney((prev) => prev - investmentCost);
-      setInvestments((prev) => {
-        const updated = [...prev];
-        updated[index] = 1; // Nur einmal kaufbar
-        return updated;
-      });
+
+    if (investments[index] !== 0) {
+      return false;
     }
+
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(investmentCost)
+      : (money >= investmentCost);
+
+    if (!wasSpent) {
+      return false;
+    }
+
+    ensureStartTime?.();
+
+    if (typeof spendMoney !== 'function') {
+      setMoney((prev) => prev - investmentCost);
+    }
+
+    setInvestments((prev) => {
+      const updated = [...prev];
+      updated[index] = 1;
+      return updated;
+    });
+
+    return true;
   };
 
   return { buyInvestment, totalIncomePerSecond, costMultiplier };

@@ -226,17 +226,23 @@ export default function GameHeader(props) {
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
     floatingClickValueAutobuyerUnlocked,
+    logisticsManagerUnlocked,
+    productionManagerUnlocked,
     setIsAutoBuyerModalOpen,
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
     floatingClickValueAutobuyerEnabled,
+    autoBuyMaterialsEnabled,
+    autoCraftEnabled,
     setAutoBuyValueUpgradeEnabled,
     setAutoBuyCooldownUpgradeEnabled,
     setAutoBuyGlobalMultiplierEnabled,
     setAutoBuyGlobalPriceDecreaseEnabled,
     setFloatingClickValueAutobuyerEnabled,
+    setAutoBuyMaterialsEnabled,
+    setAutoCraftEnabled,
   } = props;
 
   const toggleAllAutoBuyers = React.useCallback(() => {
@@ -246,7 +252,9 @@ export default function GameHeader(props) {
       autoBuyCooldownUpgradeEnabled ||
       autoBuyGlobalMultiplierEnabled ||
       autoBuyGlobalPriceDecreaseEnabled ||
-      floatingClickValueAutobuyerEnabled;
+      floatingClickValueAutobuyerEnabled ||
+      autoBuyMaterialsEnabled ||
+      autoCraftEnabled;
 
     // Wenn einer aktiv ist, alle ausschalten, sonst alle anschalten (aber nur die freigeschalteten)
     const newState = !anyActive;
@@ -266,6 +274,12 @@ export default function GameHeader(props) {
     if (floatingClickValueAutobuyerUnlocked) {
       setFloatingClickValueAutobuyerEnabled(newState);
     }
+    if (logisticsManagerUnlocked) {
+      setAutoBuyMaterialsEnabled(newState);
+    }
+    if (productionManagerUnlocked) {
+      setAutoCraftEnabled(newState);
+    }
 
     // Optional: Kurzes vibrieren auf mobilen Geräten
     if (navigator.vibrate) {
@@ -284,16 +298,22 @@ export default function GameHeader(props) {
     autoBuyGlobalMultiplierEnabled,
     autoBuyGlobalPriceDecreaseEnabled,
     floatingClickValueAutobuyerEnabled,
+    autoBuyMaterialsEnabled,
+    autoCraftEnabled,
     autoBuyerUnlocked,
     cooldownAutoBuyerUnlocked,
     globalMultiplierAutoBuyerUnlocked,
     globalPriceDecreaseAutoBuyerUnlocked,
     floatingClickValueAutobuyerUnlocked,
+    logisticsManagerUnlocked,
+    productionManagerUnlocked,
     setAutoBuyValueUpgradeEnabled,
     setAutoBuyCooldownUpgradeEnabled,
     setAutoBuyGlobalMultiplierEnabled,
     setAutoBuyGlobalPriceDecreaseEnabled,
     setFloatingClickValueAutobuyerEnabled,
+    setAutoBuyMaterialsEnabled,
+    setAutoCraftEnabled,
   ]);
 
   // DoubleClick statt LongPress für AutoBuyer-Button
@@ -309,7 +329,9 @@ export default function GameHeader(props) {
     autoBuyCooldownUpgradeEnabled ||
     autoBuyGlobalMultiplierEnabled ||
     autoBuyGlobalPriceDecreaseEnabled ||
-    floatingClickValueAutobuyerEnabled;
+    floatingClickValueAutobuyerEnabled ||
+    autoBuyMaterialsEnabled ||
+    autoCraftEnabled;
 
   // Buffer badge: yellow if buffer > 0 and active, else green if active, else no badge
   let showAutoBuyerBadge = false;
@@ -328,7 +350,9 @@ export default function GameHeader(props) {
     cooldownAutoBuyerUnlocked ||
     globalMultiplierAutoBuyerUnlocked ||
     globalPriceDecreaseAutoBuyerUnlocked ||
-    floatingClickValueAutobuyerUnlocked;
+    floatingClickValueAutobuyerUnlocked ||
+    logisticsManagerUnlocked ||
+    productionManagerUnlocked;
 
   const displayTotalMoneyPerSecond =
     totalMoneyPerSecond + (manualMoneyPerSecond || 0);
@@ -640,11 +664,17 @@ GameHeader.propTypes = {
   cooldownAutoBuyerUnlocked: PropTypes.bool.isRequired,
   globalMultiplierAutoBuyerUnlocked: PropTypes.bool.isRequired,
   globalPriceDecreaseAutoBuyerUnlocked: PropTypes.bool.isRequired,
+  logisticsManagerUnlocked: PropTypes.bool.isRequired,
+  productionManagerUnlocked: PropTypes.bool.isRequired,
   setIsAutoBuyerModalOpen: PropTypes.func.isRequired,
   autoBuyValueUpgradeEnabled: PropTypes.bool.isRequired,
   autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
   autoBuyGlobalMultiplierEnabled: PropTypes.bool.isRequired,
   autoBuyGlobalPriceDecreaseEnabled: PropTypes.bool.isRequired,
+  floatingClickValueAutobuyerEnabled: PropTypes.bool.isRequired,
+  autoBuyMaterialsEnabled: PropTypes.bool.isRequired,
+  autoCraftEnabled: PropTypes.bool.isRequired,
+  floatingClickValueAutobuyerUnlocked: PropTypes.bool.isRequired,
   autoBuyerBuffer: PropTypes.number,
   musicEnabled: PropTypes.bool.isRequired,
   setMusicEnabled: PropTypes.func.isRequired,
@@ -654,6 +684,9 @@ GameHeader.propTypes = {
   setAutoBuyCooldownUpgradeEnabled: PropTypes.func.isRequired,
   setAutoBuyGlobalMultiplierEnabled: PropTypes.func.isRequired,
   setAutoBuyGlobalPriceDecreaseEnabled: PropTypes.func.isRequired,
+  setFloatingClickValueAutobuyerEnabled: PropTypes.func.isRequired,
+  setAutoBuyMaterialsEnabled: PropTypes.func.isRequired,
+  setAutoCraftEnabled: PropTypes.func.isRequired,
 };
 
 GameHeader.defaultProps = {

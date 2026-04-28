@@ -189,7 +189,7 @@ export default function useGameState() {
   const [floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled] = useState(gameConfig.initialState.floatingClickValueAutobuyerEnabled);
 
   const [productionHqUpgrades, setProductionHqUpgrades] = useState(gameConfig.initialState.productionHqUpgrades ?? {});
-  const [isProductionHqUnlocked, setIsProductionHqUnlocked] = useState(false);
+  const [isProductionHqUnlocked, setIsProductionHqUnlocked] = useState(gameConfig.initialState.isProductionHqUnlocked ?? false);
   const [autoBuyMaterialsEnabled, setAutoBuyMaterialsEnabled] = useState(gameConfig.initialState.autoBuyMaterialsEnabled ?? false);
   const [autoCraftEnabled, setAutoCraftEnabled] = useState(gameConfig.initialState.autoCraftEnabled ?? false);
 

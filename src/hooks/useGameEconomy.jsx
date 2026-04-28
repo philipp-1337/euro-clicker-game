@@ -138,6 +138,8 @@ export default function useGameEconomy({
       globalPriceDecreaseAutoBuyerUnlocked: gameState.globalPriceDecreaseAutoBuyerUnlocked,
       autoBuyGlobalMultiplierEnabled: gameState.autoBuyGlobalMultiplierEnabled,
       autoBuyGlobalPriceDecreaseEnabled: gameState.autoBuyGlobalPriceDecreaseEnabled,
+      floatingClickValueAutobuyerUnlocked: gameState.floatingClickValueAutobuyerUnlocked,
+      floatingClickValueAutobuyerEnabled: gameState.floatingClickValueAutobuyerEnabled,
       autoBuyerInterval: gameState.autoBuyerInterval,
       autoBuyerBuffer: gameState.autoBuyerBuffer,
     };

@@ -6,11 +6,22 @@ import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 const INVESTMENT_UNLOCK_COST = 20000;
 const CRAFTING_UNLOCK_COST = 100000000;
 const CRAFTING_UNLOCK_PRESTIGE = 1;
+const PRODUCTION_HQ_BASE_COST_COINS = 2;
+const PRODUCTION_HQ_BASE_COST_GOLD = 1;
+const PRODUCTION_HQ_COST_MULTIPLIER = 1.55;
+
+const PRODUCTION_HQ_CRAFTING_VALUE_STEP = 0.1;
+const PRODUCTION_HQ_CRAFTING_SPEED_STEP = 0.08;
+const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.15;
 
 export const INVESTMENT_BASE_COST = 75000;
 export const INVESTMENT_BASE_INCOME = 250;
 export const INVESTMENT_COST_MULTIPLIER = 5;
 export const INVESTMENT_INCOME_MULTIPLIER = 3.8;
+
+const getProductionHqScalingCost = (baseCost, level) => {
+  return Math.max(1, Math.ceil(baseCost * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)));
+};
 
 const baseInvestmentDefinitions = [
   {
@@ -672,18 +683,11 @@ export const gameConfig = {
       previewText: "Upgrade your crafting value and speed.",
     },
   ],
-const PRODUCTION_HQ_BASE_COST_COINS = 1; // Test cost
-const PRODUCTION_HQ_BASE_COST_GOLD = 1;  // Test cost
-const PRODUCTION_HQ_COST_MULTIPLIER = 1.5;
-
-const PRODUCTION_HQ_CRAFTING_VALUE_STEP = 0.1;      // +10% per level
-const PRODUCTION_HQ_CRAFTING_SPEED_STEP = 0.08;     // -8% duration per level
-const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
 
   rawMaterials: [
-    { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14, },
-    { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30, },
-    { id: "tech", name: "Investment Molds", baseCost: 130000, costIncreaseFactor: 5.20, },
+    { id: "metal", name: "Precious Metals", baseCost: 5580, costIncreaseFactor: 1.06, },
+    { id: "parts", name: "Forging Instruments", baseCost: 15600, costIncreaseFactor: 1.15, },
+    { id: "tech", name: "Investment Molds", baseCost: 44900, costIncreaseFactor: 2.10, },
   ],
 
   craftingRecipes: craftingRecipeDefinitions,
@@ -695,9 +699,9 @@ const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
       description: 'Increases the value of crafted items by 10% per level.',
       icon: 'Gem',
       effectPerLevel: PRODUCTION_HQ_CRAFTING_VALUE_STEP,
-      maxLevel: 10,
+      maxLevel: 8,
       getCost: (level) => ([
-        { item: 1, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_GOLD * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+        { item: 1, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_GOLD, level) }
       ])
     },
     {
@@ -706,21 +710,21 @@ const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
       description: 'Reduces the production time of crafted items by 8% per level.',
       icon: 'Gauge',
       effectPerLevel: PRODUCTION_HQ_CRAFTING_SPEED_STEP,
-      maxLevel: 10,
+      maxLevel: 8,
       getCost: (level) => ([
-        { item: 0, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_COINS * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+        { item: 0, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_COINS, level) }
       ])
     },
     {
       id: 'material_cost',
       name: 'Material Sourcing',
-      description: 'Reduces the cost of raw materials by 5% per level.',
+      description: 'Reduces the cost of raw materials by 15% per level.',
       icon: 'ShoppingCart',
       effectPerLevel: PRODUCTION_HQ_MATERIAL_COST_STEP,
-      maxLevel: 10,
+      maxLevel: 8,
       getCost: (level) => ([
-        { item: 0, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_COINS * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) },
-        { item: 1, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_GOLD * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+        { item: 0, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_COINS, level) },
+        { item: 1, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_GOLD, level) }
       ])
     },
     {
@@ -730,19 +734,19 @@ const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
       icon: 'Bot',
       maxLevel: 1,
       getCost: () => ([
-        { item: 0, quantity: PRODUCTION_HQ_BASE_COST_COINS },
-        { item: 1, quantity: PRODUCTION_HQ_BASE_COST_GOLD }
+        { item: 0, quantity: 6 },
+        { item: 1, quantity: 2 }
       ])
     },
     {
       id: 'auto_craft',
       name: 'Production Manager',
-      description: 'Unlocks fully automated production lines: starting and claiming wealth production.',
+      description: 'Unlocks fully automated production lines: starting and claiming wealth production. Prioritizes the recipe with the lowest progress toward your HQ target stock.',
       icon: 'Cpu',
       maxLevel: 1,
       getCost: () => ([
-        { item: 0, quantity: PRODUCTION_HQ_BASE_COST_COINS },
-        { item: 1, quantity: PRODUCTION_HQ_BASE_COST_GOLD }
+        { item: 0, quantity: 9 },
+        { item: 1, quantity: 3 }
       ])
     }
   ],
@@ -778,6 +782,7 @@ const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
       auto_buy_materials: 0,
       auto_craft: 0,
     },
+    isProductionHqUnlocked: false,
     autoBuyMaterialsEnabled: false,
     autoCraftEnabled: false,
     offlineEarningsLevel: 0, // Level for offline earnings

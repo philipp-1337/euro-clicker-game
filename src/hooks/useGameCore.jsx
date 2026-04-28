@@ -19,7 +19,7 @@ import usePremiumUpgrades from './usePremiumUpgrades';
 import useInvestmentBoosts from './useInvestmentBoosts';
 import useProductionHq from './useProductionHq';
 import useProductionAutomation from './useProductionAutomation';
-import { calculateCostWithDifficulty } from '@utils/calculators';
+import useAtomicMoney from './useAtomicMoney';
 
 /**
  * Main game orchestrator hook that coordinates all game systems.
@@ -83,6 +83,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // UI states
   const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
+  const { spendMoney } = useAtomicMoney(money, setMoney);
 
   // Game calculations for derived states
   const {
@@ -112,17 +113,18 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     gameConfig,
     ensureStartTime,
     easyMode,
-    globalPriceDecrease
+    globalPriceDecrease,
+    spendMoney
   );
 
   // Manager system
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled);
+  const { buyManager } = useManagers(money, setMoney, managers, setManagers, ensureStartTime, soundEffectsEnabled, spendMoney);
   const managerCosts = gameConfig.getBaseManagerCosts().map(cost => cost * costMultiplier);
 
   // Investment system
   const { buyInvestment, totalIncomePerSecond: investmentIncomePerSecond, costMultiplier: investmentCostMultiplier } = useInvestments(
-    money, setMoney, investments, setInvestments, ensureStartTime, easyMode, investmentBoostStates
+    money, setMoney, investments, setInvestments, ensureStartTime, easyMode, investmentBoostStates, spendMoney
   );
 
   const investmentBoostsHook = useInvestmentBoosts(
@@ -154,6 +156,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     craftingProductionState, setCraftingProductionState,
     productionHqHook.productionHqValueMultiplier,
     productionHqHook.productionHqSpeedMultiplier,
+    productionHqHook.productionHqMaterialCostMultiplier,
+    spendMoney,
   );
 
   // Core economy management
@@ -173,7 +177,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     globalPriceDecreaseLevel, setGlobalPriceDecreaseLevel, setGlobalPriceDecrease,
     offlineEarningsLevel, setOfflineEarningsLevel,
     criticalClickChanceLevel, setCriticalClickChanceLevel,
-    floatingClickValueLevel, setFloatingClickValueLevel, setFloatingClickValueMultiplier
+    floatingClickValueLevel, setFloatingClickValueLevel, setFloatingClickValueMultiplier,
+    spendMoney
   });
 
   // Auto-buyers system
@@ -202,6 +207,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     floatingClickValueLevel,
     setFloatingClickValueLevel,
     setFloatingClickValueMultiplier,
+    spendMoney,
   });
 
   // Offline earnings system
@@ -251,10 +257,8 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   const wrappedBuyInvestment = useCallback((index) => {
     const investment = gameConfig.investments[index];
-    const investmentCost = investment.cost * investmentCostMultiplier;
 
-    if (money >= investmentCost && investments[index] === 0) {
-      buyInvestment(index);
+    if (investments[index] === 0 && buyInvestment(index)) {
       propagateInvestmentBoostEvent(
         {
           trigger: 'investment_purchase',
@@ -264,11 +268,10 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
         { includeInvestmentId: investment.id }
       );
     }
-  }, [buyInvestment, investmentCostMultiplier, investments, money, propagateInvestmentBoostEvent]);
+  }, [buyInvestment, investments, money, propagateInvestmentBoostEvent]);
 
   const wrappedBuyManager = useCallback((index, cost) => {
-    if (money >= cost && !managers[index]) {
-      buyManager(index, cost);
+    if (!managers[index] && buyManager(index, cost)) {
       propagateInvestmentBoostEvent({
         trigger: 'manager_purchase',
         amount: 1,
@@ -277,82 +280,38 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     }
   }, [buyManager, managers, money, propagateInvestmentBoostEvent]);
 
-  const getTotalValueUpgradeCost = useCallback((index, quantity = 1) => {
-    let totalCalculatedCost = 0;
-    const normalizedQuantity = Math.max(1, quantity);
-    const currentLevel = valueUpgradeLevels[index] ?? 0;
-
-    for (let step = 0; step < normalizedQuantity; step += 1) {
-      totalCalculatedCost += calculateCostWithDifficulty(
-        gameConfig.baseValueUpgradeCosts[index],
-        currentLevel + step,
-        gameConfig.upgrades.costIncreaseFactor,
-        easyMode,
-        gameConfig.getCostMultiplier
-      ) * globalPriceDecrease;
-    }
-
-    return totalCalculatedCost;
-  }, [easyMode, globalPriceDecrease, valueUpgradeLevels]);
-
-  const getTotalCooldownUpgradeCost = useCallback((index, quantity = 1) => {
-    let totalCalculatedCost = 0;
-    const normalizedQuantity = Math.max(1, quantity);
-    const currentLevel = cooldownUpgradeLevels[index] ?? 0;
-
-    for (let step = 0; step < normalizedQuantity; step += 1) {
-      totalCalculatedCost += calculateCostWithDifficulty(
-        gameConfig.baseCooldownUpgradeCosts[index],
-        currentLevel + step,
-        gameConfig.upgrades.costIncreaseFactor,
-        easyMode,
-        gameConfig.getCostMultiplier
-      ) * globalPriceDecrease;
-    }
-
-    return totalCalculatedCost;
-  }, [cooldownUpgradeLevels, easyMode, globalPriceDecrease]);
-
   const wrappedBuyValueUpgrade = useCallback((index, quantity = 1) => {
     const normalizedQuantity = Math.max(1, quantity);
-    const totalCost = getTotalValueUpgradeCost(index, normalizedQuantity);
-
-    if (money < totalCost) {
+    if (!buyValueUpgrade(index, normalizedQuantity)) {
       return;
     }
-
-    buyValueUpgrade(index, normalizedQuantity);
     propagateInvestmentBoostEvent({
       trigger: 'upgrade_purchase',
       amount: normalizedQuantity,
       availableMoney: money,
     });
-  }, [buyValueUpgrade, getTotalValueUpgradeCost, money, propagateInvestmentBoostEvent]);
+  }, [buyValueUpgrade, money, propagateInvestmentBoostEvent]);
 
   const wrappedBuyCooldownUpgrade = useCallback((index, quantity = 1) => {
     const normalizedQuantity = Math.max(1, quantity);
-    const totalCost = getTotalCooldownUpgradeCost(index, normalizedQuantity);
-
-    if (money < totalCost) {
+    if (!buyCooldownUpgrade(index, normalizedQuantity)) {
       return;
     }
-
-    buyCooldownUpgrade(index, normalizedQuantity);
     propagateInvestmentBoostEvent({
       trigger: 'upgrade_purchase',
       amount: normalizedQuantity,
       availableMoney: money,
     });
-  }, [buyCooldownUpgrade, getTotalCooldownUpgradeCost, money, propagateInvestmentBoostEvent]);
+  }, [buyCooldownUpgrade, money, propagateInvestmentBoostEvent]);
 
-  const wrappedPremiumUpgradePurchase = useCallback((buyFn, totalCost, quantity = 1) => {
+  const wrappedPremiumUpgradePurchase = useCallback((buyFn, quantity = 1) => {
     const normalizedQuantity = Math.max(1, quantity);
 
-    if (!(money >= totalCost)) {
+    const purchaseSucceeded = buyFn(normalizedQuantity);
+
+    if (!purchaseSucceeded) {
       return;
     }
-
-    buyFn(normalizedQuantity);
     propagateInvestmentBoostEvent({
       trigger: 'upgrade_purchase',
       amount: normalizedQuantity,
@@ -360,53 +319,36 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     });
   }, [money, propagateInvestmentBoostEvent]);
 
-  const getMaterialPurchaseCost = useCallback((materialId, quantity) => {
-    const material = gameConfig.rawMaterials.find((entry) => entry.id === materialId);
-
-    if (!material || quantity <= 0) {
-      return 0;
-    }
-
-    const costIncreaseFactor = material.costIncreaseFactor || 1.07;
-    const costMultiplier = gameConfig.getCostMultiplier(easyMode);
-    let purchaseCount = resourcePurchaseCounts[materialId] || 0;
-    let totalCost = 0;
-
-    for (let step = 0; step < quantity; step += 1) {
-      totalCost += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier * productionHqHook.productionHqMaterialCostMultiplier);
-      purchaseCount += 1;
-    }
-
-    return totalCost;
-  }, [easyMode, resourcePurchaseCounts, productionHqHook.productionHqMaterialCostMultiplier]);
-
   const wrappedBuyMaterial = useCallback((materialId, quantity = 1) => {
     if (quantity <= 0) {
       buyMaterial(materialId, quantity);
       return;
     }
 
-    const totalCost = getMaterialPurchaseCost(materialId, quantity);
+    const purchaseSucceeded = buyMaterial(materialId, quantity);
 
-    if (money >= totalCost) {
-      buyMaterial(materialId, quantity);
-      propagateInvestmentBoostEvent({
-        trigger: 'material_purchase',
-        amount: 1,
-        availableMoney: money,
-      });
+    if (!purchaseSucceeded) {
+      return;
     }
-  }, [buyMaterial, getMaterialPurchaseCost, money, propagateInvestmentBoostEvent]);
+
+    propagateInvestmentBoostEvent({
+      trigger: 'material_purchase',
+      amount: 1,
+      availableMoney: money,
+    });
+  }, [buyMaterial, money, propagateInvestmentBoostEvent]);
 
   // Investment unlock logic
   const unlockInvestments = useCallback(() => {
     const unlockCost = gameConfig.unlockInvestmentCost * costMultiplier;
-    if (money >= unlockCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - unlockCost);
-      setIsInvestmentUnlocked(true);
+    if (!spendMoney(unlockCost)) {
+      return false;
     }
-  }, [money, setMoney, setIsInvestmentUnlocked, costMultiplier, ensureStartTime]);
+
+    ensureStartTime?.();
+    setIsInvestmentUnlocked(true);
+    return true;
+  }, [costMultiplier, ensureStartTime, setIsInvestmentUnlocked, spendMoney]);
 
   const unlockInvestmentCost = gameConfig.unlockInvestmentCost * costMultiplier;
 
@@ -421,6 +363,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     autoBuyMaterialsEnabled,
     autoCraftEnabled,
     rawMaterials,
+    craftingItems,
     buyMaterial: wrappedBuyMaterial,
     craftingProductionState,
     startCraftingProduction,
@@ -475,52 +418,22 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     ...premiumUpgradesHook,
     buyGlobalMultiplier: (quantity = 1) => wrappedPremiumUpgradePurchase(
       premiumUpgradesHook.buyGlobalMultiplier,
-      premiumUpgradesHook.calculateGlobalMultiplierCost(
-        globalMultiplierLevel,
-        Math.max(1, quantity),
-        gameConfig,
-        costMultiplier
-      ),
       quantity
     ),
     buyGlobalPriceDecrease: (quantity = 1) => wrappedPremiumUpgradePurchase(
       premiumUpgradesHook.buyGlobalPriceDecrease,
-      premiumUpgradesHook.calculateGlobalPriceDecreaseCost(
-        globalPriceDecreaseLevel,
-        Math.max(1, quantity),
-        gameConfig,
-        costMultiplier
-      ),
       quantity
     ),
     buyOfflineEarningsLevel: (quantity = 1) => wrappedPremiumUpgradePurchase(
       premiumUpgradesHook.buyOfflineEarningsLevel,
-      premiumUpgradesHook.calculateOfflineEarningsCost(
-        offlineEarningsLevel,
-        Math.max(1, quantity),
-        gameConfig,
-        costMultiplier
-      ),
       quantity
     ),
     buyCriticalClickChanceLevel: (quantity = 1) => wrappedPremiumUpgradePurchase(
       premiumUpgradesHook.buyCriticalClickChanceLevel,
-      premiumUpgradesHook.calculateCriticalClickChanceCost(
-        criticalClickChanceLevel,
-        Math.max(1, quantity),
-        gameConfig,
-        costMultiplier
-      ),
       quantity
     ),
     buyFloatingClickValue: (quantity = 1) => wrappedPremiumUpgradePurchase(
       premiumUpgradesHook.buyFloatingClickValue,
-      premiumUpgradesHook.calculateFloatingClickValueCost(
-        floatingClickValueLevel ?? 0,
-        Math.max(1, quantity),
-        gameConfig,
-        costMultiplier
-      ),
       quantity
     ),
 
