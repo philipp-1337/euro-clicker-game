@@ -1,5 +1,23 @@
 # Konzept: Production HQ (Wealth Production Erweiterung)
 
+## Status-Update 2026-04-28
+
+Der bisherige Stand war nicht mehr konsistent mit dem Code:
+
+* Die zentrale `gameConfig`-Definition war syntaktisch beschädigt, wodurch der gesamte Production-HQ-Branch nicht mehr buildbar war.
+* Die Materialkosten-Reduktion wurde im UI und in der Affordability-Prüfung berücksichtigt, aber nicht in der tatsächlichen Geldabbuchung beim Rohstoffkauf.
+* Das permanente Unlock-Flag für das HQ war nicht sauber im Initialzustand verankert.
+* Die Roadmap-Auflösung für verschachtelte Werte wie `craftingItems.0` war fehleranfällig.
+
+Diese Punkte sind jetzt technisch bereinigt:
+
+* Build wiederhergestellt.
+* Materialkosten-Upgrade wirkt nun konsistent auf Anzeige, Kaufprüfung und tatsächliche Abbuchung.
+* `isProductionHqUnlocked` ist sauber Teil des Initialzustands.
+* Der Roadmap-Fortschritt für das HQ liest die Crafting-Zähler korrekt aus.
+* Das HQ zeigt die aktuell aktiven Effizienzboni jetzt direkt im Tab an.
+* Die bisherigen Testkosten (`1` / `1`) wurden durch erste echte Balancing-Werte ersetzt, damit das System nicht sofort leergekauft wird.
+
 Dieses Dokument fasst alle im Rahmen der letzten Konversation vorgenommenen Änderungen und Implementierungen zum Ausbau des "Wealth Production"-Systems, auch bekannt als "Production HQ", zusammen. Es dient als Grundlage für zukünftige Reviews, Refactorings und Weiterentwicklungen.
 
 ## 1. Ausgangssituation und Ziele
@@ -136,23 +154,23 @@ Dieses Dokument fasst alle im Rahmen der letzten Konversation vorgenommenen Änd
 
 Dieser Abschnitt beleuchtet Bereiche, die während der Implementierung als Stolpersteine identifiziert wurden, noch offene Fragen aufwerfen oder Potenzial für zukünftige Verbesserungen und Erweiterungen bieten.
 
-### 5.1 Verifikation der Effekte & Automatisierung (Kritisch)
-Die größte offene Frage ist, ob die Effekte der "Production HQ"-Upgrades (Wert, Geschwindigkeit, Materialkosten) im "Crafting"-Tab und die **Automatisierungslogik (Auto-Buy Materials, Auto-Craft)** **tatsächlich wie erwartet funktionieren**. Dies erfordert eine detaillierte manuelle Verifikation im Spiel:
+### 5.1 Manuelle Verifikation im Spiel (bleibt sinnvoll)
+Die kritischsten technischen Inkonsistenzen sind behoben. Was bleibt, ist die spielnahe QA im laufenden Spiel:
 *   **Effizienz-Upgrades:**
     *   **"Polished Molds" (Wert):** Steigt der finale Euro-Betrag eines gecrafteten Items, angezeigt in der `CraftingProductionCard` und nach dem Claimen?
     *   **"Efficient Pipelines" (Geschwindigkeit):** Reduziert sich die Produktionszeit, angezeigt in der `CraftingProductionCard`?
-    *   **"Material Sourcing" (Materialkosten):** Reduzieren sich die angezeigten Kosten beim Materialkauf im "Crafting"-Tab?
+    *   **"Material Sourcing" (Materialkosten):** Reduzieren sich angezeigte Kosten und tatsächliche Abbuchung beim Materialkauf identisch?
 *   **Automatisierungs-Module:**
     *   **"Logistics Manager":** Werden Rohstoffe automatisch nachgekauft, wenn der Bestand unter 10 Einheiten fällt und genug Geld vorhanden ist?
     *   **"Production Manager":** Werden Crafting-Prozesse automatisch gestartet, wenn Materialien vorhanden sind, und abgeschlossen/geclaimed, wenn sie fertig sind?
 
 ### 5.2 Balancing und Spielökonomie
-*   **Upgrade-Kosten:** Die aktuellen Kosten der "Production HQ"-Upgrades sind für Testzwecke auf "1" gesetzt (`PRODUCTION_HQ_BASE_COST_COINS`, `PRODUCTION_HQ_BASE_COST_GOLD`). Diese müssen für ein sinnvolles und herausforderndes Balancing angepasst werden, sobald die Effekte verifiziert sind.
+*   **Upgrade-Kosten:** Die Testkosten wurden entfernt. Der neue Stand ist ein erster spielbarer Baseline-Pass, aber noch kein finaler Economy-Tune.
 *   **Effektstärken und Maximallevel:** Die `effectPerLevel` und `maxLevel` der Upgrades müssen ebenfalls im Kontext der gesamten Spielökonomie evaluiert und ggf. angepasst werden.
 *   **Automatisierungs-Schwellenwerte:** Der Schwellenwert für den automatischen Nachkauf von Materialien (`if (owned < 10)`) ist derzeit fest auf 10 Einheiten gesetzt. Eine Verbesserung wäre, diesen Wert konfigurierbar zu machen (z.B. über ein weiteres Upgrade oder eine Einstellung im Production HQ).
 
 ### 5.3 Benutzererfahrung (UX) und Visualisierung
-*   **Sichtbarkeit von Multiplikatoren:** Aktuell werden die Multiplikatoren in der UI nur in `CraftingProductionCard` (für Dauer und Standard-Ergebnis) angezeigt. Eine zentrale Anzeige der aktuell aktiven Boni/Multiplikatoren (z.B. "% Materialkosten-Reduktion", "% Crafting-Geschwindigkeit") im "Production HQ" selbst oder im "Crafting"-Tab könnte die Transparenz für den Spieler erhöhen.
+*   **Sichtbarkeit von Multiplikatoren:** Eine zentrale Anzeige der aktuell aktiven HQ-Boni ist jetzt im "Production HQ"-Tab vorhanden. Optional wäre später noch eine zusätzliche Spiegelung direkt im "Crafting"-Tab sinnvoll.
 *   **Feedback für Automatisierung:** Visuelles oder akustisches Feedback, wenn Automatisierungs-Module Aktionen ausführen (Material gekauft, Crafting gestartet/geclaimed), könnte die UX verbessern.
 
 ### 5.4 Code-Architektur und Skalierbarkeit

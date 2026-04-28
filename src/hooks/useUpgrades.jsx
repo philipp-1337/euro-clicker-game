@@ -9,12 +9,12 @@ export default function useUpgrades(
     gameConfig,
     ensureStartTime,
     easyMode, // Added
-    globalPriceDecrease // Added
+    globalPriceDecrease, // Added
+    spendMoney
   ) {
     // buyValueUpgrade needs to handle quantity
     function buyValueUpgrade(index, quantity = 1) {
       ensureStartTime?.();
-      // States synchron updaten, keine Geld-Prüfung mehr
       let totalCalculatedCost = 0;
       let tempLevel = valueUpgradeLevels[index];
       for (let i = 0; i < quantity; i++) {
@@ -27,7 +27,19 @@ export default function useUpgrades(
         ) * globalPriceDecrease;
         totalCalculatedCost += costForThisStep;
       }
-      setMoney(money - totalCalculatedCost);
+
+      const wasSpent = typeof spendMoney === 'function'
+        ? spendMoney(totalCalculatedCost)
+        : (money >= totalCalculatedCost);
+
+      if (!wasSpent) {
+        return false;
+      }
+
+      if (typeof spendMoney !== 'function') {
+        setMoney(money - totalCalculatedCost);
+      }
+
       setValueMultipliers(prev => {
         const updated = [...prev];
         for (let i = 0; i < quantity; i++) {
@@ -40,6 +52,7 @@ export default function useUpgrades(
         updated[index] += quantity;
         return updated;
       });
+      return true;
     }
   
     function buyCooldownUpgrade(index, quantity = 1) {
@@ -60,23 +73,31 @@ export default function useUpgrades(
         totalCalculatedCost += costForThisStep;
       }
 
-      if (money >= totalCalculatedCost) {
-        ensureStartTime?.();
-        setMoney(prev => prev - totalCalculatedCost);
-        for (let i = 0; i < quantity; i++) {
-          // Apply effect for each upgrade
-          setCooldownReductions(prev => {
-            const updated = [...prev];
-            updated[index] *= gameConfig.upgrades.cooldownReductionFactor;
-            return updated;
-          });
-          setCooldownUpgradeLevels(prev => {
-            const updated = [...prev];
-            updated[index]++;
-            return updated;
-          });
-        }
+      const wasSpent = typeof spendMoney === 'function'
+        ? spendMoney(totalCalculatedCost)
+        : (money >= totalCalculatedCost);
+
+      if (!wasSpent) {
+        return false;
       }
+
+      ensureStartTime?.();
+      if (typeof spendMoney !== 'function') {
+        setMoney(prev => prev - totalCalculatedCost);
+      }
+      for (let i = 0; i < quantity; i++) {
+        setCooldownReductions(prev => {
+          const updated = [...prev];
+          updated[index] *= gameConfig.upgrades.cooldownReductionFactor;
+          return updated;
+        });
+        setCooldownUpgradeLevels(prev => {
+          const updated = [...prev];
+          updated[index]++;
+          return updated;
+        });
+      }
+      return true;
     }
   
     return {

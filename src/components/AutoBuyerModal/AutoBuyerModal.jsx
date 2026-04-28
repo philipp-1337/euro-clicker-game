@@ -6,17 +6,16 @@ import {
   Euro as EuroIcon,
   Clock as ClockIcon,
   PiggyBank as PiggyBankIcon,
-  TimerReset,
   TrendingUp,
   Percent,
   MousePointerClick,
+  ShoppingCart,
+  Cpu,
 } from 'lucide-react';
 
 const AutoBuyerModal = ({
   show,
   onClose,
-  autoBuyerInterval,
-  setAutoBuyerInterval,
   autoBuyerBuffer,
   setAutoBuyerBuffer,
   formatNumber,
@@ -35,14 +34,16 @@ const AutoBuyerModal = ({
   floatingClickValueAutobuyerUnlocked,
   floatingClickValueAutobuyerEnabled,
   setFloatingClickValueAutobuyerEnabled,
+  logisticsManagerUnlocked,
+  autoBuyMaterialsEnabled,
+  setAutoBuyMaterialsEnabled,
+  productionManagerUnlocked,
+  autoCraftEnabled,
+  setAutoCraftEnabled,
 }) => {
   const modalRef = useModal(show, onClose);
 
   if (!show) return null;
-
-  const handleIntervalChange = (e) => {
-    setAutoBuyerInterval(Number(e.target.value));
-  };
 
   const handleBufferChange = (e) => {
     const sliderValue = Number(e.target.value);
@@ -81,24 +82,6 @@ const AutoBuyerModal = ({
           </button>
         </div>
         <div className="settings-modal-content">
-          {floatingClickValueAutobuyerUnlocked && (
-              <div className="settings-row">
-                <div className="settings-row-left">
-                  <MousePointerClick size={20} className="settings-icon" />
-                  <span className="switch-text">Clicker Value Auto-Buyer</span>
-                </div>
-                <label className="switch-label">
-                  <input
-                    type="checkbox"
-                    className="switch"
-                    checked={floatingClickValueAutobuyerEnabled}
-                    onChange={() => setFloatingClickValueAutobuyerEnabled((v) => !v)}
-                    aria-label="Clicker Value Auto-Buyer"
-                  />
-                  <span className="switch-slider" />
-                </label>
-              </div>
-          )}
           {autoBuyerUnlocked && (
               <div className="settings-row">
                 <div className="settings-row-left">
@@ -175,9 +158,68 @@ const AutoBuyerModal = ({
               </div>
           )}
 
+          {floatingClickValueAutobuyerUnlocked && (
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <MousePointerClick size={20} className="settings-icon" />
+                  <span className="switch-text">Clicker Value Auto-Buyer</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={floatingClickValueAutobuyerEnabled}
+                    onChange={() => setFloatingClickValueAutobuyerEnabled((v) => !v)}
+                    aria-label="Clicker Value Auto-Buyer"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+          )}
+
+          {(logisticsManagerUnlocked || productionManagerUnlocked) && <hr />}
+
+          {logisticsManagerUnlocked && (
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <ShoppingCart size={20} className="settings-icon" />
+                  <span className="switch-text">Logistics Manager</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={autoBuyMaterialsEnabled}
+                    onChange={() => setAutoBuyMaterialsEnabled((v) => !v)}
+                    aria-label="Logistics Manager"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+          )}
+
+          {productionManagerUnlocked && (
+              <div className="settings-row">
+                <div className="settings-row-left">
+                  <Cpu size={20} className="settings-icon" />
+                  <span className="switch-text">Production Manager</span>
+                </div>
+                <label className="switch-label">
+                  <input
+                    type="checkbox"
+                    className="switch"
+                    checked={autoCraftEnabled}
+                    onChange={() => setAutoCraftEnabled((v) => !v)}
+                    aria-label="Production Manager"
+                  />
+                  <span className="switch-slider" />
+                </label>
+              </div>
+          )}
+
           <hr />
 
-          <div className="settings-row">
+          {/* <div className="settings-row">
             <TimerReset size={24} className="settings-icon" />
             <div className="settings-label-group">
               <label htmlFor="autoBuyerInterval" className="settings-label">
@@ -194,7 +236,7 @@ const AutoBuyerModal = ({
               className="settings-slider"
             />
             </div>
-          </div>
+          </div> */}
 
           <div className="settings-row">
             <PiggyBankIcon size={24} className="settings-icon" />

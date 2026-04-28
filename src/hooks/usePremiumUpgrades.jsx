@@ -47,7 +47,8 @@ export default function usePremiumUpgrades({
   // Floating Click Value
   floatingClickValueLevel,
   setFloatingClickValueLevel,
-  setFloatingClickValueMultiplier
+  setFloatingClickValueMultiplier,
+  spendMoney
 }) {
   
   const costMultiplier = gameConfig.getCostMultiplier(easyMode);
@@ -73,14 +74,23 @@ export default function usePremiumUpgrades({
       totalCalculatedCost += costForThisStep;
     }
 
-    if (money >= totalCalculatedCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - totalCalculatedCost);
-      for (let i = 0; i < quantity; i++) {
-        setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
-        setGlobalMultiplierLevel(prev => prev + 1);
-      }
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(totalCalculatedCost)
+      : (money >= totalCalculatedCost);
+
+    if (!wasSpent) {
+      return false;
     }
+
+    ensureStartTime?.();
+    if (typeof spendMoney !== 'function') {
+      setMoney(prev => prev - totalCalculatedCost);
+    }
+    for (let i = 0; i < quantity; i++) {
+      setGlobalMultiplier(prev => prev * gameConfig.premiumUpgrades.globalMultiplier.factor);
+      setGlobalMultiplierLevel(prev => prev + 1);
+    }
+    return true;
   }, [
     money,
     globalMultiplierLevel,
@@ -88,7 +98,8 @@ export default function usePremiumUpgrades({
     setGlobalMultiplier,
     setGlobalMultiplierLevel,
     ensureStartTime,
-    easyMode
+    easyMode,
+    spendMoney
   ]);
 
   // Global Price Decrease Upgrade
@@ -112,14 +123,23 @@ export default function usePremiumUpgrades({
       totalCalculatedCost += costForThisStep;
     }
 
-    if (money >= totalCalculatedCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - totalCalculatedCost);
-      for (let i = 0; i < quantity; i++) {
-        setGlobalPriceDecreaseLevel(prev => prev + 1);
-        setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
-      }
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(totalCalculatedCost)
+      : (money >= totalCalculatedCost);
+
+    if (!wasSpent) {
+      return false;
     }
+
+    ensureStartTime?.();
+    if (typeof spendMoney !== 'function') {
+      setMoney(prev => prev - totalCalculatedCost);
+    }
+    for (let i = 0; i < quantity; i++) {
+      setGlobalPriceDecreaseLevel(prev => prev + 1);
+      setGlobalPriceDecrease(prev => prev * gameConfig.premiumUpgrades.globalPriceDecrease.decreaseFactor);
+    }
+    return true;
   }, [
     money,
     globalPriceDecreaseLevel,
@@ -127,7 +147,8 @@ export default function usePremiumUpgrades({
     setGlobalPriceDecreaseLevel,
     setGlobalPriceDecrease,
     ensureStartTime,
-    easyMode
+    easyMode,
+    spendMoney
   ]);
 
   // Offline Earnings Upgrade
@@ -151,20 +172,30 @@ export default function usePremiumUpgrades({
       totalCalculatedCost += costForThisStep;
     }
 
-    if (money >= totalCalculatedCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - totalCalculatedCost);
-      for (let i = 0; i < quantity; i++) {
-        setOfflineEarningsLevel(prev => prev + 1);
-      }
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(totalCalculatedCost)
+      : (money >= totalCalculatedCost);
+
+    if (!wasSpent) {
+      return false;
     }
+
+    ensureStartTime?.();
+    if (typeof spendMoney !== 'function') {
+      setMoney(prev => prev - totalCalculatedCost);
+    }
+    for (let i = 0; i < quantity; i++) {
+      setOfflineEarningsLevel(prev => prev + 1);
+    }
+    return true;
   }, [
     money,
     offlineEarningsLevel,
     setMoney,
     setOfflineEarningsLevel,
     ensureStartTime,
-    easyMode
+    easyMode,
+    spendMoney
   ]);
 
   // Critical Click Chance Upgrade
@@ -202,20 +233,30 @@ export default function usePremiumUpgrades({
       totalCalculatedCost += costForThisStep;
     }
 
-    if (money >= totalCalculatedCost) {
-      ensureStartTime?.();
-      setMoney(prev => prev - totalCalculatedCost);
-      for (let i = 0; i < actualQuantity; i++) {
-        setCriticalClickChanceLevel(prev => prev + 1);
-      }
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(totalCalculatedCost)
+      : (money >= totalCalculatedCost);
+
+    if (!wasSpent) {
+      return false;
     }
+
+    ensureStartTime?.();
+    if (typeof spendMoney !== 'function') {
+      setMoney(prev => prev - totalCalculatedCost);
+    }
+    for (let i = 0; i < actualQuantity; i++) {
+      setCriticalClickChanceLevel(prev => prev + 1);
+    }
+    return true;
   }, [
     money,
     criticalClickChanceLevel,
     setMoney,
     setCriticalClickChanceLevel,
     ensureStartTime,
-    easyMode
+    easyMode,
+    spendMoney
   ]);
 
   // Floating Click Value Upgrade
@@ -238,13 +279,26 @@ export default function usePremiumUpgrades({
       levelsToBuy++;
     }
 
-    if (money >= totalCost && levelsToBuy > 0) {
-      setMoney(prev => prev - totalCost);
-      const newLevel = currentLevel + levelsToBuy;
-      const newValue = fibonacci(newLevel);
-      setFloatingClickValueLevel(newLevel);
-      setFloatingClickValueMultiplier(newValue);
+    if (levelsToBuy <= 0) {
+      return false;
     }
+
+    const wasSpent = typeof spendMoney === 'function'
+      ? spendMoney(totalCost)
+      : (money >= totalCost);
+
+    if (!wasSpent) {
+      return false;
+    }
+
+    if (typeof spendMoney !== 'function') {
+      setMoney(prev => prev - totalCost);
+    }
+    const newLevel = currentLevel + levelsToBuy;
+    const newValue = fibonacci(newLevel);
+    setFloatingClickValueLevel(newLevel);
+    setFloatingClickValueMultiplier(newValue);
+    return true;
   }, [
     money,
     floatingClickValueLevel,
@@ -252,7 +306,8 @@ export default function usePremiumUpgrades({
     setFloatingClickValueLevel,
     setFloatingClickValueMultiplier,
     ensureStartTime,
-    costMultiplier
+    costMultiplier,
+    spendMoney
   ]);
 
   // Utility-Funktionen für die Berechnung der Upgrade-Kosten

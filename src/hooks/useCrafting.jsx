@@ -22,7 +22,9 @@ export default function useCrafting(
   craftingProductionState = gameConfig.initialState.craftingProductionState,
   setCraftingProductionState,
   productionHqValueMultiplier = 1,
-  productionHqSpeedMultiplier = 1
+  productionHqSpeedMultiplier = 1,
+  productionHqMaterialCostMultiplier = 1,
+  spendMoney
 ) {
   const productionModeHook = useCraftingProductionMode(
     craftingProductionState,
@@ -39,32 +41,49 @@ export default function useCrafting(
 
   // Rohstoff kaufen: zieht Geld ab und erhöht Rohstoffmenge
   // Ermöglicht den Kauf von mehreren Einheiten auf einmal
-  const buyMaterial = useCallback((materialId, quantity = 1) => {
+  const buyMaterial = useCallback((materialId, quantity = 1, options = {}) => {
     const material = gameConfig.rawMaterials.find(m => m.id === materialId);
     if (!material) return;
 
     // Kaufen von Rohstoffen (quantity > 0)
     if (quantity > 0) {
+      const alreadyPaid = options?.alreadyPaid === true;
       let purchaseCount = resourcePurchaseCounts[materialId] || 0;
       let totalCost = 0;
       const costMultiplier = gameConfig.getCostMultiplier(easyMode);
       const costIncreaseFactor = material.costIncreaseFactor || 1.07;
       for (let i = 0; i < quantity; i++) {
-        totalCost += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
+        totalCost += Math.ceil(
+          material.baseCost
+          * Math.pow(costIncreaseFactor, purchaseCount)
+          * costMultiplier
+          * productionHqMaterialCostMultiplier
+        );
         purchaseCount++;
       }
-      if (money >= totalCost) {
-        setMoney(prev => prev - totalCost);
-        setRawMaterials(prev => ({
-          ...prev,
-          [materialId]: (prev[materialId] || 0) + quantity
-        }));
-        setResourcePurchaseCounts(prev => ({
-          ...prev,
-          [materialId]: (prev[materialId] || 0) + quantity
-        }));
-        ensureStartTime?.();
+
+      const wasSpent = alreadyPaid
+        ? true
+        : (typeof spendMoney === 'function' ? spendMoney(totalCost) : (money >= totalCost));
+
+      if (!wasSpent) {
+        return false;
       }
+
+      if (!alreadyPaid && typeof spendMoney !== 'function') {
+        setMoney(prev => prev - totalCost);
+      }
+
+      setRawMaterials(prev => ({
+        ...prev,
+        [materialId]: (prev[materialId] || 0) + quantity
+      }));
+      setResourcePurchaseCounts(prev => ({
+        ...prev,
+        [materialId]: (prev[materialId] || 0) + quantity
+      }));
+      ensureStartTime?.();
+      return true;
     } else if (quantity < 0) {
       // Abziehen von Rohstoffen beim Crafting, aber resourcePurchaseCounts NICHT ändern
       setRawMaterials(prev => ({
@@ -72,8 +91,21 @@ export default function useCrafting(
         [materialId]: Math.max(0, (prev[materialId] || 0) + quantity)
       }));
       // resourcePurchaseCounts bleibt unverändert
+      return true;
     }
-  }, [money, resourcePurchaseCounts, setMoney, setRawMaterials, setResourcePurchaseCounts, easyMode, ensureStartTime]);
+
+    return false;
+  }, [
+    easyMode,
+    ensureStartTime,
+    money,
+    productionHqMaterialCostMultiplier,
+    resourcePurchaseCounts,
+    spendMoney,
+    setMoney,
+    setRawMaterials,
+    setResourcePurchaseCounts,
+  ]);
 
   const getRecipeCooldownSeconds = useCallback((recipe, modeId) => {
     const costMultiplier = gameConfig.getCostMultiplier(easyMode);

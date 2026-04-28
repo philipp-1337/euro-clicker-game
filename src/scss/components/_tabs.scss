@@ -221,6 +221,42 @@
   color: map.get($colors, dark-hue);
 }
 
+.production-hq-cost-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+}
+
+.cost-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  width: 100%;
+  font-size: 0.82rem;
+  line-height: 1.2;
+
+  &.is-met {
+    color: rgba(255, 255, 255, 0.96);
+  }
+
+  &.is-missing {
+    color: rgba(255, 255, 255, 0.82);
+  }
+}
+
+.cost-item__required {
+  font-weight: 700;
+}
+
+.cost-item__owned {
+  font-size: 0.76rem;
+  white-space: nowrap;
+  opacity: 0.9;
+}
+
 .raw-materials-list {
   display: flex;
   flex-direction: column;

@@ -117,7 +117,7 @@ export default function CraftingProductionCard({
           <span className="crafting-production-card__eyebrow">Production Route</span>
           <h3>{recipe.name}</h3>
           <p>
-            Crafted <strong>{craftedCount}</strong> times
+            In inventory: <strong>{craftedCount}</strong>
           </p>
         </div>
         <div className="crafting-production-card__status-pill">

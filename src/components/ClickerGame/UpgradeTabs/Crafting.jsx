@@ -75,7 +75,7 @@ export default function Crafting({
           </p>
           <div className="crafting-unlock-card__requirements">
             <div className="premium-upgrade-level">
-              Prestige required: <strong>{gameConfig.unlockCraftingPrestige}</strong> / {accumulatedPrestigeShares}
+              Prestige Shares: <strong>{formatNumber(accumulatedPrestigeShares ?? 0, { decimals: 0 })}</strong> / {gameConfig.unlockCraftingPrestige} required
             </div>
             <div className="premium-upgrade-level">
               Unlock cost: <strong>{formatNumber(unlockCraftingCost)} €</strong>

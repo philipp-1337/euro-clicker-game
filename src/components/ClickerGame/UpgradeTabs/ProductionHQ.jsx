@@ -13,9 +13,47 @@ const getIcon = (iconName) => {
 
 const getNameForCraftedItem = (index, quantity) => {
     if (index === 0) return quantity === 1 ? 'Coin' : 'Coins';
-    if (index === 1) return 'Gold';
+    if (index === 1) return quantity === 1 ? 'Gold Bar' : 'Gold Bars';
     return '';
-}
+};
+
+const formatPercentLabel = (value) => `${Math.round(value * 100)}%`;
+
+const getUpgradeDescription = (upgrade) => {
+  if (upgrade.id === 'crafting_value') {
+    return `Increases the value of crafted items by ${formatPercentLabel(upgrade.effectPerLevel)} per level.`;
+  }
+
+  if (upgrade.id === 'crafting_speed') {
+    return `Reduces the production time of crafted items by ${formatPercentLabel(upgrade.effectPerLevel)} per level.`;
+  }
+
+  if (upgrade.id === 'material_cost') {
+    return `Reduces the cost of raw materials by ${formatPercentLabel(upgrade.effectPerLevel)} per level.`;
+  }
+
+  return upgrade.description;
+};
+
+const getProductionHqRequirements = () => {
+  const milestone = gameConfig.unlockRoadmap.find((entry) => entry.id === 'productionHq');
+
+  if (!milestone?.requirements) {
+    return [];
+  }
+
+  return milestone.requirements
+    .filter((requirement) => typeof requirement.key === 'string' && requirement.key.startsWith('craftingItems.'))
+    .map((requirement) => {
+      const itemIndex = Number(requirement.key.split('.')[1]);
+
+      return {
+        itemIndex,
+        label: requirement.itemName || getNameForCraftedItem(itemIndex, requirement.target),
+        target: Number(requirement.target) || 0,
+      };
+    });
+};
 
 const UpgradeCard = ({ upgrade, level, buyUpgrade, craftingItems }) => {
   const currentLevel = level || 0;
@@ -28,14 +66,26 @@ const UpgradeCard = ({ upgrade, level, buyUpgrade, craftingItems }) => {
 
   const renderCosts = () => {
     if (isMaxLevel) return <span>Max Level</span>;
-    return costs.map((cost, index) => {
-      const quantity = Math.ceil(cost.quantity);
-      return (
-        <span key={index} className="cost-item">
-          {formatNumber(quantity, { decimals: 0 })} {getNameForCraftedItem(cost.item, quantity)}
-        </span>
-      );
-    });
+    return (
+      <div className="production-hq-cost-stack">
+        {costs.map((cost, index) => {
+          const quantity = Math.ceil(cost.quantity);
+          const owned = craftingItems?.[cost.item] || 0;
+          const isMet = owned >= quantity;
+
+          return (
+            <span key={index} className={`cost-item ${isMet ? 'is-met' : 'is-missing'}`}>
+              <span className="cost-item__required">
+                {formatNumber(quantity, { decimals: 0 })} {getNameForCraftedItem(cost.item, quantity)}
+              </span>
+              <span className="cost-item__owned">
+                Owned: {formatNumber(owned, { decimals: 0 })}
+              </span>
+            </span>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -44,7 +94,7 @@ const UpgradeCard = ({ upgrade, level, buyUpgrade, craftingItems }) => {
         {getIcon(upgrade.icon)}
         <h3>{upgrade.name}</h3>
       </div>
-      <p className="premium-upgrade-description">{upgrade.description}</p>
+      <p className="premium-upgrade-description">{getUpgradeDescription(upgrade)}</p>
       <div className="premium-upgrade-info">
         <div className="premium-upgrade-level">
           Level: {currentLevel} / {upgrade.maxLevel}
@@ -61,7 +111,7 @@ const UpgradeCard = ({ upgrade, level, buyUpgrade, craftingItems }) => {
   );
 };
 
-const AutomationCard = ({ upgrade, level, buyUpgrade, craftingItems, isEnabled, setEnabled }) => {
+const AutomationCard = ({ upgrade, level, buyUpgrade, craftingItems }) => {
   const isUnlocked = (level || 0) > 0;
   
   if (!isUnlocked) {
@@ -73,18 +123,16 @@ const AutomationCard = ({ upgrade, level, buyUpgrade, craftingItems, isEnabled, 
       <div className="premium-upgrade-header">
         {getIcon(upgrade.icon)}
         <h3>{upgrade.name}</h3>
-        <span className={`status-badge ${isEnabled ? 'active' : 'inactive'}`}>
-          {isEnabled ? 'Active' : 'Standby'}
-        </span>
       </div>
-      <p className="premium-upgrade-description">{upgrade.description}</p>
-      <div className="premium-upgrade-info">
-        <div className="premium-upgrade-level">Status: {isEnabled ? 'Running' : 'Paused'}</div>
+      <p className="premium-upgrade-description">
+        {getUpgradeDescription(upgrade)} Manage the live state via the <Bot size={12} /> icon in the header or the Automation Settings modal.
+      </p>
+      <div className="premium-upgrade-info auto-buyer-info">
         <button
-          onClick={() => setEnabled(!isEnabled)}
-          className={`premium-upgrade-button ${isEnabled ? 'active' : ''}`}
+          disabled
+          className="premium-upgrade-button disabled"
         >
-          {isEnabled ? 'Disable Module' : 'Enable Module'}
+          Unlocked
         </button>
       </div>
     </div>
@@ -96,11 +144,12 @@ export default function ProductionHQ({
   buyProductionHqUpgrade, 
   craftingItems, 
   isUnlocked,
-  autoBuyMaterialsEnabled,
-  setAutoBuyMaterialsEnabled,
-  autoCraftEnabled,
-  setAutoCraftEnabled
+  productionHqMaterialCostMultiplier = 1,
+  productionHqValueMultiplier = 1,
+  productionHqSpeedMultiplier = 1,
 }) {
+  const unlockRequirements = getProductionHqRequirements();
+
   if (!isUnlocked) {
     return (
       <div className="upgrade-section premium-section production-hq-locked">
@@ -114,12 +163,16 @@ export default function ProductionHQ({
             To unlock the full potential of your Production HQ, you need to prove your manufacturing capabilities.
           </p>
           <div className="crafting-unlock-card__requirements">
-            <div className={`premium-upgrade-level ${(craftingItems?.[0] || 0) >= 10 ? 'met' : ''}`}>
-               Collectible Coins: <strong>{formatNumber(craftingItems?.[0] || 0, { decimals: 0 })}</strong> / 10
-            </div>
-            <div className={`premium-upgrade-level ${(craftingItems?.[1] || 0) >= 5 ? 'met' : ''}`}>
-               Gold Reserves: <strong>{formatNumber(craftingItems?.[1] || 0, { decimals: 0 })}</strong> / 5
-            </div>
+            {unlockRequirements.map((requirement) => {
+              const owned = craftingItems?.[requirement.itemIndex] || 0;
+              const isMet = owned >= requirement.target;
+
+              return (
+                <div key={requirement.itemIndex} className={`premium-upgrade-level ${isMet ? 'met' : ''}`}>
+                  {requirement.label}: <strong>{formatNumber(owned, { decimals: 0 })}</strong> / {formatNumber(requirement.target, { decimals: 0 })}
+                </div>
+              );
+            })}
           </div>
           <p className="locked-hint">
             The HQ will be operational as soon as you have produced the required assets in the Crafting tab.
@@ -135,6 +188,19 @@ export default function ProductionHQ({
   return (
     <div className="upgrade-section premium-section">
       <h2 className="section-title">Production HQ</h2>
+
+      <div className="crafting-journey-card is-live">
+        <span className="crafting-journey-card__eyebrow">HQ Overview</span>
+        <h3>Convert crafted assets into durable production leverage</h3>
+        <p>
+          The HQ is your post-prestige efficiency layer: reduce sourcing costs, compress batch times, and push crafted payouts high enough to justify active claim timing.
+        </p>
+        <div className="crafting-journey-card__highlights">
+          <span>Craft value: {formatPercentLabel(productionHqValueMultiplier - 1)} bonus</span>
+          <span>Craft speed: {formatPercentLabel(1 - productionHqSpeedMultiplier)} faster</span>
+          <span>Material costs: {formatPercentLabel(1 - productionHqMaterialCostMultiplier)} lower</span>
+        </div>
+      </div>
       
       <h3 className="section-subtitle" style={{marginTop:24, marginBottom:12}}>Efficiency Upgrades</h3>
       {efficiencyUpgrades.map(upgrade => (
@@ -155,8 +221,6 @@ export default function ProductionHQ({
           level={productionHqUpgrades?.[upgrade.id]}
           buyUpgrade={buyProductionHqUpgrade}
           craftingItems={craftingItems}
-          isEnabled={upgrade.id === 'auto_buy_materials' ? autoBuyMaterialsEnabled : autoCraftEnabled}
-          setEnabled={upgrade.id === 'auto_buy_materials' ? setAutoBuyMaterialsEnabled : setAutoCraftEnabled}
         />
       ))}
     </div>
