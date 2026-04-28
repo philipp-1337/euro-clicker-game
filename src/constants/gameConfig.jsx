@@ -641,7 +641,45 @@ export const gameConfig = {
       ctaLabel: "Unlock Wealth Production",
       previewText: "Craft assets and build a post-prestige production loop.",
     },
+    {
+      id: "productionHq",
+      title: "Production HQ",
+      description: "Unlock a dedicated hub for production upgrades to boost your crafting efficiency.",
+      unlockType: "craftingItems",
+      scope: "run",
+      progressStrategy: "segments",
+      reachedWhen: { type: "flag", key: "isProductionHqUnlocked" },
+      readyLabel: "Ready to explore",
+      progressSegments: [
+        {
+          key: "craftingItems.0",
+          target: 10,
+          start: 0,
+          end: 50,
+        },
+        {
+          key: "craftingItems.1",
+          target: 5,
+          start: 50,
+          end: 100,
+        },
+      ],
+      remainingRequirements: [
+        { key: "craftingItems.0", target: 10, format: "crafted_item", itemName: "Coins" },
+        { key: "craftingItems.1", target: 5, format: "crafted_item", itemName: "Gold Bars" },
+      ],
+      ctaLabel: "Unlock Production HQ",
+      previewText: "Upgrade your crafting value and speed.",
+    },
   ],
+const PRODUCTION_HQ_BASE_COST_COINS = 1; // Test cost
+const PRODUCTION_HQ_BASE_COST_GOLD = 1;  // Test cost
+const PRODUCTION_HQ_COST_MULTIPLIER = 1.5;
+
+const PRODUCTION_HQ_CRAFTING_VALUE_STEP = 0.1;      // +10% per level
+const PRODUCTION_HQ_CRAFTING_SPEED_STEP = 0.08;     // -8% duration per level
+const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.05;  // -5% cost per level
+
   rawMaterials: [
     { id: "metal", name: "Precious Metals", baseCost: 10000, costIncreaseFactor: 1.14, },
     { id: "parts", name: "Forging Instruments", baseCost: 22000, costIncreaseFactor: 1.30, },
@@ -650,10 +688,68 @@ export const gameConfig = {
 
   craftingRecipes: craftingRecipeDefinitions,
 
+  productionHqUpgrades: [
+    {
+      id: 'crafting_value',
+      name: 'Polished Molds',
+      description: 'Increases the value of crafted items by 10% per level.',
+      icon: 'Gem',
+      effectPerLevel: PRODUCTION_HQ_CRAFTING_VALUE_STEP,
+      maxLevel: 10,
+      getCost: (level) => ([
+        { item: 1, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_GOLD * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+      ])
+    },
+    {
+      id: 'crafting_speed',
+      name: 'Efficient Pipelines',
+      description: 'Reduces the production time of crafted items by 8% per level.',
+      icon: 'Gauge',
+      effectPerLevel: PRODUCTION_HQ_CRAFTING_SPEED_STEP,
+      maxLevel: 10,
+      getCost: (level) => ([
+        { item: 0, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_COINS * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+      ])
+    },
+    {
+      id: 'material_cost',
+      name: 'Material Sourcing',
+      description: 'Reduces the cost of raw materials by 5% per level.',
+      icon: 'ShoppingCart',
+      effectPerLevel: PRODUCTION_HQ_MATERIAL_COST_STEP,
+      maxLevel: 10,
+      getCost: (level) => ([
+        { item: 0, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_COINS * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) },
+        { item: 1, quantity: Math.floor(PRODUCTION_HQ_BASE_COST_GOLD * Math.pow(PRODUCTION_HQ_COST_MULTIPLIER, level)) }
+      ])
+    },
+    {
+      id: 'auto_buy_materials',
+      name: 'Logistics Manager',
+      description: 'Unlocks the ability to automatically restock raw materials when they run low.',
+      icon: 'Bot',
+      maxLevel: 1,
+      getCost: () => ([
+        { item: 0, quantity: PRODUCTION_HQ_BASE_COST_COINS },
+        { item: 1, quantity: PRODUCTION_HQ_BASE_COST_GOLD }
+      ])
+    },
+    {
+      id: 'auto_craft',
+      name: 'Production Manager',
+      description: 'Unlocks fully automated production lines: starting and claiming wealth production.',
+      icon: 'Cpu',
+      maxLevel: 1,
+      getCost: () => ([
+        { item: 0, quantity: PRODUCTION_HQ_BASE_COST_COINS },
+        { item: 1, quantity: PRODUCTION_HQ_BASE_COST_GOLD }
+      ])
+    }
+  ],
+
   // Upgrade-Multiplikatoren
   upgradeValueMultiplier: 1.1, // +10% pro Level
   upgradeCooldownReduction: 0.9, // -10% pro Level
-
   // Startbedingungen
   initialState: {
     money: 0,
@@ -675,6 +771,15 @@ export const gameConfig = {
     craftingProductionState: createDefaultCraftingProductionState(),
     rawMaterials: { metal: 0, parts: 0, tech: 0 }, // New: Raw materials
     resourcePurchaseCounts: { metal: 0, parts: 0, tech: 0 },
+    productionHqUpgrades: {
+      crafting_value: 0,
+      crafting_speed: 0,
+      material_cost: 0,
+      auto_buy_materials: 0,
+      auto_craft: 0,
+    },
+    autoBuyMaterialsEnabled: false,
+    autoCraftEnabled: false,
     offlineEarningsLevel: 0, // Level for offline earnings
     criticalClickChanceLevel: 0, // Level for critical click chance upgrade
     floatingClickValueLevel: 1, // Start at level 1

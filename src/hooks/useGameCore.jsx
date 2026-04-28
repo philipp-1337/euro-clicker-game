@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useGameState from './useGameState';
 import useGameCalculations from './useGameCalculations';
@@ -17,6 +17,8 @@ import useOfflineEarnings from './useOfflineEarnings';
 import useFloatingClick from './useFloatingClick';
 import usePremiumUpgrades from './usePremiumUpgrades';
 import useInvestmentBoosts from './useInvestmentBoosts';
+import useProductionHq from './useProductionHq';
+import useProductionAutomation from './useProductionAutomation';
 import { calculateCostWithDifficulty } from '@utils/calculators';
 
 /**
@@ -73,6 +75,10 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     floatingClickValueAutobuyerUnlocked, setFloatingClickValueAutobuyerUnlocked,
     floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled,
     craftingProductionState, setCraftingProductionState,
+    productionHqUpgrades, setProductionHqUpgrades,
+    isProductionHqUnlocked, setIsProductionHqUnlocked,
+    autoBuyMaterialsEnabled, setAutoBuyMaterialsEnabled,
+    autoCraftEnabled, setAutoCraftEnabled,
   } = gameStateHook;
 
   // UI states
@@ -127,6 +133,12 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     }
   );
 
+  // Production HQ system
+  const productionHqHook = useProductionHq({
+    craftingItems, setCraftingItems,
+    productionHqUpgrades, setProductionHqUpgrades,
+  });
+
   // Crafting system
   const {
     buyCraftingItem,
@@ -139,7 +151,9 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   } = useCrafting(
     money, setMoney, craftingItems, setCraftingItems, rawMaterials, setRawMaterials,
     resourcePurchaseCounts, setResourcePurchaseCounts, ensureStartTime, easyMode,
-    craftingProductionState, setCraftingProductionState
+    craftingProductionState, setCraftingProductionState,
+    productionHqHook.productionHqValueMultiplier,
+    productionHqHook.productionHqSpeedMultiplier,
   );
 
   // Core economy management
@@ -359,12 +373,12 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     let totalCost = 0;
 
     for (let step = 0; step < quantity; step += 1) {
-      totalCost += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier);
+      totalCost += Math.ceil(material.baseCost * Math.pow(costIncreaseFactor, purchaseCount) * costMultiplier * productionHqHook.productionHqMaterialCostMultiplier);
       purchaseCount += 1;
     }
 
     return totalCost;
-  }, [easyMode, resourcePurchaseCounts]);
+  }, [easyMode, resourcePurchaseCounts, productionHqHook.productionHqMaterialCostMultiplier]);
 
   const wrappedBuyMaterial = useCallback((materialId, quantity = 1) => {
     if (quantity <= 0) {
@@ -401,6 +415,24 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   
   // Update economy hook's saveGame reference
   economyHook.saveGame = saveGame;
+
+  // Production Automation system
+  useProductionAutomation({
+    autoBuyMaterialsEnabled,
+    autoCraftEnabled,
+    rawMaterials,
+    buyMaterial: wrappedBuyMaterial,
+    craftingProductionState,
+    startCraftingProduction,
+    claimCraftingProduction,
+    productionHqUpgrades,
+  });
+
+  useEffect(() => {
+    if (!isProductionHqUnlocked && craftingItems[0] >= 10 && craftingItems[1] >= 5) {
+      setIsProductionHqUnlocked(true);
+    }
+  }, [craftingItems, isProductionHqUnlocked, setIsProductionHqUnlocked]);
 
   return {
     // Basic game state
@@ -566,5 +598,17 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     setResourcePurchaseCounts,
     isCraftingUnlocked,
     setIsCraftingUnlocked,
+    isProductionHqUnlocked,
+    
+    // Production HQ
+    productionHqUpgrades,
+    buyProductionHqUpgrade: productionHqHook.buyProductionHqUpgrade,
+    autoBuyMaterialsEnabled,
+    setAutoBuyMaterialsEnabled,
+    autoCraftEnabled,
+    setAutoCraftEnabled,
+    productionHqMaterialCostMultiplier: productionHqHook.productionHqMaterialCostMultiplier,
+    productionHqValueMultiplier: productionHqHook.productionHqValueMultiplier,
+    productionHqSpeedMultiplier: productionHqHook.productionHqSpeedMultiplier,
   };
 }

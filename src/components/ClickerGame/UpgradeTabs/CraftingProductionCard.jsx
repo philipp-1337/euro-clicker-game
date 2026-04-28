@@ -20,7 +20,7 @@ const formatDurationLabel = (seconds) => {
   return `${roundedSeconds}s`;
 };
 
-const getDurationSeconds = (recipe, easyMode, modeId) => {
+const getDurationSeconds = (recipe, easyMode, modeId, productionHqSpeedMultiplier) => {
   const mode = getModeById(recipe, modeId);
   const baseCooldown = typeof recipe?.cooldownSeconds === 'number'
     ? recipe.cooldownSeconds
@@ -28,12 +28,13 @@ const getDurationSeconds = (recipe, easyMode, modeId) => {
 
   return baseCooldown
     * gameConfig.getCostMultiplier(easyMode)
-    * (mode?.durationMultiplier ?? 1);
+    * (mode?.durationMultiplier ?? 1)
+    * productionHqSpeedMultiplier;
 };
 
-const getBaseReward = (recipe, modeId) => {
+const getBaseReward = (recipe, modeId, productionHqValueMultiplier) => {
   const mode = getModeById(recipe, modeId);
-  return Math.round((recipe?.output?.money ?? 0) * (mode?.rewardMultiplier ?? 1));
+  return Math.round((recipe?.output?.money ?? 0) * (mode?.rewardMultiplier ?? 1) * productionHqValueMultiplier);
 };
 
 export default function CraftingProductionCard({
@@ -48,6 +49,8 @@ export default function CraftingProductionCard({
   resolveCraftOutcome,
   startCraftingProduction,
   claimCraftingProduction,
+  productionHqValueMultiplier = 1,
+  productionHqSpeedMultiplier = 1,
 }) {
   const [now, setNow] = useState(() => Date.now());
   const pendingOutcome = recipeState?.pendingOutcome ?? null;
@@ -56,8 +59,8 @@ export default function CraftingProductionCard({
     ? getModeById(recipe, pendingOutcome.modeId)
     : projectedMode;
   const activeModeId = activeMode?.id ?? projectedMode?.id;
-  const standardReward = getBaseReward(recipe, activeModeId);
-  const durationSeconds = getDurationSeconds(recipe, easyMode, activeModeId);
+  const standardReward = getBaseReward(recipe, activeModeId, productionHqValueMultiplier);
+  const durationSeconds = getDurationSeconds(recipe, easyMode, activeModeId, productionHqSpeedMultiplier);
   const canStart = recipe.materials.every((material) => (rawMaterials?.[material.id] || 0) >= material.quantity);
   const completionTime = pendingOutcome?.completionTime ?? null;
   const isPending = Number.isFinite(completionTime);
@@ -151,7 +154,7 @@ export default function CraftingProductionCard({
               onClick={() => setSelectedProductionMode?.(recipe.id, mode.id)}
             >
               <span>{mode.label}</span>
-              <small>{formatDurationLabel(getDurationSeconds(recipe, easyMode, mode.id))}</small>
+              <small>{formatDurationLabel(getDurationSeconds(recipe, easyMode, mode.id, productionHqSpeedMultiplier))}</small>
             </button>
           ))}
         </div>

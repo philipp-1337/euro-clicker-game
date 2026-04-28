@@ -13,6 +13,9 @@ const formatRemainingMoneyAmount = (currentValue, targetValue) =>
 const formatRemainingPrestige = (currentPrestigeShares, targetPrestige) =>
   `${formatNumber(Math.max(0, targetPrestige - currentPrestigeShares), { decimals: 0 })} Prestige`;
 
+const formatRemainingCraftedItem = (currentValue, targetValue, itemName) =>
+  `${formatNumber(Math.max(0, targetValue - currentValue), { decimals: 0 })} ${itemName}`;
+
 const CONDITION_TYPES = new Set(['flag', 'threshold']);
 const PROGRESS_STRATEGIES = new Set(['segments']);
 const roadmapWarnings = new Set();
@@ -41,6 +44,13 @@ const getTargetPrestige = (milestone, overrides) => {
 };
 
 const getContextValue = (context, key) => {
+  if (typeof key !== 'string') return key;
+
+  // Handle nested keys like 'craftingItems.0'
+  if (key.includes('.')) {
+    return key.split('.').reduce((obj, part) => (obj && obj[part] !== 'undefined') ? obj[part] : undefined, context);
+  }
+
   const value = context[key];
   if (typeof value === 'boolean') {
     return value;
@@ -142,6 +152,10 @@ const formatRemainingRequirement = (requirement, context, milestoneState) => {
     return formatRemainingPrestige(currentValue, targetValue);
   }
 
+  if (requirement.format === 'crafted_item') {
+    return formatRemainingCraftedItem(currentValue, targetValue, requirement.itemName);
+  }
+
   reportRoadmapIssue(
     `Unsupported roadmap requirement format "${requirement.format}" for milestone "${milestoneState.id}".`
   );
@@ -223,6 +237,8 @@ export default function useUnlockRoadmap({
   prestigeCount,
   prestigeShares,
   isCraftingUnlocked,
+  craftingItems,
+  isProductionHqUnlocked,
   unlockInvestmentCost,
   prestigeThresholdMoney = gameConfig.prestige.minMoneyForModalButton,
   craftingUnlockCost = gameConfig.unlockCraftingCost,
@@ -235,6 +251,8 @@ export default function useUnlockRoadmap({
       prestigeCount,
       prestigeShares,
       isCraftingUnlocked,
+      craftingItems,
+      isProductionHqUnlocked,
     };
     const milestoneOverrides = {
       unlockInvestmentCost,
@@ -259,6 +277,8 @@ export default function useUnlockRoadmap({
     prestigeCount,
     prestigeShares,
     isCraftingUnlocked,
+    craftingItems,
+    isProductionHqUnlocked,
     unlockInvestmentCost,
     prestigeThresholdMoney,
     craftingUnlockCost,

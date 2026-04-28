@@ -20,11 +20,14 @@ export default function useCrafting(
   ensureStartTime,
   easyMode,
   craftingProductionState = gameConfig.initialState.craftingProductionState,
-  setCraftingProductionState
+  setCraftingProductionState,
+  productionHqValueMultiplier = 1,
+  productionHqSpeedMultiplier = 1
 ) {
   const productionModeHook = useCraftingProductionMode(
     craftingProductionState,
-    setCraftingProductionState
+    setCraftingProductionState,
+    productionHqValueMultiplier
   );
   const rawMaterialsRef = useRef(rawMaterials);
   const productionStateRef = useRef(normalizeCraftingProductionState(craftingProductionState));
@@ -79,11 +82,12 @@ export default function useCrafting(
       : (gameConfig.craftingCooldownSeconds || 5);
     const mode = getCraftingProductionModeById(recipe, modeId);
 
-    return baseCooldown * costMultiplier * (mode?.durationMultiplier ?? 1);
-  }, [easyMode]);
+    return baseCooldown * costMultiplier * (mode?.durationMultiplier ?? 1) * productionHqSpeedMultiplier;
+  }, [easyMode, productionHqSpeedMultiplier]);
 
   const startCraftingProduction = useCallback((index) => {
     const recipe = gameConfig.craftingRecipes[index];
+
 
     if (!recipe || typeof setCraftingProductionState !== 'function') {
       return null;

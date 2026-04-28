@@ -21,7 +21,8 @@ const createDeterministicRoll = (input) => {
 
 export default function useCraftingProductionMode(
   craftingProductionState = {},
-  setCraftingProductionState
+  setCraftingProductionState,
+  productionHqValueMultiplier = 1,
 ) {
   const getNormalizedState = useCallback(() => {
     return normalizeCraftingProductionState(craftingProductionState);
@@ -110,9 +111,9 @@ export default function useCraftingProductionMode(
       rareMultiplier,
       modeRewardMultiplier,
       durationMultiplier,
-      money: Math.round(baseMoney * modeRewardMultiplier * qualityMultiplier * rareMultiplier),
+      money: Math.round(baseMoney * modeRewardMultiplier * qualityMultiplier * rareMultiplier * productionHqValueMultiplier),
     };
-  }, [getSelectedMode]);
+  }, [getSelectedMode, productionHqValueMultiplier]);
 
   return {
     getSelectedMode,

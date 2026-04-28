@@ -188,6 +188,11 @@ export default function useGameState() {
   const [floatingClickValueAutobuyerUnlocked, setFloatingClickValueAutobuyerUnlocked] = useState(gameConfig.initialState.floatingClickValueAutobuyerUnlocked);
   const [floatingClickValueAutobuyerEnabled, setFloatingClickValueAutobuyerEnabled] = useState(gameConfig.initialState.floatingClickValueAutobuyerEnabled);
 
+  const [productionHqUpgrades, setProductionHqUpgrades] = useState(gameConfig.initialState.productionHqUpgrades ?? {});
+  const [isProductionHqUnlocked, setIsProductionHqUnlocked] = useState(false);
+  const [autoBuyMaterialsEnabled, setAutoBuyMaterialsEnabled] = useState(gameConfig.initialState.autoBuyMaterialsEnabled ?? false);
+  const [autoCraftEnabled, setAutoCraftEnabled] = useState(gameConfig.initialState.autoCraftEnabled ?? false);
+
   const [investmentBoostStatesData, setInvestmentBoostStatesData] = useState(() => {
     return hydrateInvestmentBoostStates();
   });
@@ -246,6 +251,10 @@ export default function useGameState() {
     autoBuyGlobalPriceDecreaseEnabled,
     floatingClickValueAutobuyerUnlocked,
     floatingClickValueAutobuyerEnabled,
+    productionHqUpgrades,
+    isProductionHqUnlocked,
+    autoBuyMaterialsEnabled,
+    autoCraftEnabled,
     lastSaved: new Date().getTime(),
   };
 
@@ -307,6 +316,10 @@ export default function useGameState() {
     setAutoBuyGlobalPriceDecreaseEnabled(savedState.autoBuyGlobalPriceDecreaseEnabled ?? false);
     setFloatingClickValueAutobuyerUnlocked(savedState.floatingClickValueAutobuyerUnlocked ?? false);
     setFloatingClickValueAutobuyerEnabled(savedState.floatingClickValueAutobuyerEnabled ?? false);
+    setProductionHqUpgrades(savedState.productionHqUpgrades ?? {});
+    setIsProductionHqUnlocked(savedState.isProductionHqUnlocked ?? false);
+    setAutoBuyMaterialsEnabled(savedState.autoBuyMaterialsEnabled ?? false);
+    setAutoCraftEnabled(savedState.autoCraftEnabled ?? false);
 
     try {
       const clickerSaveRaw = localStorage.getItem('clickerSave');
@@ -413,6 +426,14 @@ export default function useGameState() {
     setResourcePurchaseCounts,
     craftingProductionState: craftingProductionStateData,
     setCraftingProductionState,
+    productionHqUpgrades,
+    setProductionHqUpgrades,
+    isProductionHqUnlocked,
+    setIsProductionHqUnlocked,
+    autoBuyMaterialsEnabled,
+    setAutoBuyMaterialsEnabled,
+    autoCraftEnabled,
+    setAutoCraftEnabled,
     gameState,
     loadGameState,
   };
