@@ -51,6 +51,7 @@ export default function CraftingProductionCard({
   claimCraftingProduction,
   productionHqValueMultiplier = 1,
   productionHqSpeedMultiplier = 1,
+  productionHqRareChanceBonus = 0,
 }) {
   const [now, setNow] = useState(() => Date.now());
   const pendingOutcome = recipeState?.pendingOutcome ?? null;
@@ -97,6 +98,7 @@ export default function CraftingProductionCard({
       * (recipe?.qualityMultiplier ?? 1)
       * (recipe?.rareBonusMultiplier ?? 1)
     );
+  const effectiveRareChance = Math.max(0, Math.min(1, (recipe?.rareBonusChance ?? 0) + productionHqRareChanceBonus));
 
   useEffect(() => {
     if (!isPending) {
@@ -192,7 +194,7 @@ export default function CraftingProductionCard({
             <span>Rare Result</span>
             <strong>
               {recipe?.rareBonusChance > 0
-                ? `${Math.round(recipe.rareBonusChance * 100)}% chance for up to ${formatNumber(rarePreviewMoney)} €`
+                ? `${Math.round(effectiveRareChance * 100)}% chance for up to ${formatNumber(rarePreviewMoney)} €`
                 : 'No rare result'}
             </strong>
           </div>

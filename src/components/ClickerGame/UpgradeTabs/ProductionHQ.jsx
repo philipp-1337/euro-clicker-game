@@ -1,5 +1,5 @@
 import { gameConfig } from '@constants/gameConfig';
-import { Gem, Gauge, Lock, ShoppingCart, Bot, Cpu } from 'lucide-react';
+import { Gem, Gauge, Lock, ShoppingCart, Bot, Cpu, Sparkles } from 'lucide-react';
 import { formatNumber } from '@utils/calculators';
 
 const getIcon = (iconName) => {
@@ -8,6 +8,7 @@ const getIcon = (iconName) => {
   if (iconName === 'ShoppingCart') return <ShoppingCart className="premium-icon" />;
   if (iconName === 'Bot') return <Bot className="premium-icon" />;
   if (iconName === 'Cpu') return <Cpu className="premium-icon" />;
+  if (iconName === 'Sparkles') return <Sparkles className="premium-icon" />;
   return null;
 };
 
@@ -30,6 +31,10 @@ const getUpgradeDescription = (upgrade) => {
 
   if (upgrade.id === 'material_cost') {
     return `Reduces the cost of raw materials by ${formatPercentLabel(upgrade.effectPerLevel)} per level.`;
+  }
+
+  if (upgrade.id === 'rare_result') {
+    return `Increases the rare result chance of wealth production routes by ${formatPercentLabel(upgrade.effectPerLevel)} per level.`;
   }
 
   return upgrade.description;
@@ -147,6 +152,7 @@ export default function ProductionHQ({
   productionHqMaterialCostMultiplier = 1,
   productionHqValueMultiplier = 1,
   productionHqSpeedMultiplier = 1,
+  productionHqRareChanceBonus = 0,
 }) {
   const unlockRequirements = getProductionHqRequirements();
 
@@ -199,6 +205,7 @@ export default function ProductionHQ({
           <span>Craft value: {formatPercentLabel(productionHqValueMultiplier - 1)} bonus</span>
           <span>Craft speed: {formatPercentLabel(1 - productionHqSpeedMultiplier)} faster</span>
           <span>Material costs: {formatPercentLabel(1 - productionHqMaterialCostMultiplier)} lower</span>
+          <span>Rare finishes: {formatPercentLabel(productionHqRareChanceBonus)} higher chance</span>
         </div>
       </div>
       

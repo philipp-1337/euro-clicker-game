@@ -157,6 +157,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     productionHqHook.productionHqValueMultiplier,
     productionHqHook.productionHqSpeedMultiplier,
     productionHqHook.productionHqMaterialCostMultiplier,
+    productionHqHook.productionHqRareChanceBonus,
     spendMoney,
   );
 
@@ -523,5 +524,6 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     productionHqMaterialCostMultiplier: productionHqHook.productionHqMaterialCostMultiplier,
     productionHqValueMultiplier: productionHqHook.productionHqValueMultiplier,
     productionHqSpeedMultiplier: productionHqHook.productionHqSpeedMultiplier,
+    productionHqRareChanceBonus: productionHqHook.productionHqRareChanceBonus,
   };
 }

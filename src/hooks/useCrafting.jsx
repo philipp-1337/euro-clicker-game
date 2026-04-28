@@ -24,12 +24,14 @@ export default function useCrafting(
   productionHqValueMultiplier = 1,
   productionHqSpeedMultiplier = 1,
   productionHqMaterialCostMultiplier = 1,
+  productionHqRareChanceBonus = 0,
   spendMoney
 ) {
   const productionModeHook = useCraftingProductionMode(
     craftingProductionState,
     setCraftingProductionState,
-    productionHqValueMultiplier
+    productionHqValueMultiplier,
+    productionHqRareChanceBonus
   );
   const rawMaterialsRef = useRef(rawMaterials);
   const productionStateRef = useRef(normalizeCraftingProductionState(craftingProductionState));

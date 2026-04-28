@@ -32,6 +32,7 @@ export default function Crafting({
   productionHqMaterialCostMultiplier = 1,
   productionHqValueMultiplier = 1,
   productionHqSpeedMultiplier = 1,
+  productionHqRareChanceBonus = 0,
 }) {
   const calculateTotalCost = (material) => {
     let total = 0;
@@ -161,6 +162,7 @@ export default function Crafting({
             claimCraftingProduction={claimCraftingProduction}
             productionHqValueMultiplier={productionHqValueMultiplier}
             productionHqSpeedMultiplier={productionHqSpeedMultiplier}
+            productionHqRareChanceBonus={productionHqRareChanceBonus}
           />
         ))}
       </div>

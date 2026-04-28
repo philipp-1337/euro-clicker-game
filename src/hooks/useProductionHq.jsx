@@ -53,10 +53,17 @@ export default function useProductionHq({
     return 1 - (upgrade?.effectPerLevel * level || 0);
   }, [productionHqUpgrades]);
 
+  const productionHqRareChanceBonus = useMemo(() => {
+    const upgrade = gameConfig.productionHqUpgrades.find(u => u.id === 'rare_result');
+    const level = productionHqUpgrades?.rare_result || 0;
+    return upgrade?.effectPerLevel * level || 0;
+  }, [productionHqUpgrades]);
+
   return {
     buyProductionHqUpgrade,
     productionHqValueMultiplier,
     productionHqSpeedMultiplier,
     productionHqMaterialCostMultiplier,
+    productionHqRareChanceBonus,
   };
 }

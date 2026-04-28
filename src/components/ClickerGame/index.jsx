@@ -177,6 +177,7 @@ export default function ClickerGame({
     productionHqMaterialCostMultiplier,
     productionHqValueMultiplier,
     productionHqSpeedMultiplier,
+    productionHqRareChanceBonus,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   const { nextMilestone } = useUnlockRoadmap({
@@ -779,6 +780,7 @@ export default function ClickerGame({
                 productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
                 productionHqValueMultiplier={productionHqValueMultiplier}
                 productionHqSpeedMultiplier={productionHqSpeedMultiplier}
+                productionHqRareChanceBonus={productionHqRareChanceBonus}
                 />            )}
             {activeTab === 'premium' && (
               <PremiumUpgrades
@@ -831,6 +833,7 @@ export default function ClickerGame({
                 productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
                 productionHqValueMultiplier={productionHqValueMultiplier}
                 productionHqSpeedMultiplier={productionHqSpeedMultiplier}
+                productionHqRareChanceBonus={productionHqRareChanceBonus}
               />
             )}
           </div>

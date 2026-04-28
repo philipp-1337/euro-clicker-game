@@ -23,6 +23,7 @@ export default function useCraftingProductionMode(
   craftingProductionState = {},
   setCraftingProductionState,
   productionHqValueMultiplier = 1,
+  productionHqRareChanceBonus = 0,
 ) {
   const getNormalizedState = useCallback(() => {
     return normalizeCraftingProductionState(craftingProductionState);
@@ -92,7 +93,8 @@ export default function useCraftingProductionMode(
       ? (recipe?.qualityMultiplier ?? 1)
       : 1;
     const rareRoll = createDeterministicRoll(`${recipe.id}:${mode?.id}:${normalizedCompletionTime}`);
-    const rareBonusApplied = rareRoll < (recipe?.rareBonusChance ?? 0);
+    const rareChance = Math.max(0, Math.min(1, (recipe?.rareBonusChance ?? 0) + productionHqRareChanceBonus));
+    const rareBonusApplied = rareRoll < rareChance;
     const rareMultiplier = rareBonusApplied
       ? (recipe?.rareBonusMultiplier ?? 1)
       : 1;
@@ -108,12 +110,13 @@ export default function useCraftingProductionMode(
       rareBonusApplied,
       baseMoney,
       qualityMultiplier,
+      rareChance,
       rareMultiplier,
       modeRewardMultiplier,
       durationMultiplier,
       money: Math.round(baseMoney * modeRewardMultiplier * qualityMultiplier * rareMultiplier * productionHqValueMultiplier),
     };
-  }, [getSelectedMode, productionHqValueMultiplier]);
+  }, [getSelectedMode, productionHqRareChanceBonus, productionHqValueMultiplier]);
 
   return {
     getSelectedMode,

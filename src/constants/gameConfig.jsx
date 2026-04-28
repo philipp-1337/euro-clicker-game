@@ -13,6 +13,7 @@ const PRODUCTION_HQ_COST_MULTIPLIER = 1.55;
 const PRODUCTION_HQ_CRAFTING_VALUE_STEP = 0.1;
 const PRODUCTION_HQ_CRAFTING_SPEED_STEP = 0.08;
 const PRODUCTION_HQ_MATERIAL_COST_STEP = 0.15;
+const PRODUCTION_HQ_RARE_RESULT_STEP = 0.02;
 
 export const INVESTMENT_BASE_COST = 75000;
 export const INVESTMENT_BASE_INCOME = 250;
@@ -685,8 +686,8 @@ export const gameConfig = {
   ],
 
   rawMaterials: [
-    { id: "metal", name: "Precious Metals", baseCost: 5580, costIncreaseFactor: 1.06, },
-    { id: "parts", name: "Forging Instruments", baseCost: 15600, costIncreaseFactor: 1.15, },
+    { id: "metal", name: "Precious Metals", baseCost: 5580, costIncreaseFactor: 1.05, },
+    { id: "parts", name: "Forging Instruments", baseCost: 15600, costIncreaseFactor: 1.09, },
     { id: "tech", name: "Investment Molds", baseCost: 44900, costIncreaseFactor: 2.10, },
   ],
 
@@ -725,6 +726,18 @@ export const gameConfig = {
       getCost: (level) => ([
         { item: 0, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_COINS, level) },
         { item: 1, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_GOLD, level) }
+      ])
+    },
+    {
+      id: 'rare_result',
+      name: 'Finishing Expertise',
+      description: 'Increases the rare result chance of wealth production routes by 2 percentage points per level.',
+      icon: 'Sparkles',
+      effectPerLevel: PRODUCTION_HQ_RARE_RESULT_STEP,
+      maxLevel: 5,
+      getCost: (level) => ([
+        { item: 0, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_COINS + 2, level) },
+        { item: 1, quantity: getProductionHqScalingCost(PRODUCTION_HQ_BASE_COST_GOLD + 1, level) }
       ])
     },
     {
@@ -779,6 +792,7 @@ export const gameConfig = {
       crafting_value: 0,
       crafting_speed: 0,
       material_cost: 0,
+      rare_result: 0,
       auto_buy_materials: 0,
       auto_craft: 0,
     },
