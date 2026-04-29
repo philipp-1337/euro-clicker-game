@@ -46,6 +46,8 @@ export default function ClickerGame({
     incrementFloatingClicks,
     prestigeButtonEverVisible,
     setPrestigeButtonEverVisible,
+    showMilestoneBanner,
+    setShowMilestoneBanner,
   } = useUiProgress();
 
   const [buyQuantity, setBuyQuantity] = useState(1);
@@ -118,6 +120,7 @@ export default function ClickerGame({
     canPrestige,
     floatingClickValueLevel,
     floatingClickValueMultiplier,
+    floatingClickValueCost,
     buyFloatingClickValue,
     currentFloatingClickValue,
     craftingItems,
@@ -185,6 +188,11 @@ export default function ClickerGame({
     isInvestmentUnlocked,
     prestigeCount,
     prestigeShares,
+    clickedButtonsCount: uiProgress.clickedButtons.filter(Boolean).length,
+    managersOwnedCount: managers.filter(Boolean).length,
+    nextManagerCost: managerCosts.find((cost, index) => !managers[index] && cost > 0) ?? 0,
+    floatingClickValueLevel,
+    floatingClickUpgradeCost: floatingClickValueCost,
     isCraftingUnlocked,
     craftingItems,
     isProductionHqUnlocked,
@@ -217,6 +225,22 @@ export default function ClickerGame({
       title: 'Your first prestige unlocks production decisions',
       body: 'Wealth Production is more than another payout button. After prestige, route choices, time pressure, and rare premium results start to matter.',
     };
+
+  useEffect(() => {
+    if (!nextMilestone) {
+      return;
+    }
+
+    const progressValue = Math.max(
+      0,
+      Math.min(100, Math.round(nextMilestone.currentProgressPercentage ?? 0))
+    );
+    const shouldResurface = nextMilestone.status === 'ready' || progressValue >= 85;
+
+    if (shouldResurface && !showMilestoneBanner) {
+      setShowMilestoneBanner(true);
+    }
+  }, [nextMilestone, setShowMilestoneBanner, showMilestoneBanner]);
 
   const {
     achievements,
@@ -626,6 +650,8 @@ export default function ClickerGame({
           floatingClickValueAutobuyerUnlocked={floatingClickValueAutobuyerUnlocked}
           logisticsManagerUnlocked={(productionHqUpgrades?.auto_buy_materials || 0) > 0}
           productionManagerUnlocked={(productionHqUpgrades?.auto_craft || 0) > 0}
+          showMilestoneRestoreButton={Boolean(nextMilestone) && !showMilestoneBanner}
+          onRestoreMilestoneBanner={() => setShowMilestoneBanner(true)}
           setIsAutoBuyerModalOpen={setIsAutoBuyerModalOpen}
           autoBuyValueUpgradeEnabled={autoBuyValueUpgradeEnabled}
           autoBuyCooldownUpgradeEnabled={autoBuyCooldownUpgradeEnabled}
@@ -711,9 +737,12 @@ export default function ClickerGame({
         </div>
       )}
 
-      {uiProgress.gameStarted && nextMilestone && (
+      {uiProgress.gameStarted && nextMilestone && showMilestoneBanner && (
         <div style={{ paddingBottom: upgradeTabsUnlocked ? 0 : '64px' }}>
-          <UnlockRoadmapCard milestone={nextMilestone} />
+          <UnlockRoadmapCard
+            milestone={nextMilestone}
+            onDismiss={() => setShowMilestoneBanner(false)}
+          />
         </div>
       )}
 

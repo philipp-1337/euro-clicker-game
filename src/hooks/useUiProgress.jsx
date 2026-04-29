@@ -36,6 +36,7 @@ export function useUiProgress() {
       prestigeButtonEverVisible: false, // New: Tracks if the prestige button has ever been visible
       showDarkModeButton: true, // Default: Dark mode button in header is visible
       showFloatingMoney: true, // Default: Floating money banner is visible
+      showMilestoneBanner: true,
     };
     try {
       const clickerSaveRaw = localStorage.getItem("clickerSave");
@@ -291,6 +292,18 @@ export function useUiProgress() {
     });
   }, []);
 
+  const setShowMilestoneBanner = useCallback((valueOrUpdater) => {
+    setUiProgress(prev => {
+      const prevValue = typeof prev.showMilestoneBanner === 'boolean' ? prev.showMilestoneBanner : true;
+      const nextValue = typeof valueOrUpdater === 'function'
+        ? valueOrUpdater(prevValue)
+        : valueOrUpdater;
+      const next = { ...prev, showMilestoneBanner: nextValue };
+      saveUiProgress(next);
+      return next;
+    });
+  }, []);
+
   // Sync showStatisticsHeaderButton from cloud import
   useEffect(() => {
     const handler = () => {
@@ -339,5 +352,7 @@ export function useUiProgress() {
     setShowDarkModeButton,
     showFloatingMoney: typeof uiProgress.showFloatingMoney === 'boolean' ? uiProgress.showFloatingMoney : true,
     setShowFloatingMoney,
+    showMilestoneBanner: typeof uiProgress.showMilestoneBanner === 'boolean' ? uiProgress.showMilestoneBanner : true,
+    setShowMilestoneBanner,
   };
 }

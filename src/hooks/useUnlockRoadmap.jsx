@@ -16,6 +16,9 @@ const formatRemainingPrestige = (currentPrestigeShares, targetPrestige) =>
 const formatRemainingCraftedItem = (currentValue, targetValue, itemName) =>
   `${formatNumber(Math.max(0, targetValue - currentValue), { decimals: 0 })} ${itemName}`;
 
+const formatRemainingCount = (currentValue, targetValue, unitLabel = 'steps') =>
+  `${formatNumber(Math.max(0, targetValue - currentValue), { decimals: 0 })} ${unitLabel}`;
+
 const CONDITION_TYPES = new Set(['flag', 'threshold']);
 const PROGRESS_STRATEGIES = new Set(['segments']);
 const roadmapWarnings = new Set();
@@ -173,6 +176,10 @@ const formatRemainingRequirement = (requirement, context, milestoneState) => {
     return formatRemainingCraftedItem(currentValue, targetValue, requirement.itemName);
   }
 
+  if (requirement.format === 'count') {
+    return formatRemainingCount(currentValue, targetValue, requirement.unitLabel);
+  }
+
   reportRoadmapIssue(
     `Unsupported roadmap requirement format "${requirement.format}" for milestone "${milestoneState.id}".`
   );
@@ -203,7 +210,7 @@ const formatRemainingText = (milestone, context, milestoneState) => {
     .map((requirement) => formatRemainingRequirement(requirement, context, milestoneState));
 
   return remainingParts.length > 0
-    ? `Needs ${remainingParts.join(' and ')}`
+    ? `Needs ${remainingParts.join(' and ')} more`
     : 'Ready';
 };
 
@@ -253,6 +260,11 @@ export default function useUnlockRoadmap({
   isInvestmentUnlocked,
   prestigeCount,
   prestigeShares,
+  clickedButtonsCount = 0,
+  managersOwnedCount = 0,
+  nextManagerCost = 0,
+  floatingClickValueLevel = 0,
+  floatingClickUpgradeCost = 0,
   isCraftingUnlocked,
   craftingItems,
   isProductionHqUnlocked,
@@ -267,11 +279,16 @@ export default function useUnlockRoadmap({
       isInvestmentUnlocked,
       prestigeCount,
       prestigeShares,
+      clickedButtonsCount,
+      managersOwnedCount,
+      floatingClickValueLevel,
       isCraftingUnlocked,
       craftingItems,
       isProductionHqUnlocked,
     };
     const milestoneOverrides = {
+      nextManagerCost,
+      floatingClickUpgradeCost,
       unlockInvestmentCost,
       prestigeThresholdMoney,
       craftingUnlockCost,
@@ -293,6 +310,11 @@ export default function useUnlockRoadmap({
     isInvestmentUnlocked,
     prestigeCount,
     prestigeShares,
+    clickedButtonsCount,
+    managersOwnedCount,
+    nextManagerCost,
+    floatingClickValueLevel,
+    floatingClickUpgradeCost,
     isCraftingUnlocked,
     craftingItems,
     isProductionHqUnlocked,

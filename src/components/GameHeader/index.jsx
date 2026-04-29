@@ -24,6 +24,7 @@ import {
   MailOpenIcon,
   SunIcon,
   MoonIcon,
+  TargetIcon,
 } from "lucide-react";
 import SettingsModal from "./SettingsModal";
 import AchievementsModal from "./AchievementsModal";
@@ -450,6 +451,16 @@ export default function GameHeader(props) {
               {isDarkMode ? <SunIcon size={20} /> : <MoonIcon size={20} />}
             </button>
           )}
+          {props.showMilestoneRestoreButton && (
+            <button
+              className="settings-button header-icon"
+              onClick={props.onRestoreMilestoneBanner}
+              title="Show milestone banner"
+              aria-label="Show milestone banner"
+            >
+              <TargetIcon size={20} />
+            </button>
+          )}
           {/* Prestige */}
           {showPrestigeButtonInHeader && (
             <button
@@ -666,6 +677,8 @@ GameHeader.propTypes = {
   globalPriceDecreaseAutoBuyerUnlocked: PropTypes.bool.isRequired,
   logisticsManagerUnlocked: PropTypes.bool.isRequired,
   productionManagerUnlocked: PropTypes.bool.isRequired,
+  showMilestoneRestoreButton: PropTypes.bool,
+  onRestoreMilestoneBanner: PropTypes.func,
   setIsAutoBuyerModalOpen: PropTypes.func.isRequired,
   autoBuyValueUpgradeEnabled: PropTypes.bool.isRequired,
   autoBuyCooldownUpgradeEnabled: PropTypes.bool.isRequired,
@@ -693,4 +706,6 @@ GameHeader.defaultProps = {
   manualMoneyPerSecond: 0,
   cloudUuid: null,
   autoBuyerBuffer: 0,
+  showMilestoneRestoreButton: false,
+  onRestoreMilestoneBanner: undefined,
 };
