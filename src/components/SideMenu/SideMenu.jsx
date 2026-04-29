@@ -9,12 +9,15 @@ import {
   Bell as NotificationIcon,
   Crown as CrownIcon,
   Zap as PrestigeSideMenuIcon, // Icon für Prestige
+  Bug as BugIcon,
 } from 'lucide-react';
 import AboutModal from '@components/AboutModal/AboutModal';
+import DevMenuModal from '@components/DevMenuModal/DevMenuModal';
 import MenuItem from '@components/SideMenu/MenuItem';
 import NotificationCenter from '@components/NotificationCenter/NotificationCenter';
 import { useModal } from '@hooks/useModal';
 import VersionDisplay from '@components/VersionDisplay/VersionDisplay';
+import { isDevMenuUnlocked } from '@components/AboutModal/devMenuUnlock.helpers';
 
 export default function SideMenu({ 
   isOpen,
@@ -31,9 +34,13 @@ export default function SideMenu({
   loadingNotifications,
   seenIds,
   loadingSeen,
-  markAllAsSeen
+  markAllAsSeen,
+  cloudSaveUuid,
+  onDuplicateCloudSave,
 }) {
   const [showAbout, setShowAbout] = useState(false);
+  const [showDevMenu, setShowDevMenu] = useState(false);
+  const [devMenuUnlocked, setDevMenuUnlocked] = useState(() => isDevMenuUnlocked());
   const menuRef = useModal(isOpen, () => setIsOpen(false), {
     excludeElements: ['.menu-toggle-button']
   });
@@ -122,6 +129,13 @@ export default function SideMenu({
             label="About"
             onClick={() => handleMenuItemClick(() => setShowAbout(true))}
           />
+          {devMenuUnlocked && (
+            <MenuItem
+              icon={BugIcon}
+              label="Dev Menu"
+              onClick={() => handleMenuItemClick(() => setShowDevMenu(true))}
+            />
+          )}
         </div>
 
         <div className="sidemenu-footer">
@@ -129,7 +143,20 @@ export default function SideMenu({
         </div>
       </div>
       {/* About Modal */}
-      <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
+      <AboutModal
+        show={showAbout}
+        onClose={() => setShowAbout(false)}
+        onDevMenuUnlocked={() => {
+          setDevMenuUnlocked(true);
+          setShowDevMenu(true);
+        }}
+      />
+      <DevMenuModal
+        show={showDevMenu}
+        onClose={() => setShowDevMenu(false)}
+        cloudSaveUuid={cloudSaveUuid}
+        onDuplicateCloudSave={onDuplicateCloudSave}
+      />
       <NotificationCenter
         show={showNotifications}
         onClose={() => {

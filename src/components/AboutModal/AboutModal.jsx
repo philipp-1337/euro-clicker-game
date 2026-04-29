@@ -1,10 +1,28 @@
+import { useState } from 'react';
 import { X as CloseIcon, Code, Coffee as CoffeeIcon } from 'lucide-react';
 import { useModal } from '@hooks/useModal';
+import {
+  registerDevMenuTap,
+  unlockDevMenu,
+} from './devMenuUnlock.helpers';
 
-export default function AboutModal({ show, onClose }) {
+export default function AboutModal({ show, onClose, onDevMenuUnlocked }) {
   const modalRef = useModal(show, onClose);
+  const [coffeeTapCount, setCoffeeTapCount] = useState(0);
 
   if (!show) return null;
+
+  const handleCoffeeIconClick = () => {
+    const { nextCount, unlocked } = registerDevMenuTap(coffeeTapCount);
+    setCoffeeTapCount(nextCount);
+
+    if (!unlocked) return;
+
+    unlockDevMenu();
+    setCoffeeTapCount(0);
+    onClose();
+    onDevMenuUnlocked?.();
+  };
 
   return (
     <div className="modal-backdrop">
@@ -77,7 +95,24 @@ export default function AboutModal({ show, onClose }) {
             </a>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-            <CoffeeIcon size={20} />
+            <button
+              type="button"
+              onClick={handleCoffeeIconClick}
+              aria-label="Creators"
+              title="Creators"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+                color: 'inherit',
+              }}
+            >
+              <CoffeeIcon size={20} />
+            </button>
             <span>Created by fabiokay & philipp-1337</span>
           </div>
 

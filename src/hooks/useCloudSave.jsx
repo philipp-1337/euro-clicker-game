@@ -3,17 +3,10 @@ import { db } from '../firebase';
 import { gameConfig } from '@constants/gameConfig'; // Import gameConfig
 import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { removeUndefinedFields } from '@utils/removeUndefinedFields';
-
-// Hilfsfunktion für UUID
-function generateUUID() {
-  // RFC4122 v4 compliant
-  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-    (
-      c ^
-      (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
-    ).toString(16)
-  );
-}
+import {
+  duplicateCloudSaveDocument,
+  generateCloudSaveUuid,
+} from './useCloudSave.helpers';
 
 const CLICKER_SAVE_KEY = 'clickerSave';
 const UI_PROGRESS_KEY = 'clickerUiProgress';
@@ -29,7 +22,7 @@ export default function useCloudSave() {
   const exportToCloud = async (gameState) => {
     let uuid = cloudUuid;
     if (!uuid) {
-      uuid = generateUUID();
+      uuid = generateCloudSaveUuid();
       localStorage.setItem('cloudSaveUuid', uuid);
       setCloudUuid(uuid);
     }
@@ -205,11 +198,19 @@ export default function useCloudSave() {
     }
   };
 
+  const duplicateCloudSave = async () => duplicateCloudSaveDocument({
+    db,
+    sourceUuid: cloudUuid,
+    createUuid: generateCloudSaveUuid,
+    removeUndefinedFields,
+  });
+
   return {
     cloudUuid,
     exportToCloud,
     importFromCloud,
     deleteFromCloud,
+    duplicateCloudSave,
     cloudStatus,
     setCloudUuid,
   };

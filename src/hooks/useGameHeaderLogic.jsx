@@ -77,7 +77,13 @@ export default function useGameHeaderLogic(props) {
   // const [saveMessage, setSaveMessage] = useState('');
   const [showStats, setShowStats] = useState(false);
 
-  const { cloudUuid, exportToCloud, importFromCloud, setCloudUuid } = useCloudSave();
+  const {
+    cloudUuid,
+    exportToCloud,
+    importFromCloud,
+    setCloudUuid,
+    duplicateCloudSave,
+  } = useCloudSave();
 
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [importUuid, setImportUuid] = useState("");
@@ -282,6 +288,7 @@ export default function useGameHeaderLogic(props) {
     showUuid,
     setShowUuid,
     cloudUuid,
+    duplicateCloudSave,
     floatingClicks,
     triggerSaveFeedback,
     money,

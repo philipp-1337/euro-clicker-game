@@ -78,6 +78,7 @@ export default function GameHeader(props) {
     setCloudSaveMode,
     handleSave,
     cloudUuid,
+    duplicateCloudSave,
     floatingClicks,
     // triggerSaveFeedback,
     money,
@@ -644,6 +645,8 @@ export default function GameHeader(props) {
         seenIds={seenIds}
         loadingSeen={loadingSeen}
         markAllAsSeen={markAllAsSeen}
+        cloudSaveUuid={cloudUuid}
+        onDuplicateCloudSave={duplicateCloudSave}
       />
     </>
   );
