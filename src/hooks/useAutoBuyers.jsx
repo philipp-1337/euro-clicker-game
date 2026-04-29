@@ -3,6 +3,7 @@ import { calculateCostWithDifficulty } from '@utils/calculators';
 import { gameConfig } from '@constants/gameConfig';
 
 export default function useAutoBuyers({
+  enabled = true,
   money,
   setMoney,
   easyMode,
@@ -148,6 +149,10 @@ export default function useAutoBuyers({
   };
 
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     const autoBuyerLoop = () => {
       const purchases = [];
 
@@ -338,6 +343,7 @@ export default function useAutoBuyers({
 
     return () => clearInterval(interval);
   }, [
+    enabled,
     autoBuyValueUpgradeEnabled,
     autoBuyCooldownUpgradeEnabled,
     autoBuyGlobalMultiplierEnabled,

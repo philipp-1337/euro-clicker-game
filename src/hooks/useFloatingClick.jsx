@@ -8,6 +8,7 @@ import { useCallback, useMemo, useEffect, useState } from 'react';
  * - Click-based income statistics
  */
 export default function useFloatingClick({
+  enabled = true,
   setMoney,
   setClickHistory,
   criticalClickChanceLevel,
@@ -34,6 +35,10 @@ export default function useFloatingClick({
 
   // Main floating click function
   const addQuickMoney = useCallback(() => {
+    if (!enabled) {
+      return { isCritical: false, amount: 0, multiplier: 1 };
+    }
+
     ensureStartTime?.();
 
     const now = Date.now();
@@ -61,12 +66,18 @@ export default function useFloatingClick({
     currentCriticalClickChance,
     currentFloatingClickValue,
     currentCriticalHitMultiplier,
+    enabled,
     setClickHistory
   ]);
 
 
   // Effect to calculate manual money per second based on click history (jetzt mit amount)
   useEffect(() => {
+    if (!enabled) {
+      setManualMoneyPerSecond(0);
+      return undefined;
+    }
+
     const windowSizeMs = 5000; // 5 second window
     const updateIntervalMs = 100; // Update every 100ms
 
@@ -96,7 +107,7 @@ export default function useFloatingClick({
     }, updateIntervalMs);
 
     return () => clearInterval(interval);
-  }, [currentFloatingClickValue, setClickHistory]);
+  }, [currentFloatingClickValue, enabled, setClickHistory]);
 
   return {
     // Values

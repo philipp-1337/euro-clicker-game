@@ -167,6 +167,14 @@ export default function useGameState() {
 
   const [isCraftingUnlocked, setIsCraftingUnlocked] = useState(gameConfig.initialState.isCraftingUnlocked ?? false);
   const [craftingItems, setCraftingItems] = useState(gameConfig.initialState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
+  const [gamePhase, setGamePhase] = useState(gameConfig.initialState.gamePhase ?? 'capital_phase');
+  const [hasEnteredProductionHq, setHasEnteredProductionHq] = useState(gameConfig.initialState.hasEnteredProductionHq ?? false);
+  const [hqMaterials, setHqMaterials] = useState(gameConfig.initialState.hqMaterials ?? {});
+  const [hqComponents, setHqComponents] = useState(gameConfig.initialState.hqComponents ?? {});
+  const [hqTier, setHqTier] = useState(gameConfig.initialState.hqTier ?? 0);
+  const [hqProgress, setHqProgress] = useState(gameConfig.initialState.hqProgress ?? 0);
+  const [hqProductionState, setHqProductionState] = useState(gameConfig.initialState.hqProductionState ?? {});
+  const [hqUpgrades, setHqUpgrades] = useState(gameConfig.initialState.hqUpgrades ?? {});
 
   const [rawMaterials, setRawMaterials] = useState(gameConfig.initialState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
   const [resourcePurchaseCounts, setResourcePurchaseCounts] = useState(gameConfig.initialState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
@@ -226,6 +234,14 @@ export default function useGameState() {
     floatingClickValueMultiplier,
     isCraftingUnlocked,
     craftingItems,
+    gamePhase,
+    hasEnteredProductionHq,
+    hqMaterials,
+    hqComponents,
+    hqTier,
+    hqProgress,
+    hqProductionState,
+    hqUpgrades,
     rawMaterials,
     resourcePurchaseCounts,
     craftingProductionState: toPersistedCraftingProductionState(craftingProductionStateData),
@@ -301,6 +317,14 @@ export default function useGameState() {
     setClickHistory(savedState.clickHistory ?? []);
     setIsCraftingUnlocked(savedState.isCraftingUnlocked ?? false);
     setCraftingItems(savedState.craftingItems ?? gameConfig.craftingRecipes.map(() => 0));
+    setGamePhase(savedState.gamePhase ?? gameConfig.initialState.gamePhase ?? 'capital_phase');
+    setHasEnteredProductionHq(savedState.hasEnteredProductionHq ?? false);
+    setHqMaterials(savedState.hqMaterials ?? gameConfig.initialState.hqMaterials ?? {});
+    setHqComponents(savedState.hqComponents ?? gameConfig.initialState.hqComponents ?? {});
+    setHqTier(savedState.hqTier ?? gameConfig.initialState.hqTier ?? 0);
+    setHqProgress(savedState.hqProgress ?? gameConfig.initialState.hqProgress ?? 0);
+    setHqProductionState(savedState.hqProductionState ?? gameConfig.initialState.hqProductionState ?? {});
+    setHqUpgrades(savedState.hqUpgrades ?? gameConfig.initialState.hqUpgrades ?? {});
     setRawMaterials(savedState.rawMaterials ?? { metal: 0, parts: 0, tech: 0 });
     setResourcePurchaseCounts(savedState.resourcePurchaseCounts ?? { metal: 0, parts: 0, tech: 0 });
     setCraftingProductionStateData(hydrateCraftingProductionState(savedState.craftingProductionState));
@@ -420,6 +444,22 @@ export default function useGameState() {
     setIsCraftingUnlocked,
     craftingItems,
     setCraftingItems,
+    gamePhase,
+    setGamePhase,
+    hasEnteredProductionHq,
+    setHasEnteredProductionHq,
+    hqMaterials,
+    setHqMaterials,
+    hqComponents,
+    setHqComponents,
+    hqTier,
+    setHqTier,
+    hqProgress,
+    setHqProgress,
+    hqProductionState,
+    setHqProductionState,
+    hqUpgrades,
+    setHqUpgrades,
     rawMaterials,
     setRawMaterials,
     resourcePurchaseCounts,

@@ -9,6 +9,7 @@ import { gameConfig } from '@constants/gameConfig';
  * - Visibility change handling for tab switching
  */
 export default function useOfflineEarnings({
+  enabled = true,
   isGameStarted,
   totalMoneyPerSecond,
   offlineEarningsLevel,
@@ -71,6 +72,10 @@ export default function useOfflineEarnings({
 
   // Effect to track active/inactive play time and handle visibility changes
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     let activeIntervalId;
 
     const clearActiveTimer = () => {
@@ -86,7 +91,7 @@ export default function useOfflineEarnings({
     };
 
     const handleVisibilityChange = () => {
-      if (!isGameStarted) {
+      if (!enabled || !isGameStarted) {
         clearActiveTimer();
         inactiveStartTimeRef.current = null;
         return;
@@ -117,7 +122,7 @@ export default function useOfflineEarnings({
       }
     };
 
-    if (!isGameStarted) {
+    if (!enabled || !isGameStarted) {
       clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       return;
@@ -137,7 +142,7 @@ export default function useOfflineEarnings({
       clearActiveTimer();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [setActivePlayTime, setInactivePlayTime, isGameStarted]);
+  }, [enabled, setActivePlayTime, setInactivePlayTime, isGameStarted]);
 
   return {
     // Offline earnings state

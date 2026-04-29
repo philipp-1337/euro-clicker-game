@@ -5,11 +5,12 @@ import ClickerButtons from './ClickerButtons';
 import FloatingClickButton from './FloatingClickButton';
 import BottomTabMenu from './BottomTabMenu';
 import UnlockRoadmapCard from './UnlockRoadmapCard';
+import ProductionHqTransitionModal from './ProductionHqTransitionModal';
+import ProductionHqShell from './ProductionHqShell';
 import BasicUpgrades from './UpgradeTabs/BasicUpgrades';
 import Investments from './UpgradeTabs/Investments';
 import Crafting from './UpgradeTabs/Crafting';
 import PremiumUpgrades from './UpgradeTabs/PremiumUpgrades';
-import ProductionHQ from './UpgradeTabs/ProductionHQ'; // Import ProductionHQ
 import useGameCore from '@hooks/useGameCore';
 import useUnlockRoadmap from '@hooks/useUnlockRoadmap';
 import { useAchievements } from '@hooks/useAchievements';
@@ -133,6 +134,9 @@ export default function ClickerGame({
     buyMaterial,
     rawMaterials,
     resourcePurchaseCounts,
+    gamePhase,
+    hqTier,
+    hqProgress,
     isCraftingUnlocked,
     setIsCraftingUnlocked,
     autoBuyValueUpgradeEnabled,
@@ -171,7 +175,6 @@ export default function ClickerGame({
     setPrestigeCount,
     setRawMaterials,
     productionHqUpgrades,
-    buyProductionHqUpgrade,
     isProductionHqUnlocked,
     autoBuyMaterialsEnabled,
     setAutoBuyMaterialsEnabled,
@@ -181,6 +184,12 @@ export default function ClickerGame({
     productionHqValueMultiplier,
     productionHqSpeedMultiplier,
     productionHqRareChanceBonus,
+    canEnterProductionHq,
+    productionHqEntryState,
+    isProductionHqTransitionOpen,
+    setIsProductionHqTransitionOpen,
+    enterProductionHq,
+    productionHqLoop,
   } = useGameCore(easyMode, soundEffectsEnabled, buyQuantity);
 
   const { nextMilestone } = useUnlockRoadmap({
@@ -225,6 +234,14 @@ export default function ClickerGame({
       title: 'Your first prestige unlocks production decisions',
       body: 'Wealth Production is more than another payout button. After prestige, route choices, time pressure, and rare premium results start to matter.',
     };
+
+  useEffect(() => {
+    if (gamePhase === 'hq_phase' || activeTab !== 'production_hq') {
+      return;
+    }
+
+    setActiveTab('crafting');
+  }, [activeTab, gamePhase]);
 
   useEffect(() => {
     if (!nextMilestone) {
@@ -566,6 +583,19 @@ export default function ClickerGame({
     };
   }, [unlockSpecificAchievementById]);
 
+  if (gamePhase === 'hq_phase') {
+    return (
+      <div className="game-container">
+        <ProductionHqShell
+          productionHqEntryState={productionHqEntryState}
+          productionHqLoop={productionHqLoop}
+          hqTier={hqTier}
+          hqProgress={hqProgress}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="game-container">
       {showWelcomeBackModal && (
@@ -810,7 +840,11 @@ export default function ClickerGame({
                 productionHqValueMultiplier={productionHqValueMultiplier}
                 productionHqSpeedMultiplier={productionHqSpeedMultiplier}
                 productionHqRareChanceBonus={productionHqRareChanceBonus}
-                />            )}
+                canEnterProductionHq={canEnterProductionHq}
+                productionHqEntryState={productionHqEntryState}
+                onOpenProductionHqTransition={() => setIsProductionHqTransitionOpen(true)}
+              />
+            )}
             {activeTab === 'premium' && (
               <PremiumUpgrades
                 money={money}
@@ -849,26 +883,16 @@ export default function ClickerGame({
                 floatingClickValueAutobuyerUnlockCost={floatingClickValueAutobuyerUnlockCost}
               />
             )}
-            {activeTab === 'production_hq' && (
-              <ProductionHQ
-                productionHqUpgrades={productionHqUpgrades}
-                buyProductionHqUpgrade={buyProductionHqUpgrade}
-                craftingItems={craftingItems}
-                isUnlocked={isProductionHqUnlocked}
-                autoBuyMaterialsEnabled={autoBuyMaterialsEnabled}
-                setAutoBuyMaterialsEnabled={setAutoBuyMaterialsEnabled}
-                autoCraftEnabled={autoCraftEnabled}
-                setAutoCraftEnabled={setAutoCraftEnabled}
-                productionHqMaterialCostMultiplier={productionHqMaterialCostMultiplier}
-                productionHqValueMultiplier={productionHqValueMultiplier}
-                productionHqSpeedMultiplier={productionHqSpeedMultiplier}
-                productionHqRareChanceBonus={productionHqRareChanceBonus}
-              />
-            )}
           </div>
-          <BottomTabMenu activeTab={activeTab} setActiveTab={setActiveTab} prestigeCount={prestigeCount} />
+          <BottomTabMenu activeTab={activeTab} setActiveTab={setActiveTab} />
         </>
       )}
+
+      <ProductionHqTransitionModal
+        open={isProductionHqTransitionOpen}
+        onCancel={() => setIsProductionHqTransitionOpen(false)}
+        onConfirm={enterProductionHq}
+      />
 
       <FloatingClickButton
         onClick={handleFloatingClick}

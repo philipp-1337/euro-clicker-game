@@ -3,7 +3,8 @@ name: Build & Deploy to Firebase Hosting (React)
 on:
   push:
     branches:
-      - '**'
+      - main
+      - alpha-*
   workflow_dispatch: # Optional: manuell auslösbar
 
 jobs:
@@ -39,5 +40,5 @@ jobs:
             firebase deploy --only hosting:production
           else
             BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-            firebase hosting:channel:deploy alpha-${BRANCH_NAME} --only production
+            firebase hosting:channel:deploy "${BRANCH_NAME}" --only production --expires 14d
           fi

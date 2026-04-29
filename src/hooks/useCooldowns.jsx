@@ -2,10 +2,14 @@ import { useCallback, useEffect } from 'react';
 import { gameConfig } from '@constants/gameConfig';
 import useSoundEffects from './useSoundEffects'; // Import the new hook
 
-export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled) {
+export default function useCooldowns(cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled, enabled = true) {
   const { playSound } = useSoundEffects(soundEffectsEnabled); // Use the sound effects hook
 
   const handleClick = useCallback((index, isManager = false) => {
+    if (!enabled) {
+      return;
+    }
+
     if (cooldowns[index] <= 0) {
       // Nur bei manuellen Klicks Geld addieren!
       if (!isManager) {
@@ -18,10 +22,14 @@ export default function useCooldowns(cooldowns, setCooldowns, managers, buttons,
       });
       playSound('click'); // Play the click sound
     }
-  }, [cooldowns, buttons, setMoney, setCooldowns, playSound]);
+  }, [cooldowns, buttons, enabled, setMoney, setCooldowns, playSound]);
 
   // Cooldown-Timer
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     const interval = setInterval(() => {
       setCooldowns(prevCooldowns => 
         prevCooldowns.map((cooldown, index) => {
@@ -36,10 +44,14 @@ export default function useCooldowns(cooldowns, setCooldowns, managers, buttons,
     }, gameConfig.timing.updateInterval);
 
     return () => clearInterval(interval);
-  }, [managers, buttons, handleClick, setCooldowns]);
+  }, [enabled, managers, buttons, handleClick, setCooldowns]);
 
   // Manager Auto-Clicking
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     const autoClickInterval = setInterval(() => {
       managers.forEach((hasManager, index) => {
         if (hasManager && cooldowns[index] <= 0) {
@@ -49,7 +61,7 @@ export default function useCooldowns(cooldowns, setCooldowns, managers, buttons,
     }, gameConfig.timing.updateInterval);
 
     return () => clearInterval(autoClickInterval);
-  }, [managers, cooldowns, buttons, handleClick]);
+  }, [enabled, managers, cooldowns, buttons, handleClick]);
 
   return { handleClick };
 }

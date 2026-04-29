@@ -1,192 +1,412 @@
-# Konzept: Production HQ (Wealth Production Erweiterung)
+# Konzept: Production HQ Nach Dem Hard Phase Shift
 
-## Status-Update 2026-04-28
+Stand: 2026-04-29
 
-Der bisherige Stand war nicht mehr konsistent mit dem Code:
+## Zweck
 
-* Die zentrale `gameConfig`-Definition war syntaktisch beschädigt, wodurch der gesamte Production-HQ-Branch nicht mehr buildbar war.
-* Die Materialkosten-Reduktion wurde im UI und in der Affordability-Prüfung berücksichtigt, aber nicht in der tatsächlichen Geldabbuchung beim Rohstoffkauf.
-* Das permanente Unlock-Flag für das HQ war nicht sauber im Initialzustand verankert.
-* Die Roadmap-Auflösung für verschachtelte Werte wie `craftingItems.0` war fehleranfällig.
+Dieses Dokument beschreibt den aktuellen Stand von `Production HQ` nach dem Umbau vom alten geldbasierten Late-Game-Tab zu einer eigenen Post-Cash-Phase.
 
-Diese Punkte sind jetzt technisch bereinigt:
+Es beantwortet vier Fragen:
 
-* Build wiederhergestellt.
-* Materialkosten-Upgrade wirkt nun konsistent auf Anzeige, Kaufprüfung und tatsächliche Abbuchung.
-* `isProductionHqUnlocked` ist sauber Teil des Initialzustands.
-* Der Roadmap-Fortschritt für das HQ liest die Crafting-Zähler korrekt aus.
-* Das HQ zeigt die aktuell aktiven Effizienzboni jetzt direkt im Tab an.
-* Die bisherigen Testkosten (`1` / `1`) wurden durch erste echte Balancing-Werte ersetzt, damit das System nicht sofort leergekauft wird.
+1. Was ist die neue Idee hinter `Production HQ`?
+2. Was ist bereits im Code und im Spiel umgesetzt?
+3. Wie spielt sich die Phase aktuell?
+4. Welche sinnvollen Ausbauschritte bieten sich als Nächstes an?
 
-Dieses Dokument fasst alle im Rahmen der letzten Konversation vorgenommenen Änderungen und Implementierungen zum Ausbau des "Wealth Production"-Systems, auch bekannt als "Production HQ", zusammen. Es dient als Grundlage für zukünftige Reviews, Refactorings und Weiterentwicklungen.
+Das Dokument ist bewusst kein reines Changelog. Es soll die Produktidee, den aktuellen Feature-Stand und die nächsten Möglichkeiten in einer gemeinsamen Sicht zusammenführen.
 
-## 1. Ausgangssituation und Ziele
+## Kurzfazit
 
-**Initialer Wunsch des Nutzers:**
-*   Erweiterung des Crafting-Systems um Upgrades (günstigere Rohstoffe, höhere Wahrscheinlichkeit für seltene Ergebnisse, schnelleres Crafting, mehr Ertrag).
-*   Automatisierung des Rohstoffkaufs und des Craftings.
+`Production HQ` ist nicht mehr als weiterer Upgrade-Tab im Geldspiel gedacht.
 
-**Hauptziele dieser Implementierung:**
-*   Schaffung eines neuen Hauptbereichs "Production HQ".
-*   Implementierung verschiedener Crafting-bezogener Upgrades.
-*   Implementierung von Automatisierungs-Modulen.
-*   Nahtlose Integration in das bestehende Spiel (UI, UX, Code-Architektur).
-*   Integration in das "Next Milestone"-System.
+Der aktuelle Stand ist:
 
-## 2. Implementierte Features und Änderungen
+- ein irreversibler `Hard Phase Shift`
+- klares Ende der Cash-Phase
+- alte geldbasierte Hauptsysteme verschwinden aus der Haupt-UI
+- eine erste spielbare HQ-V1 mit:
+  - passiver Extraktion
+  - aktiven Burst-Fenstern
+  - Komponentenfertigung
+  - HQ-Core-Fortschritt
+  - ersten HQ-Upgrades
 
-### 2.1 Production HQ Tab & Freischaltbedingung
+Damit ist der wichtigste strukturelle Schritt bereits gemacht:
 
-**Beschreibung:** Ein neuer Tab in der Hauptnavigation, der nach dem ersten Prestige sichtbar wird. Der Zugang zu den Upgrades in diesem Tab ist jedoch erst möglich, wenn bestimmte Crafting-Ziele erreicht wurden.
+`Das Late-Game hängt nicht mehr nur weiteren Content an das Geldspiel an, sondern beginnt eine neue Phase mit eigener Logik.`
 
-**Details:**
-*   **Sichtbarkeit des Tabs:** Der Tab "Prod. HQ" wird sichtbar, sobald der Spieler mindestens einmal `prestigeCount > 0` erreicht hat.
-    *   `src/components/ClickerGame/BottomTabMenu.jsx`: Logik angepasst, um `prestigeCount` zu prüfen.
-    *   `src/components/ClickerGame/index.jsx`: `prestigeCount` wird an `BottomTabMenu` weitergegeben.
-*   **Zugang zu Upgrades innerhalb des Tabs:** Die Upgrades selbst sind erst zugänglich, wenn 10 "Collectible Coins" (`craftingItems[0]`) und 5 "Gold Reserves" (`craftingItems[1]`) produziert wurden. Vorher wird ein "Locked"-Bildschirm angezeigt.
-    *   `src/components/ClickerGame/UpgradeTabs/ProductionHQ.jsx`: Implementierung des bedingten Renderings (Sperrbildschirm vs. Upgrades). Zeigt den Fortschritt zu den Freischaltbedingungen an.
-    *   `src/components/ClickerGame/index.jsx`: `isProductionHqUnlocked` (dauerhaftes Flag) wird an `ProductionHQ` weitergegeben.
+## Produktidee
 
-### 2.2 Integration in das "Next Milestone" System
+Der Leitgedanke für das neue Late-Game lautet:
 
-**Beschreibung:** Das Freischalten des Production HQ wird als Meilenstein in der Roadmap des Spiels angezeigt.
+`Ab einem bestimmten Punkt ist Geld narrativ und spielerisch vorbei.`
 
-**Details:**
-*   **Neuer Zustand:**
-    *   `src/hooks/useGameState.jsx`: `isProductionHqUnlocked` (Boolean) hinzugefügt, wird gespeichert und geladen.
-    *   `src/hooks/useGameCore.jsx`: Ein `useEffect` überwacht `craftingItems` und setzt `isProductionHqUnlocked` auf `true`, sobald die Bedingung (10 Coins, 5 Gold) erfüllt ist. Dieses Flag ist permanent.
-*   **Meilenstein-Definition:**
-    *   `src/constants/gameConfig.jsx`: Ein neuer Eintrag in `unlockRoadmap` für "productionHq".
-        *   `reachedWhen: { type: "flag", key: "isProductionHqUnlocked" }`
-        *   `progressSegments`: Definiert den Fortschritt basierend auf `craftingItems[0]` und `craftingItems[1]`.
-        *   `remainingRequirements`: Textformatierung für den verbleibenden Bedarf mit neuem `crafted_item`-Format.
-*   **Roadmap-Logik-Anpassung:**
-    *   `src/hooks/useUnlockRoadmap.jsx`:
-        *   `getContextValue` wurde erweitert, um verschachtelte Schlüssel wie `craftingItems.0` zu verarbeiten.
-        *   `formatRemainingRequirement` wurde erweitert, um das neue `crafted_item`-Format mit `itemName` zu unterstützen.
-        *   Hook-Signatur um `craftingItems` und `isProductionHqUnlocked` erweitert.
+Vorher war `Crafting` noch stark an das alte System gebunden:
 
-### 2.3 Crafting Upgrades (Effizienz-Upgrades)
+- Materialien kaufen mit Geld
+- Rezept starten
+- Geld-Reward einsammeln
+- HQ als Effizienzaufsatz auf denselben Loop
 
-**Beschreibung:** Drei Upgrades, die die Effizienz der Wealth Production steigern: Wert, Geschwindigkeit und Materialkosten.
+Die neue Entscheidung war deshalb:
 
-**Details:**
-*   **Konfiguration:**
-    *   `src/constants/gameConfig.jsx`:
-        *   Neue Konstanten `PRODUCTION_HQ_BASE_COST_COINS`, `PRODUCTION_HQ_BASE_COST_GOLD`, `PRODUCTION_HQ_COST_MULTIPLIER` für refaktorierte Kostenberechnung.
-        *   Konstanten für Effektschritte (z.B. `PRODUCTION_HQ_CRAFTING_VALUE_STEP`).
-        *   `productionHqUpgrades` Array enthält Definitionen für:
-            *   `crafting_value` ("Polished Molds"): Erhöht den Wert gecrafteter Items. Kostet nur Gold.
-            *   `crafting_speed` ("Efficient Pipelines"): Reduziert Crafting-Zeit. Kostet nur Coins.
-            *   `material_cost` ("Material Sourcing"): Reduziert Rohstoffkosten. Kostet Coins und Gold.
-        *   Initialisierung der Upgrade-Level im `initialState`.
-*   **Logik:**
-    *   `src/hooks/useProductionHq.jsx` (neu erstellt):
-        *   Berechnet `productionHqValueMultiplier`, `productionHqSpeedMultiplier`, `productionHqMaterialCostMultiplier` basierend auf den Upgrade-Leveln.
-        *   Implementiert `buyProductionHqUpgrade` Funktion, die Kosten abzieht und Upgrade-Level erhöht.
-    *   `src/hooks/useGameCore.jsx`:
-        *   Bindet `useProductionHq` ein, exportiert die Multiplikatoren und die Kauf-Funktion.
-        *   Wendet `productionHqMaterialCostMultiplier` auf die interne `getMaterialPurchaseCost`-Berechnung an.
-    *   `src/hooks/useCrafting.jsx`:
-        *   Akzeptiert `productionHqMaterialCostMultiplier`, `productionHqValueMultiplier`, `productionHqSpeedMultiplier`.
-        *   Übergibt `productionHqValueMultiplier` an `useCraftingProductionMode`.
-        *   Wendet `productionHqSpeedMultiplier` auf die Cooldown-Berechnung in `getRecipeCooldownSeconds` an.
-        *   Wendet `productionHqMaterialCostMultiplier` auf die `calculateTotalCost`-Berechnung im UI an.
-    *   `src/hooks/useCraftingProductionMode.jsx`:
-        *   Akzeptiert `productionHqValueMultiplier`.
-        *   Wendet diesen Multiplikator auf die finale Geldberechnung in `resolveCraftOutcome` an.
-*   **UI-Anzeige:**
-    *   `src/components/ClickerGame/UpgradeTabs/ProductionHQ.jsx`: Zeigt die Upgrade-Karten an.
-    *   `src/components/ClickerGame/UpgradeTabs/CraftingProductionCard.jsx`:
-        *   Akzeptiert `productionHqValueMultiplier` und `productionHqSpeedMultiplier`.
-        *   Aktualisiert die Anzeige von "Voraussichtliche Dauer" (`getDurationSeconds`) und "Standardergebnis" (`getBaseReward`) basierend auf diesen Multiplikatoren.
-    *   Kostenanzeige wurde auf Textformat ("4 Coins", "1 Gold") umgestellt und Nachkommastellen entfernt.
+- kein weiterer Soft-Upgrade-Pfad
+- kein weiterer numerischer Cash-Layer
+- kein Parallelbetrieb von altem und neuem Spiel
 
-### 2.4 Automatisierungs-Module
+Stattdessen:
 
-**Beschreibung:** Zwei Module, die das Rohstoffmanagement und den Crafting-Prozess automatisieren.
+- klarer Trigger
+- klare Bestätigung
+- sichtbarer Bruch
+- neuer Produktions-Loop
 
-**Details:**
-*   **Konfiguration:**
-    *   `src/constants/gameConfig.jsx`: Definitionen für `auto_buy_materials` ("Logistics Manager") und `auto_craft` ("Production Manager") in `productionHqUpgrades`.
-    *   `initialState`: `autoBuyMaterialsEnabled` und `autoCraftEnabled` (Boolean-Flags für Aktivierungsstatus) hinzugefügt.
-*   **Zustandsverwaltung:**
-    *   `src/hooks/useGameState.jsx`: `autoBuyMaterialsEnabled`, `autoCraftEnabled` werden hinzugefügt (Speichern/Laden).
-    *   `src/hooks/useGameCore.jsx`: Bindet die neuen Zustände ein und exportiert sie.
-*   **Logik-Hook:**
-    *   `src/hooks/useProductionAutomation.jsx` (neu erstellt):
-        *   Nutzt `useEffect` mit `setInterval`, um Logik alle 2 Sekunden auszuführen.
-        *   Verwendet `useRef` für `rawMaterials` und `craftingProductionState`, um Stale-Closure-Probleme zu vermeiden.
-        *   **Material Logistics Manager:** Wenn `autoBuyMaterialsEnabled` aktiv ist und Rohstoffe unter einem Schwellenwert liegen (derzeit 10 Einheiten), ruft es `buyMaterial` auf.
-        *   **Production Line Manager:** Wenn `autoCraftEnabled` aktiv ist, prüft es, ob ein Crafting-Prozess fertig zum Claimen ist oder ob ein neuer gestartet werden kann (wenn genug Rohstoffe vorhanden sind).
-*   **UI-Anzeige:**
-    *   `src/components/ClickerGame/UpgradeTabs/ProductionHQ.jsx`:
-        *   Implementiert `AutomationCard` Komponente.
-        *   Zeigt diese Karten für Automatisierungs-Upgrades an.
-        *   Wenn ein Modul gekauft wurde, wird ein Button zum Aktivieren/Deaktivieren (`setAutoBuyMaterialsEnabled`, `setAutoCraftEnabled`) angezeigt.
+## Trigger Und Übergang
 
-## 3. Bekannte und behobene Bugs/Anmerkungen
+Der Einstieg in `Production HQ` funktioniert aktuell so:
 
-*   **ReferenceError `buyMaterial`/`wrappedBuyMaterial`:** Behoben durch Korrektur der Aufrufreihenfolge von Hooks in `useGameCore.jsx`. `useProductionAutomation` wird nun nach `useCrafting` aufgerufen, damit `buyMaterial` etc. verfügbar sind.
-*   **Stale Closures in Automation:** Behoben durch die Verwendung von `useRef` für `rawMaterials` und `craftingProductionState` innerhalb von `useProductionAutomation`, um sicherzustellen, dass die `setInterval`-Callbacks immer auf die aktuellsten Werte zugreifen.
-*   **Unused Imports:** `Coins` und `Layers` Icons aus `ProductionHQ.jsx` entfernt, nachdem die Kostenanzeige auf Text umgestellt wurde.
+- `Wealth Production` muss freigeschaltet sein
+- der Spieler braucht mindestens:
+  - `10 Collectible Coins`
+  - `5 Gold Reserves`
 
-## 4. Liste der geänderten/erstellten Dateien
+Danach erscheint in `Crafting` ein singulärer CTA:
 
-**Neu erstellt:**
-*   `src/hooks/useProductionHq.jsx`
-*   `src/hooks/useProductionAutomation.jsx`
-*   `src/components/ClickerGame/UpgradeTabs/ProductionHQ.jsx`
+- `Enter Production HQ`
 
-**Geändert:**
-*   `src/constants/gameConfig.jsx`
-*   `src/hooks/useGameState.jsx`
-*   `src/hooks/useGameCore.jsx`
-*   `src/hooks/useCrafting.jsx`
-*   `src/hooks/useCraftingProductionMode.jsx`
-*   `src/hooks/useUnlockRoadmap.jsx`
-*   `src/components/ClickerGame/index.jsx`
-*   `src/components/ClickerGame/BottomTabMenu.jsx`
-*   `src/components/ClickerGame/UpgradeTabs/Crafting.jsx`
-*   `src/components/ClickerGame/UpgradeTabs/CraftingProductionCard.jsx`
+Der Wechsel wird über ein eigenes Bestätigungs-Modal abgesichert.
 
-## 5. Offene Punkte, Ideen & Herausforderungen
+Wichtig:
 
-Dieser Abschnitt beleuchtet Bereiche, die während der Implementierung als Stolpersteine identifiziert wurden, noch offene Fragen aufwerfen oder Potenzial für zukünftige Verbesserungen und Erweiterungen bieten.
+- der Übergang ist bewusst
+- der Übergang ist irreversibel
+- der Übergang beendet die Cash-Phase dauerhaft
 
-### 5.1 Manuelle Verifikation im Spiel (bleibt sinnvoll)
-Die kritischsten technischen Inkonsistenzen sind behoben. Was bleibt, ist die spielnahe QA im laufenden Spiel:
-*   **Effizienz-Upgrades:**
-    *   **"Polished Molds" (Wert):** Steigt der finale Euro-Betrag eines gecrafteten Items, angezeigt in der `CraftingProductionCard` und nach dem Claimen?
-    *   **"Efficient Pipelines" (Geschwindigkeit):** Reduziert sich die Produktionszeit, angezeigt in der `CraftingProductionCard`?
-    *   **"Material Sourcing" (Materialkosten):** Reduzieren sich angezeigte Kosten und tatsächliche Abbuchung beim Materialkauf identisch?
-*   **Automatisierungs-Module:**
-    *   **"Logistics Manager":** Werden Rohstoffe automatisch nachgekauft, wenn der Bestand unter 10 Einheiten fällt und genug Geld vorhanden ist?
-    *   **"Production Manager":** Werden Crafting-Prozesse automatisch gestartet, wenn Materialien vorhanden sind, und abgeschlossen/geclaimed, wenn sie fertig sind?
+## Was Nach Dem Shift Passiert
 
-### 5.2 Balancing und Spielökonomie
-*   **Upgrade-Kosten:** Die Testkosten wurden entfernt. Der neue Stand ist ein erster spielbarer Baseline-Pass, aber noch kein finaler Economy-Tune.
-*   **Effektstärken und Maximallevel:** Die `effectPerLevel` und `maxLevel` der Upgrades müssen ebenfalls im Kontext der gesamten Spielökonomie evaluiert und ggf. angepasst werden.
-*   **Automatisierungs-Schwellenwerte:** Der Schwellenwert für den automatischen Nachkauf von Materialien (`if (owned < 10)`) ist derzeit fest auf 10 Einheiten gesetzt. Eine Verbesserung wäre, diesen Wert konfigurierbar zu machen (z.B. über ein weiteres Upgrade oder eine Einstellung im Production HQ).
+Sobald der Spieler `Enter Production HQ` bestätigt, wechselt das Spiel in `hq_phase`.
 
-### 5.3 Benutzererfahrung (UX) und Visualisierung
-*   **Sichtbarkeit von Multiplikatoren:** Eine zentrale Anzeige der aktuell aktiven HQ-Boni ist jetzt im "Production HQ"-Tab vorhanden. Optional wäre später noch eine zusätzliche Spiegelung direkt im "Crafting"-Tab sinnvoll.
-*   **Feedback für Automatisierung:** Visuelles oder akustisches Feedback, wenn Automatisierungs-Module Aktionen ausführen (Material gekauft, Crafting gestartet/geclaimed), könnte die UX verbessern.
+Das bedeutet aktuell:
 
-### 5.4 Code-Architektur und Skalierbarkeit
-*   **Code-Komplexität von `useGameCore.jsx`:** Der `useGameCore`-Hook ist weiterhin sehr umfangreich. Obwohl viele Aspekte in spezialisierte Sub-Hooks ausgelagert wurden, bleibt die zentrale Koordination komplex. Zukünftige Erweiterungen sollten diese Struktur weiterhin respektieren oder alternative, noch modularere Ansätze prüfen, um die Wartbarkeit langfristig zu gewährleisten.
-*   **Skalierbarkeit von `productionHqUpgrades` in `initialState`:** Der `initialState` wird derzeit manuell um neue Upgrade-IDs erweitert. Für eine größere Anzahl von Upgrades könnte eine dynamischere Initialisierung basierend auf `gameConfig.productionHqUpgrades` (ähnlich `craftingItems`) sinnvoll sein, um den Wartungsaufwand zu reduzieren.
-*   **`useEffect` mit `setInterval` und Stale Closures:** Die Verwendung von `useRef` zur Vermeidung von Stale Closures ist eine gängige Praxis, aber bei komplexen Abhängigkeiten immer eine Quelle potenzieller Fehler. Gründliches Testen und eventuell Refactoring (z.B. Nutzung von `useReducer` oder anderen State-Management-Pattern für komplexere Intervalle) ist hier unerlässlich.
+- die Capital-Phase bleibt im Save erhalten, aber ist nicht mehr die aktive Hauptspielfläche
+- die Bottom-Tab-Navigation des alten Spiels verschwindet
+- `Production HQ` wird zur zentralen Oberfläche
 
-### 5.5 Ideen für zukünftige Erweiterungen
-*   **Zusätzliche Automatisierungs-Module:**
-    *   **Auto-Prestige:** Ein Modul, das automatisch prestigt, wenn bestimmte Bedingungen erfüllt sind.
-    *   **Auto-Upgrade-Käufer:** Ein Modul, das automatisch "Production HQ"-Upgrades kauft.
-    *   **Priorisierung für Auto-Crafting:** Konfigurierbare Prioritäten für welche Rezepte der "Production Manager" zuerst craften soll.
-    *   **Ziel-Menge für Material-Kauf:** Statt eines festen Schwellenwerts könnte der Spieler ein Ziel-Inventar (z.B. "halte immer 100 Metal") einstellen.
-*   **Seltene Material-Drops:** Zufällige, seltene Material-Drops aus anderen Spielaktivitäten, die das Crafting beeinflussen.
-*   **Crafting-Queue:** Eine Warteschlange für Crafting-Rezepte, die der "Production Manager" abarbeiten kann.
+Wichtiger technischer Punkt:
 
----
+Nicht nur die UI wurde umgeschaltet.
 
-Ich hoffe, dieses detaillierte Konzeptdokument mit den zusätzlichen Anmerkungen hilft dir, einen klaren Überblick über die vorgenommenen Änderungen zu bekommen und die weitere Entwicklung effizient zu gestalten.
+Auch die alten laufenden Systeme der Capital-Phase werden in `hq_phase` abgeschaltet:
+
+- Manager-Autoclicks
+- alte Cooldown-Intervalle
+- passive Geld-Income-Ticks
+- Autobuyer
+- alte Production-Automation
+- Floating-Click-Statistikloops der Cash-Phase
+
+Das ist wichtig für:
+
+- saubere Spielsemantik
+- weniger CPU-/RAM-Last
+- keine alten Sound- oder State-Leaks in die neue Phase
+
+## Aktueller Spielbarer HQ-V1 Loop
+
+Die neue Phase ist aktuell als erster aktiver Produktionsloop umgesetzt.
+
+### 1. Extraction
+
+Es gibt drei Basismaterialien:
+
+- `Scrap`
+- `Circuits`
+- `Alloy`
+
+Diese steigen passiv über Zeit.
+
+Zusätzlich besitzt jedes Material einen aktiven `Overdrive`:
+
+- sofortiger Material-Burst
+- eigener Cooldown
+- klare Entscheidung, wann der Burst benutzt wird
+
+Dadurch ist die Phase nicht rein passiv, sondern hat kurze aktive Verdichtungsmomente.
+
+### 2. Precision Window
+
+Zusätzlich gibt es ein globales aktives Fenster:
+
+- `Trigger Precision Window`
+
+Während dieses Fensters liefern Crafts in `Assembly` mehr Output.
+
+Spielerisch ist das aktuell der wichtigste aktive HQ-Moment, weil er sofort eine Frage erzeugt:
+
+`Nutze ich Materialien sofort oder warte ich auf ein stärkeres Precision-Fenster?`
+
+### 3. Assembly
+
+Basismaterialien werden in Komponenten umgewandelt.
+
+Aktuell gibt es:
+
+- `Frames`
+- `Relays`
+- `Control Units`
+
+Jede Komponente hat:
+
+- feste Materialkosten
+- sichtbaren Bestand
+- klar lesbare Rolle im HQ-Ausbau
+
+Während das `Precision Window` aktiv ist, steigt der Output pro Craft.
+
+### 4. HQ Core
+
+Komponenten können nicht nur in Upgrades fließen, sondern auch in den `HQ Core`.
+
+Der Core dient als Fortschrittsanker der Phase:
+
+- Komponenten investieren
+- Fortschritt innerhalb des Tiers erhöhen
+- nächstes Tier freischalten
+
+Damit entsteht bereits eine erste echte Entscheidung:
+
+`Nutze ich meine Komponenten für bessere Produktion oder für den direkten Core-Fortschritt?`
+
+### 5. HQ Upgrades
+
+Es gibt aktuell drei HQ-spezifische Upgrades:
+
+- `Flux Lines`
+  - steigert passive Extraktion
+- `Calibration Matrix`
+  - verstärkt den Bonus des Precision Window
+- `Thermal Sinks`
+  - verkürzt Overdrive-Cooldowns und verlängert Precision Window
+
+Diese Upgrades sind bewusst keine alten Geldupgrades mit neuen Namen, sondern greifen direkt in den neuen Produktionsstil ein.
+
+## Aktuell Noch Vorhandene Alt-Systeme
+
+Es gibt im Save und im Code weiterhin Reste des früheren `Production HQ`-Ansatzes.
+
+Dazu gehören unter anderem:
+
+- frühere HQ-Upgrades für Crafting-Value / Speed / Materialkosten
+- alte Crafting-nahe Automatisierungszustände
+- alte Meilenstein- und Persistenzfelder
+
+Wichtig ist:
+
+Diese Alt-Systeme sind derzeit nicht das primäre Herzstück der `hq_phase`.
+
+Sie existieren teilweise noch, weil:
+
+- Save-Migrationen weniger riskant bleiben
+- bestehender Code nicht unnötig destruktiv entfernt wurde
+- die neue HQ-Phase iterativ aufgebaut wird
+
+Perspektivisch sollte der Code hier weiter bereinigt werden, sobald klar ist, welche Teile dauerhaft noch gebraucht werden.
+
+## Was Bereits Gut Funktioniert
+
+Der aktuelle Stand löst mehrere frühere Late-Game-Probleme bereits spürbar:
+
+### 1. Der Bruch ist klarer
+
+Vorher war `Production HQ` eher:
+
+`mehr Systeme im gleichen Spiel`
+
+Jetzt ist es deutlich stärker:
+
+`neue Phase mit anderen Prioritäten`
+
+### 2. Crafting Ist Nicht Mehr Nur Geldproduktion
+
+Die neue HQ-Phase verschiebt den Fokus weg von:
+
+- Euro-Ertrag
+- Prestige-Denken
+- altem Kaufmenü-Verhalten
+
+hin zu:
+
+- Ressourcenfluss
+- Timing
+- Komponentenallokation
+
+### 3. Der Spieler Hat Wieder Kürzere Entscheidungen
+
+Die Kombination aus:
+
+- Overdrive
+- Precision Window
+- Upgrade vs. Core
+
+erzeugt wieder kleine aktive Entscheidungen statt nur passives Abarbeiten.
+
+## Bekannte Grenzen Der Aktuellen V1
+
+Trotz des großen Fortschritts ist die HQ-Phase noch klar V1.
+
+### 1. Die Produktion ist noch relativ flach
+
+Der Loop ist schon spielbar, aber noch nicht tief.
+
+Aktuell fehlt noch mehr von:
+
+- Spezialisierung
+- Richtungsentscheidung
+- längerfristiger Produktionsplanung
+
+### 2. Es gibt noch wenig Überraschung
+
+Die neue Phase hat bereits aktive Fenster, aber noch kaum:
+
+- seltene Events
+- Lucky Moments
+- kritische Produktionsresultate
+- situative Ausnahmezustände
+
+### 3. Die visuelle Identität ist noch funktional
+
+Die Phase funktioniert spielmechanisch, aber die UI ist noch nicht stark genug als:
+
+- “neues Spiel im Spiel”
+- Maschinenraum / HQ / Industriezentrum
+
+inszeniert.
+
+### 4. Alte und neue HQ-Ideen liegen teilweise nebeneinander
+
+Es gibt noch eine Übergangsphase zwischen:
+
+- altem `Crafting-HQ`-Denken
+- neuem `Post-Cash-HQ`-Denken
+
+Das ist okay für den aktuellen Ausbau, sollte aber später konsolidiert werden.
+
+## Sinnvolle Nächste Ausbaustufen
+
+Die folgenden Richtungen passen gut zum bereits gebauten System.
+
+### A. Seltene HQ-Events
+
+Mögliche Beispiele:
+
+- `Power Surge`
+  - Overdrive ohne Cooldown für 10 Sekunden
+- `Signal Drift`
+  - Precision Window stärker, aber kürzer
+- `Contaminated Alloy`
+  - ein Materialfluss sinkt kurz, ein anderer explodiert
+
+Warum sinnvoll:
+
+- mehr Spontaneität
+- mehr Dopamin-Momente
+- mehr aktives Reagieren
+
+### B. Produktionsdoktrinen
+
+Eine frühe dauerhafte Wahl könnte den HQ-Stil prägen:
+
+- `Throughput`
+  - mehr passive Extraktion
+  - schwächere Burst-Fenster
+- `Precision`
+  - stärkere aktive Fenster
+  - geringerer Basisertrag
+
+Warum sinnvoll:
+
+- mehr Identität
+- mehr Wiederspiel-Fantasie im Kopf
+- das HQ fühlt sich weniger generisch an
+
+### C. Erweiterte Komponentenketten
+
+Beispiele:
+
+- Zwischenprodukte
+- zwei alternative Rezepte für denselben Output
+- seltene High-End-Komponenten
+
+Warum sinnvoll:
+
+- mehr Tiefe
+- mehr Ressourcenabwägung
+- mehr “Wie richte ich meinen Flow ein?”
+
+Wichtig:
+
+Nur schrittweise einführen.
+Zu viele Produktionsstufen auf einmal würden die klare V1 verwässern.
+
+### D. HQ-Projekte Statt Nur Tier-Fortschritt
+
+Statt nur linearer Core-Stufen könnten später konkrete Projekte entstehen:
+
+- neuer Extraktionsarm
+- stabilere Präzisionskammer
+- zweite Assembly-Linie
+- Event-Radar
+
+Warum sinnvoll:
+
+- freigeschaltete Features fühlen sich greifbarer an
+- Fortschritt bekommt mehr Persönlichkeit
+
+### E. Eigene Audio-/Visual-Dramaturgie
+
+Der Schritt ist wichtig, sobald die Mechanik stabil ist.
+
+Sinnvolle Hebel:
+
+- anderer Hintergrundsound für HQ
+- stärkere Overdrive-/Precision-FX
+- klarer Fortschrittsmoment bei Core-Installationen
+- andere Farb- und Layoutsprache als im Geldspiel
+
+## Technische Leitlinien Für Die Nächsten Schritte
+
+Für weitere Ausbauten sollten folgende Regeln beibehalten werden:
+
+### 1. `hq_phase` bleibt eine echte Laufzeitgrenze
+
+Nicht wieder alte Cash-Intervalle oder Semantik in die neue Phase zurückleaken lassen.
+
+### 2. Neue HQ-Mechaniken zuerst als saubere Helper oder dedizierte Hooks modellieren
+
+Die aktuelle Richtung mit testbaren HQ-Helpern ist gut und sollte fortgesetzt werden.
+
+### 3. Alte HQ-/Crafting-Überbleibsel bewusst konsolidieren
+
+Nicht alles sofort löschen, aber mittelfristig klar entscheiden:
+
+- was gehört noch zur Capital-Phase?
+- was gehört dauerhaft zur HQ-Phase?
+- was ist nur historischer Ballast?
+
+## Zusammenfassung
+
+`Production HQ` ist aktuell in einem guten Übergangszustand:
+
+- der wichtigste Paradigmenwechsel ist gebaut
+- die neue Phase ist bereits spielbar
+- die alte Capital-Phase läuft in HQ nicht mehr unsichtbar weiter
+- erste aktive Produktionsentscheidungen sind vorhanden
+
+Was jetzt noch fehlt, ist nicht mehr die Grundidee, sondern:
+
+- mehr Tiefe
+- mehr Persönlichkeit
+- mehr Event- und Dramaturgie-Momente
+- schrittweise stärkere Eigenständigkeit der HQ-Welt
+
+Die wichtigste Grundlage dafür ist bereits da.

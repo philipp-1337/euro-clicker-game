@@ -1,4 +1,4 @@
-import { Hammer, Landmark, Euro, Star, Factory } from 'lucide-react';
+import { Hammer, Landmark, Euro, Star } from 'lucide-react';
 
 const baseTabs = [
 	{ key: 'basic', label: 'Basic', icon: <Euro size={26} /> },
@@ -7,17 +7,10 @@ const baseTabs = [
 	{ key: 'crafting', label: 'Crafting', icon: <Hammer size={26} /> },
 ];
 
-export default function BottomTabMenu({ activeTab, setActiveTab, prestigeCount }) {
-	const isProductionHQUnlocked = prestigeCount > 0;
-
-	const tabs = [...baseTabs];
-	if (isProductionHQUnlocked) {
-		tabs.push({ key: 'production_hq', label: 'Prod. HQ', icon: <Factory size={26} /> });
-	}
-
+export default function BottomTabMenu({ activeTab, setActiveTab }) {
 	return (
 		<nav className="bottom-tab-menu">
-			{tabs.map(tab => (
+			{baseTabs.map(tab => (
 				<button
 					key={tab.key}
 					className={`bottom-tab-btn ${tab.key}${

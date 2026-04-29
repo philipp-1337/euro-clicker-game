@@ -9,6 +9,7 @@ import { createInitialInvestmentBoostStates, gameConfig } from '@constants/gameC
  * - Total money per second calculations
  */
 export default function useGameEconomy({
+  enabled = true,
   money,
   setMoney,
   buttons,
@@ -66,6 +67,10 @@ export default function useGameEconomy({
 
   // Central money income effect
   useEffect(() => {
+    if (!enabled) {
+      return undefined;
+    }
+
     const interval = setInterval(() => {
       const incomeThisTick = (typeof totalMoneyPerSecond === 'number' && !isNaN(totalMoneyPerSecond))
         ? totalMoneyPerSecond / (1000 / gameConfig.timing.updateInterval)
@@ -77,7 +82,7 @@ export default function useGameEconomy({
       });
     }, gameConfig.timing.updateInterval);
     return () => clearInterval(interval);
-  }, [totalMoneyPerSecond, setMoney]);
+  }, [enabled, totalMoneyPerSecond, setMoney]);
 
   // Prestige logic
   const canPrestige = currentRunShares >= gameConfig.prestige.minSharesToPrestige;

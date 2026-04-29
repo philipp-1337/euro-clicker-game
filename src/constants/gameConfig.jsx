@@ -6,6 +6,8 @@ import Crafting from '@components/ClickerGame/UpgradeTabs/Crafting';
 const INVESTMENT_UNLOCK_COST = 20000;
 const CRAFTING_UNLOCK_COST = 100000000;
 const CRAFTING_UNLOCK_PRESTIGE = 1;
+const PRODUCTION_HQ_ENTRY_COINS = 10;
+const PRODUCTION_HQ_ENTRY_GOLD = 5;
 const PRODUCTION_HQ_BASE_COST_COINS = 2;
 const PRODUCTION_HQ_BASE_COST_GOLD = 1;
 const PRODUCTION_HQ_COST_MULTIPLIER = 1.55;
@@ -561,6 +563,114 @@ export const gameConfig = {
 
   unlockCraftingCost: CRAFTING_UNLOCK_COST,
   unlockCraftingPrestige: CRAFTING_UNLOCK_PRESTIGE,
+  productionHqEntryRequirements: {
+    collectibleCoin: PRODUCTION_HQ_ENTRY_COINS,
+    goldReserve: PRODUCTION_HQ_ENTRY_GOLD,
+  },
+  productionHqPhase: {
+    materials: [
+      {
+        id: 'scrap',
+        name: 'Scrap',
+        baseRatePerSecond: 1.2,
+        overdriveBurst: 10,
+        overdriveLabel: 'Rip open surplus stockpiles for an instant burst.',
+      },
+      {
+        id: 'circuits',
+        name: 'Circuits',
+        baseRatePerSecond: 0.8,
+        overdriveBurst: 7,
+        overdriveLabel: 'Burn reserve boards to spike your signal throughput.',
+      },
+      {
+        id: 'alloy',
+        name: 'Alloy',
+        baseRatePerSecond: 0.45,
+        overdriveBurst: 4,
+        overdriveLabel: 'Force a hot smelt cycle for heavier metal output.',
+      },
+    ],
+    components: [
+      {
+        id: 'frame',
+        name: 'Frames',
+        costs: { scrap: 8, alloy: 2 },
+        description: 'Structural shells for the HQ expansion line.',
+      },
+      {
+        id: 'relay',
+        name: 'Relays',
+        costs: { scrap: 4, circuits: 4 },
+        description: 'Signal relays for routing and timing control.',
+      },
+      {
+        id: 'control_unit',
+        name: 'Control Units',
+        costs: { circuits: 6, alloy: 3 },
+        description: 'High-end logic bricks for precision tooling.',
+      },
+    ],
+    upgrades: [
+      {
+        id: 'flux_lines',
+        name: 'Flux Lines',
+        maxLevel: 3,
+        description: '+25% passive extraction on every material stream.',
+        costsByLevel: [
+          { frame: 2 },
+          { frame: 4, relay: 2 },
+          { frame: 6, relay: 4 },
+        ],
+      },
+      {
+        id: 'calibration_matrix',
+        name: 'Calibration Matrix',
+        maxLevel: 2,
+        description: 'Precision Window grants +1 extra component output per level.',
+        costsByLevel: [
+          { control_unit: 2, relay: 2 },
+          { control_unit: 4, relay: 4 },
+        ],
+      },
+      {
+        id: 'thermal_sinks',
+        name: 'Thermal Sinks',
+        maxLevel: 2,
+        description: 'Shorter overdrive cooldowns and longer precision windows.',
+        costsByLevel: [
+          { frame: 2, control_unit: 1 },
+          { frame: 4, control_unit: 3 },
+        ],
+      },
+    ],
+    coreTiers: [
+      {
+        tier: 0,
+        projectCount: 3,
+        projectCost: { frame: 2 },
+        unlockLabel: 'Unlocks stronger routing and the first extractor tune-up.',
+      },
+      {
+        tier: 1,
+        projectCount: 4,
+        projectCost: { frame: 2, relay: 2 },
+        unlockLabel: 'Stabilizes the line for better overdrive and more assembly pressure.',
+      },
+      {
+        tier: 2,
+        projectCount: 4,
+        projectCost: { relay: 2, control_unit: 2 },
+        unlockLabel: 'Opens the first serious precision architecture for the HQ.',
+      },
+      {
+        tier: 3,
+        projectCount: 0,
+        projectCost: {},
+        unlockLabel: 'Core stabilized. Future tiers can branch from here.',
+      },
+    ],
+  },
   unlockRoadmap: [
     {
       id: "incomeStreams",
@@ -744,23 +854,23 @@ export const gameConfig = {
       progressSegments: [
         {
           key: "craftingItems.0",
-          target: 10,
+          target: PRODUCTION_HQ_ENTRY_COINS,
           start: 0,
           end: 50,
         },
         {
           key: "craftingItems.1",
-          target: 5,
+          target: PRODUCTION_HQ_ENTRY_GOLD,
           start: 50,
           end: 100,
         },
       ],
       remainingRequirements: [
-        { key: "craftingItems.0", target: 10, format: "crafted_item", itemName: "Coins" },
-        { key: "craftingItems.1", target: 5, format: "crafted_item", itemName: "Gold Bars" },
+        { key: "craftingItems.0", target: PRODUCTION_HQ_ENTRY_COINS, format: "crafted_item", itemName: "Coins" },
+        { key: "craftingItems.1", target: PRODUCTION_HQ_ENTRY_GOLD, format: "crafted_item", itemName: "Gold Bars" },
       ],
       ctaLabel: "Unlock Production HQ",
-      previewText: "Upgrade your crafting value and speed.",
+      previewText: "Leave the cash economy behind and enter the irreversible HQ phase.",
     },
   ],
 
@@ -865,6 +975,14 @@ export const gameConfig = {
     isCraftingUnlocked: false,
     craftingItems: craftingRecipeDefinitions.map(() => 0),
     craftingProductionState: createDefaultCraftingProductionState(),
+    gamePhase: 'capital_phase',
+    hasEnteredProductionHq: false,
+    hqMaterials: {},
+    hqComponents: {},
+    hqTier: 0,
+    hqProgress: 0,
+    hqProductionState: {},
+    hqUpgrades: {},
     rawMaterials: { metal: 0, parts: 0, tech: 0 }, // New: Raw materials
     resourcePurchaseCounts: { metal: 0, parts: 0, tech: 0 },
     productionHqUpgrades: {

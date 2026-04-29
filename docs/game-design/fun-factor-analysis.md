@@ -482,6 +482,71 @@ Nicht zu viele Schichten einbauen.
 
 Ein Idle Game gewinnt mehr durch einen klaren Hook als durch fünf mittelinteressante Teilsysteme.
 
+## Neue Erkenntnis: Late-Game Braucht Einen Echten Regimewechsel
+
+Eine wichtige spätere Erkenntnis für den Bereich nach `Crafting` / `Wealth Production` ist:
+
+`Wenn das Late-Game nur weiter Geld produziert, bleibt es emotional im alten Spiel gefangen.`
+
+Gerade der Bereich rund um `Production HQ` sollte deshalb nicht nur ein weiterer Ausbau-Tab innerhalb der Geldökonomie sein.
+
+Stärker wäre ein klarer Phasenwechsel:
+
+- der Spieler erreicht eine definierte Crafting-Schwelle
+- ein einmaliger Trigger erscheint
+- nach der Bestätigung endet die Geldphase dauerhaft
+- das Spiel wechselt sichtbar in ein neues Produktionsspiel
+
+### Warum das wichtig ist
+
+Das löst ein zentrales Spätspiel-Problem:
+
+Wenn `100 Millionen`, `Prestige` und alte Kaufmenüs im Late-Game weiter dominant bleiben, fühlt sich neues Systemdesign schnell wie “noch mehr Aufsatz auf dasselbe Spiel” an.
+
+Ein `Hard Phase Shift` erzeugt stattdessen genau den Moment, der aktuell oft noch fehlt:
+
+- Überraschung
+- Bedeutung
+- echter Abschnittswechsel
+- starke Erinnerung an einen konkreten Punkt im Spiel
+
+### Konkrete Design-Richtung
+
+Eine starke Form davon wäre:
+
+- `10 Collectible Coins`
+- `5 Gold Reserves`
+- danach erscheint ein einmaliger Einstieg in `Production HQ`
+- dieser Einstieg beendet die Cash-Phase dauerhaft
+
+Danach sollten folgende Systeme bewusst keine Hauptrolle mehr spielen:
+
+- `Money`
+- `Basic Upgrades`
+- `Premium Upgrades`
+- `Investments`
+- `Prestige`
+
+Stattdessen sollte das neue Herzstück aufbauen auf:
+
+- Rohmaterialien
+- Komponenten
+- HQ-Fortschritt
+
+### Warum das besser zum Spaßfaktor passt
+
+Weil es aus `Crafting` nicht nur einen besseren Geldgenerator macht, sondern eine neue Identität.
+
+Die Spielerfrage wechselt dann von:
+
+`Wie mache ich mehr Geld?`
+
+zu:
+
+`Wie baue ich meine Produktionskette und mein HQ weiter aus?`
+
+Genau dieser Bedeutungswechsel ist viel eher geeignet, das Late-Game wie eine echte neue Phase wirken zu lassen.
+
 ## Beobachtung 10: Unterhaltung Kommt Auch Von Inszenierung, Nicht Nur Von Mechanik
 
 Ein Teil der aktuellen Trockenheit liegt vermutlich nicht nur an den Regeln, sondern auch daran, wie wenig manche Momente inszeniert sind.

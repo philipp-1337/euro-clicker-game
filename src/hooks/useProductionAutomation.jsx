@@ -25,6 +25,7 @@ const getAutoCraftTargets = () => {
 const AUTO_CRAFT_TARGETS = getAutoCraftTargets();
 
 export default function useProductionAutomation({
+  enabled = true,
   autoBuyMaterialsEnabled,
   autoCraftEnabled,
   rawMaterials,
@@ -68,7 +69,7 @@ export default function useProductionAutomation({
 
   // Auto-Buy Materials Logic
   useEffect(() => {
-    if (!autoBuyMaterialsEnabled || productionHqUpgrades?.auto_buy_materials < 1) return;
+    if (!enabled || !autoBuyMaterialsEnabled || productionHqUpgrades?.auto_buy_materials < 1) return;
 
     const interval = setInterval(() => {
       gameConfig.rawMaterials.forEach(material => {
@@ -80,11 +81,11 @@ export default function useProductionAutomation({
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [autoBuyMaterialsEnabled, productionHqUpgrades?.auto_buy_materials]);
+  }, [enabled, autoBuyMaterialsEnabled, productionHqUpgrades?.auto_buy_materials]);
 
   // Auto-Craft Logic (Start and Claim)
   useEffect(() => {
-    if (!autoCraftEnabled || productionHqUpgrades?.auto_craft < 1) return;
+    if (!enabled || !autoCraftEnabled || productionHqUpgrades?.auto_craft < 1) return;
 
     const interval = setInterval(() => {
       const localCraftingItems = Array.isArray(craftingItemsRef.current)
@@ -147,5 +148,5 @@ export default function useProductionAutomation({
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [autoCraftEnabled, productionHqUpgrades?.auto_craft]);
+  }, [enabled, autoCraftEnabled, productionHqUpgrades?.auto_craft]);
 }

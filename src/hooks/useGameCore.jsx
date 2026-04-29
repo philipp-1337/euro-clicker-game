@@ -20,6 +20,9 @@ import useInvestmentBoosts from './useInvestmentBoosts';
 import useProductionHq from './useProductionHq';
 import useProductionAutomation from './useProductionAutomation';
 import useAtomicMoney from './useAtomicMoney';
+import useProductionHqPhase from './useProductionHqPhase';
+import { getGamePhaseRuntimeFlags } from './useGamePhase.helpers';
+import useProductionHqLoop from './useProductionHqLoop';
 
 /**
  * Main game orchestrator hook that coordinates all game systems.
@@ -57,6 +60,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     prestigeCount, setPrestigeCount,
     setClickHistory,
     craftingItems, setCraftingItems,
+    gamePhase, setGamePhase,
+    hasEnteredProductionHq, setHasEnteredProductionHq,
+    hqMaterials, setHqMaterials,
+    hqComponents, setHqComponents,
+    hqTier, setHqTier,
+    hqProgress, setHqProgress,
+    hqProductionState, setHqProductionState,
+    hqUpgrades, setHqUpgrades,
     rawMaterials, setRawMaterials,
     resourcePurchaseCounts, setResourcePurchaseCounts,
     isCraftingUnlocked, setIsCraftingUnlocked,
@@ -83,7 +94,9 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // UI states
   const [isAutoBuyerModalOpen, setIsAutoBuyerModalOpen] = useState(false);
+  const [isProductionHqTransitionOpen, setIsProductionHqTransitionOpen] = useState(false);
   const { spendMoney } = useAtomicMoney(money, setMoney);
+  const phaseFlags = getGamePhaseRuntimeFlags(gamePhase);
 
   // Game calculations for derived states
   const {
@@ -136,6 +149,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
   );
 
   // Production HQ system
+  const productionHqPhaseHook = useProductionHqPhase({
+    craftingItems,
+    gamePhase,
+    setGamePhase,
+    hasEnteredProductionHq,
+    setHasEnteredProductionHq,
+  });
+
   const productionHqHook = useProductionHq({
     craftingItems, setCraftingItems,
     productionHqUpgrades, setProductionHqUpgrades,
@@ -163,6 +184,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Core economy management
   const economyHook = useGameEconomy({
+    enabled: phaseFlags.runCapitalTimers,
     money, setMoney, buttons, managers, investments,
     totalMoneyPerSecond: investmentIncomePerSecond,
     prestigeShares, setPrestigeShares,
@@ -184,6 +206,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Auto-buyers system
   const autoBuyersHook = useAutoBuyers({
+    enabled: phaseFlags.runCapitalTimers,
     money, setMoney, easyMode, globalPriceDecrease, buyQuantity, ensureStartTime,
     autoBuyerUnlocked, setAutoBuyerUnlocked,
     cooldownAutoBuyerUnlocked, setCooldownAutoBuyerUnlocked,
@@ -213,6 +236,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Offline earnings system
   const offlineEarningsHook = useOfflineEarnings({
+    enabled: phaseFlags.runCapitalTimers,
     isGameStarted, totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
     offlineEarningsLevel, initialOfflineDuration,
     activePlayTime, setActivePlayTime,
@@ -222,6 +246,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Floating click system
   const floatingClickHook = useFloatingClick({
+    enabled: phaseFlags.allowCapitalActions,
     money, setMoney, setClickHistory,
     totalMoneyPerSecond: economyHook.totalMoneyPerSecond,
     criticalClickChanceLevel,
@@ -232,7 +257,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Click handling and cooldowns
   const { handleClick } = useCooldowns(
-    cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled
+    cooldowns, setCooldowns, managers, buttons, money, setMoney, soundEffectsEnabled, phaseFlags.runCapitalTimers
   );
 
   // Wrapped click handler to ensure start time
@@ -361,6 +386,7 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
 
   // Production Automation system
   useProductionAutomation({
+    enabled: phaseFlags.runCapitalTimers,
     autoBuyMaterialsEnabled,
     autoCraftEnabled,
     rawMaterials,
@@ -378,6 +404,32 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     }
   }, [craftingItems, isProductionHqUnlocked, setIsProductionHqUnlocked]);
 
+  const confirmProductionHqTransition = useCallback(() => {
+    const didEnter = productionHqPhaseHook.enterProductionHq();
+
+    if (didEnter) {
+      setIsProductionHqTransitionOpen(false);
+    }
+
+    return didEnter;
+  }, [productionHqPhaseHook]);
+
+  const productionHqLoop = useProductionHqLoop({
+    enabled: gamePhase === 'hq_phase',
+    hqMaterials,
+    setHqMaterials,
+    hqComponents,
+    setHqComponents,
+    hqTier,
+    setHqTier,
+    hqProgress,
+    setHqProgress,
+    hqProductionState,
+    setHqProductionState,
+    hqUpgrades,
+    setHqUpgrades,
+  });
+
   return {
     // Basic game state
     money,
@@ -390,6 +442,14 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     activePlayTime,
     inactivePlayTime,
     gameState,
+    gamePhase,
+    hasEnteredProductionHq,
+    hqMaterials,
+    hqComponents,
+    hqTier,
+    hqProgress,
+    hqProductionState,
+    hqUpgrades,
     valueMultipliers,
     cooldownReductions,
 
@@ -513,6 +573,11 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     isCraftingUnlocked,
     setIsCraftingUnlocked,
     isProductionHqUnlocked,
+    canEnterProductionHq: productionHqPhaseHook.canEnterProductionHq,
+    productionHqEntryState: productionHqPhaseHook,
+    isProductionHqTransitionOpen,
+    setIsProductionHqTransitionOpen,
+    enterProductionHq: confirmProductionHqTransition,
     
     // Production HQ
     productionHqUpgrades,
@@ -525,5 +590,12 @@ export default function useGameCore(easyMode = false, soundEffectsEnabled, buyQu
     productionHqValueMultiplier: productionHqHook.productionHqValueMultiplier,
     productionHqSpeedMultiplier: productionHqHook.productionHqSpeedMultiplier,
     productionHqRareChanceBonus: productionHqHook.productionHqRareChanceBonus,
+    setHqMaterials,
+    setHqComponents,
+    setHqTier,
+    setHqProgress,
+    setHqProductionState,
+    setHqUpgrades,
+    productionHqLoop,
   };
 }

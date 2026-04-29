@@ -33,6 +33,9 @@ export default function Crafting({
   productionHqValueMultiplier = 1,
   productionHqSpeedMultiplier = 1,
   productionHqRareChanceBonus = 0,
+  canEnterProductionHq = false,
+  productionHqEntryState,
+  onOpenProductionHqTransition,
 }) {
   const calculateTotalCost = (material) => {
     let total = 0;
@@ -112,6 +115,38 @@ export default function Crafting({
           Each run asks two questions: which mode fits your economy right now, and can you claim inside the quality window for a stronger finish?
         </p>
       </div>
+
+      {canEnterProductionHq && (
+        <div className="premium-upgrade-card crafting-unlock-card">
+          <div className="premium-upgrade-header">
+            <Unlock className="premium-icon" />
+            <h3>Production HQ Ready</h3>
+          </div>
+          <p className="premium-upgrade-description">
+            You have crossed the industrial threshold. Entering Production HQ permanently ends the
+            cash phase and removes the old money-driven menu structure.
+          </p>
+          <div className="crafting-unlock-card__requirements">
+            <div className="premium-upgrade-level">
+              Collectible Coins: <strong>{productionHqEntryState?.coinCount ?? 0}</strong> / {productionHqEntryState?.requiredCoins ?? 10}
+            </div>
+            <div className="premium-upgrade-level">
+              Gold Reserves: <strong>{productionHqEntryState?.goldCount ?? 0}</strong> / {productionHqEntryState?.requiredGold ?? 5}
+            </div>
+          </div>
+          <div className="premium-upgrade-info">
+            <div className="premium-upgrade-level">
+              Warning: This permanently ends the cash phase.
+            </div>
+            <button
+              className="premium-upgrade-button"
+              onClick={onOpenProductionHqTransition}
+            >
+              Enter Production HQ
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="crafting-materials-grid">
         {gameConfig.rawMaterials.map((material) => {
