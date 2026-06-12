@@ -24,21 +24,21 @@ Euro Clicker Game is an idle/incremental game inspired by classics like "Cookie 
 
 ## Installation
 
-- Make sure Node.js and npm are installed on your system.
+- Make sure [Bun](https://bun.sh/) is installed on your system.
 - Clone this repository.
 - Navigate to the project directory and install the dependencies:
 
     ```bash
-    npm install
+    bun install
     ```
 
 - Start the application:
 
     ```bash
-    npm start
+    bun dev
     ```
 
-- Open [http://localhost:3000](http://localhost:3000) in your browser to play.
+- Open [http://localhost:5173](http://localhost:5173) in your browser to play. (Vite default port)
 
 ## Technologies Used
 

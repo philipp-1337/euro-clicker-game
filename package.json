@@ -23,7 +23,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "npx eslint --ext .js,.jsx,.ts,.tsx",
+    "lint": "bun x eslint --ext .js,.jsx,.ts,.tsx",
     "release": "standard-version"
   },
   "browserslist": {
