@@ -1,4 +1,5 @@
-import admin from "firebase-admin";
+import { initializeApp, cert, getApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 // Konfiguration
 const RETENTION_DAYS = parseInt(process.env.RETENTION_DAYS || '7', 10);
@@ -9,15 +10,15 @@ const TIMESTAMP_FIELD = "updatedAt";
 // Initialisiere Firebase
 try {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+  initializeApp({
+    credential: cert(serviceAccount)
   });
 } catch (error) {
   console.error('[FEHLER] Firebase-Initialisierung fehlgeschlagen:', error.message);
   process.exit(1);
 }
 
-const db = admin.firestore();
+const db = getFirestore();
 
 /**
  * Löscht Dokumente, die älter als die angegebene Anzahl von Tagen sind
@@ -67,7 +68,7 @@ async function deleteOldSaves() {
     process.exit(1);
   } finally {
     // Beende die Firebase-App ordnungsgemäß
-    await admin.app().delete();
+    await getApp().delete();
   }
 }
 

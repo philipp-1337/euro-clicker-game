@@ -1,4 +1,5 @@
-import admin from "firebase-admin";
+import { initializeApp, cert, getApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 // Konfiguration
 const BATCH_SIZE = 500; // Firestore Batch-Limit
@@ -8,15 +9,15 @@ const FLAG_FIELD = "flagged";
 // Initialisiere Firebase
 try {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+  initializeApp({
+    credential: cert(serviceAccount)
   });
 } catch (error) {
   console.error('[FEHLER] Firebase-Initialisierung fehlgeschlagen:', error.message);
   process.exit(1);
 }
 
-const db = admin.firestore();
+const db = getFirestore();
 
 /**
  * Löscht geflaggte Dokumente aus der Leaderboard-Sammlung.
@@ -74,7 +75,7 @@ async function main() {
     console.error('[FEHLER] Ein Fehler ist während der Leaderboard-Bereinigung aufgetreten.', error);
     process.exit(1);
   } finally {
-    await admin.app().delete();
+    await getApp().delete();
     console.log('[INFO] Firebase-Verbindung geschlossen.');
     process.exit(0);
   }

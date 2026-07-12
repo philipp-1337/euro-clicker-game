@@ -1,4 +1,5 @@
-import admin from "firebase-admin";
+import { initializeApp, cert, getApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
 
 // Konfiguration
 const RETENTION_DAYS = parseInt(process.env.RETENTION_DAYS || '30', 10); // Default: 30 Tage
@@ -9,15 +10,15 @@ const TIMESTAMP_FIELD = "lastSeenAt";
 // Initialisiere Firebase
 try {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+  initializeApp({
+    credential: cert(serviceAccount)
   });
 } catch (error) {
   console.error('[FEHLER] Firebase-Initialisierung fehlgeschlagen:', error.message);
   process.exit(1);
 }
 
-const db = admin.firestore();
+const db = getFirestore();
 
 /**
  * Löscht notificationReads-Dokumente, deren lastSeenAt älter als RETENTION_DAYS ist
@@ -59,7 +60,7 @@ async function deleteOldNotificationReads() {
     console.error('[FEHLER] Fehler beim Löschen alter notificationReads:', error);
     process.exit(1);
   } finally {
-    await admin.app().delete();
+    await getApp().delete();
   }
 }
 
